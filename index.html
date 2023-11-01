@@ -155,6 +155,11 @@
       <h3 class="widget-title">归档</h3>
       
       
+        <a class="archive-link" href="/archives/2023/11 ">
+          十一月 2023 
+          <div class="archive-count">1 </div>
+        </a>
+      
         <a class="archive-link" href="/archives/2023/10 ">
           十月 2023 
           <div class="archive-count">1 </div>
@@ -175,6 +180,12 @@
     <div class="widget">
       <h3 class="widget-title">最新文章</h3>
       <ul>
+        
+          <a class="recent-link" href="/2023/11/02/JNDI%E6%B3%A8%E5%85%A5/" title="JNDI初步学习" >
+            <div class="recent-link-text">
+              JNDI初步学习
+            </div>
+          </a>
         
           <a class="recent-link" href="/2023/10/24/RMI%E6%94%BB%E5%87%BB%E6%80%BB%E7%BB%93/" title="RMI的基本攻击方式总结" >
             <div class="recent-link-text">
@@ -198,6 +209,76 @@
     </div>
     <div id="content-body">
       
+   
+
+<article id="post-JNDI注入" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 itemprop="name">
+        <a class="p-name article-title" href="/2023/11/02/JNDI%E6%B3%A8%E5%85%A5/">JNDI初步学习</a>
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2023-11-01T17:37:51.000Z" itemprop="datePublished">2023-11-02</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            5.2k 词 
+          </div>
+        </div>
+        
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <div class="truncate-text">
+            什么是JNDI在学之前我们得先了解什么是JNDI （Java Naming and Directory Interface）它的中文翻译叫做 java命名和目录的接口，类比一个java的字典，它是为java应用程序提供命名和目录访问服务的API，允许客户端通过名称发现和查找数据或者对象。用于提供基于配置的动态调用。这些对象可以存储在不同的命名或者目录服务中JNDI的服务分为两部分Naming与DirectoryNaming的话类似于哈希表的键值对取值和存值，通过键获取对应的服务。Directory是一种特殊的Naming Service 用于类似目录的方式存取服务
+具体到哪些服务呢？
+
+1.RMI2.LDAP 轻量级目录访问协议3.DNS4.CORBA 通用对象服务(COS)名称服务5.JNDI Reference
+
+LDAP CORBA RMI是采用字符串对应对象，DNS是IP对应域名用字符串对应对象，默认存在一个对象加载的过程，那可能就存在通过反序列化加载恶意对象的情况。这也是漏洞所在
+JNDI具体实现 以及JNDI对应RMI原生反序列化攻击我们上一节RMI server端还...  
+          </div>
+        
+      </div>
+
+         
+    </div>
+    
+     
+    <a class="right-panel  non-pic  "
+      
+      href="/2023/11/02/JNDI%E6%B3%A8%E5%85%A5/" 
+    >
+       
+      <i class="fa-solid fa-angle-right non-pic"></i>
+       
+    </a>
+     
+  </div>
+  
+</article>
+
+ 
+
    
 
 <article id="post-RMI攻击总结" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
