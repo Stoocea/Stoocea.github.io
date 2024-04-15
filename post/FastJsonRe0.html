@@ -1,213 +1,175 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>FastJsonRe0 | stoocea</title><meta name="author" content="stoocea"><meta name="copyright" content="stoocea"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="FastJsonRe0"><meta name="application-name" content="FastJsonRe0"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="FastJsonRe0"><meta property="og:url" content="http://example.com/post/FastJsonRe0.html"><meta property="og:site_name" content="stoocea"><meta property="og:description" content="参考自：https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;alibaba&amp;#x2F;fastjsonhttps:&amp;#x2F;&amp;#x2F;su18.org&amp;#x2F;post&amp;#x2F;fastjson&amp;#x2F;#%E5%89%8D%E8%A8%80https:&amp;#x2F;&amp;#x2F;drun1baby.top&amp;#x2F; FastJson 工作流程及其组件分析0x01 简介FastJson 是阿里"><meta property="og:locale" content="zh-CN"><meta property="og:image" content="https://bu.dusays.com/2024/03/08/65ea7ca64ea9f.png"><meta property="article:author" content="stoocea"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://bu.dusays.com/2024/03/08/65ea7ca64ea9f.png"><meta name="description" content="参考自：https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;alibaba&amp;#x2F;fastjsonhttps:&amp;#x2F;&amp;#x2F;su18.org&amp;#x2F;post&amp;#x2F;fastjson&amp;#x2F;#%E5%89%8D%E8%A8%80https:&amp;#x2F;&amp;#x2F;drun1baby.top&amp;#x2F; FastJson 工作流程及其组件分析0x01 简介FastJson 是阿里"><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="http://example.com/post/FastJsonRe0"><link rel="preconnect" href="//cdn.cbd.int"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
-  linkPageTop: undefined,
-  peoplecanvas: {"enable":true,"img":"https://upload-bbs.miyoushe.com/upload/2023/09/03/125766904/ee23df8517f3c3e3efc4145658269c06_5714860933110284659.png"},
-  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
-  diytitle: {"enable":true,"leaveTitle":"w(ﾟДﾟ)w 不要走！再看看嘛！","backTitle":"♪(^∇^*)欢迎肥来！"},
-  LA51: undefined,
-  greetingBox: undefined,
-  twikooEnvId: '',
-  commentBarrageConfig:undefined,
-  root: '/',
-  preloader: {"source":3},
-  friends_vue_info: undefined,
-  navMusic: false,
-  mainTone: undefined,
-  authorStatus: {"skills":null},
-  algolia: undefined,
-  localSearch: undefined,
-  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
-  noticeOutdate: undefined,
-  highlight: {"plugin":"prismjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
-  copy: {
-    success: '复制成功',
-    error: '复制错误',
-    noSupport: '浏览器不支持'
-  },
-  relativeDate: {
-    homepage: false,
-    simplehomepage: true,
-    post: false
-  },
-  runtime: '天',
-  date_suffix: {
-    just: '刚刚',
-    min: '分钟前',
-    hour: '小时前',
-    day: '天前',
-    month: '个月前'
-  },
-  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"作者: stoocea","link":"链接: ","source":"来源: stoocea","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。","copySuccess":"复制成功，复制和转载请标注本文地址"}},
-  lightbox: 'fancybox',
-  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
-  source: {
-    justifiedGallery: {
-      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
-      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
+    
+      FastJsonRe0 
+      
+      
+      |
+    
+     stoocea&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="https://bu.dusays.com/2024/04/15/661ce929d665d.png">
+    <link rel="icon" href="https://bu.dusays.com/2024/04/15/661ce929d665d.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
     }
-  },
-  isPhotoFigcaption: false,
-  islazyload: true,
-  isAnchor: false,
-  shortcutKey: undefined,
-  autoDarkmode: true
-}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
-  configTitle: 'stoocea',
-  title: 'FastJsonRe0',
-  postAI: '',
-  pageFillDescription: 'FastJson 工作流程及其组件分析, 0x01 简介, 0x02 fastjson 使用, 1x01 javabean-gtjson, 1x02 json-gtjavabean, 1x03 常见特性, 1x04 Fastjson 工作流程分析, 2x01 选定解析器-DefaultJSONParser, 2x02 获取解析器–getDeserializer, 2x03 deserialze 解析—javaBeanDeserializer, 0x03 漏洞复现, 1x01  JdbcRowSetImpl 利用, 1x02 TemplateImpl 利用, 2x01  流程简单分析, 0x04 补丁修复分析, 1x01 fastjson-1.2.25, 1x02 fastjson-1.2.42 至 1.2.44, 1x03 fastjson-1.2.45, 1x04 fastjson-1.2.47参考自工作流程及其组件分析简介是阿里巴巴的开源解析库它可以解析格式的字符串支持序列化为字符串也可以从字符串反序列化到特点就是快性能好也就是因为此使用的用户特别多但是开源组件用户大的特点一旦爆出漏洞危害也是巨大的使用从显式上来说功能的实现连接于一个类使用就是为了让类转化得到字符串或者将解析为那功能组件和具体的工作流程也是绕不开这两者的先看将转化为这里最常用的方法就是该方法有很多重载方法并且都带有不同的参数最常用的是下面几个序列化特性这个特性可以放到中供全局使用又或者直接在方法中指定使用比如中指定就可以实现指定序列化类型使序列化数据自带标记序列化过滤器它是一个接口功能就和名字一样可以通过配置它的子接口或者实现类的内容实现扩展编程也就是额外执行一些代码操作序列化配置可自定义的序列化配置类之后调试会遇到那么具体使用如下解析为类型或者类型调用了的调用了的调用了的调用了的调用了无参构造调用了有参构造中将数据反序列化成类的常用方法为这三个方法也同样拥有很多的重载方法带有不同的参数具体可以去类的具体定义中查看反序列化特性类的特性处理泛型反序列化编程扩展定制反序列化例如用于处理多余的字段用于处理多余字段时提供类型信息还是与序列化有所不同的但是有些很常见以及必须要实现的特性和配置还是相同的中的反序列化组件中的属性就很符合其反序列化的功能所要求的类型宽泛有一张关于早期的框架图之后流程调试的时候会遇到这些常见组件常见特性相信看完上面的使用例应该有不少疑问比说为什么序列化结果会有等这里我们将会用实例一个一个解决为什么序列化结果出现了的字样假如我们不加反序列化标识结果如下就没有标识符了然后我们再尝试不指定类型直接解析序列化数据最后的打印输出并不是我们想要的类的方法而是的方法也就是说我们现在得到的并不是想要的类并且无法被强转那我们想要得到指定类的方法就是加上指定标识的类或者直接在方法中加上该类的全类名的参数即可这里我们只演示如何通过来指定类型有两种方法序列化的时候加序列化标识自己手动加这里就不演示了工作流程分析选定解析器断点我们打在测试类的方法处然后跟进这里发现其实对于只是一层强转封装最终调用的还是所以继续跟进内容主要是获取到解析器然后调用解析器的方法去解析这里的感兴趣的师傅可以自己调一下我这里只给出实例化完成之后里面需要注意的点大致信息如下我们的输入字符串信息几个标识符包括我们上面提到的字符串扫描器这里的中有一段值的计算感兴趣的师傅可以跟进一下流程这里算出来是其他功能信息不一一列举我们继续跟进的方法方法内容主体被占领了然后是根据我们刚才初始化时给算的来进行选择的刚才其实就是算的字符不太了解具体算法也就是左标识符那么这里自然跟进到的情况获取到的本身并不带属性值直接跟进方法此时还是类中这里的方法内容较多主要就是根据字符来进行逻辑判断然后由逻辑判断走到处理方法这里只走关键性逻辑通过去取得值然后继续往下走通过值获取到我们刚才指定的也就是类然后调用工具类的实现类加载由于他本地缓存中并没有类所以它得获取到类之后加载然后存进本地缓存注意此时并没有对类进行任何操作他只是根据这个名字加载了一个空类甚至都没有属性值返回出来这个空类然后继续往下走来到最终解析的地方这里是先根据类来获取解析器然后在调用其解析方法获取解析器跟进这里判断了一下当前缓存中是否存在能够直接获取到解析该数据的解析器如果有就直接返回了很显然我们这里没有所以还需要跟进内容较多我们直接跟进到最后在此之前的内容只有一个循环黑名单检测但是那个黑名单里面的内容只有线程类这么一个所以并不影响然后再进行了多次判断是否为数组集合或者报错类如果都不是就进入有很多关于前置的检查这个我们之后再谈这里走到开始正式构造方法本身是返回一个列表那列表是什么它里面存储了我们当前想要反序列化中的方法方法无参构造字段属性值等具体信息以及标识这点从他方法的开头能看出来后续的很多类型检测就不看了我们直接到关键内容在它方法的最后有三段循环其中第一个循环是用来获取方法第二个循环是用来获取字段属性第三个循环是在获取方法我们只看第一个循环的内容有四个判断如果不想进入其内容被出去需要满足方法名长度不能小于不能是静态方法返回值不能为空获取该方法的参数数量不能为我们现在想要获取的类肯定满足这个要求这里记住就好后续漏洞利用会考虑到持续跟进我们以方法的进度为例再经过了注解处理以及各类字符处理之后它最终会被进数组这里要注意的是我们在实例化单个时有个需要注意的点关于的设置其实对于漏洞本身的执行是没有影响的主要是关于解析器的生成因为解析器是动态生成的如果为后续会调用解析器去解析我们就无法跟进流程继续分析了为了让参数不为我们在类中加上一个字段属性以及它的一个方法即可不要设置方法那么这里就不多记录直接返回到解析器构造完毕开始调用解析经过几层包装特性跟进到了的方法前面是对数据做处理我们跟进到重点循环关于的遍历循环前面是对中获取到的字段属性以及方法等进行类型判断和特殊情况的判断当来到方法它首先是实例化了一个的空类里面的属性值都为默认后续会调用的方法具体内容的话就是反射调用方法了漏洞触发点也就是在这后续的漏洞利用不太能跟进到这还是解析器的原因我们没办法跟进到具体内容漏洞复现稍微回忆一下流程主要集中于中的获取解析器和解析数据经过处理利用主要问题出在和方法中存在可控的参数以及有后续调用的可能这里能够对变量自由赋值然后在方法中我们找到了熟悉的再看一眼它前面的调用居然是并且中的参数也是我们刚才的可以通过方法去自己构造三种条件结合起来就存在攻击的可能测试一下具体的流程分析无法跟进上面工作流程中我们讲到了的问题由于我们不能够控制中具体方法内容也就无法使得参数为不开启解析器所以无法调试但其实的内容是差不多的循环获取到数组的内容然后读取到方法反射调用利用先看利用吧具体恶意类的内容也就是中恶意类一样只不过这里我们用写一下流程简单分析解析部分不赘述来分析部分将部分拆分成如上几个部分触发部分在中也就是的为什么是一般中会在最后调用方法并且在方法中也会调用到方法我们先跟进到中这里会调用到方法在方法中又会调用方法然后经过参数不为并且参数不为的情况下调用方法然后在方法中通过传递的字节码通过方法进行类加载其中还有很多限制条件这里不做赘述所以整个的利用链就是这里又有一个细节问题为什么不直接开始调用之前我们分析过获取解析器的时候中获取方法会有限制条件非静态方法无参数返回类型必须是或继承自或或或或返回值不满足第三点条件所以我们必须往上找其他的利用对于中它的返回值是继承于所以符合条件补丁修复分析研究高版本的防御补丁的思想以及绕过直到之前的补丁修复绕过都必须开启测试人员可以添加如下代码进行开启之后的第一次更新官方引入机制默认情况下关闭不能直接反序列化任意类打开之后是基于黑名单来实现安全检测的也提供了添加黑名单的接口集中处理的地方在也就是我们通过来获取解析器类但是具体的使用却是在中而只有经过这层才能继续往下走正常的解析流程我们先跟进类之后再看具体的方法处理多了很多成员变量其中包括黑名单和白名单列表然后多了一个安全开关具体的黑名单如下白名单是没有具体定义的它需要通过一些方法去添加内容使用代码进行添加加上启动参数在中添加这些我们肯定是无法利用的都是服务端自己能干的事还得从其他地方入手我们跟进方法他有几层黑白名单的混合双打先看第一次如果选项开启那么就会先遍历白名单匹配目标类是否在其中如果在就直接加载类然后遍历黑名单匹配目标类是否在其中如果在就抛异常下面还有一次混合双打当我们没有开启的时候先遍历黑名单匹配就抛出异常然后再遍历白名单匹配就直接加载如果这两次混合双打没有打对地方那么最后只有一种可能会加载类了开启或者不为问题就出在这最后一手回首掏里面我们跟进这个最后的这里为了兼容其他格式的数据使用递归调用来处理这些特殊字符于是我们的绕过思路就是在原先反序列化的类名前加上以及最后加上之后也会被递归解析能够准确找到全类名进行加载至攻防全部集中于此只列出不做具体分析双写和绕过利用判断的绕过这个版本的字符串判断的绕过基本上就结束了又爆出来一个黑名单绕过补充不全最严重的一集上面版本的绕过都必须建立在开启的情况下本来限制就很大了而版本的漏洞则不需要开启这个影响版本有些不同未开启的情况下漏洞主要发生地点是在中我们将的版本改为经过几个版本的更新已有些不同主要也是集中于我们上面总结的漏洞的补丁修改主题内容如下前面还有一部分是关于与字符绕过的处理包括处理和直接禁用等等然后就是熟悉的黑白名单混合检测只不过中我们取出黑名单值变成了值匹配内容是一样的就算不开启也就是第一个循环不进去我们往后走逻辑来到个判断处假如说前两个判断有一个判断的内容满足要求了我们就能够进入第三个判断直接出我们的恶意类就不用去面对恐怖的未开启的黑名单检测在前的情况了那么接下来就是关于前两个判断的内容分别是通过调用从缓存中取出赋值为直接调用去找有没有这个类但其实最终利用到的还是因为我们无法从中传值也就是无法写入我们想要的恶意类也就获取不到直接看对于它的内容仅仅是从中取值但是我们是可以通过往里写值的直接跟进到内容和我们上面绕过时分析到的逻辑是差不多的多了一些字符绕过的检测最后这一个部分仍然没变也就是说会在最后尝试向中写入当前正在实例化的类那我们只需要能够控制到的参数往里传入我们想要实例化的类即可首先中有重载三个方法虽然最终都会往三个参数的走也就是我们刚才分析的但是每个被调用的地方都是不同的但是可以明确一点三个的参数是一定会有的其他参数可有可无也就是说我们只要找到能够后续调用且参数可控的部分就能够形成利用链找一下双参数的在哪被调用了跟进到的具体调用部分需要的是参数来指定为我们想要加载的类来看参数如何控制这里想要赋值就必须使得不为空且为我们的目标看一下是如何赋值的当为时会进入判断然后通过扫描器判断字符串中键是否符合要求然后将中值通过的解析器方法返回给如何变为呢我们可以尝试一下的后续直接跟进到中我们来到第二个判断也就是直通过去实际上就是从中取值由于在初始化的时候会调用方法去初始化而在的初始化方法中已经将加载了所以我们此时的能从中到并且在后续的方法中会将设置为那么此时的条件都已经达成了设置为我们能够通过自控去设置然后通过去加载并且写入缓存如下我个人的复习和学习暂时停在这里后续还有其他的内容会继续补充到我这篇笔记性质的博客',
-  isPost: true,
-  isHome: false,
-  isHighlightShrink: false,
-  isToc: true,
-  postUpdate: '2024-03-18 20:00:44',
-  postMainColor: '',
-}</script><noscript><style type="text/css">
-  #nav {
-    opacity: 1
-  }
-  .justified-gallery img {
-    opacity: 1
-  }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
 
-  #recent-posts time,
-  #post-meta time {
-    display: inline !important
-  }
-</style></noscript><script>(win=>{
-      win.saveToLocal = {
-        set: (key, value, ttl) => {
-          if (ttl === 0) return
-          const now = Date.now()
-          const expiry = now + ttl * 86400000
-          const item = {
-            value,
-            expiry
-          }
-          localStorage.setItem(key, JSON.stringify(item))
-        },
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
       
-        get: key => {
-          const itemStr = localStorage.getItem(key)
+        <img src="https://bu.dusays.com/2024/04/15/661ce929d665d.png" alt="">
       
-          if (!itemStr) {
-            return undefined
-          }
-          const item = JSON.parse(itemStr)
-          const now = Date.now()
+    </a>
+    <div class="nickname"><a href="/">Stoocea</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
       
-          if (now > item.expiry) {
-            localStorage.removeItem(key)
-            return undefined
-          }
-          return item.value
-        }
-      }
-    
-      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
-        const script = document.createElement('script')
-        script.src = url
-        script.async = true
-        script.onerror = reject
-        script.onload = script.onreadystatechange = function() {
-          const loadState = this.readyState
-          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-          script.onload = script.onreadystatechange = null
-          resolve()
-        }
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
 
-        Object.keys(attr).forEach(key => {
-          script.setAttribute(key, attr[key])
-        })
 
-        document.head.appendChild(script)
-      })
-    
-      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
-        const link = document.createElement('link')
-        link.rel = 'stylesheet'
-        link.href = url
-        if (id) link.id = id
-        link.onerror = reject
-        link.onload = link.onreadystatechange = function() {
-          const loadState = this.readyState
-          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-          link.onload = link.onreadystatechange = null
-          resolve()
-        }
-        document.head.appendChild(link)
-      })
-    
-      win.activateDarkMode = () => {
-        document.documentElement.setAttribute('data-theme', 'dark')
-        if (document.querySelector('meta[name="theme-color"]') !== null) {
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
-        }
-      }
-      win.activateLightMode = () => {
-        document.documentElement.setAttribute('data-theme', 'light')
-        if (document.querySelector('meta[name="theme-color"]') !== null) {
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
-        }
-      }
-      const t = saveToLocal.get('theme')
-    
-          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
-          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
-          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
-          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+<script src="/js/activeNav.js"></script>
 
-          if (t === undefined) {
-            if (isLightMode) activateLightMode()
-            else if (isDarkMode) activateDarkMode()
-            else if (isNotSpecified || hasNoSupport) {
-              const now = new Date()
-              const hour = now.getHours()
-              const isNight = hour <= 6 || hour >= 18
-              isNight ? activateDarkMode() : activateLightMode()
-            }
-            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
-              if (saveToLocal.get('theme') === undefined) {
-                e.matches ? activateDarkMode() : activateLightMode()
-              }
-            })
-          } else if (t === 'light') activateLightMode()
-          else activateDarkMode()
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">FastJsonRe0</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-04-15 17:06:58
+        </span>
         
-      const asideStatus = saveToLocal.get('aside-status')
-      if (asideStatus !== undefined) {
-        if (asideStatus === 'hide') {
-          document.documentElement.classList.add('hide-aside')
-        } else {
-          document.documentElement.classList.remove('hide-aside')
-        }
-      }
-    
-      const detectApple = () => {
-        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
-          document.documentElement.classList.add('apple')
-        }
-      }
-      detectApple()
-    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://bu.dusays.com/2024/03/08/65ea7ca64ea9f.png"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
-  endLoading: () => {
-    document.getElementById('loading-box').classList.add("loaded");
-  },
-  initLoading: () => {
-    document.getElementById('loading-box').classList.remove("loaded")
-  }
-}
-window.addEventListener('load',()=> { preloader.endLoading() })
-setTimeout(function(){preloader.endLoading();},10000)
-
-if (true) {
-  document.addEventListener('pjax:send', () => { preloader.initLoading() })
-  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
-}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><a id="site-name" href="/" accesskey="h"><div class="title">stoocea</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> 最新评论</span></div><div class="aside-list"><span>正在加载中...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>归档</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/03/"><span class="card-archive-list-date">三月 2024</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">11</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="article-meta tags"></span></div></div><h1 class="post-title" itemprop="name headline">FastJsonRe0</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2024-03-18T09:00:00.000Z" title="发表于 2024-03-18 17:00:00">2024-03-18</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2024-03-18T12:00:44.761Z" title="更新于 2024-03-18 20:00:44">2024-03-18</time></span></div><div class="meta-secondline"><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为长沙"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>长沙</span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section><div id="post-top-cover"><img class="nolazyload" id="post-top-bg" src="https://bu.dusays.com/2024/03/11/65ee76f777226.jpg"></div></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container" itemscope itemtype="http://example.com/post/FastJsonRe0.html"><header><h1 id="CrawlerTitle" itemprop="name headline">FastJsonRe0</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">stoocea</span><time itemprop="dateCreated datePublished" datetime="2024-03-18T09:00:00.000Z" title="发表于 2024-03-18 17:00:00">2024-03-18</time><time itemprop="dateCreated datePublished" datetime="2024-03-18T12:00:44.761Z" title="更新于 2024-03-18 20:00:44">2024-03-18</time></header><p>参考自：<br><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson">https://github.com/alibaba/fastjson</a><br><a target="_blank" rel="noopener" href="https://su18.org/post/fastjson/#%E5%89%8D%E8%A8%80">https://su18.org/post/fastjson/#%E5%89%8D%E8%A8%80</a><br><a target="_blank" rel="noopener" href="https://drun1baby.top/">https://drun1baby.top/</a></p>
+      </div>
+      <div class="markdown-body">
+        <p>参考自：<br><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson">https://github.com/alibaba/fastjson</a><br><a target="_blank" rel="noopener" href="https://su18.org/post/fastjson/#%E5%89%8D%E8%A8%80">https://su18.org/post/fastjson/#%E5%89%8D%E8%A8%80</a><br><a target="_blank" rel="noopener" href="https://drun1baby.top/">https://drun1baby.top/</a></p>
 <h1 id="FastJson-工作流程及其组件分析"><a href="#FastJson-工作流程及其组件分析" class="headerlink" title="FastJson 工作流程及其组件分析"></a>FastJson 工作流程及其组件分析</h1><h2 id="0x01-简介"><a href="#0x01-简介" class="headerlink" title="0x01 简介"></a>0x01 简介</h2><p>FastJson 是阿里巴巴的开源 JSON 解析库，它可以解析 JSON 格式的字符串，支持 javaBean 序列化为 JSON 字符串，也可以从 JSON 字符串反序列化到 javabean<br>特点就是快，性能好，也就是因为此，FastJson 使用的用户特别多。但是开源组件+用户大的特点，一旦爆出漏洞，危害也是巨大的</p>
 <h2 id="0x02-fastjson-使用"><a href="#0x02-fastjson-使用" class="headerlink" title="0x02 fastjson 使用"></a>0x02 fastjson 使用</h2><p>从显式上来说，fastjson 功能的实现连接于一个类<code>com.alibaba.fastjson.JSON</code><br>使用 fastjson 就是为了让类 转化得到 json 字符串，或者将 json 解析为 javabean，那功能组件和具体的工作流程也是绕不开这两者的<br>先看将 javabean 转化为 json</p>
 <h3 id="1x01-javabean-json"><a href="#1x01-javabean-json" class="headerlink" title="1x01 javabean-&gt;json"></a>1x01 javabean-&gt;json</h3><p>这里最常用的方法就是<code>JSON.toJSONString()</code>,该方法有很多重载方法，并且都带有不同的参数，最常用的是下面几个：<br>序列化特性：<code>com.alibaba.fastjson.serializer.SerializerFeature</code>，这个特性可以放到 <code>fastjsonconfig </code>中供全局使用，又或者直接在方法中指定使用，比如<code>JSON.toJSONString</code>中指定，就可以实现指定序列化类型，使序列化数据自带<code>@type</code>标记</p>
-<p>序列化过滤器：<code>com.alibaba.fastjson.serializer.SerializeFilter</code>，它是一个接口，功能就和名字一样，可以通过配置它的子接口或者实现类的内容，实现扩展编程，也就是额外执行一些代码操作<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339183511-ad04a090-0432-46d7-b6ac-b3b8c2fabe5a.png#averageHue=%23576957&clientId=u945d9825-8c54-4&from=paste&height=310&id=ucec0051d&originHeight=465&originWidth=1819&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=260974&status=done&style=none&taskId=uc5d44dec-2ca5-4061-8cf1-9679983013d&title=&width=1212.6666666666667" referrerpolicy="no-referrer" alt="image.png"></p>
-<p>序列化配置：<code>com.alibaba.fastjson.serializer.SerializeConfig</code>，可自定义的序列化配置类，之后调试会遇到<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339326854-124703c8-d984-43c7-bb94-164718bb18b5.png#averageHue=%23333a41&clientId=u945d9825-8c54-4&from=paste&height=406&id=u7ab81456&originHeight=609&originWidth=1251&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=348293&status=done&style=none&taskId=u408d112d-e96f-4a50-b06e-b0fc73860fc&title=&width=834" referrerpolicy="no-referrer" alt="image.png"><br>那么具体使用如下</p>
+<p>序列化过滤器：<code>com.alibaba.fastjson.serializer.SerializeFilter</code>，它是一个接口，功能就和名字一样，可以通过配置它的子接口或者实现类的内容，实现扩展编程，也就是额外执行一些代码操作<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339183511-ad04a090-0432-46d7-b6ac-b3b8c2fabe5a.png#averageHue=%23576957&clientId=u945d9825-8c54-4&from=paste&height=310&id=ucec0051d&originHeight=465&originWidth=1819&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=260974&status=done&style=none&taskId=uc5d44dec-2ca5-4061-8cf1-9679983013d&title=&width=1212.6666666666667" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>序列化配置：<code>com.alibaba.fastjson.serializer.SerializeConfig</code>，可自定义的序列化配置类，之后调试会遇到<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339326854-124703c8-d984-43c7-bb94-164718bb18b5.png#averageHue=%23333a41&clientId=u945d9825-8c54-4&from=paste&height=406&id=u7ab81456&originHeight=609&originWidth=1251&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=348293&status=done&style=none&taskId=u408d112d-e96f-4a50-b06e-b0fc73860fc&title=&width=834" referrerpolicy="no-referrer" alt="image.png"><br>那么具体使用如下</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSON</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSONObject</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>serializer<span class="token punctuation">.</span></span><span class="token class-name">SerializerFeature</span></span><span class="token punctuation">;</span>
@@ -268,8 +230,8 @@ if (true) {
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span>
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339675557-3f57be73-06de-4555-8176-3b47885f8fcc.png#averageHue=%233a3e46&clientId=u945d9825-8c54-4&from=paste&height=210&id=u52b6c195&originHeight=315&originWidth=847&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=80930&status=done&style=none&taskId=u11ce3a83-ac4f-4097-bd00-a0f4008d024&title=&width=564.6666666666666" referrerpolicy="no-referrer" alt="image.png"></p>
-<h3 id="1x02-json-javabean"><a href="#1x02-json-javabean" class="headerlink" title="1x02 json-&gt;javabean"></a>1x02 json-&gt;javabean</h3><p>fastjson 中将 json 数据反序列化成 javabean 类的常用方法为<code>parse()``parseObject()``parseArray()</code>，这三个方法也同样拥有很多的重载方法，带有不同的参数（具体可以去类的具体定义中查看）:<br>反序列化特性： <code>com.alibaba.fastjson.parser.Feature</code><br>类的特性 <code>java.lang.reflect.Type</code><br>处理泛型反序列化：<code>com.alibaba.fastjson.TypeReference</code><br>编程扩展定制反序列化：<code>com.alibaba.fastjson.parser.deserializer.ParseProcess</code>，例如<code>ExtraProcessor</code> 用于处理多余的字段，<code>ExtraTypeProvider</code> 用于处理多余字段时提供类型信息<br>还是与序列化有所不同的，但是有些很常见以及必须要实现的特性和配置还是相同的，fastjson 中的反序列化组件中的属性就很符合其反序列化的功能所要求的，类型宽泛<br>有一张关于 FastJson 早期的框架图：<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710342282453-1d17b97d-430b-4c34-b1d7-801ca9ce21b7.png#averageHue=%237c7c7c&clientId=u945d9825-8c54-4&from=paste&height=363&id=u627fa2de&originHeight=544&originWidth=906&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=118937&status=done&style=none&taskId=u1b136b5e-440a-4957-85aa-cfc130e1b26&title=&width=604" referrerpolicy="no-referrer" alt="1616458393831.png"><br>之后流程调试的时候会遇到这些常见组件</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339675557-3f57be73-06de-4555-8176-3b47885f8fcc.png#averageHue=%233a3e46&clientId=u945d9825-8c54-4&from=paste&height=210&id=u52b6c195&originHeight=315&originWidth=847&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=80930&status=done&style=none&taskId=u11ce3a83-ac4f-4097-bd00-a0f4008d024&title=&width=564.6666666666666" referrerpolicy="no-referrer" alt="image.png"></p>
+<h3 id="1x02-json-javabean"><a href="#1x02-json-javabean" class="headerlink" title="1x02 json-&gt;javabean"></a>1x02 json-&gt;javabean</h3><p>fastjson 中将 json 数据反序列化成 javabean 类的常用方法为<code>parse()``parseObject()``parseArray()</code>，这三个方法也同样拥有很多的重载方法，带有不同的参数（具体可以去类的具体定义中查看）:<br>反序列化特性： <code>com.alibaba.fastjson.parser.Feature</code><br>类的特性 <code>java.lang.reflect.Type</code><br>处理泛型反序列化：<code>com.alibaba.fastjson.TypeReference</code><br>编程扩展定制反序列化：<code>com.alibaba.fastjson.parser.deserializer.ParseProcess</code>，例如<code>ExtraProcessor</code> 用于处理多余的字段，<code>ExtraTypeProvider</code> 用于处理多余字段时提供类型信息<br>还是与序列化有所不同的，但是有些很常见以及必须要实现的特性和配置还是相同的，fastjson 中的反序列化组件中的属性就很符合其反序列化的功能所要求的，类型宽泛<br>有一张关于 FastJson 早期的框架图：<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710342282453-1d17b97d-430b-4c34-b1d7-801ca9ce21b7.png#averageHue=%237c7c7c&clientId=u945d9825-8c54-4&from=paste&height=363&id=u627fa2de&originHeight=544&originWidth=906&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=118937&status=done&style=none&taskId=u1b136b5e-440a-4957-85aa-cfc130e1b26&title=&width=604" referrerpolicy="no-referrer" alt="1616458393831.png"><br>之后流程调试的时候会遇到这些常见组件</p>
 <h3 id="1x03-常见特性"><a href="#1x03-常见特性" class="headerlink" title="1x03 常见特性"></a>1x03 常见特性</h3><p>相信看完上面的使用例应该有不少疑问，比说为什么序列化结果会有 <code>@type</code>等<br>这里我们将会用实例一个一个解决<br>1.为什么序列化结果出现了<code>@type</code>的字样，假如我们不加反序列化标识<code>SerializerFeature</code></p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSON</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>serializer<span class="token punctuation">.</span></span><span class="token class-name">SerializerFeature</span></span><span class="token punctuation">;</span>
@@ -284,38 +246,38 @@ if (true) {
          <span class="token comment">//JSON.parseObject(personString);</span>
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>结果如下<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384953668-6d29619d-97a6-400b-8803-b2f7a089c6d5.png#averageHue=%233d4048&clientId=ud4e25145-d315-4&from=paste&height=44&id=u4cf7fece&originHeight=66&originWidth=557&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=13993&status=done&style=none&taskId=u9c43ecd1-2041-4165-aa4b-6fc6aa78df7&title=&width=371.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>就没有<code>@type</code>标识符了，然后我们再尝试不指定类型，直接解析序列化数据</p>
+<p>结果如下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384953668-6d29619d-97a6-400b-8803-b2f7a089c6d5.png#averageHue=%233d4048&clientId=ud4e25145-d315-4&from=paste&height=44&id=u4cf7fece&originHeight=66&originWidth=557&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=13993&status=done&style=none&taskId=u9c43ecd1-2041-4165-aa4b-6fc6aa78df7&title=&width=371.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>就没有<code>@type</code>标识符了，然后我们再尝试不指定类型，直接解析序列化数据</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">String</span> personString<span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">toJSONString</span><span class="token punctuation">(</span>person<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>personString<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token class-name">JSONObject</span> person1<span class="token operator">=</span><span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parseObject</span><span class="token punctuation">(</span>personString<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>person1<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385328620-3bf107fa-c564-4498-b046-f70d88f30f51.png#averageHue=%233e414a&clientId=ud4e25145-d315-4&from=paste&height=71&id=u559dc735&originHeight=107&originWidth=504&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=23846&status=done&style=none&taskId=u9c2bbcce-c0f1-4f7f-9b85-6668e3f9f02&title=&width=336" referrerpolicy="no-referrer" alt="image.png"><br>最后的打印输出并不是我们想要的 person 类的 toString 方法，而是 JSONObject 的 toString 方法，也就是说我们现在得到的并不是想要的 Person 类，并且无法被强转<br>那我们想要得到指定类的方法就是加上<code>@type</code>指定标识的类或者直接在 parseObject 方法中加上该类的全类名的参数即可，这里我们只演示如何通过<code>@type</code>来指定类型<br>有两种方法：<br>1 序列化的时候加序列化标识<code>SerializerFeature.WriteClassName</code></p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385328620-3bf107fa-c564-4498-b046-f70d88f30f51.png#averageHue=%233e414a&clientId=ud4e25145-d315-4&from=paste&height=71&id=u559dc735&originHeight=107&originWidth=504&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=23846&status=done&style=none&taskId=u9c2bbcce-c0f1-4f7f-9b85-6668e3f9f02&title=&width=336" referrerpolicy="no-referrer" alt="image.png"><br>最后的打印输出并不是我们想要的 person 类的 toString 方法，而是 JSONObject 的 toString 方法，也就是说我们现在得到的并不是想要的 Person 类，并且无法被强转<br>那我们想要得到指定类的方法就是加上<code>@type</code>指定标识的类或者直接在 parseObject 方法中加上该类的全类名的参数即可，这里我们只演示如何通过<code>@type</code>来指定类型<br>有两种方法：<br>1 序列化的时候加序列化标识<code>SerializerFeature.WriteClassName</code></p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">String</span> personString<span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">toJSONString</span><span class="token punctuation">(</span>person<span class="token punctuation">,</span><span class="token class-name">SerializerFeature<span class="token punctuation">.</span>WriteClassName</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>personString<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385599600-3b05e3f9-1e72-4365-9a1a-c86bc67d99d2.png#averageHue=%233d4049&clientId=ud4e25145-d315-4&from=paste&height=48&id=u992ef72d&originHeight=72&originWidth=760&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=20169&status=done&style=none&taskId=ucc404d6f-1e41-4176-92d4-eb2c9e4f329&title=&width=506.6666666666667" referrerpolicy="no-referrer" alt="image.png"></p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385599600-3b05e3f9-1e72-4365-9a1a-c86bc67d99d2.png#averageHue=%233d4049&clientId=ud4e25145-d315-4&from=paste&height=48&id=u992ef72d&originHeight=72&originWidth=760&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=20169&status=done&style=none&taskId=ucc404d6f-1e41-4176-92d4-eb2c9e4f329&title=&width=506.6666666666667" referrerpolicy="no-referrer" alt="image.png"></p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">Object</span> person1<span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>personString<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>person1<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385616584-7f9462a8-4015-4480-99c8-7d31cf8aa49c.png#averageHue=%233f424a&clientId=ud4e25145-d315-4&from=paste&height=39&id=u3050d408&originHeight=58&originWidth=553&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=14301&status=done&style=none&taskId=u6bb87834-821c-484d-bdfe-782255c5fcc&title=&width=368.6666666666667" referrerpolicy="no-referrer" alt="image.png"></p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385616584-7f9462a8-4015-4480-99c8-7d31cf8aa49c.png#averageHue=%233f424a&clientId=ud4e25145-d315-4&from=paste&height=39&id=u3050d408&originHeight=58&originWidth=553&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=14301&status=done&style=none&taskId=u6bb87834-821c-484d-bdfe-782255c5fcc&title=&width=368.6666666666667" referrerpolicy="no-referrer" alt="image.png"></p>
 <p>2 自己手动加，这里就不演示了</p>
-<h3 id="1x04-Fastjson-工作流程分析"><a href="#1x04-Fastjson-工作流程分析" class="headerlink" title="1x04 Fastjson 工作流程分析"></a>1x04 Fastjson 工作流程分析</h3><h4 id="2x01-选定解析器-DefaultJSONParser"><a href="#2x01-选定解析器-DefaultJSONParser" class="headerlink" title="2x01 选定解析器-DefaultJSONParser"></a>2x01 选定解析器-DefaultJSONParser</h4><p>断点我们打在测试类的 parseObject 方法处<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384335528-1f5456c7-5756-4908-99a7-86d1991e5d8d.png#averageHue=%233d454d&clientId=ud4e25145-d315-4&from=paste&height=341&id=u74151a6f&originHeight=512&originWidth=1553&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=312505&status=done&style=none&taskId=u19a25aa3-2ed5-4b2b-8d21-fcdff24ddee&title=&width=1035.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>然后跟进<br>这里发现其实 parseObject 对于 parse 只是一层强转封装，最终调用的还是 parse<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384349205-8f1c1503-e058-4068-bc3f-a77d7e4a3c09.png#averageHue=%233b444d&clientId=ud4e25145-d315-4&from=paste&height=268&id=uc74e0714&originHeight=402&originWidth=1454&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=219290&status=done&style=none&taskId=ue9225a1a-1e1b-415e-bc94-cb2fcdddfb5&title=&width=969.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>所以继续跟进 parse<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384430301-93c935ee-5449-4ad3-9906-7d82f0b7b49e.png#averageHue=%233c434a&clientId=ud4e25145-d315-4&from=paste&height=453&id=u80264a05&originHeight=680&originWidth=1567&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=354947&status=done&style=none&taskId=u1f9895b2-6d7b-42b5-a065-0f29cf37765&title=&width=1044.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>内容主要是获取到 JSONParser 解析器，然后调用解析器的 parse 方法去解析，这里的 DefaultJSONParser 感兴趣的师傅可以自己调一下，我这里只给出 Parser 实例化完成之后里面需要注意的点<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384606933-ed45fa2a-37d4-47f8-90ef-1844f9739a78.png#averageHue=%2331373e&clientId=ud4e25145-d315-4&from=paste&height=701&id=uf094493f&originHeight=1052&originWidth=1189&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=643176&status=done&style=none&taskId=u5295ab3f-6dd4-48ef-8640-01542ae8417&title=&width=792.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>大致信息如下：</p>
+<h3 id="1x04-Fastjson-工作流程分析"><a href="#1x04-Fastjson-工作流程分析" class="headerlink" title="1x04 Fastjson 工作流程分析"></a>1x04 Fastjson 工作流程分析</h3><h4 id="2x01-选定解析器-DefaultJSONParser"><a href="#2x01-选定解析器-DefaultJSONParser" class="headerlink" title="2x01 选定解析器-DefaultJSONParser"></a>2x01 选定解析器-DefaultJSONParser</h4><p>断点我们打在测试类的 parseObject 方法处<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384335528-1f5456c7-5756-4908-99a7-86d1991e5d8d.png#averageHue=%233d454d&clientId=ud4e25145-d315-4&from=paste&height=341&id=u74151a6f&originHeight=512&originWidth=1553&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=312505&status=done&style=none&taskId=u19a25aa3-2ed5-4b2b-8d21-fcdff24ddee&title=&width=1035.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>然后跟进<br>这里发现其实 parseObject 对于 parse 只是一层强转封装，最终调用的还是 parse<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384349205-8f1c1503-e058-4068-bc3f-a77d7e4a3c09.png#averageHue=%233b444d&clientId=ud4e25145-d315-4&from=paste&height=268&id=uc74e0714&originHeight=402&originWidth=1454&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=219290&status=done&style=none&taskId=ue9225a1a-1e1b-415e-bc94-cb2fcdddfb5&title=&width=969.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>所以继续跟进 parse<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384430301-93c935ee-5449-4ad3-9906-7d82f0b7b49e.png#averageHue=%233c434a&clientId=ud4e25145-d315-4&from=paste&height=453&id=u80264a05&originHeight=680&originWidth=1567&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=354947&status=done&style=none&taskId=u1f9895b2-6d7b-42b5-a065-0f29cf37765&title=&width=1044.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>内容主要是获取到 JSONParser 解析器，然后调用解析器的 parse 方法去解析，这里的 DefaultJSONParser 感兴趣的师傅可以自己调一下，我这里只给出 Parser 实例化完成之后里面需要注意的点<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384606933-ed45fa2a-37d4-47f8-90ef-1844f9739a78.png#averageHue=%2331373e&clientId=ud4e25145-d315-4&from=paste&height=701&id=uf094493f&originHeight=1052&originWidth=1189&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=643176&status=done&style=none&taskId=u5295ab3f-6dd4-48ef-8640-01542ae8417&title=&width=792.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>大致信息如下：</p>
 <ul>
 <li>我们的输入字符串信息 input</li>
 <li>几个标识符，包括我们上面提到的<code>@type</code></li>
 <li>json 字符串扫描器 lexer—JSONScanner，这里的 scanner 中有一段 token值的计算，感兴趣的师傅可以跟进一下流程，这里 token 算出来是 12</li>
 <li>其他功能信息不一一列举</li>
 </ul>
-<p>我们继续跟进 parser 的 parse 方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385876215-2780965b-7550-420a-b77f-a749b238d18a.png#averageHue=%233c424c&clientId=ud4e25145-d315-4&from=paste&height=678&id=u0f615ec6&originHeight=1017&originWidth=1800&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=716629&status=done&style=none&taskId=u7b96be9d-20f2-40fc-9ab3-801118d7f77&title=&width=1200" referrerpolicy="no-referrer" alt="image.png"><br>parse 方法内容主体被 switch 占领了，然后是根据我们刚才初始化 parser 时给 scanner 算的 token 来进行选择的，刚才 token 其实就是算的”{“字符（不太了解具体算法），也就是左标识符，那么这里自然跟进到<code>case: LBRACE</code>的情况<br>获取到的 JSONObject 本身并不带属性值<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710407579894-5f39792f-626e-4427-8296-a4618f1cddc9.png#averageHue=%235d6176&clientId=u69d11c5b-0f3a-4&from=paste&height=114&id=u0621dea2&originHeight=171&originWidth=1568&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=102537&status=done&style=none&taskId=ua5adeb35-b320-4979-815b-2d85a9c2551&title=&width=1045.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>直接跟进 parseObject 方法，此时还是 DefaultJSONParser 类中<br>这里的 parseObject 方法内容较多，主要就是根据字符来进行逻辑判断，然后由逻辑判断走到处理方法<br>这里只走关键性逻辑，通过 scanner 去取得 key 值---<code>@type</code><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710413981304-01ba44ad-46d9-483c-9f8f-d0e462c59f13.png#averageHue=%233a424a&clientId=uc4b17eff-485b-4&from=paste&height=179&id=uc32423f8&originHeight=268&originWidth=1459&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=157192&status=done&style=none&taskId=uaea7b508-c9ad-4a62-95a2-85ba655c321&title=&width=972.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>然后继续往下走，通过 key 值获取到我们刚才指定的 type，也就是 Person 类，然后调用 type 工具类的 loadClass 实现类加载<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710414025765-c44d000d-0939-4813-b78c-7dd19cd9352b.png#averageHue=%233c4d5f&clientId=uc4b17eff-485b-4&from=paste&height=87&id=uc98de7a3&originHeight=131&originWidth=1769&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=126291&status=done&style=none&taskId=u2c8a7a70-4d3c-4ee4-b087-4924c9b01ab&title=&width=1179.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>由于他本地缓存 map 中并没有 person 类，所以它得获取到类之后加载，然后存进本地缓存 map，注意此时并没有对 person 类进行任何操作，他只是根据 person 这个名字加载了一个空类，甚至都没有属性值<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710414301111-d1c2c203-fd5b-4af5-8f14-5adfc4b4a04b.png#averageHue=%233c444c&clientId=uc4b17eff-485b-4&from=paste&height=304&id=u373ac7d1&originHeight=456&originWidth=1744&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=275794&status=done&style=none&taskId=u1e86fc15-3e66-43cb-88dc-cd6caa96745&title=&width=1162.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>返回出来这个 person 空类，然后继续往下走，来到最终解析的地方，这里是先根据 person 类来获取解析器，然后在调用其解析方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710414641877-567bd601-c280-4664-bb83-a68dfe7e6ead.png#averageHue=%233b4c5e&clientId=uc4b17eff-485b-4&from=paste&height=83&id=ua4982ad0&originHeight=124&originWidth=1442&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=59958&status=done&style=none&taskId=uef016cd3-49e4-4f13-b604-af2c5457ef5&title=&width=961.3333333333334" referrerpolicy="no-referrer" alt="image.png"></p>
-<h4 id="2x02-获取解析器–getDeserializer"><a href="#2x02-获取解析器–getDeserializer" class="headerlink" title="2x02 获取解析器–getDeserializer"></a>2x02 获取解析器–getDeserializer</h4><p>跟进<code>getDeserializer</code><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710730383797-b9128926-fdd3-4712-b75f-87db7be73a66.png#averageHue=%23464c59&clientId=uc6fd9fb4-b99e-4&from=paste&height=269&id=u9fa00bb6&originHeight=403&originWidth=1704&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=251588&status=done&style=none&taskId=u1d5ecb8b-ca51-4aab-8064-0025651661c&title=&width=1136" referrerpolicy="no-referrer" alt="image.png"><br>这里判断了一下当前缓存中是否存在能够直接获取到解析该 json 数据的解析器，如果有就直接返回了，很显然我们这里没有，所以还需要跟进<code>getDeserializer</code><br>内容较多，我们直接跟进到最后 <code>createJavaBeanDeserializer</code>，在此之前的内容只有一个 for 循环黑名单检测，但是那个黑名单里面的内容只有 Thread 线程类这么一个，所以并不影响，然后再进行了多次 if 判断，是否为数组，集合，Map，或者报错类，如果都不是就进入<code>createJavaBeanDeserializer</code><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710730562556-8eab2137-1a12-4f09-9119-4b3dd4ed47c8.png#averageHue=%233c424d&clientId=uc6fd9fb4-b99e-4&from=paste&height=750&id=ueb096123&originHeight=1125&originWidth=2486&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1084835&status=done&style=none&taskId=u20d09945-db2c-43c7-b1c8-bc8fb286085&title=&width=1657.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br><code>createJavaBeanDeserializer</code>有很多关于 ASM 前置的检查，这个我们之后再谈，这里走到<code>JavaBeanInfo.build</code>开始正式构造 beanInfo<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710730762923-64bebe44-b299-466f-8366-f22b3ae6a56d.png#averageHue=%23353c44&clientId=uc6fd9fb4-b99e-4&from=paste&height=410&id=uad48976f&originHeight=615&originWidth=2117&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=550878&status=done&style=none&taskId=u53f58c59-9d1f-422a-9b3c-1bead98427d&title=&width=1411.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>build 方法本身是返回一个 JavaBeanInfo 列表，那 javaBeanInfo 列表是什么？它里面存储了我们当前想要反序列化 bean 中的 set 方法，get 方法，无参构造，字段属性值等具体信息以及标识，这点从他方法的开头能看出来<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710730920363-57b2b6b6-6255-4719-9d9f-61fd23fb920d.png#averageHue=%23404752&clientId=uc6fd9fb4-b99e-4&from=paste&height=303&id=udc504cc3&originHeight=454&originWidth=1367&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=261860&status=done&style=none&taskId=ue9aa8134-8d1f-4a6c-b71f-663b1d0d4cb&title=&width=911.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>后续的很多类型检测就不看了，我们直接到关键内容<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710731075040-df815dfc-da73-409d-82b3-45385a524e93.png#averageHue=%23363d45&clientId=uc6fd9fb4-b99e-4&from=paste&height=135&id=u9aeb8581&originHeight=202&originWidth=982&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=56442&status=done&style=none&taskId=u5ef444db-ef18-4ab0-954b-3383554f194&title=&width=654.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>在它方法的最后有三段 for 循环，其中第一个 for 循环是用来获取 set 方法，第二个 for 循环是用来获取字段属性，第三个 for 循环是在获取 get 方法<br>我们只看第一个 for 循环的内容<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710731149831-8283f291-fc48-4505-a2b8-ead95a6104e1.png#averageHue=%23363d46&clientId=uc6fd9fb4-b99e-4&from=paste&height=367&id=ub0fa9ced&originHeight=550&originWidth=1073&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=189924&status=done&style=none&taskId=u4026d3fa-b7c9-4ed6-a096-c689ff80ffb&title=&width=715.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>有四个 if 判断，如果不想进入其内容被 return 出去，需要满足：</p>
+<p>我们继续跟进 parser 的 parse 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385876215-2780965b-7550-420a-b77f-a749b238d18a.png#averageHue=%233c424c&clientId=ud4e25145-d315-4&from=paste&height=678&id=u0f615ec6&originHeight=1017&originWidth=1800&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=716629&status=done&style=none&taskId=u7b96be9d-20f2-40fc-9ab3-801118d7f77&title=&width=1200" referrerpolicy="no-referrer" alt="image.png"><br>parse 方法内容主体被 switch 占领了，然后是根据我们刚才初始化 parser 时给 scanner 算的 token 来进行选择的，刚才 token 其实就是算的”{“字符（不太了解具体算法），也就是左标识符，那么这里自然跟进到<code>case: LBRACE</code>的情况<br>获取到的 JSONObject 本身并不带属性值<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710407579894-5f39792f-626e-4427-8296-a4618f1cddc9.png#averageHue=%235d6176&clientId=u69d11c5b-0f3a-4&from=paste&height=114&id=u0621dea2&originHeight=171&originWidth=1568&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=102537&status=done&style=none&taskId=ua5adeb35-b320-4979-815b-2d85a9c2551&title=&width=1045.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>直接跟进 parseObject 方法，此时还是 DefaultJSONParser 类中<br>这里的 parseObject 方法内容较多，主要就是根据字符来进行逻辑判断，然后由逻辑判断走到处理方法<br>这里只走关键性逻辑，通过 scanner 去取得 key 值---<code>@type</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710413981304-01ba44ad-46d9-483c-9f8f-d0e462c59f13.png#averageHue=%233a424a&clientId=uc4b17eff-485b-4&from=paste&height=179&id=uc32423f8&originHeight=268&originWidth=1459&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=157192&status=done&style=none&taskId=uaea7b508-c9ad-4a62-95a2-85ba655c321&title=&width=972.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>然后继续往下走，通过 key 值获取到我们刚才指定的 type，也就是 Person 类，然后调用 type 工具类的 loadClass 实现类加载<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710414025765-c44d000d-0939-4813-b78c-7dd19cd9352b.png#averageHue=%233c4d5f&clientId=uc4b17eff-485b-4&from=paste&height=87&id=uc98de7a3&originHeight=131&originWidth=1769&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=126291&status=done&style=none&taskId=u2c8a7a70-4d3c-4ee4-b087-4924c9b01ab&title=&width=1179.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>由于他本地缓存 map 中并没有 person 类，所以它得获取到类之后加载，然后存进本地缓存 map，注意此时并没有对 person 类进行任何操作，他只是根据 person 这个名字加载了一个空类，甚至都没有属性值<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710414301111-d1c2c203-fd5b-4af5-8f14-5adfc4b4a04b.png#averageHue=%233c444c&clientId=uc4b17eff-485b-4&from=paste&height=304&id=u373ac7d1&originHeight=456&originWidth=1744&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=275794&status=done&style=none&taskId=u1e86fc15-3e66-43cb-88dc-cd6caa96745&title=&width=1162.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>返回出来这个 person 空类，然后继续往下走，来到最终解析的地方，这里是先根据 person 类来获取解析器，然后在调用其解析方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710414641877-567bd601-c280-4664-bb83-a68dfe7e6ead.png#averageHue=%233b4c5e&clientId=uc4b17eff-485b-4&from=paste&height=83&id=ua4982ad0&originHeight=124&originWidth=1442&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=59958&status=done&style=none&taskId=uef016cd3-49e4-4f13-b604-af2c5457ef5&title=&width=961.3333333333334" referrerpolicy="no-referrer" alt="image.png"></p>
+<h4 id="2x02-获取解析器–getDeserializer"><a href="#2x02-获取解析器–getDeserializer" class="headerlink" title="2x02 获取解析器–getDeserializer"></a>2x02 获取解析器–getDeserializer</h4><p>跟进<code>getDeserializer</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710730383797-b9128926-fdd3-4712-b75f-87db7be73a66.png#averageHue=%23464c59&clientId=uc6fd9fb4-b99e-4&from=paste&height=269&id=u9fa00bb6&originHeight=403&originWidth=1704&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=251588&status=done&style=none&taskId=u1d5ecb8b-ca51-4aab-8064-0025651661c&title=&width=1136" referrerpolicy="no-referrer" alt="image.png"><br>这里判断了一下当前缓存中是否存在能够直接获取到解析该 json 数据的解析器，如果有就直接返回了，很显然我们这里没有，所以还需要跟进<code>getDeserializer</code><br>内容较多，我们直接跟进到最后 <code>createJavaBeanDeserializer</code>，在此之前的内容只有一个 for 循环黑名单检测，但是那个黑名单里面的内容只有 Thread 线程类这么一个，所以并不影响，然后再进行了多次 if 判断，是否为数组，集合，Map，或者报错类，如果都不是就进入<code>createJavaBeanDeserializer</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710730562556-8eab2137-1a12-4f09-9119-4b3dd4ed47c8.png#averageHue=%233c424d&clientId=uc6fd9fb4-b99e-4&from=paste&height=750&id=ueb096123&originHeight=1125&originWidth=2486&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1084835&status=done&style=none&taskId=u20d09945-db2c-43c7-b1c8-bc8fb286085&title=&width=1657.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br><code>createJavaBeanDeserializer</code>有很多关于 ASM 前置的检查，这个我们之后再谈，这里走到<code>JavaBeanInfo.build</code>开始正式构造 beanInfo<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710730762923-64bebe44-b299-466f-8366-f22b3ae6a56d.png#averageHue=%23353c44&clientId=uc6fd9fb4-b99e-4&from=paste&height=410&id=uad48976f&originHeight=615&originWidth=2117&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=550878&status=done&style=none&taskId=u53f58c59-9d1f-422a-9b3c-1bead98427d&title=&width=1411.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>build 方法本身是返回一个 JavaBeanInfo 列表，那 javaBeanInfo 列表是什么？它里面存储了我们当前想要反序列化 bean 中的 set 方法，get 方法，无参构造，字段属性值等具体信息以及标识，这点从他方法的开头能看出来<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710730920363-57b2b6b6-6255-4719-9d9f-61fd23fb920d.png#averageHue=%23404752&clientId=uc6fd9fb4-b99e-4&from=paste&height=303&id=udc504cc3&originHeight=454&originWidth=1367&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=261860&status=done&style=none&taskId=ue9aa8134-8d1f-4a6c-b71f-663b1d0d4cb&title=&width=911.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>后续的很多类型检测就不看了，我们直接到关键内容<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710731075040-df815dfc-da73-409d-82b3-45385a524e93.png#averageHue=%23363d45&clientId=uc6fd9fb4-b99e-4&from=paste&height=135&id=u9aeb8581&originHeight=202&originWidth=982&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=56442&status=done&style=none&taskId=u5ef444db-ef18-4ab0-954b-3383554f194&title=&width=654.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>在它方法的最后有三段 for 循环，其中第一个 for 循环是用来获取 set 方法，第二个 for 循环是用来获取字段属性，第三个 for 循环是在获取 get 方法<br>我们只看第一个 for 循环的内容<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710731149831-8283f291-fc48-4505-a2b8-ead95a6104e1.png#averageHue=%23363d46&clientId=uc6fd9fb4-b99e-4&from=paste&height=367&id=ub0fa9ced&originHeight=550&originWidth=1073&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=189924&status=done&style=none&taskId=u4026d3fa-b7c9-4ed6-a096-c689ff80ffb&title=&width=715.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>有四个 if 判断，如果不想进入其内容被 return 出去，需要满足：</p>
 <ul>
 <li>方法名长度不能小于 4</li>
 <li>不能是静态方法</li>
 <li>返回值不能为空</li>
 <li>获取该方法的参数数量，不能为 1</li>
 </ul>
-<p>我们现在想要获取的 Person 类肯定满足这个要求，这里记住就好，后续漏洞利用会考虑到<br>持续跟进，我们以 setName 方法的进度为例，再经过了注解处理以及各类字符处理之后，它最终会被 add 进 fieldInfo 数组<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710731527309-aa50cdb3-3b0f-4e79-8fbf-a91534c86220.png#averageHue=%23353b43&clientId=uc6fd9fb4-b99e-4&from=paste&height=562&id=u39d7fe01&originHeight=927&originWidth=2457&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=973988&status=done&style=none&taskId=u5f92809c-7871-4206-99c2-3de80ec27a5&title=&width=1489.0908230237774" referrerpolicy="no-referrer" alt="image.png"><br>这里要注意的是我们在实例化单个 FieldInfo 时有个需要注意的点–关于 getOnly 的设置，其实对于漏洞本身的执行是没有影响的，主要是关于 ASM 解析器的生成，因为 ASM 解析器是动态生成的，如果 getOnly 为 ture，后续会调用 ASM 解析器去解析，我们就无法跟进流程继续分析了。为了让 getOnly 参数不为 true，我们在类中加上一个字段属性以及它的一个 get 方法即可，不要设置 set 方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710731719355-6e487d50-ad8c-49be-a07c-612f531f2db0.png#averageHue=%233f4551&clientId=uc6fd9fb4-b99e-4&from=paste&height=264&id=u15a3b1ac&originHeight=435&originWidth=1588&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=241293&status=done&style=none&taskId=ue888a20f-2f23-488a-a1e2-286f9fe82ff&title=&width=962.4241867976225" referrerpolicy="no-referrer" alt="image.png"><br>那么这里就不多记录，直接返回到解析器构造完毕，开始调用 deserialze</p>
-<h4 id="2x03-deserialze-解析—javaBeanDeserializer"><a href="#2x03-deserialze-解析—javaBeanDeserializer" class="headerlink" title="2x03 deserialze 解析—javaBeanDeserializer"></a>2x03 deserialze 解析—javaBeanDeserializer</h4><p>经过几层包装特性，跟进到了 javaBeanDeserializer 的 deserialze 方法，前面是对 JSON 数据做处理，我们跟进到重点 for 循环，关于 fieldInfo 的遍历<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732011257-b66be996-3e4c-4128-a1ad-0ca2f7764790.png#averageHue=%23363d46&clientId=uc6fd9fb4-b99e-4&from=paste&height=629&id=uf5021c0d&originHeight=1038&originWidth=2473&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1077492&status=done&style=none&taskId=u76d65448-81b9-4af5-98fe-9bd16c100a5&title=&width=1498.7877921602774" referrerpolicy="no-referrer" alt="image.png"><br>for 循环前面是对 fieldinfo 中获取到的字段属性以及 getset 方法等进行类型判断和特殊情况的判断，当来到 createInstance 方法，它首先是实例化了一个 Person 的空类，里面的属性值都为默认<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732487683-11d8bd1d-859f-4858-97fd-8d030dbc1f1d.png#averageHue=%233a3f49&clientId=uc6fd9fb4-b99e-4&from=paste&height=633&id=ua5ea5382&originHeight=1045&originWidth=2556&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=927002&status=done&style=none&taskId=u7a05839c-2db1-4f1a-b1e4-c5e816bad45&title=&width=1549.090819555871" referrerpolicy="no-referrer" alt="image.png"><br>后续会调用 FieldDeserializer 的 setVlue 方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732599865-8f1a78ad-ff02-43b2-8cc5-da0bd1d39902.png#averageHue=%233a404a&clientId=uc6fd9fb4-b99e-4&from=paste&height=730&id=u25dd7551&originHeight=1204&originWidth=2130&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1010006&status=done&style=none&taskId=ub9e1247a-8acd-4b94-868c-ac975788191&title=&width=1290.9090162965592" referrerpolicy="no-referrer" alt="image.png"><br>具体内容的话就是反射调用 set 方法了<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732664111-0b27aa88-1dc4-4dcf-9e1f-9ec53ff402d4.png#averageHue=%23363d47&clientId=uc6fd9fb4-b99e-4&from=paste&height=498&id=uf764e4ab&originHeight=821&originWidth=1942&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=679185&status=done&style=none&taskId=u99025488-aa7d-42ad-89b7-b760c12afd1&title=&width=1176.9696289426845" referrerpolicy="no-referrer" alt="image.png"><br>漏洞触发点也就是在这，后续的漏洞利用不太能跟进到这，还是 ASM 解析器的原因，我们没办法跟进到具体内容</p>
+<p>我们现在想要获取的 Person 类肯定满足这个要求，这里记住就好，后续漏洞利用会考虑到<br>持续跟进，我们以 setName 方法的进度为例，再经过了注解处理以及各类字符处理之后，它最终会被 add 进 fieldInfo 数组<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710731527309-aa50cdb3-3b0f-4e79-8fbf-a91534c86220.png#averageHue=%23353b43&clientId=uc6fd9fb4-b99e-4&from=paste&height=562&id=u39d7fe01&originHeight=927&originWidth=2457&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=973988&status=done&style=none&taskId=u5f92809c-7871-4206-99c2-3de80ec27a5&title=&width=1489.0908230237774" referrerpolicy="no-referrer" alt="image.png"><br>这里要注意的是我们在实例化单个 FieldInfo 时有个需要注意的点–关于 getOnly 的设置，其实对于漏洞本身的执行是没有影响的，主要是关于 ASM 解析器的生成，因为 ASM 解析器是动态生成的，如果 getOnly 为 ture，后续会调用 ASM 解析器去解析，我们就无法跟进流程继续分析了。为了让 getOnly 参数不为 true，我们在类中加上一个字段属性以及它的一个 get 方法即可，不要设置 set 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710731719355-6e487d50-ad8c-49be-a07c-612f531f2db0.png#averageHue=%233f4551&clientId=uc6fd9fb4-b99e-4&from=paste&height=264&id=u15a3b1ac&originHeight=435&originWidth=1588&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=241293&status=done&style=none&taskId=ue888a20f-2f23-488a-a1e2-286f9fe82ff&title=&width=962.4241867976225" referrerpolicy="no-referrer" alt="image.png"><br>那么这里就不多记录，直接返回到解析器构造完毕，开始调用 deserialze</p>
+<h4 id="2x03-deserialze-解析—javaBeanDeserializer"><a href="#2x03-deserialze-解析—javaBeanDeserializer" class="headerlink" title="2x03 deserialze 解析—javaBeanDeserializer"></a>2x03 deserialze 解析—javaBeanDeserializer</h4><p>经过几层包装特性，跟进到了 javaBeanDeserializer 的 deserialze 方法，前面是对 JSON 数据做处理，我们跟进到重点 for 循环，关于 fieldInfo 的遍历<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732011257-b66be996-3e4c-4128-a1ad-0ca2f7764790.png#averageHue=%23363d46&clientId=uc6fd9fb4-b99e-4&from=paste&height=629&id=uf5021c0d&originHeight=1038&originWidth=2473&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1077492&status=done&style=none&taskId=u76d65448-81b9-4af5-98fe-9bd16c100a5&title=&width=1498.7877921602774" referrerpolicy="no-referrer" alt="image.png"><br>for 循环前面是对 fieldinfo 中获取到的字段属性以及 getset 方法等进行类型判断和特殊情况的判断，当来到 createInstance 方法，它首先是实例化了一个 Person 的空类，里面的属性值都为默认<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732487683-11d8bd1d-859f-4858-97fd-8d030dbc1f1d.png#averageHue=%233a3f49&clientId=uc6fd9fb4-b99e-4&from=paste&height=633&id=ua5ea5382&originHeight=1045&originWidth=2556&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=927002&status=done&style=none&taskId=u7a05839c-2db1-4f1a-b1e4-c5e816bad45&title=&width=1549.090819555871" referrerpolicy="no-referrer" alt="image.png"><br>后续会调用 FieldDeserializer 的 setVlue 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732599865-8f1a78ad-ff02-43b2-8cc5-da0bd1d39902.png#averageHue=%233a404a&clientId=uc6fd9fb4-b99e-4&from=paste&height=730&id=u25dd7551&originHeight=1204&originWidth=2130&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1010006&status=done&style=none&taskId=ub9e1247a-8acd-4b94-868c-ac975788191&title=&width=1290.9090162965592" referrerpolicy="no-referrer" alt="image.png"><br>具体内容的话就是反射调用 set 方法了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732664111-0b27aa88-1dc4-4dcf-9e1f-9ec53ff402d4.png#averageHue=%23363d47&clientId=uc6fd9fb4-b99e-4&from=paste&height=498&id=uf764e4ab&originHeight=821&originWidth=1942&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=679185&status=done&style=none&taskId=u99025488-aa7d-42ad-89b7-b760c12afd1&title=&width=1176.9696289426845" referrerpolicy="no-referrer" alt="image.png"><br>漏洞触发点也就是在这，后续的漏洞利用不太能跟进到这，还是 ASM 解析器的原因，我们没办法跟进到具体内容</p>
 <h2 id="0x03-漏洞复现"><a href="#0x03-漏洞复现" class="headerlink" title="0x03 漏洞复现"></a>0x03 漏洞复现</h2><p>稍微回忆一下流程，主要集中于DefaultJSONParser 中的获取解析器和 deserialze 解析，JSON 数据经过处理</p>
-<h3 id="1x01-JdbcRowSetImpl-利用"><a href="#1x01-JdbcRowSetImpl-利用" class="headerlink" title="1x01  JdbcRowSetImpl 利用"></a>1x01  JdbcRowSetImpl 利用</h3><p>主要问题出在<code>JdbcRowSetImpl#setDataSourceName</code>和<code>JdbcRowSetImpl#setAutoCommit</code>方法中存在可控的参数以及有后续调用的可能<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710416903707-98080cd8-afc4-4bba-8900-8e1fbe70c364.png#averageHue=%233b3d3f&clientId=uc4b17eff-485b-4&from=paste&height=349&id=u875c7aa6&originHeight=524&originWidth=1121&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=221746&status=done&style=none&taskId=u1a08b5af-f0a8-44ae-8a20-149f94b4f16&title=&width=747.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>这里能够对 dataSource 变量自由赋值<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710416969481-9d74a99e-8c3c-4ba7-9f81-29a0e366a445.png#averageHue=%233c403f&clientId=uc4b17eff-485b-4&from=paste&height=271&id=ua52d0d7f&originHeight=406&originWidth=1039&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=161258&status=done&style=none&taskId=u20a841f1-cf91-47f6-bc2b-c3e19e22f14&title=&width=692.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>然后在 connect 方法中我们找到了熟悉的 lookup，再看一眼它前面的调用，居然是 initialContext，并且 lookup 中的参数也是我们刚才的可以通过 set 方法去自己构造 datasource，三种条件结合起来就存在 JNDI 攻击的可能<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710416977008-81a76719-b42f-429c-bece-8237cf112339.png#averageHue=%233c3e3f&clientId=uc4b17eff-485b-4&from=paste&height=291&id=u8fa763be&originHeight=436&originWidth=1608&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=269661&status=done&style=none&taskId=udc5b008a-6e39-4a7f-940d-db286e6bc49&title=&width=1072" referrerpolicy="no-referrer" alt="image.png"></p>
+<h3 id="1x01-JdbcRowSetImpl-利用"><a href="#1x01-JdbcRowSetImpl-利用" class="headerlink" title="1x01  JdbcRowSetImpl 利用"></a>1x01  JdbcRowSetImpl 利用</h3><p>主要问题出在<code>JdbcRowSetImpl#setDataSourceName</code>和<code>JdbcRowSetImpl#setAutoCommit</code>方法中存在可控的参数以及有后续调用的可能<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710416903707-98080cd8-afc4-4bba-8900-8e1fbe70c364.png#averageHue=%233b3d3f&clientId=uc4b17eff-485b-4&from=paste&height=349&id=u875c7aa6&originHeight=524&originWidth=1121&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=221746&status=done&style=none&taskId=u1a08b5af-f0a8-44ae-8a20-149f94b4f16&title=&width=747.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>这里能够对 dataSource 变量自由赋值<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710416969481-9d74a99e-8c3c-4ba7-9f81-29a0e366a445.png#averageHue=%233c403f&clientId=uc4b17eff-485b-4&from=paste&height=271&id=ua52d0d7f&originHeight=406&originWidth=1039&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=161258&status=done&style=none&taskId=u20a841f1-cf91-47f6-bc2b-c3e19e22f14&title=&width=692.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>然后在 connect 方法中我们找到了熟悉的 lookup，再看一眼它前面的调用，居然是 initialContext，并且 lookup 中的参数也是我们刚才的可以通过 set 方法去自己构造 datasource，三种条件结合起来就存在 JNDI 攻击的可能<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710416977008-81a76719-b42f-429c-bece-8237cf112339.png#averageHue=%233c3e3f&clientId=uc4b17eff-485b-4&from=paste&height=291&id=u8fa763be&originHeight=436&originWidth=1608&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=269661&status=done&style=none&taskId=udc5b008a-6e39-4a7f-940d-db286e6bc49&title=&width=1072" referrerpolicy="no-referrer" alt="image.png"></p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSON</span></span><span class="token punctuation">;</span>
 
 
@@ -339,7 +301,7 @@ if (true) {
     <span class="token punctuation">&#125;</span>
 
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>测试一下<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710417168100-c7572f76-9fcf-4344-b30d-4d3697e3357d.png#averageHue=%2354595b&clientId=uc4b17eff-485b-4&from=paste&height=653&id=ua773a7e3&originHeight=979&originWidth=2402&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=642359&status=done&style=none&taskId=uc6cf5d54-f3b5-4e18-8563-fb0fe09d0ef&title=&width=1601.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>具体的流程分析无法，跟进上面工作流程中我们讲到了 getOnly 的问题，由于我们不能够控制 JdbcRowSetImpl 中具体方法内容，也就无法使得 getOnly 参数为 false，不开启 ASM 解析器<br>所以无法调试，但其实 deserialize 的内容是差不多的，for 循环获取到 fieldInfo 数组的内容，然后读取到 set 方法反射调用<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710742537389-b6db61d9-19a7-4893-873c-67165aed53ad.png#averageHue=%233b414b&clientId=ue1f0f42a-3850-4&from=paste&height=630&id=u019fb7f4&originHeight=1040&originWidth=2560&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1026123&status=done&style=none&taskId=uc3fbbfe4-be11-4b33-a01e-26dade847d9&title=&width=1551.515061839996" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>测试一下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710417168100-c7572f76-9fcf-4344-b30d-4d3697e3357d.png#averageHue=%2354595b&clientId=uc4b17eff-485b-4&from=paste&height=653&id=ua773a7e3&originHeight=979&originWidth=2402&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=642359&status=done&style=none&taskId=uc6cf5d54-f3b5-4e18-8563-fb0fe09d0ef&title=&width=1601.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>具体的流程分析无法，跟进上面工作流程中我们讲到了 getOnly 的问题，由于我们不能够控制 JdbcRowSetImpl 中具体方法内容，也就无法使得 getOnly 参数为 false，不开启 ASM 解析器<br>所以无法调试，但其实 deserialize 的内容是差不多的，for 循环获取到 fieldInfo 数组的内容，然后读取到 set 方法反射调用<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710742537389-b6db61d9-19a7-4893-873c-67165aed53ad.png#averageHue=%233b414b&clientId=ue1f0f42a-3850-4&from=paste&height=630&id=u019fb7f4&originHeight=1040&originWidth=2560&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1026123&status=done&style=none&taskId=uc3fbbfe4-be11-4b33-a01e-26dade847d9&title=&width=1551.515061839996" referrerpolicy="no-referrer" alt="image.png"></p>
 <h3 id="1x02-TemplateImpl-利用"><a href="#1x02-TemplateImpl-利用" class="headerlink" title="1x02 TemplateImpl 利用"></a>1x02 TemplateImpl 利用</h3><p>先看利用 POC 吧</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSON</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>parser<span class="token punctuation">.</span></span><span class="token class-name">Feature</span></span><span class="token punctuation">;</span>
@@ -409,16 +371,16 @@ if (true) {
  <span class="token string">"_version"</span><span class="token operator">:</span><span class="token string">"1.0"</span><span class="token punctuation">,</span> 
  
  <span class="token string">"allowedProtocols"</span><span class="token operator">:</span><span class="token string">"all"</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>将 payload 部分拆分成如上几个部分，触发部分在<code>_outputProperties</code>中，也就是<code>TemplatesImpl</code>的 <code>getoutputProperties</code><br>为什么是 get？一般 parseObject 中会在最后调用 toJSON 方法，并且在 toJSON 方法中也会调用到 get 方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747589869-cf0190e4-bf63-4850-85b3-5806c7f49bb4.png#averageHue=%23484d5b&clientId=u59ce0523-5c63-4&from=paste&height=242&id=u110e2b7f&originHeight=399&originWidth=1390&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=224688&status=done&style=none&taskId=u3cfb6ce9-8b34-4ae9-a923-f1c1667353f&title=&width=842.4241937334353" referrerpolicy="no-referrer" alt="image.png"><br>我们先跟进到<code>getoutputProperties</code>中<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747511355-44f922cd-2dd3-4494-b329-20e754fcbfd0.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=259&id=ua56e2dde&originHeight=427&originWidth=1075&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=172056&status=done&style=none&taskId=u9c12c330-b477-40ee-b6a2-94eb5d61b98&title=&width=651.515113858592" referrerpolicy="no-referrer" alt="image.png"><br>这里会调用到 newTransformer 方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747647895-fc1f485c-a00e-4906-9ba0-29d1cb237798.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=332&id=uba8fba83&originHeight=547&originWidth=1423&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=288928&status=done&style=none&taskId=uaa70f0fd-6384-4aaf-b41b-c0a60b149a6&title=&width=862.4241925774666" referrerpolicy="no-referrer" alt="image.png"><br>在<code>newTransformer</code>方法中又会调用<code>getTransletInstance()</code>方法<br>然后经过 <code>_name</code>参数不为 null，并且<code>_class</code>参数不为 null 的情况下，调用 defineTransletClasses 方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747832652-d1c01fd9-55d2-4a63-bc49-67b13fdcffec.png#averageHue=%23383d45&clientId=u59ce0523-5c63-4&from=paste&height=159&id=u29f2b616&originHeight=299&originWidth=1669&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=151390&status=done&style=none&taskId=u456f6f34-05f9-46fe-986c-3bb217e225a&title=&width=890.1333333333333" referrerpolicy="no-referrer" alt="image.png"><br>然后在 defineTransletClasses 方法中通过 _bytecodes 传递的字节码，通过 defineClass 方法进行类加载（其中还有很多限制条件，这里不做赘述）<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747965310-97e4a1f6-01a3-4e83-b145-273bd3f3797a.png#averageHue=%23363d45&clientId=u59ce0523-5c63-4&from=paste&height=243&id=ufecf2516&originHeight=456&originWidth=1322&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=173518&status=done&style=none&taskId=u92f494c4-70fb-4321-8448-4ade78cf6a2&title=&width=705.0666666666667" referrerpolicy="no-referrer" alt="image.png"><br>所以整个的利用链就是:</p>
+<p>将 payload 部分拆分成如上几个部分，触发部分在<code>_outputProperties</code>中，也就是<code>TemplatesImpl</code>的 <code>getoutputProperties</code><br>为什么是 get？一般 parseObject 中会在最后调用 toJSON 方法，并且在 toJSON 方法中也会调用到 get 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747589869-cf0190e4-bf63-4850-85b3-5806c7f49bb4.png#averageHue=%23484d5b&clientId=u59ce0523-5c63-4&from=paste&height=242&id=u110e2b7f&originHeight=399&originWidth=1390&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=224688&status=done&style=none&taskId=u3cfb6ce9-8b34-4ae9-a923-f1c1667353f&title=&width=842.4241937334353" referrerpolicy="no-referrer" alt="image.png"><br>我们先跟进到<code>getoutputProperties</code>中<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747511355-44f922cd-2dd3-4494-b329-20e754fcbfd0.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=259&id=ua56e2dde&originHeight=427&originWidth=1075&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=172056&status=done&style=none&taskId=u9c12c330-b477-40ee-b6a2-94eb5d61b98&title=&width=651.515113858592" referrerpolicy="no-referrer" alt="image.png"><br>这里会调用到 newTransformer 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747647895-fc1f485c-a00e-4906-9ba0-29d1cb237798.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=332&id=uba8fba83&originHeight=547&originWidth=1423&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=288928&status=done&style=none&taskId=uaa70f0fd-6384-4aaf-b41b-c0a60b149a6&title=&width=862.4241925774666" referrerpolicy="no-referrer" alt="image.png"><br>在<code>newTransformer</code>方法中又会调用<code>getTransletInstance()</code>方法<br>然后经过 <code>_name</code>参数不为 null，并且<code>_class</code>参数不为 null 的情况下，调用 defineTransletClasses 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747832652-d1c01fd9-55d2-4a63-bc49-67b13fdcffec.png#averageHue=%23383d45&clientId=u59ce0523-5c63-4&from=paste&height=159&id=u29f2b616&originHeight=299&originWidth=1669&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=151390&status=done&style=none&taskId=u456f6f34-05f9-46fe-986c-3bb217e225a&title=&width=890.1333333333333" referrerpolicy="no-referrer" alt="image.png"><br>然后在 defineTransletClasses 方法中通过 _bytecodes 传递的字节码，通过 defineClass 方法进行类加载（其中还有很多限制条件，这里不做赘述）<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747965310-97e4a1f6-01a3-4e83-b145-273bd3f3797a.png#averageHue=%23363d45&clientId=u59ce0523-5c63-4&from=paste&height=243&id=ufecf2516&originHeight=456&originWidth=1322&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=173518&status=done&style=none&taskId=u92f494c4-70fb-4321-8448-4ade78cf6a2&title=&width=705.0666666666667" referrerpolicy="no-referrer" alt="image.png"><br>所以整个的利用链就是:</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">getoutputProperties<span class="token operator">-></span>newTransformer<span class="token operator">-></span>getTransletInstance<span class="token operator">-></span>defineTransletClasses<span class="token operator">-></span>defineClass <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>这里又有一个细节问题，为什么不直接getTransletInstance 开始调用？<br>之前我们分析过 FastJson 获取解析器–getDeserializer 的时候，beaninfo 中获取 get 方法会有限制条件</p>
 <blockquote>
 <p>1.非静态方法<br>2.无参数<br>3.返回类型必须是（或继承自）Collection或Map或AtomicBoolean或AtomicInteger或AtomicLong</p>
 </blockquote>
-<p><code>getTransletInstance</code><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710748829169-d8c4dd93-1b24-4916-8a11-1dd9ed74efbe.png#averageHue=%2337414c&clientId=u59ce0523-5c63-4&from=paste&height=64&id=u50239fff&originHeight=120&originWidth=681&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=31879&status=done&style=none&taskId=u4e5a37fd-7a34-4c78-b63b-89383bff696&title=&width=363.2" referrerpolicy="no-referrer" alt="image.png"><br>返回值不满足第三点条件，所以我们必须往上找其他的利用<br>对于<code>getoutputProperties</code>中，它的返回值是 Properties<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710749440675-f1769edd-8ec7-4e56-a415-c450b8e17d24.png#averageHue=%23383e48&clientId=u59ce0523-5c63-4&from=paste&height=45&id=u22a8f098&originHeight=84&originWidth=810&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=28980&status=done&style=none&taskId=u6eb056b8-b64e-4c6c-8e69-b9b8e2e04f6&title=&width=432" referrerpolicy="no-referrer" alt="image.png"><br>Properties 继承于 HashMap，所以符合条件<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710749480171-ecf41df9-7e17-4d6a-861b-24b0d564473b.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=67&id=uf8e664a4&originHeight=125&originWidth=960&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=54165&status=done&style=none&taskId=u8deb8c86-274d-4738-b721-bfe08bde6b7&title=&width=512" referrerpolicy="no-referrer" alt="image.png"></p>
+<p><code>getTransletInstance</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710748829169-d8c4dd93-1b24-4916-8a11-1dd9ed74efbe.png#averageHue=%2337414c&clientId=u59ce0523-5c63-4&from=paste&height=64&id=u50239fff&originHeight=120&originWidth=681&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=31879&status=done&style=none&taskId=u4e5a37fd-7a34-4c78-b63b-89383bff696&title=&width=363.2" referrerpolicy="no-referrer" alt="image.png"><br>返回值不满足第三点条件，所以我们必须往上找其他的利用<br>对于<code>getoutputProperties</code>中，它的返回值是 Properties<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710749440675-f1769edd-8ec7-4e56-a415-c450b8e17d24.png#averageHue=%23383e48&clientId=u59ce0523-5c63-4&from=paste&height=45&id=u22a8f098&originHeight=84&originWidth=810&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=28980&status=done&style=none&taskId=u6eb056b8-b64e-4c6c-8e69-b9b8e2e04f6&title=&width=432" referrerpolicy="no-referrer" alt="image.png"><br>Properties 继承于 HashMap，所以符合条件<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710749480171-ecf41df9-7e17-4d6a-861b-24b0d564473b.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=67&id=uf8e664a4&originHeight=125&originWidth=960&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=54165&status=done&style=none&taskId=u8deb8c86-274d-4738-b721-bfe08bde6b7&title=&width=512" referrerpolicy="no-referrer" alt="image.png"></p>
 <h2 id="0x04-补丁修复分析"><a href="#0x04-补丁修复分析" class="headerlink" title="0x04 补丁修复分析"></a>0x04 补丁修复分析</h2><p>研究高版本的防御补丁的思想，以及绕过<br>直到 fastjson-1.2.47 之前的补丁修复绕过，都必须开启AutoTypeSupport<br>测试人员可以添加如下代码进行开启</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">ParserConfig</span><span class="token punctuation">.</span><span class="token function">getGlobalInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setAutoTypeSupport</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<h3 id="1x01-fastjson-1-2-25"><a href="#1x01-fastjson-1-2-25" class="headerlink" title="1x01 fastjson-1.2.25"></a>1x01 fastjson-1.2.25</h3><p>1.2.24 之后的第一次更新，官方引入<code>checkAutoType</code>机制，默认情况下，autoTypeSupport 关闭，不能直接反序列化任意类。打开<code>AutoType</code>之后是基于黑名单来实现安全检测的，fastjson 也提供了添加黑名单的接口<br>集中处理的地方在 ParserConfig，也就是我们通过<code>config.getDeserializer</code>来获取解析器类<br>但是具体的使用却是在<code>DefaultJSONParser</code>中<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753428551-e5fff72c-21b1-4220-bcc6-775725224140.png#averageHue=%2338414d&clientId=u59ce0523-5c63-4&from=paste&height=105&id=u780b0bc1&originHeight=196&originWidth=2022&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=123447&status=done&style=none&taskId=u8705b3ef-c246-44f0-8194-93766d1b937&title=&width=1078.4" referrerpolicy="no-referrer" alt="image.png"><br>而只有经过这层 checkAutoType 才能继续往下走正常的解析流程<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753469247-b348203d-211e-491a-9077-52aeef154e27.png#averageHue=%23383e47&clientId=u59ce0523-5c63-4&from=paste&height=71&id=uee0188b4&originHeight=134&originWidth=1582&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=66444&status=done&style=none&taskId=u0b56d8a2-9a3e-49e2-9f5f-1bfc3e8182f&title=&width=843.7333333333333" referrerpolicy="no-referrer" alt="image.png"><br>我们先跟进 parserconfig 类，之后再看具体的方法处理<br>多了很多成员变量，其中包括黑名单和白名单列表，然后多了一个<code>AUTO_SUPPORT</code>安全开关<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753682976-adaafb61-b942-42b9-8f8b-11783129f0d0.png#averageHue=%23373d45&clientId=u59ce0523-5c63-4&from=paste&height=237&id=ucd8747df&originHeight=444&originWidth=1626&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=248377&status=done&style=none&taskId=u00e09436-c1e5-4d99-a3dc-d4189cd9f88&title=&width=867.2" referrerpolicy="no-referrer" alt="image.png"><br>具体的黑名单如下<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753855619-415bd430-eb24-45f2-ac8b-9d1b21ad0f10.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=76&id=u2e0c7974&originHeight=143&originWidth=2207&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=112933&status=done&style=none&taskId=u898158bb-5d1b-4cbc-8cb6-21b53a9d857&title=&width=1177.0666666666666" referrerpolicy="no-referrer" alt="image.png"></p>
+<h3 id="1x01-fastjson-1-2-25"><a href="#1x01-fastjson-1-2-25" class="headerlink" title="1x01 fastjson-1.2.25"></a>1x01 fastjson-1.2.25</h3><p>1.2.24 之后的第一次更新，官方引入<code>checkAutoType</code>机制，默认情况下，autoTypeSupport 关闭，不能直接反序列化任意类。打开<code>AutoType</code>之后是基于黑名单来实现安全检测的，fastjson 也提供了添加黑名单的接口<br>集中处理的地方在 ParserConfig，也就是我们通过<code>config.getDeserializer</code>来获取解析器类<br>但是具体的使用却是在<code>DefaultJSONParser</code>中<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753428551-e5fff72c-21b1-4220-bcc6-775725224140.png#averageHue=%2338414d&clientId=u59ce0523-5c63-4&from=paste&height=105&id=u780b0bc1&originHeight=196&originWidth=2022&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=123447&status=done&style=none&taskId=u8705b3ef-c246-44f0-8194-93766d1b937&title=&width=1078.4" referrerpolicy="no-referrer" alt="image.png"><br>而只有经过这层 checkAutoType 才能继续往下走正常的解析流程<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753469247-b348203d-211e-491a-9077-52aeef154e27.png#averageHue=%23383e47&clientId=u59ce0523-5c63-4&from=paste&height=71&id=uee0188b4&originHeight=134&originWidth=1582&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=66444&status=done&style=none&taskId=u0b56d8a2-9a3e-49e2-9f5f-1bfc3e8182f&title=&width=843.7333333333333" referrerpolicy="no-referrer" alt="image.png"><br>我们先跟进 parserconfig 类，之后再看具体的方法处理<br>多了很多成员变量，其中包括黑名单和白名单列表，然后多了一个<code>AUTO_SUPPORT</code>安全开关<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753682976-adaafb61-b942-42b9-8f8b-11783129f0d0.png#averageHue=%23373d45&clientId=u59ce0523-5c63-4&from=paste&height=237&id=ucd8747df&originHeight=444&originWidth=1626&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=248377&status=done&style=none&taskId=u00e09436-c1e5-4d99-a3dc-d4189cd9f88&title=&width=867.2" referrerpolicy="no-referrer" alt="image.png"><br>具体的黑名单如下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753855619-415bd430-eb24-45f2-ac8b-9d1b21ad0f10.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=76&id=u2e0c7974&originHeight=143&originWidth=2207&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=112933&status=done&style=none&taskId=u898158bb-5d1b-4cbc-8cb6-21b53a9d857&title=&width=1177.0666666666666" referrerpolicy="no-referrer" alt="image.png"></p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">bsh
 com<span class="token punctuation">.</span>mchange
 <span class="token class-name"><span class="token namespace">com<span class="token punctuation">.</span>sun<span class="token punctuation">.</span>
@@ -445,7 +407,7 @@ org<span class="token punctuation">.</span>springframework<span aria-hidden="tru
 <blockquote>
 <p>使用代码进行添加：ParserConfig.getGlobalInstance().addAccept(“org.su18.fastjson.,org.javaweb.”)<br>加上JVM启动参数：-Dfastjson.parser.autoTypeAccept&#x3D;org.su18.fastjson.<br>在fastjson.properties中添加：fastjson.parser.autoTypeAccept&#x3D;org.su18.fastjson.</p>
 </blockquote>
-<p>这些我们肯定是无法利用的，都是服务端自己能干的事，还得从其他地方入手<br>我们跟进<code>checkAutoType</code>方法<br>他有几层黑白名单的混合双打，先看第一次<br>如果<code>autoTypeSupport</code>选项开启，那么就会先遍历白名单，匹配目标类是否在其中，如果在就直接加载类，然后遍历黑名单，匹配目标类是否在其中，如果在就抛异常<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710756289095-fa4ddba1-e644-4fab-9ba3-c50676ae8870.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=316&id=uee28cba2&originHeight=593&originWidth=2033&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=375516&status=done&style=none&taskId=u43116b97-1de7-42a0-9e5d-87963f47f44&title=&width=1084.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>下面还有一次混合双打，当我们没有开启<code>autoTypeSupport</code>的时候，先遍历黑名单匹配就抛出异常，然后再遍历白名单匹配就直接加载。如果这两次混合双打没有打对地方，那么最后只有一种可能会加载类了—开启 autoTypeSupport 或者 expectClass 不为 null<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710756679508-f34455f3-a3e9-4b4c-87aa-fd00be5b4e22.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=541&id=u68004b0c&originHeight=1014&originWidth=1791&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=549609&status=done&style=none&taskId=ub88cd837-670f-4190-a294-a26af740259&title=&width=955.2" referrerpolicy="no-referrer" alt="image.png"><br>问题就出在这最后一手回首掏里面，我们跟进这个最后的 loadClass<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710757188128-6d8da548-8a4c-4efe-9888-dcc0e64b1bb8.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=241&id=u913c1e3b&originHeight=452&originWidth=1421&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=196625&status=done&style=none&taskId=u51b008ce-bf65-4224-a3b3-002f386bbdc&title=&width=757.8666666666667" referrerpolicy="no-referrer" alt="image.png"><br>fastjson 这里为了兼容其他 JSON 格式的数据，使用递归调用来处理这些特殊字符<br>于是我们的绕过思路就是在原先反序列化的类名前加上<code>L</code>以及最后加上<code>;</code>,之后也会被递归解析，能够准确找到全类名进行加载<br>Poc</p>
+<p>这些我们肯定是无法利用的，都是服务端自己能干的事，还得从其他地方入手<br>我们跟进<code>checkAutoType</code>方法<br>他有几层黑白名单的混合双打，先看第一次<br>如果<code>autoTypeSupport</code>选项开启，那么就会先遍历白名单，匹配目标类是否在其中，如果在就直接加载类，然后遍历黑名单，匹配目标类是否在其中，如果在就抛异常<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710756289095-fa4ddba1-e644-4fab-9ba3-c50676ae8870.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=316&id=uee28cba2&originHeight=593&originWidth=2033&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=375516&status=done&style=none&taskId=u43116b97-1de7-42a0-9e5d-87963f47f44&title=&width=1084.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>下面还有一次混合双打，当我们没有开启<code>autoTypeSupport</code>的时候，先遍历黑名单匹配就抛出异常，然后再遍历白名单匹配就直接加载。如果这两次混合双打没有打对地方，那么最后只有一种可能会加载类了—开启 autoTypeSupport 或者 expectClass 不为 null<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710756679508-f34455f3-a3e9-4b4c-87aa-fd00be5b4e22.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=541&id=u68004b0c&originHeight=1014&originWidth=1791&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=549609&status=done&style=none&taskId=ub88cd837-670f-4190-a294-a26af740259&title=&width=955.2" referrerpolicy="no-referrer" alt="image.png"><br>问题就出在这最后一手回首掏里面，我们跟进这个最后的 loadClass<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710757188128-6d8da548-8a4c-4efe-9888-dcc0e64b1bb8.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=241&id=u913c1e3b&originHeight=452&originWidth=1421&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=196625&status=done&style=none&taskId=u51b008ce-bf65-4224-a3b3-002f386bbdc&title=&width=757.8666666666667" referrerpolicy="no-referrer" alt="image.png"><br>fastjson 这里为了兼容其他 JSON 格式的数据，使用递归调用来处理这些特殊字符<br>于是我们的绕过思路就是在原先反序列化的类名前加上<code>L</code>以及最后加上<code>;</code>,之后也会被递归解析，能够准确找到全类名进行加载<br>Poc</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSON</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>parser<span class="token punctuation">.</span></span><span class="token class-name">Feature</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>parser<span class="token punctuation">.</span></span><span class="token class-name">ParserConfig</span></span><span class="token punctuation">;</span>
@@ -497,9 +459,9 @@ org<span class="token punctuation">.</span>springframework<span aria-hidden="tru
 <blockquote>
 <p>1.2.25 &lt;&#x3D; fastjson &lt;&#x3D; 1.2.32 未开启 AutoTypeSupport 的情况下<br>1.2.33 &lt;&#x3D; fastjson &lt;&#x3D; 1.2.47</p>
 </blockquote>
-<p>漏洞主要发生地点是在 checkautotype 中<br>我们将 fastjson 的版本改为 1.2.47,经过几个版本的更新，checkAutoType 已有些不同，主要也是集中于我们上面总结的漏洞的补丁修改<br>主题内容如下，前面还有一部分是关于<code>;</code>与<code>L</code>字符绕过的处理，包括 hash 处理和直接禁用等等<br>然后就是熟悉的黑白名单混合检测，只不过 for 中我们取出黑名单值变成了 hash 值匹配，内容是一样的<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759429541-08367cfc-13d4-4058-a4c5-0d2cedd8b72f.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=317&id=u1f65ae9b&originHeight=595&originWidth=1542&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=308428&status=done&style=none&taskId=uac5e88c8-60d9-4e81-925f-22e3ace25ca&title=&width=822.4" referrerpolicy="no-referrer" alt="image.png"><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759440795-6d653c19-91e8-48f8-81a7-8c516440e681.png#averageHue=%23373d45&clientId=u59ce0523-5c63-4&from=paste&height=326&id=u36fa25da&originHeight=611&originWidth=1565&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=272616&status=done&style=none&taskId=u6d545ebe-9042-4a02-881e-86bc445a12e&title=&width=834.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759457887-45e9b576-4e1e-4afe-b050-3159de9005f6.png#averageHue=%23373c45&clientId=u59ce0523-5c63-4&from=paste&height=463&id=u5cf66b1e&originHeight=869&originWidth=1556&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=417889&status=done&style=none&taskId=ufc3349c7-6797-4b1b-8180-422e297c7bc&title=&width=829.8666666666667" referrerpolicy="no-referrer" alt="image.png"><br>就算不开启 autoType，也就是第一个 for 循环不进去，我们往后走逻辑，来到个 if 判断处，假如说前两个 if 判断有一个 if 判断的内容满足要求了，我们就能够进入第三个 if 判断，直接 return 出我们的恶意类，就不用去面对恐怖的 autotype 未开启的黑名单检测在前的情况了<br>那么接下来就是关于前两个 if 判断的内容<br>分别是通过调用<code>TypeUtils.getClassFromMapping</code>，从缓存 map 中取出赋值为 clazz ；直接调用<code>deserializers.findClass(typeName)</code>去找有没有这个类<br>但其实最终利用到的还是<code>TypeUtils.getClassFromMapping</code>，因为<code>deserializers.findClass</code>我们无法从中传值，也就是无法写入我们想要的恶意类，也就获取不到 clazz<br>直接看<code>TypeUtils.getClassFromMapping</code><br>对于<code>getClassFromMapping</code>，它的内容仅仅是从 mappings 中取值，但是我们是可以通过<code>TypeUtils.loadClass</code>往里写值的<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759964975-edd47965-21a2-4a63-bf43-59b5071bb821.png#averageHue=%23373e47&clientId=u59ce0523-5c63-4&from=paste&height=89&id=u95d026c7&originHeight=167&originWidth=1179&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=74406&status=done&style=none&taskId=ueba22526-2896-4a1a-aaff-cea4a65165d&title=&width=628.8" referrerpolicy="no-referrer" alt="image.png"><br>直接跟进到<code>TypeUtils.loadClass</code>,内容和我们上面绕过时分析到的逻辑是差不多的,多了一些字符绕过的检测,最后这一个部分仍然没变<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760060376-bdf8330e-2449-4951-b49e-c595dded31f7.png#averageHue=%23373c44&clientId=u59ce0523-5c63-4&from=paste&height=203&id=u6c15d57f&originHeight=380&originWidth=867&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=69811&status=done&style=none&taskId=u64217b73-a7e6-4c70-ac7f-50dc1471c5d&title=&width=462.4" referrerpolicy="no-referrer" alt="image.png"><br>也就是说 loadClass 会在最后尝试向 mappings 中写入当前正在实例化的类,那我们只需要能够控制到 loadClass 的参数,往里传入我们想要实例化的类即可<br>首先,<code>TypeUtils</code> 中有重载三个 loadClass 方法<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760474254-1311a315-63f9-47d4-8f0a-1d4002a83c3e.png#averageHue=%23383e47&clientId=u59ce0523-5c63-4&from=paste&height=48&id=u8ca70845&originHeight=90&originWidth=1430&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=53585&status=done&style=none&taskId=uc7d665e1-7755-4daa-8749-8765d74b860&title=&width=762.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760493308-8e775bcc-acd5-4711-a423-fb48f1c0eacf.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=121&id=u90286091&originHeight=226&originWidth=1324&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=124476&status=done&style=none&taskId=uc927103c-4b5a-44af-9444-d3870ee45cc&title=&width=706.1333333333333" referrerpolicy="no-referrer" alt="image.png"><br>虽然最终都会往三个参数的 loadClass 走(也就是我们刚才分析的 loadClass),但是每个 loadClass 被调用的地方都是不同的<br>但是可以明确一点,三个 loadClass 的 String Class 参数是一定会有的,其他参数可有可无,也就是说我们只要找到能够后续调用,且参数可控的部分,就能够形成利用链<br>找一下双参数的 loadClass 在哪被调用了<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760691314-1fa70a38-c908-48fe-ac1e-3e0aa0ac7a45.png#averageHue=%2339404b&clientId=u59ce0523-5c63-4&from=paste&height=249&id=uc234f505&originHeight=467&originWidth=1186&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=239267&status=done&style=none&taskId=uec4f3ca6-c6ac-4bd7-8257-09d37f97287&title=&width=632.5333333333333" referrerpolicy="no-referrer" alt="image.png"><br>跟进到<code>com.alibaba.fastjson.serializer.MiscCodec</code>的具体调用部分<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760841884-af26ac13-066f-497b-ac59-767ad8e6b7be.png#averageHue=%23373f48&clientId=u59ce0523-5c63-4&from=paste&height=68&id=u0627c15c&originHeight=127&originWidth=1422&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=59741&status=done&style=none&taskId=u5c78e354-8374-4f62-8d81-20597b2fe87&title=&width=758.4" referrerpolicy="no-referrer" alt="image.png"><br>需要的是 strVal 参数来指定为我们想要加载的类,来看 strVal 参数如何控制<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760926332-46eac8c6-36a5-4f16-96e3-5691535d4ab3.png#averageHue=%23373e48&clientId=u59ce0523-5c63-4&from=paste&height=108&id=ufa36e546&originHeight=202&originWidth=927&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=47683&status=done&style=none&taskId=u4f78ae44-ddd3-4a55-a29e-92992dd0b1d&title=&width=494.4" referrerpolicy="no-referrer" alt="image.png"><br>这里想要赋值 strVal 就必须使得 objVal 不为空,且为我们的目标<br>看一下 objVal 是如何赋值的<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760999342-c90429aa-b02d-4c3c-90ef-1afe00695287.png#averageHue=%23373c45&clientId=u59ce0523-5c63-4&from=paste&height=428&id=u59347f96&originHeight=802&originWidth=1097&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=256174&status=done&style=none&taskId=uebd4de35-a58e-48d2-9229-ff7799a345e&title=&width=585.0666666666667" referrerpolicy="no-referrer" alt="image.png"><br>当<code>parser.resolveStatus</code> 为<code>TypeNameRedirect</code>时,会进入 if 判断,然后通过扫描器判断 json 字符串中 val 键是否符合要求,然后将 val 中值通过 parser 的解析器方法返回给 objVal<br>resolveStatus 如何变为TypeNameRedirect 呢?<br>我们可以尝试一下 POC 的 payload</p>
+<p>漏洞主要发生地点是在 checkautotype 中<br>我们将 fastjson 的版本改为 1.2.47,经过几个版本的更新，checkAutoType 已有些不同，主要也是集中于我们上面总结的漏洞的补丁修改<br>主题内容如下，前面还有一部分是关于<code>;</code>与<code>L</code>字符绕过的处理，包括 hash 处理和直接禁用等等<br>然后就是熟悉的黑白名单混合检测，只不过 for 中我们取出黑名单值变成了 hash 值匹配，内容是一样的<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759429541-08367cfc-13d4-4058-a4c5-0d2cedd8b72f.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=317&id=u1f65ae9b&originHeight=595&originWidth=1542&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=308428&status=done&style=none&taskId=uac5e88c8-60d9-4e81-925f-22e3ace25ca&title=&width=822.4" referrerpolicy="no-referrer" alt="image.png"><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759440795-6d653c19-91e8-48f8-81a7-8c516440e681.png#averageHue=%23373d45&clientId=u59ce0523-5c63-4&from=paste&height=326&id=u36fa25da&originHeight=611&originWidth=1565&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=272616&status=done&style=none&taskId=u6d545ebe-9042-4a02-881e-86bc445a12e&title=&width=834.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759457887-45e9b576-4e1e-4afe-b050-3159de9005f6.png#averageHue=%23373c45&clientId=u59ce0523-5c63-4&from=paste&height=463&id=u5cf66b1e&originHeight=869&originWidth=1556&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=417889&status=done&style=none&taskId=ufc3349c7-6797-4b1b-8180-422e297c7bc&title=&width=829.8666666666667" referrerpolicy="no-referrer" alt="image.png"><br>就算不开启 autoType，也就是第一个 for 循环不进去，我们往后走逻辑，来到个 if 判断处，假如说前两个 if 判断有一个 if 判断的内容满足要求了，我们就能够进入第三个 if 判断，直接 return 出我们的恶意类，就不用去面对恐怖的 autotype 未开启的黑名单检测在前的情况了<br>那么接下来就是关于前两个 if 判断的内容<br>分别是通过调用<code>TypeUtils.getClassFromMapping</code>，从缓存 map 中取出赋值为 clazz ；直接调用<code>deserializers.findClass(typeName)</code>去找有没有这个类<br>但其实最终利用到的还是<code>TypeUtils.getClassFromMapping</code>，因为<code>deserializers.findClass</code>我们无法从中传值，也就是无法写入我们想要的恶意类，也就获取不到 clazz<br>直接看<code>TypeUtils.getClassFromMapping</code><br>对于<code>getClassFromMapping</code>，它的内容仅仅是从 mappings 中取值，但是我们是可以通过<code>TypeUtils.loadClass</code>往里写值的<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759964975-edd47965-21a2-4a63-bf43-59b5071bb821.png#averageHue=%23373e47&clientId=u59ce0523-5c63-4&from=paste&height=89&id=u95d026c7&originHeight=167&originWidth=1179&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=74406&status=done&style=none&taskId=ueba22526-2896-4a1a-aaff-cea4a65165d&title=&width=628.8" referrerpolicy="no-referrer" alt="image.png"><br>直接跟进到<code>TypeUtils.loadClass</code>,内容和我们上面绕过时分析到的逻辑是差不多的,多了一些字符绕过的检测,最后这一个部分仍然没变<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760060376-bdf8330e-2449-4951-b49e-c595dded31f7.png#averageHue=%23373c44&clientId=u59ce0523-5c63-4&from=paste&height=203&id=u6c15d57f&originHeight=380&originWidth=867&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=69811&status=done&style=none&taskId=u64217b73-a7e6-4c70-ac7f-50dc1471c5d&title=&width=462.4" referrerpolicy="no-referrer" alt="image.png"><br>也就是说 loadClass 会在最后尝试向 mappings 中写入当前正在实例化的类,那我们只需要能够控制到 loadClass 的参数,往里传入我们想要实例化的类即可<br>首先,<code>TypeUtils</code> 中有重载三个 loadClass 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760474254-1311a315-63f9-47d4-8f0a-1d4002a83c3e.png#averageHue=%23383e47&clientId=u59ce0523-5c63-4&from=paste&height=48&id=u8ca70845&originHeight=90&originWidth=1430&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=53585&status=done&style=none&taskId=uc7d665e1-7755-4daa-8749-8765d74b860&title=&width=762.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760493308-8e775bcc-acd5-4711-a423-fb48f1c0eacf.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=121&id=u90286091&originHeight=226&originWidth=1324&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=124476&status=done&style=none&taskId=uc927103c-4b5a-44af-9444-d3870ee45cc&title=&width=706.1333333333333" referrerpolicy="no-referrer" alt="image.png"><br>虽然最终都会往三个参数的 loadClass 走(也就是我们刚才分析的 loadClass),但是每个 loadClass 被调用的地方都是不同的<br>但是可以明确一点,三个 loadClass 的 String Class 参数是一定会有的,其他参数可有可无,也就是说我们只要找到能够后续调用,且参数可控的部分,就能够形成利用链<br>找一下双参数的 loadClass 在哪被调用了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760691314-1fa70a38-c908-48fe-ac1e-3e0aa0ac7a45.png#averageHue=%2339404b&clientId=u59ce0523-5c63-4&from=paste&height=249&id=uc234f505&originHeight=467&originWidth=1186&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=239267&status=done&style=none&taskId=uec4f3ca6-c6ac-4bd7-8257-09d37f97287&title=&width=632.5333333333333" referrerpolicy="no-referrer" alt="image.png"><br>跟进到<code>com.alibaba.fastjson.serializer.MiscCodec</code>的具体调用部分<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760841884-af26ac13-066f-497b-ac59-767ad8e6b7be.png#averageHue=%23373f48&clientId=u59ce0523-5c63-4&from=paste&height=68&id=u0627c15c&originHeight=127&originWidth=1422&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=59741&status=done&style=none&taskId=u5c78e354-8374-4f62-8d81-20597b2fe87&title=&width=758.4" referrerpolicy="no-referrer" alt="image.png"><br>需要的是 strVal 参数来指定为我们想要加载的类,来看 strVal 参数如何控制<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760926332-46eac8c6-36a5-4f16-96e3-5691535d4ab3.png#averageHue=%23373e48&clientId=u59ce0523-5c63-4&from=paste&height=108&id=ufa36e546&originHeight=202&originWidth=927&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=47683&status=done&style=none&taskId=u4f78ae44-ddd3-4a55-a29e-92992dd0b1d&title=&width=494.4" referrerpolicy="no-referrer" alt="image.png"><br>这里想要赋值 strVal 就必须使得 objVal 不为空,且为我们的目标<br>看一下 objVal 是如何赋值的<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760999342-c90429aa-b02d-4c3c-90ef-1afe00695287.png#averageHue=%23373c45&clientId=u59ce0523-5c63-4&from=paste&height=428&id=u59347f96&originHeight=802&originWidth=1097&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=256174&status=done&style=none&taskId=uebd4de35-a58e-48d2-9229-ff7799a345e&title=&width=585.0666666666667" referrerpolicy="no-referrer" alt="image.png"><br>当<code>parser.resolveStatus</code> 为<code>TypeNameRedirect</code>时,会进入 if 判断,然后通过扫描器判断 json 字符串中 val 键是否符合要求,然后将 val 中值通过 parser 的解析器方法返回给 objVal<br>resolveStatus 如何变为TypeNameRedirect 呢?<br>我们可以尝试一下 POC 的 payload</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token punctuation">&#123;</span><span class="token string">"@type"</span><span class="token operator">:</span><span class="token string">"java.lang.Class"</span><span class="token punctuation">,</span><span class="token string">"val"</span><span class="token operator">:</span><span class="token string">"aaaaa"</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>后续直接跟进到 checkAutoType 中,我们来到第二个 if 判断,也就是直通过 deserializer 去 findClass<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710761805704-8a2b0430-2c05-461f-aa97-bacf3b55051c.png#averageHue=%23555a6c&clientId=u59ce0523-5c63-4&from=paste&height=76&id=u13405a69&originHeight=142&originWidth=1823&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=85562&status=done&style=none&taskId=u51c04b9d-4220-43b9-aada-de0ffc73dcc&title=&width=972.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>实际上就是从<code>IdentityHashMap</code>中取值,由于 parserConfig 在初始化的时候会调用 initDeserializer 方法去初始化 deserializer<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710762229343-02ff32a1-3dc5-47e0-81ba-5bb09840a606.png#averageHue=%23373c45&clientId=u59ce0523-5c63-4&from=paste&height=466&id=u65ddbd94&originHeight=874&originWidth=1310&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=395803&status=done&style=none&taskId=u6de650b3-0247-4ed0-bcc8-7b8122b28c6&title=&width=698.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>而在 deserializer 的初始化方法中,已经将 Class.class 加载了<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710762194669-244b4ccd-acda-4b65-b217-3c2ee3796258.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=500&id=ufbd4272d&originHeight=937&originWidth=1227&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=544264&status=done&style=none&taskId=ub8ae00f8-6f7c-4777-b022-a15045fe3e9&title=&width=654.4" referrerpolicy="no-referrer" alt="image.png"><br>所以我们此时的 deserializer 能从中 find 到 clazz,并且在后续的 parseObject 方法中会将<code>resolveStatus</code>设置为<code>TypeNameRedirect</code><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710762431316-b3140e70-a5f1-454c-81e2-8c3f41266476.png#averageHue=%2339404c&clientId=u59ce0523-5c63-4&from=paste&height=44&id=u28aa8fc4&originHeight=82&originWidth=1252&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=26844&status=done&style=none&taskId=u82b0f034-d698-4f82-8e2f-e8342cf6629&title=&width=667.7333333333333" referrerpolicy="no-referrer" alt="image.png"><br>那么此时的条件都已经达成了:<code>resolveStatus</code>设置为<code>TypeNameRedirect</code>,我们能够通过自控 objval 去设置 strval,然后通过 loadClass 去加载 strval,并且写入 mappings 缓存<br>POC 如下:</p>
+<p>后续直接跟进到 checkAutoType 中,我们来到第二个 if 判断,也就是直通过 deserializer 去 findClass<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710761805704-8a2b0430-2c05-461f-aa97-bacf3b55051c.png#averageHue=%23555a6c&clientId=u59ce0523-5c63-4&from=paste&height=76&id=u13405a69&originHeight=142&originWidth=1823&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=85562&status=done&style=none&taskId=u51c04b9d-4220-43b9-aada-de0ffc73dcc&title=&width=972.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>实际上就是从<code>IdentityHashMap</code>中取值,由于 parserConfig 在初始化的时候会调用 initDeserializer 方法去初始化 deserializer<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710762229343-02ff32a1-3dc5-47e0-81ba-5bb09840a606.png#averageHue=%23373c45&clientId=u59ce0523-5c63-4&from=paste&height=466&id=u65ddbd94&originHeight=874&originWidth=1310&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=395803&status=done&style=none&taskId=u6de650b3-0247-4ed0-bcc8-7b8122b28c6&title=&width=698.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>而在 deserializer 的初始化方法中,已经将 Class.class 加载了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710762194669-244b4ccd-acda-4b65-b217-3c2ee3796258.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=500&id=ufbd4272d&originHeight=937&originWidth=1227&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=544264&status=done&style=none&taskId=ub8ae00f8-6f7c-4777-b022-a15045fe3e9&title=&width=654.4" referrerpolicy="no-referrer" alt="image.png"><br>所以我们此时的 deserializer 能从中 find 到 clazz,并且在后续的 parseObject 方法中会将<code>resolveStatus</code>设置为<code>TypeNameRedirect</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710762431316-b3140e70-a5f1-454c-81e2-8c3f41266476.png#averageHue=%2339404c&clientId=u59ce0523-5c63-4&from=paste&height=44&id=u28aa8fc4&originHeight=82&originWidth=1252&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=26844&status=done&style=none&taskId=u82b0f034-d698-4f82-8e2f-e8342cf6629&title=&width=667.7333333333333" referrerpolicy="no-referrer" alt="image.png"><br>那么此时的条件都已经达成了:<code>resolveStatus</code>设置为<code>TypeNameRedirect</code>,我们能够通过自控 objval 去设置 strval,然后通过 loadClass 去加载 strval,并且写入 mappings 缓存<br>POC 如下:</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span></span><span class="token class-name">JSON</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>parser<span class="token punctuation">.</span></span><span class="token class-name">Feature</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>alibaba<span class="token punctuation">.</span>fastjson<span class="token punctuation">.</span>parser<span class="token punctuation">.</span></span><span class="token class-name">ParserConfig</span></span><span class="token punctuation">;</span>
@@ -524,148 +486,350 @@ org<span class="token punctuation">.</span>springframework<span aria-hidden="tru
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>我个人的 FastJson 复习和学习暂时停在这里,后续还有其他的内容会继续补充到我这篇笔记性质的博客</p>
-</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2024/03/08/65ea7ca64ea9f.png" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2024/03/08/65ea7ca64ea9f.png" title="头像" alt="头像"></a><div class="post-copyright__author_name">stoocea</div><div class="post-copyright__author_desc"></div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://example.com/post/FastJsonRe0.html">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://example.com/post/FastJsonRe0.html')">FastJsonRe0</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://example.com/post/FastJsonRe0.html"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=FastJsonRe0&amp;url=http://example.com/post/FastJsonRe0.html&amp;pic=https://bu.dusays.com/2024/03/11/65ee76f777226.jpg" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><script>function copyCurrentPageUrl() {
-  var currentPageUrl = window.location.href;
-  var input = document.createElement("input");
-  input.setAttribute("value", currentPageUrl);
-  document.body.appendChild(input);
-  input.select();
-  input.setSelectionRange(0, 99999);
-  document.execCommand("copy");
-  document.body.removeChild(input);
-}</script><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="copyCurrentPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">stoocea</a>！</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"></div></div></div><div class="post_share"><div class="social-share" data-image="https://bu.dusays.com/2024/03/08/65ea7ca64ea9f.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/%E6%9C%80%E8%BF%91%E7%9A%84%E6%84%9F%E6%83%B3.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">最近的感想</div></div></a></div><div class="next-post pull-right"><a href="/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Jackson反序列化初步学习</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2024/03/08/65ea7ca64ea9f.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-status"><img class="g-status" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://bu.dusays.com/2021/01/15/d24ffd2267904.png" alt="status"/></div></div><div class="author-info__description">time thicking away</div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>文章目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FastJson-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%8F%8A%E5%85%B6%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">FastJson 工作流程及其组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-fastjson-%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">0x02 fastjson 使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-javabean-json"><span class="toc-number">1.2.1.</span> <span class="toc-text">1x01 javabean-&gt;json</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-json-javabean"><span class="toc-number">1.2.2.</span> <span class="toc-text">1x02 json-&gt;javabean</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-%E5%B8%B8%E8%A7%81%E7%89%B9%E6%80%A7"><span class="toc-number">1.2.3.</span> <span class="toc-text">1x03 常见特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-Fastjson-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">1.2.4.</span> <span class="toc-text">1x04 Fastjson 工作流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E9%80%89%E5%AE%9A%E8%A7%A3%E6%9E%90%E5%99%A8-DefaultJSONParser"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">2x01 选定解析器-DefaultJSONParser</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E8%8E%B7%E5%8F%96%E8%A7%A3%E6%9E%90%E5%99%A8%E2%80%93getDeserializer"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">2x02 获取解析器–getDeserializer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x03-deserialze-%E8%A7%A3%E6%9E%90%E2%80%94javaBeanDeserializer"><span class="toc-number">1.2.4.3.</span> <span class="toc-text">2x03 deserialze 解析—javaBeanDeserializer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">1.3.</span> <span class="toc-text">0x03 漏洞复现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-JdbcRowSetImpl-%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.1.</span> <span class="toc-text">1x01  JdbcRowSetImpl 利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-TemplateImpl-%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">1x02 TemplateImpl 利用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E6%B5%81%E7%A8%8B%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">2x01  流程简单分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E8%A1%A5%E4%B8%81%E4%BF%AE%E5%A4%8D%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">0x04 补丁修复分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-fastjson-1-2-25"><span class="toc-number">1.4.1.</span> <span class="toc-text">1x01 fastjson-1.2.25</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-fastjson-1-2-42-%E8%87%B3-1-2-44"><span class="toc-number">1.4.2.</span> <span class="toc-text">1x02 fastjson-1.2.42 至 1.2.44</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-fastjson-1-2-45"><span class="toc-number">1.4.3.</span> <span class="toc-text">1x03 fastjson-1.2.45</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-fastjson-1-2-47"><span class="toc-number">1.4.4.</span> <span class="toc-text">1x04 fastjson-1.2.47</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>最近发布</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/Re_Live.html" title="Re_Life">Re_Life</a><time datetime="2024-03-31T15:59:00.000Z" title="发表于 2024-03-31 23:59:00">2024-03-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" title="ROME攻击链分析">ROME攻击链分析</a><time datetime="2024-03-31T15:50:00.000Z" title="发表于 2024-03-31 23:50:00">2024-03-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/C3P0%E9%93%BE%E5%88%86%E6%9E%90.html" title="C3P0攻击链学习">C3P0攻击链学习</a><time datetime="2024-03-22T07:00:00.000Z" title="发表于 2024-03-22 15:00:00">2024-03-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" title="Jackson反序列化初步学习">Jackson反序列化初步学习</a><time datetime="2024-03-18T09:01:00.000Z" title="发表于 2024-03-18 17:01:00">2024-03-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/post/FastJsonRe0.html" title="FastJsonRe0">FastJsonRe0</a><time datetime="2024-03-18T09:00:00.000Z" title="发表于 2024-03-18 17:00:00">2024-03-18</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"><div class="copyright">&copy;2020 - 2024 By <a class="footer-bar-link" href="/" title="stoocea" target="_blank">stoocea</a></div></div><div id="footer-type-tips"></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/anzhiyu-c/hexo-theme-anzhiyu" title="主题">主题</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/" title="tag"><div class="headline">标签</div><div class="length-num">0</div></a><a href="/categories/" title="category"><div class="headline">分类</div><div class="length-num">0</div></a></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="显示模式"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>显示模式</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">网页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://blog.anheyu.com/" title="博客"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="博客"/><span class="back-menu-item-text">博客</span></a></div></div><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://image.anheyu.com/" title="安知鱼图床"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://image.anheyu.com/favicon.ico" alt="安知鱼图床"/><span class="back-menu-item-text">安知鱼图床</span></a></div></div></div><span class="sidebar-menu-item-title">标签</span></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://y.qq.com/n/ryqq/playlist/8802438608&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.28/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.5/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
-var HoldLog = console.log;
-console.log = function () {};
-let now1 = new Date();
-queueMicrotask(() => {
-  const Log = function () {
-    HoldLog.apply(console, arguments);
-  }; //在恢复前输出日志
-  const grt = new Date("03/01/2024 00:00:00"); //此处修改你的建站时间或者网站上线时间
-  now1.setTime(now1.getTime() + 250);
-  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
-  const dnum = Math.floor(days);
-  const ascll = [
-    `欢迎使用安知鱼!`,
-    `生活明朗, 万物可爱`,
-    `
-        
-       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
-      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
-      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
-      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
-      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
-      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
-        
-        `,
-    "已上线",
-    dnum,
-    "天",
-    "©2020 By 安知鱼 V1.6.12",
-  ];
-  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
 
-  setTimeout(
-    Log.bind(
-      console,
-      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
-      "color:#425AEF",
-      "",
-      "color:#425AEF",
-      "color:#425AEF",
-      "",
-      "color:#425AEF",
-      ""
-    )
-  );
-  setTimeout(
-    Log.bind(
-      console,
-      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
-      "color:white; background-color:#4fd953",
-      "",
-      "",
-      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
-    )
-  );
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/%E6%9C%80%E8%BF%91%E7%9A%84%E6%84%9F%E6%83%B3.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-04-15 17:06:58
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FastJson-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%8F%8A%E5%85%B6%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">FastJson 工作流程及其组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%AE%80%E4%BB%8B"><span class="toc-text">0x01 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-fastjson-%E4%BD%BF%E7%94%A8"><span class="toc-text">0x02 fastjson 使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-javabean-json"><span class="toc-text">1x01 javabean-&gt;json</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-json-javabean"><span class="toc-text">1x02 json-&gt;javabean</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-%E5%B8%B8%E8%A7%81%E7%89%B9%E6%80%A7"><span class="toc-text">1x03 常见特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-Fastjson-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x04 Fastjson 工作流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E9%80%89%E5%AE%9A%E8%A7%A3%E6%9E%90%E5%99%A8-DefaultJSONParser"><span class="toc-text">2x01 选定解析器-DefaultJSONParser</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E8%8E%B7%E5%8F%96%E8%A7%A3%E6%9E%90%E5%99%A8%E2%80%93getDeserializer"><span class="toc-text">2x02 获取解析器–getDeserializer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x03-deserialze-%E8%A7%A3%E6%9E%90%E2%80%94javaBeanDeserializer"><span class="toc-text">2x03 deserialze 解析—javaBeanDeserializer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-text">0x03 漏洞复现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-JdbcRowSetImpl-%E5%88%A9%E7%94%A8"><span class="toc-text">1x01  JdbcRowSetImpl 利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-TemplateImpl-%E5%88%A9%E7%94%A8"><span class="toc-text">1x02 TemplateImpl 利用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E6%B5%81%E7%A8%8B%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90"><span class="toc-text">2x01  流程简单分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E8%A1%A5%E4%B8%81%E4%BF%AE%E5%A4%8D%E5%88%86%E6%9E%90"><span class="toc-text">0x04 补丁修复分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-fastjson-1-2-25"><span class="toc-text">1x01 fastjson-1.2.25</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-fastjson-1-2-42-%E8%87%B3-1-2-44"><span class="toc-text">1x02 fastjson-1.2.42 至 1.2.44</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-fastjson-1-2-45"><span class="toc-text">1x03 fastjson-1.2.45</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-fastjson-1-2-47"><span class="toc-text">1x04 fastjson-1.2.47</span></a></li></ol></li></ol></li></ol>
+      
+    </div>
+  </div>
 
-  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
-
-  setTimeout(
-    console.warn.bind(
-      console,
-      "%c ⚡ Powered by 安知鱼 %c 你正在访问 stoocea 的博客.",
-      "color:white; background-color:#f0ad4e",
-      ""
-    )
-  );
-
-  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
-
-  setTimeout(
-    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
-  );
-});</script><script async src="/anzhiyu/random.js"></script><div class="js-pjax"><input type="hidden" name="page-type" id="page-type" value="java"></div><script>var visitorMail = "";
-</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
-var pjax = new Pjax({
-  elements: 'a:not([target="_blank"])',
-  selectors: pjaxSelectors,
-  cacheBust: false,
-  analytics: false,
-  scrollRestoration: false
-})
-
-document.addEventListener('pjax:send', function () {
-  // removeEventListener scroll 
-  anzhiyu.removeGlobalFnEvent('pjax')
-  anzhiyu.removeGlobalFnEvent('themeChange')
-
-  document.getElementById('rightside').classList.remove('rightside-show')
   
-  if (window.aplayers) {
-    for (let i = 0; i < window.aplayers.length; i++) {
-      if (!window.aplayers[i].options.fixed) {
-        window.aplayers[i].destroy()
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
       }
     }
-  }
 
-  typeof typed === 'object' && typed.destroy()
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
 
-  //reset readmode
-  const $bodyClassList = document.body.classList
-  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
-})
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
 
-document.addEventListener('pjax:complete', function () {
-  window.refreshFn()
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
 
-  document.querySelectorAll('script[data-pjax]').forEach(item => {
-    const newScript = document.createElement('script')
-    const content = item.text || item.textContent || item.innerHTML || ""
-    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
-    newScript.appendChild(document.createTextNode(content))
-    item.parentNode.replaceChild(newScript, item)
-  })
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
 
-  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
 
-  typeof panguInit === 'function' && panguInit()
+                  if (start < 0) {
+                    start = 0;
+                  }
 
-  // google analytics
-  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+                  if (start == 0) {
+                    end = 100;
+                  }
 
-  // baidu analytics
-  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+                  if (end > content.length) {
+                    end = content.length;
+                  }
 
-  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+                  var match_content = content.substr(start, end);
 
-  // prismjs
-  typeof Prism === 'object' && Prism.highlightAll()
-})
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
 
-document.addEventListener('pjax:error', e => {
-  if (e.request.status === 404) {
-    pjax.loadUrl('/404.html')
-  }
-})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + FastJsonRe0 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FFastJsonRe0.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/FastJsonRe0.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
