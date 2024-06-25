@@ -1,176 +1,67 @@
-<!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
-
-  <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="author" content="stoocea" />
-  <!-- Open Graph Description 简短摘要-->
-  
-  <!-- 用于搜索引擎的文章摘要 -->
-  
-  <meta name="description" content="time thicking away" />
-  
-  
-  
-  <title>
-    
-      JavaAgent型内存马分析 
-      
-      
-      |
-    
-     stoocea&#39;s blog
-  </title>
-
-  
-    <link rel="apple-touch-icon" href="https://bu.dusays.com/2024/04/15/661ce929d665d.png">
-    <link rel="icon" href="https://bu.dusays.com/2024/04/15/661ce929d665d.png">
-  
-
-  <!-- Raleway-Font -->
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
-
-  <!-- hexo site css -->
-  <link rel="stylesheet" href="/css/main.css" />
-  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
-  <!-- 代码块风格 -->
-  
-    
-<link rel="stylesheet" href="/css/figcaption/mac-block.css">
-
-  
-
-  <!-- jquery3.3.1 -->
-  
-    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
-  
-
-  <!-- fancybox -->
-  
-    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
-    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
-  
-  
-<script src="/js/fancybox.js"></script>
-
-
-  
-
-  
-
-  <script>
-    var html = document.documentElement
-    const colorMode = localStorage.getItem('color-mode')
-    if (colorMode) {
-      document.documentElement.setAttribute('color-mode', colorMode)
-    }
-  </script>
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-
-  <body>
-    <div id="app">
-      <div class="header">
-  <div class="avatar">
-    <a href="/">
-      <!-- 头像取消懒加载，添加no-lazy -->
-      
-        <img src="https://bu.dusays.com/2024/04/15/661ce929d665d.png" alt="">
-      
-    </a>
-    <div class="nickname"><a href="/">Stoocea</a></div>
-  </div>
-  <div class="navbar">
-    <ul>
-      
-        <li class="nav-item" data-path="/">
-          <a href="/">Home</a>
-        </li>
-      
-        <li class="nav-item" data-path="/archives/">
-          <a href="/archives/">Archives</a>
-        </li>
-      
-        <li class="nav-item" data-path="/tags/">
-          <a href="/tags/">Tags</a>
-        </li>
-      
-        <li class="nav-item" data-path="/friends/">
-          <a href="/friends/">Friends</a>
-        </li>
-      
-        <li class="nav-item" data-path="/about/">
-          <a href="/about/">About</a>
-        </li>
-      
-    </ul>
-  </div>
-</div>
-
-
-<script src="/js/activeNav.js"></script>
-
-
-
-      <div class="flex-container">
-        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
-<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
-
-
-  <!-- LaTex Display -->
-
-  
-    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
-  
-  <script>
-    MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-      }
-    }
-  </script>
-
-
-
-
-
-  <!-- clipboard -->
-
-  
-    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
-  
-  
-<script src="/js/codeCopy.js"></script>
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
-  <div class="container post-details" id="post-details">
-    <div class="post-content">
-      <div class="post-title">JavaAgent型内存马分析</div>
-      <div class="post-attach">
-        <span class="post-pubtime">
-          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-04-15 17:06:48
-        </span>
-        
-      </div>
-      <div class="markdown-body">
-        <h2 id="1-什么是-javaAgent？"><a href="#1-什么是-javaAgent？" class="headerlink" title="1.什么是 javaAgent？"></a>1.什么是 javaAgent？</h2><p><strong>Agent，意为“代理”</strong><br>java 是一种静态强类型的语言，在运行之前必须将其编译成.class 字节码，然后交给 JVM 去处理运行。java Agent 就是一种能够在不影响正常编译的前提下，修改 java 字节码，进行动态修改已加载或者未加载的类，属性和方法的技术<br>平常我们见到的一些技术，比如热加载，或者 RASP 都是基于 Agent 工具实现的，它具体是怎么实现的呢？</p>
-<p>有两种形式<br>一种是在 JVM 启动前就加载 premain-Agent，另一种是 JVM 启动之后加载 agentmain-Agent，这里我们可以将其功能理解为一种特殊 Interceptor  （拦截器）<br><strong>Premain-Agent</strong><br><img src="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990843458-83a08530-567a-4173-89bc-9e8193e2592b.jpeg#averageHue=%23f9f9f9&clientId=ua6718e02-a329-4&from=paste&height=215&id=u7d2fb3c1&originHeight=322&originWidth=1742&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=29182&status=done&style=none&taskId=u20685936-e08f-445c-9713-ae78767af47&title=&width=1161.3333333333333" referrerpolicy="no-referrer" alt="PreAgent.jpg"></p>
-<p><strong>agentmain-Agent</strong><br><img src="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990852067-3b4192bb-91ed-41af-94c9-c9d2771f135c.jpeg#averageHue=%23fbfbfb&clientId=ua6718e02-a329-4&from=paste&height=415&id=u93b2e673&originHeight=622&originWidth=1382&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=32466&status=done&style=none&taskId=uda67e32e-241d-43af-a2ec-8246fe2131c&title=&width=921.3333333333334" referrerpolicy="no-referrer" alt="agentmain-Agent.jpg"></p>
+<!DOCTYPE html><html lang="zh-CN" theme-mode="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>JavaAgent型内存马分析 | stoocea's blog</title><link rel="icon" type="image/x-icon" href="https://bu.dusays.com/2024/06/25/667ac0f8ca940.png"><link rel="preload" as="font" crossorigin="anonymous" href="/font/Bender.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/BenderLight.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/JetBrainsMono-Regular.woff2"><link rel="stylesheet" href="/css/arknights.css"><style>@font-face {
+  font-family: Bender;
+  src: local('Bender'), url("/font/Bender.ttf"), url("/font/Bender.otf");
+}
+@font-face {
+  font-family: BenderLight;
+  src: local('BenderLight'), url("/font/BenderLight.ttf");
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}
+</style><script>var config = {"root":"/","search":{"preload":false,"activeHolder":"Enter here","blurHolder":"Search","noResult":"Data \"$0\" not found"},"code":{"codeInfo":"$0 - $1 lines","copy":"copy"}}</script><link type="text/css" rel="stylesheet" href="/lib/encrypt/hbe.style.css"><script src="//unpkg.com/mermaid@10.5.0/dist/mermaid.min.js"></script><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lightgallery.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-zoom.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-thumbnail.css"><link type="text/css" rel="stylesheet" href="/lib/fontawesome/css/all.min.css"><script>if (window.localStorage.getItem('theme-mode') === 'light')
+ document.documentElement.setAttribute('theme-mode', 'light')
+if (window.localStorage.getItem('theme-mode') === 'dark')
+ document.documentElement.setAttribute('theme-mode', 'dark')</script><style>@font-face {
+ font-family: BenderLight;
+ src: local('Bender'), url("/font/BenderLight.woff2") format('woff2');
+}
+@font-face {
+ font-family: 'JetBrains Mono';
+ src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}</style><style>:root {
+ --dark-background: url('https://ak.hypergryph.com/assets/index/images/ak/pc/bk.jpg');
+ --light-background: url('/img/bk.jpg');
+ --theme-encrypt-confirm: 'confirm'
+}</style><script defer src="/js/arknights.js"></script><script defer src="/js/search.js"></script><script defer type="module">import mermaid from '//unpkg.com/mermaid@10.5.0/dist/mermaid.esm.mjs';
+window.mermaid = mermaid;
+code.paintMermaid();
+</script><script async src="//unpkg.com/lightgallery@2.7.1/lightgallery.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script><script async src="/lib/encrypt/hbe.js"></script><script async src="/js/pjax.js"></script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js','data-pjax','.busuanzi'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><meta name="generator" content="Hexo 6.3.0"></head><body><div class="loading" style="opacity: 0;"><div class="loadingBar left"></div><div class="loadingBar right"></div></div><main><header class="closed"><div class="navBtn"><i class="navBtnIcon"><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span></i></div><nav><div class="navItem" id="search-header"><span class="navItemTitle"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="Search" spellcheck="false" maxlength="50" type="text" id="search-input"></span></div><div class="navItem" id="search-holder"></div><div class="search-popup" tabindex="0"><div id="search-result"></div></div><ol class="navContent"><li class="navItem"><a class="navBlock" href="/"><span class="navItemTitle">Home</span></a></li><li class="navItem" matchdata="categories,tags"><a class="navBlock" href="/archives/"><span class="navItemTitle">Archives</span></a></li></ol></nav></header><article><div id="post-bg"><div id="post-title"><h1>JavaAgent型内存马分析</h1><div id="post-info"><span>First Post: <div class="control"><time datetime="2024-03-06T09:50:51.000Z" id="date"> 2024-03-06</time></div></span><br><span>Last Update: <div class="control"><time datetime="2024-04-15T09:06:48.267Z" id="updated"> 2024-04-15</time></div></span></div></div><hr><div id="post-content"><h2 id="1-什么是-javaAgent？"><a href="#1-什么是-javaAgent？" class="headerlink" title="1.什么是 javaAgent？"></a>1.什么是 javaAgent？</h2><p><strong>Agent，意为“代理”</strong><br>java 是一种静态强类型的语言，在运行之前必须将其编译成.class 字节码，然后交给 JVM 去处理运行。java Agent 就是一种能够在不影响正常编译的前提下，修改 java 字节码，进行动态修改已加载或者未加载的类，属性和方法的技术<br>平常我们见到的一些技术，比如热加载，或者 RASP 都是基于 Agent 工具实现的，它具体是怎么实现的呢？</p>
+<p>有两种形式<br>一种是在 JVM 启动前就加载 premain-Agent，另一种是 JVM 启动之后加载 agentmain-Agent，这里我们可以将其功能理解为一种特殊 Interceptor  （拦截器）<br><strong>Premain-Agent</strong><br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990843458-83a08530-567a-4173-89bc-9e8193e2592b.jpeg#averageHue=%23f9f9f9&clientId=ua6718e02-a329-4&from=paste&height=215&id=u7d2fb3c1&originHeight=322&originWidth=1742&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=29182&status=done&style=none&taskId=u20685936-e08f-445c-9713-ae78767af47&title=&width=1161.3333333333333'><img src="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990843458-83a08530-567a-4173-89bc-9e8193e2592b.jpeg#averageHue=%23f9f9f9&clientId=ua6718e02-a329-4&from=paste&height=215&id=u7d2fb3c1&originHeight=322&originWidth=1742&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=29182&status=done&style=none&taskId=u20685936-e08f-445c-9713-ae78767af47&title=&width=1161.3333333333333" referrerpolicy="no-referrer" alt="PreAgent.jpg"></p>
+<p><strong>agentmain-Agent</strong><br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990852067-3b4192bb-91ed-41af-94c9-c9d2771f135c.jpeg#averageHue=%23fbfbfb&clientId=ua6718e02-a329-4&from=paste&height=415&id=u93b2e673&originHeight=622&originWidth=1382&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=32466&status=done&style=none&taskId=uda67e32e-241d-43af-a2ec-8246fe2131c&title=&width=921.3333333333334'><img src="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990852067-3b4192bb-91ed-41af-94c9-c9d2771f135c.jpeg#averageHue=%23fbfbfb&clientId=ua6718e02-a329-4&from=paste&height=415&id=u93b2e673&originHeight=622&originWidth=1382&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=32466&status=done&style=none&taskId=uda67e32e-241d-43af-a2ec-8246fe2131c&title=&width=921.3333333333334" referrerpolicy="no-referrer" alt="agentmain-Agent.jpg"></p>
 <p>我们可以通过两个例子来看看 agentmain-Agent 和premain-Agent 到底是如何发挥作用的</p>
 <h2 id="premain-Agent"><a href="#premain-Agent" class="headerlink" title="premain-Agent"></a>premain-Agent</h2><p>首先我们必须实现<code>premain-Agent</code>类，也就是我们要决定 agent 处理的内容和逻辑，同时我们 jar 文件的清单（mainfest）中必须要包含 Premain-Class 属性<br>然后我们可以在命令行使用 -javaagent 来实现启动时的加载</p>
 <p>具体的实现如下，创建的premain-Agent类必须要实现 premian 方法</p>
@@ -215,7 +106,7 @@
     <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>plugin</span><span class="token punctuation">></span></span>
   <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>plugins</span><span class="token punctuation">></span></span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>build</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>然后运行 maven 的 assembly:assembly 命令打包（该命令是自定义打包，会识别 MF 文件，package 则不会）<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1705996869963-eb93d807-2430-476f-8b18-3b0e359cc092.png#averageHue=%232e3746&clientId=ua6718e02-a329-4&from=paste&height=404&id=uea841312&originHeight=606&originWidth=1587&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=381792&status=done&style=none&taskId=uac0d498f-498d-405f-b7d5-dbe5502bc5c&title=&width=1058" referrerpolicy="no-referrer" alt="image.png"><br>打包成功之后呢，我们会得到如下两个 jar 包，第二个是我们需要的<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1705996904627-ffa0c452-e376-44cf-aee6-135dafaa5b2c.png#averageHue=%23494135&clientId=ua6718e02-a329-4&from=paste&height=63&id=u9bcd21b3&originHeight=94&originWidth=591&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=45319&status=done&style=none&taskId=ue70896c7-0ee0-4745-94c1-c72e65c802e&title=&width=394" referrerpolicy="no-referrer" alt="image.png"><br>之后就是配置 vm-option 选项了，这里经典的坑，我也是看两位大师傅的文章才缓过来<br>打开运行那块的 Edit Configurations 选项，然后添加一个 Application，由于 VM-option 选项在新版的 ideaUI 中被隐藏起来了，我们选择 Modify options 中的 add VM options 即可重新设置 VMoption<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1705997087781-42c30fc3-ed32-4f55-a8cd-c1469901de7f.png#averageHue=%232c3035&clientId=ua6718e02-a329-4&from=paste&height=835&id=u242d7086&originHeight=1253&originWidth=1904&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=410788&status=done&style=none&taskId=u03acbaf3-3a61-4044-82d6-8d6c70add34&title=&width=1269.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>然后这个 vm-option 的制定路径就是我们刚才生成的 jar 中的第二个，记得前面带上<code>-javaagent</code>参数，之后配置主类的路径即可<br>运行主类：<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1705997320485-10a292aa-402a-450f-9fbb-5f85e37cd739.png#averageHue=%232b3036&clientId=ua6718e02-a329-4&from=paste&height=237&id=u86f754ee&originHeight=355&originWidth=872&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=205945&status=done&style=none&taskId=ub8f1ba40-2e54-47a0-a103-3cc2f95a429&title=&width=581.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>以上就是 Premain-Agent 的工作实例<br>需要理解一点，我们刚才对于添加新的 application 的做法中，设置了启动主类，以及对应的 vm-option，也就是说，当我们指定运行这个 application 的时候，其实是在 vm-option 指定为我们刚才打包好的 jar 包，然后在此环境下运行 hello 主类才得到的上面的结果，而不是说直接在项目中启动主类，因为这个时候的项目其实是没有指定 agent 启动的 hello 主类的</p>
+<p>然后运行 maven 的 assembly:assembly 命令打包（该命令是自定义打包，会识别 MF 文件，package 则不会）<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1705996869963-eb93d807-2430-476f-8b18-3b0e359cc092.png#averageHue=%232e3746&clientId=ua6718e02-a329-4&from=paste&height=404&id=uea841312&originHeight=606&originWidth=1587&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=381792&status=done&style=none&taskId=uac0d498f-498d-405f-b7d5-dbe5502bc5c&title=&width=1058'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1705996869963-eb93d807-2430-476f-8b18-3b0e359cc092.png#averageHue=%232e3746&clientId=ua6718e02-a329-4&from=paste&height=404&id=uea841312&originHeight=606&originWidth=1587&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=381792&status=done&style=none&taskId=uac0d498f-498d-405f-b7d5-dbe5502bc5c&title=&width=1058" referrerpolicy="no-referrer" alt="image.png"><br>打包成功之后呢，我们会得到如下两个 jar 包，第二个是我们需要的<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1705996904627-ffa0c452-e376-44cf-aee6-135dafaa5b2c.png#averageHue=%23494135&clientId=ua6718e02-a329-4&from=paste&height=63&id=u9bcd21b3&originHeight=94&originWidth=591&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=45319&status=done&style=none&taskId=ue70896c7-0ee0-4745-94c1-c72e65c802e&title=&width=394'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1705996904627-ffa0c452-e376-44cf-aee6-135dafaa5b2c.png#averageHue=%23494135&clientId=ua6718e02-a329-4&from=paste&height=63&id=u9bcd21b3&originHeight=94&originWidth=591&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=45319&status=done&style=none&taskId=ue70896c7-0ee0-4745-94c1-c72e65c802e&title=&width=394" referrerpolicy="no-referrer" alt="image.png"><br>之后就是配置 vm-option 选项了，这里经典的坑，我也是看两位大师傅的文章才缓过来<br>打开运行那块的 Edit Configurations 选项，然后添加一个 Application，由于 VM-option 选项在新版的 ideaUI 中被隐藏起来了，我们选择 Modify options 中的 add VM options 即可重新设置 VMoption<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1705997087781-42c30fc3-ed32-4f55-a8cd-c1469901de7f.png#averageHue=%232c3035&clientId=ua6718e02-a329-4&from=paste&height=835&id=u242d7086&originHeight=1253&originWidth=1904&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=410788&status=done&style=none&taskId=u03acbaf3-3a61-4044-82d6-8d6c70add34&title=&width=1269.3333333333333'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1705997087781-42c30fc3-ed32-4f55-a8cd-c1469901de7f.png#averageHue=%232c3035&clientId=ua6718e02-a329-4&from=paste&height=835&id=u242d7086&originHeight=1253&originWidth=1904&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=410788&status=done&style=none&taskId=u03acbaf3-3a61-4044-82d6-8d6c70add34&title=&width=1269.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>然后这个 vm-option 的制定路径就是我们刚才生成的 jar 中的第二个，记得前面带上<code>-javaagent</code>参数，之后配置主类的路径即可<br>运行主类：<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1705997320485-10a292aa-402a-450f-9fbb-5f85e37cd739.png#averageHue=%232b3036&clientId=ua6718e02-a329-4&from=paste&height=237&id=u86f754ee&originHeight=355&originWidth=872&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=205945&status=done&style=none&taskId=ub8f1ba40-2e54-47a0-a103-3cc2f95a429&title=&width=581.3333333333334'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1705997320485-10a292aa-402a-450f-9fbb-5f85e37cd739.png#averageHue=%232b3036&clientId=ua6718e02-a329-4&from=paste&height=237&id=u86f754ee&originHeight=355&originWidth=872&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=205945&status=done&style=none&taskId=ub8f1ba40-2e54-47a0-a103-3cc2f95a429&title=&width=581.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>以上就是 Premain-Agent 的工作实例<br>需要理解一点，我们刚才对于添加新的 application 的做法中，设置了启动主类，以及对应的 vm-option，也就是说，当我们指定运行这个 application 的时候，其实是在 vm-option 指定为我们刚才打包好的 jar 包，然后在此环境下运行 hello 主类才得到的上面的结果，而不是说直接在项目中启动主类，因为这个时候的项目其实是没有指定 agent 启动的 hello 主类的</p>
 <h2 id="agentmain-Agent"><a href="#agentmain-Agent" class="headerlink" title="agentmain-Agent"></a>agentmain-Agent</h2><p>premain-agent 只能在类加载前去插入，而 agentmain 可以在已经运行的 jvm 中去加载，并实现相应的修改字节码的功能</p>
 <h3 id="VirtualMachine类"><a href="#VirtualMachine类" class="headerlink" title="VirtualMachine类"></a>VirtualMachine类</h3><p><code> com.sun.tools.attach.VirtualMachine</code>类可以实现获取 JVM 信息，内存 dump，现成 dump，类信息统计等功能<br>该类允许我们通过给 attach 方法传入一个 JVM 的 PID，来远程连接到该 JVM 上，之后我们就可以对连接的 JVM 进行各种操作，如注入 agent<br>下面是一些该类的主要方法</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">//允许我们传入一个JVM的PID，然后远程连接到该JVM上</span>
@@ -247,7 +138,7 @@
         <span class="token punctuation">&#125;</span>
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706159054417-bb7b9a5e-663e-4a3a-b2df-d17bba87093b.png#averageHue=%232d3e5c&clientId=u59ee69b3-79ec-4&from=paste&height=485&id=u46b1ef77&originHeight=727&originWidth=1744&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=887626&status=done&style=none&taskId=u3b6cf096-927e-4927-8e25-a749a4b5243&title=&width=1162.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>这里有一个坑，有些找不到 tools 这个 jar 包，所以必须得自行导入<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706159114151-785383af-bec0-4559-a3af-f350e180bf70.png#averageHue=%232d2f32&clientId=u59ee69b3-79ec-4&from=paste&height=243&id=u376c33c9&originHeight=365&originWidth=1257&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=28858&status=done&style=none&taskId=ub2735ff1-4ff1-44ea-af07-9156520754d&title=&width=838" referrerpolicy="no-referrer" alt="image.png"></p>
+<p class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1706159054417-bb7b9a5e-663e-4a3a-b2df-d17bba87093b.png#averageHue=%232d3e5c&clientId=u59ee69b3-79ec-4&from=paste&height=485&id=u46b1ef77&originHeight=727&originWidth=1744&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=887626&status=done&style=none&taskId=u3b6cf096-927e-4927-8e25-a749a4b5243&title=&width=1162.6666666666667'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706159054417-bb7b9a5e-663e-4a3a-b2df-d17bba87093b.png#averageHue=%232d3e5c&clientId=u59ee69b3-79ec-4&from=paste&height=485&id=u46b1ef77&originHeight=727&originWidth=1744&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=887626&status=done&style=none&taskId=u3b6cf096-927e-4927-8e25-a749a4b5243&title=&width=1162.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>这里有一个坑，有些找不到 tools 这个 jar 包，所以必须得自行导入<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1706159114151-785383af-bec0-4559-a3af-f350e180bf70.png#averageHue=%232d2f32&clientId=u59ee69b3-79ec-4&from=paste&height=243&id=u376c33c9&originHeight=365&originWidth=1257&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=28858&status=done&style=none&taskId=ub2735ff1-4ff1-44ea-af07-9156520754d&title=&width=838'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706159114151-785383af-bec0-4559-a3af-f350e180bf70.png#averageHue=%232d2f32&clientId=u59ee69b3-79ec-4&from=paste&height=243&id=u376c33c9&originHeight=365&originWidth=1257&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=28858&status=done&style=none&taskId=ub2735ff1-4ff1-44ea-af07-9156520754d&title=&width=838" referrerpolicy="no-referrer" alt="image.png"></p>
 <h3 id="agentmain-注入过程详解"><a href="#agentmain-注入过程详解" class="headerlink" title="agentmain 注入过程详解"></a>agentmain 注入过程详解</h3><p>介绍完上面两种对 JVM 信息获取和操作的类之后我们来实现一个<code>agentmain-Agent</code><br>首先写一个 Sleep_Hello 类，模拟正常运行的 JVM</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token keyword">static</span> <span class="token import static"><span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span></span><span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token static">sleep</span></span><span class="token punctuation">;</span>
 <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Sleep_Hello</span> <span class="token punctuation">&#123;</span>
@@ -299,11 +190,11 @@
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span>
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>如何进行操作？我们首先先启动 Sleep_Hello 这个程序，让他对应的 JVM 跑起来，然后运行我们的 inject_Agent 程序，把我们刚才打包好的 agent 程序注入进去。<br>就是同时运行两个程序的事，只不过注入的时候要多注入几次，可以先尝试把现在运行的 JVM 打印出来，找到 Sleep_Hello 这个我们的目标 JVM 之后，再准确的指定，成功率高一点，我这边有一个时刻打印了两次“调用了agentmain-Agent!”就是多尝试的时候打印出的<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706161384395-caf28db1-93b0-46b9-be3c-bd029a43996e.png#averageHue=%232d3a52&clientId=u59ee69b3-79ec-4&from=paste&height=758&id=u90b69262&originHeight=1137&originWidth=2547&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1743562&status=done&style=none&taskId=ue0d49de0-2454-483f-a71e-dce9fb307d1&title=&width=1698" referrerpolicy="no-referrer" alt="image.png"><br>效果就是，本来打印的 hello world，后来注入程序将我们的 agent 注入进去之后就开始打印 agentmain-Agent 了，并且源程序没有结束，这个现象也是很符合我们的 mmshell 的感觉</p>
+<p>如何进行操作？我们首先先启动 Sleep_Hello 这个程序，让他对应的 JVM 跑起来，然后运行我们的 inject_Agent 程序，把我们刚才打包好的 agent 程序注入进去。<br>就是同时运行两个程序的事，只不过注入的时候要多注入几次，可以先尝试把现在运行的 JVM 打印出来，找到 Sleep_Hello 这个我们的目标 JVM 之后，再准确的指定，成功率高一点，我这边有一个时刻打印了两次“调用了agentmain-Agent!”就是多尝试的时候打印出的<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1706161384395-caf28db1-93b0-46b9-be3c-bd029a43996e.png#averageHue=%232d3a52&clientId=u59ee69b3-79ec-4&from=paste&height=758&id=u90b69262&originHeight=1137&originWidth=2547&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1743562&status=done&style=none&taskId=ue0d49de0-2454-483f-a71e-dce9fb307d1&title=&width=1698'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706161384395-caf28db1-93b0-46b9-be3c-bd029a43996e.png#averageHue=%232d3a52&clientId=u59ee69b3-79ec-4&from=paste&height=758&id=u90b69262&originHeight=1137&originWidth=2547&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1743562&status=done&style=none&taskId=ue0d49de0-2454-483f-a71e-dce9fb307d1&title=&width=1698" referrerpolicy="no-referrer" alt="image.png"><br>效果就是，本来打印的 hello world，后来注入程序将我们的 agent 注入进去之后就开始打印 agentmain-Agent 了，并且源程序没有结束，这个现象也是很符合我们的 mmshell 的感觉</p>
 <h2 id="Agentmain-Instrumentation"><a href="#Agentmain-Instrumentation" class="headerlink" title="Agentmain-Instrumentation"></a>Agentmain-Instrumentation</h2><blockquote>
 <p>”动态修改字节码“</p>
 </blockquote>
-<p>这个玩意我们一开始学 agent 的时候写 premainagnet 就遇到过，只不过没有细讲它<br> Instrumentation是 JVMTIAgent（JVM Tool Interface Agent）的一部分，Java agent通过这个类和目标 JVM 进行交互，从而达到修改数据的效果。<br>这也是为什么我们写 java agent 类的时候，premain 或者 agentmain 方法的参数除了 arg 那个参数数组，还必须有一个它的参数类<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706161721609-5ddb9bd5-e179-4df9-89b7-784faeafc3ab.png#averageHue=%232a2f36&clientId=u8d72d196-18f8-4&from=paste&height=30&id=u70d3f390&originHeight=45&originWidth=1403&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=59970&status=done&style=none&taskId=u0d6aeaac-f1d6-44ab-9035-c571885cadd&title=&width=935.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>它本质是一个接口<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706162973893-47e206f9-557b-4e50-9534-f544d0f32e84.png#averageHue=%23363a41&clientId=u5595a040-f3b4-4&from=paste&height=390&id=uca763f93&originHeight=585&originWidth=761&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=452663&status=done&style=none&taskId=u9679f3ee-738b-4129-9dcc-05095039396&title=&width=507.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>重要方法的大概作用如下</p>
+<p>这个玩意我们一开始学 agent 的时候写 premainagnet 就遇到过，只不过没有细讲它<br> Instrumentation是 JVMTIAgent（JVM Tool Interface Agent）的一部分，Java agent通过这个类和目标 JVM 进行交互，从而达到修改数据的效果。<br>这也是为什么我们写 java agent 类的时候，premain 或者 agentmain 方法的参数除了 arg 那个参数数组，还必须有一个它的参数类<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1706161721609-5ddb9bd5-e179-4df9-89b7-784faeafc3ab.png#averageHue=%232a2f36&clientId=u8d72d196-18f8-4&from=paste&height=30&id=u70d3f390&originHeight=45&originWidth=1403&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=59970&status=done&style=none&taskId=u0d6aeaac-f1d6-44ab-9035-c571885cadd&title=&width=935.3333333333334'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706161721609-5ddb9bd5-e179-4df9-89b7-784faeafc3ab.png#averageHue=%232a2f36&clientId=u8d72d196-18f8-4&from=paste&height=30&id=u70d3f390&originHeight=45&originWidth=1403&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=59970&status=done&style=none&taskId=u0d6aeaac-f1d6-44ab-9035-c571885cadd&title=&width=935.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>它本质是一个接口<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1706162973893-47e206f9-557b-4e50-9534-f544d0f32e84.png#averageHue=%23363a41&clientId=u5595a040-f3b4-4&from=paste&height=390&id=uca763f93&originHeight=585&originWidth=761&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=452663&status=done&style=none&taskId=u9679f3ee-738b-4129-9dcc-05095039396&title=&width=507.3333333333333'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706162973893-47e206f9-557b-4e50-9534-f544d0f32e84.png#averageHue=%23363a41&clientId=u5595a040-f3b4-4&from=paste&height=390&id=uca763f93&originHeight=585&originWidth=761&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=452663&status=done&style=none&taskId=u9679f3ee-738b-4129-9dcc-05095039396&title=&width=507.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>重要方法的大概作用如下</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">Instrumentation</span> <span class="token punctuation">&#123;</span>
     
     <span class="token comment">//增加一个Class 文件的转换器，转换器用于改变 Class 二进制流的数据，参数 canRetransform 设置是否允许重新转换。</span>
@@ -348,8 +239,8 @@
     <span class="token punctuation">&#125;</span>
 
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>然后还是用 Sleep_Hello 去实现，用 Inject 将我们的 Agentmain_Instrument 注入进去<br>效果图如下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706165353064-43e75c2e-05ee-4098-a7f4-323140facc16.png#averageHue=%232c384c&clientId=u5595a040-f3b4-4&from=paste&height=777&id=u910ed04e&originHeight=1166&originWidth=2486&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1791856&status=done&style=none&taskId=u1e5663c4-c91a-4f91-9683-b0a4d791117&title=&width=1657.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>然后我们再来介绍一下addTransformer</p>
-<h3 id="addTransformer"><a href="#addTransformer" class="headerlink" title="addTransformer"></a>addTransformer</h3><p>上面对Instrumentation 这个接口做总介绍的时候提到过，它的作用就是增加一个 Class 文件的转化器，该转化器用来改变 class 二进制流的数据，其参数 canRetransform  限制其能否重新转化<br>在 Instrumentation 中由 addTransformer 添加的新 transformer calss 文件转换器不仅可以修改二进制流数据，而且能够对未加载的类进行拦截，同时能够对已加载的类进行重新拦截，我们之后就是根据这个特性来实现动态修改字节码的。<br>而我们创建的这个 transform 转换器需要实现一个接口：<br><code>ClassFileTransformer</code> ，该接口里面只有一个方法，然后返回一个 byte 数组，其实就是 class 的二进制流数据<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706166068955-609b6489-616c-4ae1-a412-35e89305a3d7.png#averageHue=%232a2e34&clientId=u5595a040-f3b4-4&from=paste&height=189&id=uad7cd01e&originHeight=283&originWidth=824&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=207632&status=done&style=none&taskId=u49c6d260-4a23-4526-9f87-73f43614bf1&title=&width=549.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>所以整个Instrumentation 作用的流程简化一下：</p>
+<p>然后还是用 Sleep_Hello 去实现，用 Inject 将我们的 Agentmain_Instrument 注入进去<br>效果图如下<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1706165353064-43e75c2e-05ee-4098-a7f4-323140facc16.png#averageHue=%232c384c&clientId=u5595a040-f3b4-4&from=paste&height=777&id=u910ed04e&originHeight=1166&originWidth=2486&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1791856&status=done&style=none&taskId=u1e5663c4-c91a-4f91-9683-b0a4d791117&title=&width=1657.3333333333333'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706165353064-43e75c2e-05ee-4098-a7f4-323140facc16.png#averageHue=%232c384c&clientId=u5595a040-f3b4-4&from=paste&height=777&id=u910ed04e&originHeight=1166&originWidth=2486&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1791856&status=done&style=none&taskId=u1e5663c4-c91a-4f91-9683-b0a4d791117&title=&width=1657.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>然后我们再来介绍一下addTransformer</p>
+<h3 id="addTransformer"><a href="#addTransformer" class="headerlink" title="addTransformer"></a>addTransformer</h3><p>上面对Instrumentation 这个接口做总介绍的时候提到过，它的作用就是增加一个 Class 文件的转化器，该转化器用来改变 class 二进制流的数据，其参数 canRetransform  限制其能否重新转化<br>在 Instrumentation 中由 addTransformer 添加的新 transformer calss 文件转换器不仅可以修改二进制流数据，而且能够对未加载的类进行拦截，同时能够对已加载的类进行重新拦截，我们之后就是根据这个特性来实现动态修改字节码的。<br>而我们创建的这个 transform 转换器需要实现一个接口：<br><code>ClassFileTransformer</code> ，该接口里面只有一个方法，然后返回一个 byte 数组，其实就是 class 的二进制流数据<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1706166068955-609b6489-616c-4ae1-a412-35e89305a3d7.png#averageHue=%232a2e34&clientId=u5595a040-f3b4-4&from=paste&height=189&id=uad7cd01e&originHeight=283&originWidth=824&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=207632&status=done&style=none&taskId=u49c6d260-4a23-4526-9f87-73f43614bf1&title=&width=549.3333333333334'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706166068955-609b6489-616c-4ae1-a412-35e89305a3d7.png#averageHue=%232a2e34&clientId=u5595a040-f3b4-4&from=paste&height=189&id=uad7cd01e&originHeight=283&originWidth=824&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=207632&status=done&style=none&taskId=u49c6d260-4a23-4526-9f87-73f43614bf1&title=&width=549.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>所以整个Instrumentation 作用的流程简化一下：</p>
 <ul>
 <li>首先 Instrumentation. addTransformer()  来加载一个转换器</li>
 <li>转换器的结果 （transform 方法的 return） 将成为转换后的字节码</li>
@@ -474,7 +365,7 @@
         <span class="token punctuation">&#125;</span>
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>分析完毕后呢，具体的结果应该如下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706169455331-ec153c93-14b8-465f-adb5-877e4d501796.png#averageHue=%232c3038&clientId=u5595a040-f3b4-4&from=paste&height=457&id=u55b55734&originHeight=686&originWidth=1650&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=842070&status=done&style=none&taskId=u1bb135e8-d855-4fe1-9fd4-b17afd4e28d&title=&width=1100" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>分析完毕后呢，具体的结果应该如下<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1706169455331-ec153c93-14b8-465f-adb5-877e4d501796.png#averageHue=%232c3038&clientId=u5595a040-f3b4-4&from=paste&height=457&id=u55b55734&originHeight=686&originWidth=1650&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=842070&status=done&style=none&taskId=u1bb135e8-d855-4fe1-9fd4-b17afd4e28d&title=&width=1100'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706169455331-ec153c93-14b8-465f-adb5-877e4d501796.png#averageHue=%232c3038&clientId=u5595a040-f3b4-4&from=paste&height=457&id=u55b55734&originHeight=686&originWidth=1650&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=842070&status=done&style=none&taskId=u1bb135e8-d855-4fe1-9fd4-b17afd4e28d&title=&width=1100" referrerpolicy="no-referrer" alt="image.png"></p>
 <h4 id="步骤总结"><a href="#步骤总结" class="headerlink" title="步骤总结"></a>步骤总结</h4><p>首先实例化一个 CtClass 对象，我们之后的创建 CtFiled 或者 CtMethod，CtConstructor 都是对其的补充，而 CtClass 就代表着我们要创建的那个类<br>这里需要注意一点，ClassPool 会在内存中维护所有被它创建过的 CtClass，所以当 CtClass 过多的时候，会占用大量的内存，API 中给出的解决方法是，有意识地调用 detach()以释放内存</p>
 <p><strong>ClassPool</strong>需要关注的方法：</p>
 <ol>
@@ -522,7 +413,7 @@
         <span class="token punctuation">&#125;</span>
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>效果图下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706170701054-7478aa2e-3a1f-47a9-8c99-d3af73cd4aff.png#averageHue=%232c3036&clientId=u5595a040-f3b4-4&from=paste&height=626&id=u962312c6&originHeight=1112&originWidth=1014&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=969347&status=done&style=none&taskId=u681686a4-7c18-419c-b418-80b1ce080ea&title=&width=571" referrerpolicy="no-referrer" alt="image.png"><br>当然还有通过.class 文件调用到我们用 javassist 写的类的方法（这两种方法就搬一下 boogipop 师傅的代码了）</p>
+<p>效果图下<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1706170701054-7478aa2e-3a1f-47a9-8c99-d3af73cd4aff.png#averageHue=%232c3036&clientId=u5595a040-f3b4-4&from=paste&height=626&id=u962312c6&originHeight=1112&originWidth=1014&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=969347&status=done&style=none&taskId=u681686a4-7c18-419c-b418-80b1ce080ea&title=&width=571'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706170701054-7478aa2e-3a1f-47a9-8c99-d3af73cd4aff.png#averageHue=%232c3036&clientId=u5595a040-f3b4-4&from=paste&height=626&id=u962312c6&originHeight=1112&originWidth=1014&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=969347&status=done&style=none&taskId=u681686a4-7c18-419c-b418-80b1ce080ea&title=&width=571" referrerpolicy="no-referrer" alt="image.png"><br>当然还有通过.class 文件调用到我们用 javassist 写的类的方法（这两种方法就搬一下 boogipop 师傅的代码了）</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">   <span class="token class-name">ClassPool</span> pool <span class="token operator">=</span> <span class="token class-name">ClassPool</span><span class="token punctuation">.</span><span class="token function">getDefault</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token comment">// 将一个ClassPath加到类搜索路径的末尾位置 或 插入到起始位置。通常通过该方法写入额外的类搜索路径，以解决多个类加载器环境中找不到类的尴尬</span>
         pool<span class="token punctuation">.</span><span class="token function">appendClassPath</span><span class="token punctuation">(</span><span class="token string">"E:\\CTFLearning\\Java\\agentdemo\\"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -639,10 +530,10 @@
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span>
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>之后就是运行 Sleep_Hello 使他的 JVM 持续运作，然后运行 Inject，将我们的 agentmain 注入到它的 JVM 中，然后我们的 agentmain 中的内容又是通过addTransformer 来开启了一个动态加载字节码的过程，transform 又被我们重写成了用 javassist 修改 Sleep_Hello 字节码的内容<br>所以一旦我们注入进 agentmain，就会重写一直在运行的 Sleep_Hello 的字节码，表现为：本来一直在 hello world，然后突然现实一句 javassist，之后的内容变成了 “stoocea Hacker”了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706173739606-b6c8ee68-cfca-45fe-9630-c8078aecf8b5.png#averageHue=%232d3037&clientId=u5595a040-f3b4-4&from=paste&height=747&id=u97990302&originHeight=1120&originWidth=2487&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1886694&status=done&style=none&taskId=u4c1f97e3-0f7d-4c41-be18-018a3b5f24e&title=&width=1658" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>之后就是运行 Sleep_Hello 使他的 JVM 持续运作，然后运行 Inject，将我们的 agentmain 注入到它的 JVM 中，然后我们的 agentmain 中的内容又是通过addTransformer 来开启了一个动态加载字节码的过程，transform 又被我们重写成了用 javassist 修改 Sleep_Hello 字节码的内容<br>所以一旦我们注入进 agentmain，就会重写一直在运行的 Sleep_Hello 的字节码，表现为：本来一直在 hello world，然后突然现实一句 javassist，之后的内容变成了 “stoocea Hacker”了<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1706173739606-b6c8ee68-cfca-45fe-9630-c8078aecf8b5.png#averageHue=%232d3037&clientId=u5595a040-f3b4-4&from=paste&height=747&id=u97990302&originHeight=1120&originWidth=2487&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1886694&status=done&style=none&taskId=u4c1f97e3-0f7d-4c41-be18-018a3b5f24e&title=&width=1658'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706173739606-b6c8ee68-cfca-45fe-9630-c8078aecf8b5.png#averageHue=%232d3037&clientId=u5595a040-f3b4-4&from=paste&height=747&id=u97990302&originHeight=1120&originWidth=2487&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1886694&status=done&style=none&taskId=u4c1f97e3-0f7d-4c41-be18-018a3b5f24e&title=&width=1658" referrerpolicy="no-referrer" alt="image.png"></p>
 <h2 id="Agent-内存马实现"><a href="#Agent-内存马实现" class="headerlink" title="Agent 内存马实现"></a>Agent 内存马实现</h2><p>本文章其实主要写到现在,也是终于可以开始写 Agent 内存马了<br>但是这里主要的实现是通过 Springboot 来的，我个人 Springboot 还不是很熟，所以只能依葫芦画瓢，这篇 Agent 内存马之后就去补 Spring 基础了<br>根据 tomcat 的责任链机制，我们可以知道，每一次请求的调用栈中都会有一个反复调用<code>InternalDoFilter</code>的链<code>**internalDoFilter-&gt;doFilter-&gt;service**</code> ，也就是说 Spring 他在处理请求时会不断调用 internalFilter 方法，或者是 Dofliter 方法，是不是和我们上面的 Sleep_Hello 不断调用 helloworld 方法一样？我们既能够知道他 JVM 的具体名称，也能够通过 Javassist 去修改这两个方法的字节码内容，实现不断调用我们的改写的恶意方法的效果<br>而且这两个方法具有参数<code>**request response**</code>** **拿来回显也是很好的选择</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706249152119-688b526a-868a-445e-9184-c60b3a145ad5.png#averageHue=%232a2d33&clientId=uc9d4b41e-c695-4&from=paste&height=109&id=u40bccdab&originHeight=163&originWidth=1247&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=156919&status=done&style=none&taskId=u9b61b101-da2d-4810-87cc-c88d1e91de7&title=&width=831.3333333333334" referrerpolicy="no-referrer" alt="image.png"></p>
-<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706249165800-c60da297-472d-472b-ad82-7c63438da01b.png#averageHue=%232a2e34&clientId=uc9d4b41e-c695-4&from=paste&height=193&id=uc294bf54&originHeight=289&originWidth=1515&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=323639&status=done&style=none&taskId=u625455c3-8c92-4522-86d5-a61433d1b16&title=&width=1010" referrerpolicy="no-referrer" alt="image.png"></p>
+<p class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1706249152119-688b526a-868a-445e-9184-c60b3a145ad5.png#averageHue=%232a2d33&clientId=uc9d4b41e-c695-4&from=paste&height=109&id=u40bccdab&originHeight=163&originWidth=1247&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=156919&status=done&style=none&taskId=u9b61b101-da2d-4810-87cc-c88d1e91de7&title=&width=831.3333333333334'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706249152119-688b526a-868a-445e-9184-c60b3a145ad5.png#averageHue=%232a2d33&clientId=uc9d4b41e-c695-4&from=paste&height=109&id=u40bccdab&originHeight=163&originWidth=1247&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=156919&status=done&style=none&taskId=u9b61b101-da2d-4810-87cc-c88d1e91de7&title=&width=831.3333333333334" referrerpolicy="no-referrer" alt="image.png"></p>
+<p class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1706249165800-c60da297-472d-472b-ad82-7c63438da01b.png#averageHue=%232a2e34&clientId=uc9d4b41e-c695-4&from=paste&height=193&id=uc294bf54&originHeight=289&originWidth=1515&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=323639&status=done&style=none&taskId=u625455c3-8c92-4522-86d5-a61433d1b16&title=&width=1010'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706249165800-c60da297-472d-472b-ad82-7c63438da01b.png#averageHue=%232a2e34&clientId=uc9d4b41e-c695-4&from=paste&height=193&id=uc294bf54&originHeight=289&originWidth=1515&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=323639&status=done&style=none&taskId=u625455c3-8c92-4522-86d5-a61433d1b16&title=&width=1010" referrerpolicy="no-referrer" alt="image.png"></p>
 <h3 id="注入过程"><a href="#注入过程" class="headerlink" title="注入过程"></a>注入过程</h3><p>首先先写一下最终通过 javassit 修改字节码的内容</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>instrument<span class="token punctuation">.</span></span><span class="token class-name">ClassFileTransformer</span></span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>lang<span class="token punctuation">.</span>instrument<span class="token punctuation">.</span></span><span class="token class-name">IllegalClassFormatException</span></span><span class="token punctuation">;</span>
@@ -742,350 +633,4 @@
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>之后的实现就不做了，因为 Spring 这块的知识还在补习</p>
 <h2 id="回顾一下"><a href="#回顾一下" class="headerlink" title="回顾一下"></a>回顾一下</h2><p>其实学 agent 内存马我的目的不是其本身，而是它的前置知识很诱人，就是 JAVAagent 和 javassist，所以这块的重点也自然放在这两个上，然后现阶段的主要工作是在做前面知识的复习，以及后续知识的推进，JAVAagent 这块的知识对于我来说是新的知识，所以接下来是对前面旧知识的复习，包括 Spring 基础，RMI，JNDI 等</p>
-
-      </div>
-      
-        <div class="prev-or-next">
-          <div class="post-foot-next">
-            
-              <a href="/post/RMIRe0.html" target="_self">
-                <i class="iconfont icon-chevronleft"></i>
-                <span>上一页</span>
-              </a>
-            
-          </div>
-          <div class="post-attach">
-            <span class="post-pubtime">
-              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-04-15 17:06:48
-            </span>
-            
-          </div>
-          <div class="post-foot-prev">
-            
-              <a href="/post/Spring%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E6%9E%90.html" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-    </div>
-    
-  <div id="btn-catalog" class="btn-catalog">
-    <i class="iconfont icon-catalog"></i>
-  </div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">目录</div>
-    <div class="catalog-content">
-      
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-javaAgent%EF%BC%9F"><span class="toc-text">1.什么是 javaAgent？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#premain-Agent"><span class="toc-text">premain-Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#agentmain-Agent"><span class="toc-text">agentmain-Agent</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachine%E7%B1%BB"><span class="toc-text">VirtualMachine类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachineDescriptor%E7%B1%BB"><span class="toc-text">VirtualMachineDescriptor类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#agentmain-%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-text">agentmain 注入过程详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agentmain-Instrumentation"><span class="toc-text">Agentmain-Instrumentation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#addTransformer"><span class="toc-text">addTransformer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Javassist"><span class="toc-text">Javassist</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Javassist-%E5%88%9B%E5%BB%BA%E7%B1%BB"><span class="toc-text">使用 Javassist 创建类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E6%80%BB%E7%BB%93"><span class="toc-text">步骤总结</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E7%94%9F%E6%88%90%E7%9A%84-class-%E6%96%87%E4%BB%B6"><span class="toc-text">调用生成的 class 文件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%B7%B2%E5%8A%A0%E8%BD%BD%E7%B1%BB%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-text">修改已加载类的字节码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0"><span class="toc-text">Agent 内存马实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B"><span class="toc-text">注入过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE%E4%B8%80%E4%B8%8B"><span class="toc-text">回顾一下</span></a></li></ol>
-      
-    </div>
-  </div>
-
-  
-<script src="/js/catalog.js"></script>
-
-
-
-
-    
-      <div class="comments-container">
-        
-
-
-
-
-
-
-
-      </div>
-    
-  </div>
-
-
-        
-<div class="footer">
-  <div class="social">
-    <ul>
-      
-        <li>
-          
-              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
-                <i class="iconfont icon-github"></i>
-              </a>
-              
-        </li>
-        
-    </ul>
-  </div>
-  
-    
-    <div class="footer-more">
-      
-        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
-        
-    </div>
-  
-    
-    <div class="footer-more">
-      
-        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
-        
-    </div>
-  
-  
-</div>
-
-      </div>
-
-      <div class="tools-bar">
-        <div class="back-to-top tools-bar-item hidden">
-  <a href="javascript: void(0)">
-    <i class="iconfont icon-chevronup"></i>
-  </a>
-</div>
-
-
-<script src="/js/backtotop.js"></script>
-
-
-
-        
-  <div class="search-icon tools-bar-item" id="search-icon">
-    <a href="javascript: void(0)">
-      <i class="iconfont icon-search"></i>
-    </a>
-  </div>
-
-  <div class="search-overlay hidden">
-    <div class="search-content" tabindex="0">
-      <div class="search-title">
-        <span class="search-icon-input">
-          <a href="javascript: void(0)">
-            <i class="iconfont icon-search"></i>
-          </a>
-        </span>
-        
-          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
-        
-        <span class="search-close-icon" id="search-close-icon">
-          <a href="javascript: void(0)">
-            <i class="iconfont icon-close"></i>
-          </a>
-        </span>
-      </div>
-      <div class="search-result" id="search-result"></div>
-    </div>
-  </div>
-
-  <script type="text/javascript">
-    var inputArea = document.querySelector("#search-input")
-    var searchOverlayArea = document.querySelector(".search-overlay")
-
-    inputArea.onclick = function() {
-      getSearchFile()
-      this.onclick = null
-    }
-
-    inputArea.onkeydown = function() {
-      if(event.keyCode == 13)
-        return false
-    }
-
-    function openOrHideSearchContent() {
-      let isHidden = searchOverlayArea.classList.contains('hidden')
-      if (isHidden) {
-        searchOverlayArea.classList.remove('hidden')
-        document.body.classList.add('hidden')
-        // inputArea.focus()
-      } else {
-        searchOverlayArea.classList.add('hidden')
-        document.body.classList.remove('hidden')
-      }
-    }
-
-    function blurSearchContent(e) {
-      if (e.target === searchOverlayArea) {
-        openOrHideSearchContent()
-      }
-    }
-
-    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
-    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
-    searchOverlayArea.addEventListener("click", blurSearchContent, false)
-
-    var searchFunc = function (path, search_id, content_id) {
-      'use strict';
-      var $input = document.getElementById(search_id);
-      var $resultContent = document.getElementById(content_id);
-      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
-      $.ajax({
-        // 0x01. load xml file
-        url: path,
-        dataType: "xml",
-        success: function (xmlResponse) {
-          // 0x02. parse xml file
-          var datas = $("entry", xmlResponse).map(function () {
-            return {
-              title: $("title", this).text(),
-              content: $("content", this).text(),
-              url: $("url", this).text()
-            };
-          }).get();
-          $resultContent.innerHTML = "";
-
-          $input.addEventListener('input', function () {
-            // 0x03. parse query to keywords list
-            var str = '<ul class=\"search-result-list\">';
-            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
-            $resultContent.innerHTML = "";
-            if (this.value.trim().length <= 0) {
-              return;
-            }
-            // 0x04. perform local searching
-            datas.forEach(function (data) {
-              var isMatch = true;
-              var content_index = [];
-              if (!data.title || data.title.trim() === '') {
-                data.title = "Untitled";
-              }
-              var orig_data_title = data.title.trim();
-              var data_title = orig_data_title.toLowerCase();
-              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
-              var data_content = orig_data_content.toLowerCase();
-              var data_url = data.url;
-              var index_title = -1;
-              var index_content = -1;
-              var first_occur = -1;
-              // only match artiles with not empty contents
-              if (data_content !== '') {
-                keywords.forEach(function (keyword, i) {
-                  index_title = data_title.indexOf(keyword);
-                  index_content = data_content.indexOf(keyword);
-
-                  if (index_title < 0 && index_content < 0) {
-                    isMatch = false;
-                  } else {
-                    if (index_content < 0) {
-                      index_content = 0;
-                    }
-                    if (i == 0) {
-                      first_occur = index_content;
-                    }
-                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
-                  }
-                });
-              } else {
-                isMatch = false;
-              }
-              // 0x05. show search results
-              if (isMatch) {
-                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
-                var content = orig_data_content;
-                if (first_occur >= 0) {
-                  // cut out 100 characters
-                  var start = first_occur - 20;
-                  var end = first_occur + 80;
-
-                  if (start < 0) {
-                    start = 0;
-                  }
-
-                  if (start == 0) {
-                    end = 100;
-                  }
-
-                  if (end > content.length) {
-                    end = content.length;
-                  }
-
-                  var match_content = content.substr(start, end);
-
-                  // highlight all keywords
-                  keywords.forEach(function (keyword) {
-                    var regS = new RegExp(keyword, "gi");
-                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
-                  });
-
-                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
-                }
-                str += "</li>";
-              }
-            });
-            str += "</ul>";
-            if (str.indexOf('<li>') === -1) {
-              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
-            }
-            $resultContent.innerHTML = str;
-          });
-        },
-        error: function(xhr, status, error) {
-          $resultContent.innerHTML = ""
-          if (xhr.status === 404) {
-            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
-          } else {
-            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
-          }
-        }
-      });
-      $(document).on('click', '#search-close-icon', function() {
-        $('#search-input').val('');
-        $('#search-result').html('');
-      });
-    }
-
-    var getSearchFile = function() {
-        var path = "/search.xml";
-        searchFunc(path, 'search-input', 'search-result');
-    }
-  </script>
-
-
-
-
-        
-  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-    <a href="javascript: void(0)">
-      <i id="theme-icon" class="iconfont icon-moon"></i>
-    </a>
-  </div>
-
-  
-<script src="/js/colorscheme.js"></script>
-
-
-
-
-
-        
-  
-    <div class="share-icon tools-bar-item">
-      <a href="javascript: void(0)" id="share-icon">
-        <i class="iconfont iconshare"></i>
-      </a>
-      <div class="share-content hidden">
-        
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + JavaAgent%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E6%9E%90 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FJavaAgent%25E5%2586%2585%25E5%25AD%2598%25E9%25A9%25AC.html + '" target="_blank" title="Twitter">
-            <i class="iconfont icon-twitter"></i>
-          </a>
-        
-        
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html" target="_blank" title="Facebook">
-            <i class="iconfont icon-facebooksquare"></i>
-          </a>
-        
-      </div>
-    </div>
-  
-  
-<script src="/js/shares.js"></script>
-
-
-
-      </div>
-    </div>
-  </body>
-</html>
+<div id="paginator"></div></div><div id="post-footer"><div id="pages"><div class="footer-link" style="width: 50%;text-align:right;border-right:1px #fe2 solid"><a href="/post/Spring%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E6%9E%90.html">← Next Spring型内存马</a></div><div class="footer-link" style="width: 50%;right:1px;border-left:1px #fe2 solid"><a href="/post/RMIRe0.html">RMIRe0 Prev →</a></div></div></div></div><div class="bottom-btn"><div><a class="i-top" id="to-top" onClick="scrolls.scrolltop();" title="To Top" style="opacity: 0; display: none;">∧ </a><a class="i-index" id="to-index" href="#toc-div" title="To Catalog">≡</a><a class="i-color" id="color-mode" onClick="colorMode.change()" title="Change Theme"></a></div></div></article><aside><div id="about"><a href="/" id="logo"><img src="https://bu.dusays.com/2024/06/25/667ac0f8ca940.png" alt="Logo"></a><h1 id="Dr"><a href="/">stoocea</a></h1><div id="description"><p>time thicking away</p></div></div><div id="aside-block"><div id="toc-div"><h1>Catalog</h1><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-javaAgent%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">1.什么是 javaAgent？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#premain-Agent"><span class="toc-number">2.</span> <span class="toc-text">premain-Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#agentmain-Agent"><span class="toc-number">3.</span> <span class="toc-text">agentmain-Agent</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachine%E7%B1%BB"><span class="toc-number">3.1.</span> <span class="toc-text">VirtualMachine类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachineDescriptor%E7%B1%BB"><span class="toc-number">3.2.</span> <span class="toc-text">VirtualMachineDescriptor类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#agentmain-%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.3.</span> <span class="toc-text">agentmain 注入过程详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agentmain-Instrumentation"><span class="toc-number">4.</span> <span class="toc-text">Agentmain-Instrumentation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#addTransformer"><span class="toc-number">4.1.</span> <span class="toc-text">addTransformer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Javassist"><span class="toc-number">4.2.</span> <span class="toc-text">Javassist</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Javassist-%E5%88%9B%E5%BB%BA%E7%B1%BB"><span class="toc-number">4.2.1.</span> <span class="toc-text">使用 Javassist 创建类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E6%80%BB%E7%BB%93"><span class="toc-number">4.2.2.</span> <span class="toc-text">步骤总结</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E7%94%9F%E6%88%90%E7%9A%84-class-%E6%96%87%E4%BB%B6"><span class="toc-number">4.2.3.</span> <span class="toc-text">调用生成的 class 文件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%B7%B2%E5%8A%A0%E8%BD%BD%E7%B1%BB%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-number">5.</span> <span class="toc-text">修改已加载类的字节码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0"><span class="toc-number">6.</span> <span class="toc-text">Agent 内存马实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B"><span class="toc-number">6.1.</span> <span class="toc-text">注入过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE%E4%B8%80%E4%B8%8B"><span class="toc-number">7.</span> <span class="toc-text">回顾一下</span></a></li></ol></div></div><footer><nobr>Published with <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a></nobr><wbr><nobr> Theme <a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknights</a></nobr><wbr><nobr> by <a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main><canvas id="canvas-dust"></canvas></body></html>

@@ -1,174 +1,65 @@
-<!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
-
-  <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="author" content="stoocea" />
-  <!-- Open Graph Description 简短摘要-->
-  
-  <!-- 用于搜索引擎的文章摘要 -->
-  
-  <meta name="description" content="time thicking away" />
-  
-  
-  
-  <title>
-    
-      Spring型内存马 
-      
-      
-      |
-    
-     stoocea&#39;s blog
-  </title>
-
-  
-    <link rel="apple-touch-icon" href="https://bu.dusays.com/2024/04/15/661ce929d665d.png">
-    <link rel="icon" href="https://bu.dusays.com/2024/04/15/661ce929d665d.png">
-  
-
-  <!-- Raleway-Font -->
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
-
-  <!-- hexo site css -->
-  <link rel="stylesheet" href="/css/main.css" />
-  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
-  <!-- 代码块风格 -->
-  
-    
-<link rel="stylesheet" href="/css/figcaption/mac-block.css">
-
-  
-
-  <!-- jquery3.3.1 -->
-  
-    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
-  
-
-  <!-- fancybox -->
-  
-    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
-    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
-  
-  
-<script src="/js/fancybox.js"></script>
-
-
-  
-
-  
-
-  <script>
-    var html = document.documentElement
-    const colorMode = localStorage.getItem('color-mode')
-    if (colorMode) {
-      document.documentElement.setAttribute('color-mode', colorMode)
-    }
-  </script>
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-
-  <body>
-    <div id="app">
-      <div class="header">
-  <div class="avatar">
-    <a href="/">
-      <!-- 头像取消懒加载，添加no-lazy -->
-      
-        <img src="https://bu.dusays.com/2024/04/15/661ce929d665d.png" alt="">
-      
-    </a>
-    <div class="nickname"><a href="/">Stoocea</a></div>
-  </div>
-  <div class="navbar">
-    <ul>
-      
-        <li class="nav-item" data-path="/">
-          <a href="/">Home</a>
-        </li>
-      
-        <li class="nav-item" data-path="/archives/">
-          <a href="/archives/">Archives</a>
-        </li>
-      
-        <li class="nav-item" data-path="/tags/">
-          <a href="/tags/">Tags</a>
-        </li>
-      
-        <li class="nav-item" data-path="/friends/">
-          <a href="/friends/">Friends</a>
-        </li>
-      
-        <li class="nav-item" data-path="/about/">
-          <a href="/about/">About</a>
-        </li>
-      
-    </ul>
-  </div>
-</div>
-
-
-<script src="/js/activeNav.js"></script>
-
-
-
-      <div class="flex-container">
-        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
-<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
-
-
-  <!-- LaTex Display -->
-
-  
-    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
-  
-  <script>
-    MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-      }
-    }
-  </script>
-
-
-
-
-
-  <!-- clipboard -->
-
-  
-    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
-  
-  
-<script src="/js/codeCopy.js"></script>
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
-  <div class="container post-details" id="post-details">
-    <div class="post-content">
-      <div class="post-title">Spring型内存马</div>
-      <div class="post-attach">
-        <span class="post-pubtime">
-          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-04-15 17:06:29
-        </span>
-        
-      </div>
-      <div class="markdown-body">
-        <h1 id="1-Spring-特性"><a href="#1-Spring-特性" class="headerlink" title="1 Spring 特性"></a>1 Spring 特性</h1><h2 id="0x01-综述"><a href="#0x01-综述" class="headerlink" title="0x01 综述"></a>0x01 综述</h2><p>简化来说就是 IOC 和 AOP，中文翻译是控制反转和切面编程。我个人理解：IOC 是把 java 类托管，我们就不需要自己主动去 new 一个类了，按需向 IOC 容器中取就行；AOP 其实我个人感觉很像 JavaAgent，只不过 Spring 实现起来比较简单，写一个配置类和对应的配置文件即可精确定位方法，实现方法执行前，中，后插入代码执行</p>
+<!DOCTYPE html><html lang="zh-CN" theme-mode="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Spring型内存马 | stoocea's blog</title><link rel="icon" type="image/x-icon" href="https://bu.dusays.com/2024/06/25/667ac0f8ca940.png"><link rel="preload" as="font" crossorigin="anonymous" href="/font/Bender.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/BenderLight.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/JetBrainsMono-Regular.woff2"><link rel="stylesheet" href="/css/arknights.css"><style>@font-face {
+  font-family: Bender;
+  src: local('Bender'), url("/font/Bender.ttf"), url("/font/Bender.otf");
+}
+@font-face {
+  font-family: BenderLight;
+  src: local('BenderLight'), url("/font/BenderLight.ttf");
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}
+</style><script>var config = {"root":"/","search":{"preload":false,"activeHolder":"Enter here","blurHolder":"Search","noResult":"Data \"$0\" not found"},"code":{"codeInfo":"$0 - $1 lines","copy":"copy"}}</script><link type="text/css" rel="stylesheet" href="/lib/encrypt/hbe.style.css"><script src="//unpkg.com/mermaid@10.5.0/dist/mermaid.min.js"></script><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lightgallery.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-zoom.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-thumbnail.css"><link type="text/css" rel="stylesheet" href="/lib/fontawesome/css/all.min.css"><script>if (window.localStorage.getItem('theme-mode') === 'light')
+ document.documentElement.setAttribute('theme-mode', 'light')
+if (window.localStorage.getItem('theme-mode') === 'dark')
+ document.documentElement.setAttribute('theme-mode', 'dark')</script><style>@font-face {
+ font-family: BenderLight;
+ src: local('Bender'), url("/font/BenderLight.woff2") format('woff2');
+}
+@font-face {
+ font-family: 'JetBrains Mono';
+ src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}</style><style>:root {
+ --dark-background: url('https://ak.hypergryph.com/assets/index/images/ak/pc/bk.jpg');
+ --light-background: url('/img/bk.jpg');
+ --theme-encrypt-confirm: 'confirm'
+}</style><script defer src="/js/arknights.js"></script><script defer src="/js/search.js"></script><script defer type="module">import mermaid from '//unpkg.com/mermaid@10.5.0/dist/mermaid.esm.mjs';
+window.mermaid = mermaid;
+code.paintMermaid();
+</script><script async src="//unpkg.com/lightgallery@2.7.1/lightgallery.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script><script async src="/lib/encrypt/hbe.js"></script><script async src="/js/pjax.js"></script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js','data-pjax','.busuanzi'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><meta name="generator" content="Hexo 6.3.0"></head><body><div class="loading" style="opacity: 0;"><div class="loadingBar left"></div><div class="loadingBar right"></div></div><main><header class="closed"><div class="navBtn"><i class="navBtnIcon"><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span></i></div><nav><div class="navItem" id="search-header"><span class="navItemTitle"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="Search" spellcheck="false" maxlength="50" type="text" id="search-input"></span></div><div class="navItem" id="search-holder"></div><div class="search-popup" tabindex="0"><div id="search-result"></div></div><ol class="navContent"><li class="navItem"><a class="navBlock" href="/"><span class="navItemTitle">Home</span></a></li><li class="navItem" matchdata="categories,tags"><a class="navBlock" href="/archives/"><span class="navItemTitle">Archives</span></a></li></ol></nav></header><article><div id="post-bg"><div id="post-title"><h1>Spring型内存马</h1><div id="post-info"><span>First Post: <div class="control"><time datetime="2024-03-07T09:50:51.000Z" id="date"> 2024-03-07</time></div></span><br><span>Last Update: <div class="control"><time datetime="2024-04-15T09:06:29.044Z" id="updated"> 2024-04-15</time></div></span></div></div><hr><div id="post-content"><h1 id="1-Spring-特性"><a href="#1-Spring-特性" class="headerlink" title="1 Spring 特性"></a>1 Spring 特性</h1><h2 id="0x01-综述"><a href="#0x01-综述" class="headerlink" title="0x01 综述"></a>0x01 综述</h2><p>简化来说就是 IOC 和 AOP，中文翻译是控制反转和切面编程。我个人理解：IOC 是把 java 类托管，我们就不需要自己主动去 new 一个类了，按需向 IOC 容器中取就行；AOP 其实我个人感觉很像 JavaAgent，只不过 Spring 实现起来比较简单，写一个配置类和对应的配置文件即可精确定位方法，实现方法执行前，中，后插入代码执行</p>
 <h2 id="0x02-Spring-以及-SprinMVC"><a href="#0x02-Spring-以及-SprinMVC" class="headerlink" title="0x02 Spring 以及 SprinMVC"></a>0x02 Spring 以及 SprinMVC</h2><p>我们由 Spring 特性提取出一段信息：Spring 中的对象都是托管给 IOC 容器去管理的，不论是获取，删除等操作，都是由 IOC 容器去做的<br>至于 Spring 或者 springboot 的一个小 demo，师傅们可以移步至其他基础部分，这里就不多阐述<br>然后必须提的一点是 SpringMVC 的流程，我这里有一张图，然后辅助一些文字描述：</p>
 <ul>
 <li>首先 <code>DispatchServlet</code> 接收到客户端发送过来的请求信息（tomcat 已经处理完信息了，由单独的 servlet 接收），然后 <code>DispatchServlet</code>去调用 HandlerMapping，其主要目的是去完成对应 Controller 的搜索</li>
@@ -176,9 +67,9 @@
 <li><code>ModelAndView</code>渲染完毕，发送给 <code>DispatchServlet</code>，让他去处理对应的前端渲染相关工作</li>
 <li>最后<code>DispatchServlet</code>终于返回到了前端，也就是用户看到的数据</li>
 </ul>
-<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709431796433-fc555bfe-d4fa-4203-a47e-aaa6492e306e.png#averageHue=%23f9f9f9&from=url&id=q9Asb&originHeight=567&originWidth=1091&originalType=binary&ratio=1.5&rotation=0&showTitle=false&status=done&style=none&title=" referrerpolicy="no-referrer"><br>所以 SpringMVC 的核心点就是 <code>DispatchServlet</code>，它起到了一个中轴的作用，之后的分析会着重于它</p>
+<p class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709431796433-fc555bfe-d4fa-4203-a47e-aaa6492e306e.png#averageHue=%23f9f9f9&from=url&id=q9Asb&originHeight=567&originWidth=1091&originalType=binary&ratio=1.5&rotation=0&showTitle=false&status=done&style=none&title='><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709431796433-fc555bfe-d4fa-4203-a47e-aaa6492e306e.png#averageHue=%23f9f9f9&from=url&id=q9Asb&originHeight=567&originWidth=1091&originalType=binary&ratio=1.5&rotation=0&showTitle=false&status=done&style=none&title=" referrerpolicy="no-referrer"><br>所以 SpringMVC 的核心点就是 <code>DispatchServlet</code>，它起到了一个中轴的作用，之后的分析会着重于它</p>
 <h2 id="0x03-IOC-容器"><a href="#0x03-IOC-容器" class="headerlink" title="0x03 IOC 容器"></a>0x03 IOC 容器</h2><p>Spring 中 IOC 的中文翻译：<strong>控制反转</strong>，我个人理解为，程序员不用再去过多的处理类的创建和配置，专心于控制逻辑的设计，到需要用到 java 对象时再从容器中取出就行<br>Spring 框架中<code> BeanFactory</code>接口就是 <code>spring</code> IOC 容器的实际代表者，但是 一个 IOC 不可能只单单有这些功能，还需要获取 sources 资源，以及字符转化等功能，所以最终 <code>ApplicationContext</code> 就来继承一些必要的接口（<code>BeanFactory</code> 肯定包含在内），作为 IOC 容器</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709725402899-cda2d1c4-e64f-40aa-a355-8f295de97b65.png#averageHue=%232d2d2d&clientId=u6003de45-a3b1-4&from=paste&height=174&id=ua241b277&originHeight=261&originWidth=1509&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=30665&status=done&style=none&taskId=u2bd84fd0-f00c-409a-91d1-395959d52c4&title=&width=1006" referrerpolicy="no-referrer" alt="图片-55.png"><br>每一个 dispatchservlet 都代表着一段完整的逻辑链，我们在学习的时候一般都是一个 web 程序有一个 dispatchservlet，而一个 dispatchservlet 的创建就代表着一个 <code>child context</code>型的 IOC 容器被创建了，有 child 必有 Root（not father），Spring 中的 <code>Root Context</code>是伴随着 ContextLoaderListener 创建的，这也是全局唯一一个公共的 IOC 容器<br>前面也提到了，IOC 容器的代表者是 <code>ApplicationContext</code>，当然这个 child 的 IOC 容器。<br>Root 的 IOC 容器叫做 <code>WebApplicationContext</code>，所有的 child 可以取访问 Root 容器，但是 Root 却不能去访问 Child 中的内容<br>随着每一个 Context 被创建，都会被最为属性存入 Tomcat 中的 <code>ServletContext</code></p>
+<p class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709725402899-cda2d1c4-e64f-40aa-a355-8f295de97b65.png#averageHue=%232d2d2d&clientId=u6003de45-a3b1-4&from=paste&height=174&id=ua241b277&originHeight=261&originWidth=1509&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=30665&status=done&style=none&taskId=u2bd84fd0-f00c-409a-91d1-395959d52c4&title=&width=1006'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709725402899-cda2d1c4-e64f-40aa-a355-8f295de97b65.png#averageHue=%232d2d2d&clientId=u6003de45-a3b1-4&from=paste&height=174&id=ua241b277&originHeight=261&originWidth=1509&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=30665&status=done&style=none&taskId=u2bd84fd0-f00c-409a-91d1-395959d52c4&title=&width=1006" referrerpolicy="no-referrer" alt="图片-55.png"><br>每一个 dispatchservlet 都代表着一段完整的逻辑链，我们在学习的时候一般都是一个 web 程序有一个 dispatchservlet，而一个 dispatchservlet 的创建就代表着一个 <code>child context</code>型的 IOC 容器被创建了，有 child 必有 Root（not father），Spring 中的 <code>Root Context</code>是伴随着 ContextLoaderListener 创建的，这也是全局唯一一个公共的 IOC 容器<br>前面也提到了，IOC 容器的代表者是 <code>ApplicationContext</code>，当然这个 child 的 IOC 容器。<br>Root 的 IOC 容器叫做 <code>WebApplicationContext</code>，所有的 child 可以取访问 Root 容器，但是 Root 却不能去访问 Child 中的内容<br>随着每一个 Context 被创建，都会被最为属性存入 Tomcat 中的 <code>ServletContext</code></p>
 <p>讲了这么多，其实是为了解决动态注册 Controller 等 Spring 中常用且可用组件注册的问题，也就引出了我们如何注入 Spring 型内存马的整体思路：</p>
 <ul>
 <li>获取到上下文环境内容</li>
@@ -191,11 +82,11 @@
 
 <h5 id="2-WebApplicationContextUtils"><a href="#2-WebApplicationContextUtils" class="headerlink" title="2  WebApplicationContextUtils"></a>2  WebApplicationContextUtils</h5><p>这个工具类的<code>getWebApplicationContext</code> 方法也是获取的 <code>ContextLoaderListener</code> 创建的 <code>Root WebApplicationContext </code></p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">WebApplicationContext</span> context <span class="token operator">=</span> <span class="token class-name">WebApplicationContextUtils</span><span class="token punctuation">.</span><span class="token function">getWebApplicationContext</span><span class="token punctuation">(</span><span class="token class-name">RequestContextUtils</span><span class="token punctuation">.</span><span class="token function">getWebApplicationContext</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">ServletRequestAttributes</span><span class="token punctuation">)</span><span class="token class-name">RequestContextHolder</span><span class="token punctuation">.</span><span class="token function">currentRequestAttributes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getRequest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getServletContext</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>其实这个类的 <code> getRequiredWebApplicationContext</code>也能够获取到 <code>RootContext</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709730801343-a2937304-ff50-4dfd-bb03-c40c99d8cfcd.png#averageHue=%233c4650&clientId=u6003de45-a3b1-4&from=paste&height=69&id=u1f70e752&originHeight=104&originWidth=891&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=73439&status=done&style=none&taskId=ufeace79f-7c8a-4f3d-80f0-7cb9412aecd&title=&width=594" referrerpolicy="no-referrer" alt="image.png"></p>
-<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709730846358-28cf3358-c44f-4c30-b887-984f97aa1050.png#averageHue=%233c424c&clientId=u6003de45-a3b1-4&from=paste&height=244&id=u06599f56&originHeight=366&originWidth=1928&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=286665&status=done&style=none&taskId=u8dd35f0d-9348-4c81-b36f-fe9e76a41d2&title=&width=1285.3333333333333" referrerpolicy="no-referrer" alt="image.png"></p>
-<p>多讲一嘴这个 <code>getWebApplicationContext</code>方法是如何获取到 Root Context 的：<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709730979937-a3b154b2-e4b1-4075-9589-ce6dfbafec94.png#averageHue=%233c424b&clientId=u6003de45-a3b1-4&from=paste&height=514&id=ude405a52&originHeight=771&originWidth=1835&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=650512&status=done&style=none&taskId=u8a810bed-9e16-40be-ab42-85487ea234e&title=&width=1223.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>它其实是从 Servlet 中直接通过键值对取出的 RootContext<br>在这个 Utils 获取 WAC 的整体的逻辑中，最终都是调用到了 <code>getWebApplicationContext</code>来获取</p>
+<p>其实这个类的 <code> getRequiredWebApplicationContext</code>也能够获取到 <code>RootContext</code><br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709730801343-a2937304-ff50-4dfd-bb03-c40c99d8cfcd.png#averageHue=%233c4650&clientId=u6003de45-a3b1-4&from=paste&height=69&id=u1f70e752&originHeight=104&originWidth=891&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=73439&status=done&style=none&taskId=ufeace79f-7c8a-4f3d-80f0-7cb9412aecd&title=&width=594'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709730801343-a2937304-ff50-4dfd-bb03-c40c99d8cfcd.png#averageHue=%233c4650&clientId=u6003de45-a3b1-4&from=paste&height=69&id=u1f70e752&originHeight=104&originWidth=891&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=73439&status=done&style=none&taskId=ufeace79f-7c8a-4f3d-80f0-7cb9412aecd&title=&width=594" referrerpolicy="no-referrer" alt="image.png"></p>
+<p class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709730846358-28cf3358-c44f-4c30-b887-984f97aa1050.png#averageHue=%233c424c&clientId=u6003de45-a3b1-4&from=paste&height=244&id=u06599f56&originHeight=366&originWidth=1928&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=286665&status=done&style=none&taskId=u8dd35f0d-9348-4c81-b36f-fe9e76a41d2&title=&width=1285.3333333333333'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709730846358-28cf3358-c44f-4c30-b887-984f97aa1050.png#averageHue=%233c424c&clientId=u6003de45-a3b1-4&from=paste&height=244&id=u06599f56&originHeight=366&originWidth=1928&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=286665&status=done&style=none&taskId=u8dd35f0d-9348-4c81-b36f-fe9e76a41d2&title=&width=1285.3333333333333" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>多讲一嘴这个 <code>getWebApplicationContext</code>方法是如何获取到 Root Context 的：<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709730979937-a3b154b2-e4b1-4075-9589-ce6dfbafec94.png#averageHue=%233c424b&clientId=u6003de45-a3b1-4&from=paste&height=514&id=ude405a52&originHeight=771&originWidth=1835&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=650512&status=done&style=none&taskId=u8a810bed-9e16-40be-ab42-85487ea234e&title=&width=1223.3333333333333'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709730979937-a3b154b2-e4b1-4075-9589-ce6dfbafec94.png#averageHue=%233c424b&clientId=u6003de45-a3b1-4&from=paste&height=514&id=ude405a52&originHeight=771&originWidth=1835&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=650512&status=done&style=none&taskId=u8a810bed-9e16-40be-ab42-85487ea234e&title=&width=1223.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>它其实是从 Servlet 中直接通过键值对取出的 RootContext<br>在这个 Utils 获取 WAC 的整体的逻辑中，最终都是调用到了 <code>getWebApplicationContext</code>来获取</p>
 <h5 id="3-RequestContextUtils"><a href="#3-RequestContextUtils" class="headerlink" title="3 RequestContextUtils"></a>3 RequestContextUtils</h5><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">WebApplicationContext</span> context <span class="token operator">=</span> <span class="token class-name">RequestContextUtils</span><span class="token punctuation">.</span><span class="token function">getWebApplicationContext</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">ServletRequestAttributes</span><span class="token punctuation">)</span><span class="token class-name">RequestContextHolder</span><span class="token punctuation">.</span><span class="token function">currentRequestAttributes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getRequest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>这个类的 <code>getWebApplicationContext</code>方法现在改成了 <code>findWebApplicationContext</code>方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709731151448-e7a90656-391c-4769-b991-2fade9fca53f.png#averageHue=%233c434c&clientId=u6003de45-a3b1-4&from=paste&height=410&id=ucb7e4fb4&originHeight=615&originWidth=2100&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=547031&status=done&style=none&taskId=u1c72435c-2439-4492-ac4a-d5d44f97eae&title=&width=1400" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>这个类的 <code>getWebApplicationContext</code>方法现在改成了 <code>findWebApplicationContext</code>方法<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709731151448-e7a90656-391c-4769-b991-2fade9fca53f.png#averageHue=%233c434c&clientId=u6003de45-a3b1-4&from=paste&height=410&id=ucb7e4fb4&originHeight=615&originWidth=2100&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=547031&status=done&style=none&taskId=u1c72435c-2439-4492-ac4a-d5d44f97eae&title=&width=1400'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709731151448-e7a90656-391c-4769-b991-2fade9fca53f.png#averageHue=%233c434c&clientId=u6003de45-a3b1-4&from=paste&height=410&id=ucb7e4fb4&originHeight=615&originWidth=2100&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=547031&status=done&style=none&taskId=u1c72435c-2439-4492-ac4a-d5d44f97eae&title=&width=1400" referrerpolicy="no-referrer" alt="image.png"></p>
 <h5 id="4-getAttribute"><a href="#4-getAttribute" class="headerlink" title="4 getAttribute"></a>4 getAttribute</h5><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">WebApplicationContext</span> context <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">WebApplicationContext</span><span class="token punctuation">)</span><span class="token class-name">RequestContextHolder</span><span class="token punctuation">.</span><span class="token function">currentRequestAttributes</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">"org.springframework.web.servlet.DispatcherServlet.CONTEXT"</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>这个是从 ServletContext 中获取</p>
 <h3 id="1x02-动态注册-Controller"><a href="#1x02-动态注册-Controller" class="headerlink" title="1x02 动态注册 Controller"></a>1x02 动态注册 Controller</h3><h4 id="2x01-如何获取到映射注册器"><a href="#2x01-如何获取到映射注册器" class="headerlink" title="2x01 如何获取到映射注册器"></a>2x01 如何获取到映射注册器</h4><p>回顾 MVC 的控制流程，接受到客户端发送的信息之后，调用 <code>HandlerMapping</code>去找对应的 Controller 处理逻辑。这里的 <code>HandlerMapping</code>其实指的是 <code>RequestMappingHandlerMapping</code><br><code>RequestMappingHandlerMapping</code>是 Spring 中一个十分重要的 bean，Spring 会先把 Controller 解析成<code>RequestMappingInfo</code>对象，然后再注册进<code>RequestMappingHandlerMapping</code>中，这样请求才能够从 <code>RequestMappingHandlerMapping</code>中找到对应的 Controller<br>那么现在的目标是如何获取到<code>RequestMappingHandlerMapping</code>并向<code>RequestMappingHandlerMapping</code>中注册 Controller<br>一个一个解决问题：</p>
@@ -227,7 +118,7 @@
 r<span class="token punctuation">.</span><span class="token function">registerMapping</span><span class="token punctuation">(</span>info<span class="token punctuation">,</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"恶意Controller"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> method<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>在其父类 <code>Abstract**HandlerMethod**Mapping</code>中其实还有一个方法可以用来注册路由映射–<code>detectHandlerMethods</code></p>
-<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709737009610-7cb402ad-17a3-4c15-b4c3-d6ae2323fcb7.png#averageHue=%233d434c&clientId=u9af1806a-7a9b-4&from=paste&height=670&id=u04bf8f66&originHeight=1005&originWidth=1745&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=816298&status=done&style=none&taskId=ue9804de3-6f8b-4779-a568-9bc8f6e5ce6&title=&width=1163.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>逻辑为接受一个任意类型的 handler 参数，然后在 IOC 容器中找寻这个名字 bean 进行注册		<br>贴一下实现的伪代码：</p>
+<p class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709737009610-7cb402ad-17a3-4c15-b4c3-d6ae2323fcb7.png#averageHue=%233d434c&clientId=u9af1806a-7a9b-4&from=paste&height=670&id=u04bf8f66&originHeight=1005&originWidth=1745&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=816298&status=done&style=none&taskId=ue9804de3-6f8b-4779-a568-9bc8f6e5ce6&title=&width=1163.3333333333333'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709737009610-7cb402ad-17a3-4c15-b4c3-d6ae2323fcb7.png#averageHue=%233d434c&clientId=u9af1806a-7a9b-4&from=paste&height=670&id=u04bf8f66&originHeight=1005&originWidth=1745&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=816298&status=done&style=none&taskId=ue9804de3-6f8b-4779-a568-9bc8f6e5ce6&title=&width=1163.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>逻辑为接受一个任意类型的 handler 参数，然后在 IOC 容器中找寻这个名字 bean 进行注册		<br>贴一下实现的伪代码：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">context<span class="token punctuation">.</span><span class="token function">getBeanFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">registerSingleton</span><span class="token punctuation">(</span><span class="token string">"dynamicController"</span><span class="token punctuation">,</span> <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"恶意Controller"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
 <span class="token class-name"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>mvc<span class="token punctuation">.</span>method<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span>RequestMappingHandlerMapping</span> requestMappingHandlerMapping <span class="token operator">=</span> context<span class="token punctuation">.</span><span class="token function">getBean</span><span class="token punctuation">(</span><span class="token class-name"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>mvc<span class="token punctuation">.</span>method<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span>RequestMappingHandlerMapping</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -356,7 +247,7 @@ m1<span class="token punctuation">.</span><span class="token function">invoke</s
         <span class="token punctuation">&#125;</span>
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>这里我的版本是 tomcat8   JDK11 然后 spring 版本的是 5，可以复现<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709738213835-98ccdbf1-7cf5-4adf-aeaf-39a29fc85250.png#averageHue=%236d9824&clientId=u9af1806a-7a9b-4&from=paste&height=124&id=ucd52ff9e&originHeight=205&originWidth=2559&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=40796&status=done&style=none&taskId=u908d4aee-1d00-4003-9e9b-ccaebf67e2b&title=&width=1550.9090012689649" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>这里我的版本是 tomcat8   JDK11 然后 spring 版本的是 5，可以复现<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709738213835-98ccdbf1-7cf5-4adf-aeaf-39a29fc85250.png#averageHue=%236d9824&clientId=u9af1806a-7a9b-4&from=paste&height=124&id=ucd52ff9e&originHeight=205&originWidth=2559&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=40796&status=done&style=none&taskId=u908d4aee-1d00-4003-9e9b-ccaebf67e2b&title=&width=1550.9090012689649'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709738213835-98ccdbf1-7cf5-4adf-aeaf-39a29fc85250.png#averageHue=%236d9824&clientId=u9af1806a-7a9b-4&from=paste&height=124&id=ucd52ff9e&originHeight=205&originWidth=2559&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=40796&status=done&style=none&taskId=u908d4aee-1d00-4003-9e9b-ccaebf67e2b&title=&width=1550.9090012689649" referrerpolicy="no-referrer" alt="image.png"></p>
 <p>如果师傅们出不来结果，考虑如下几个方面的环境配置<br>springmvc 中的配置是否完整，也即是否扫描了识别了 controller，和是否配置了 springmvc 的注解引擎</p>
 <pre class="line-numbers language-markup" data-language="markup"><code class="language-markup"><span class="token prolog">&lt;?xml version="1.0" encoding="UTF-8"?></span>
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>beans</span> <span class="token attr-name">xmlns</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>http://www.springframework.org/schema/beans<span class="token punctuation">"</span></span>
@@ -433,7 +324,7 @@ m1<span class="token punctuation">.</span><span class="token function">invoke</s
 <li>通过实现<code>WebRequestInterceptor </code>或者继承 <code> WebRequestInterceptor</code>接口的实现类</li>
 </ol>
 <p>现在来尝试实现一个 Interceptor，采用的方法是直接实现<code>HandlerInterceptor</code>接口，<code>HandlerInterceptor</code>接口本身就有三个方法’</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709778858494-b85ebdf6-88bf-4b7c-94c1-d9dccc7d1ae2.png#averageHue=%233c454f&clientId=u1acac59a-b2bd-4&from=paste&height=113&id=udaf047ac&originHeight=187&originWidth=787&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=82905&status=done&style=none&taskId=u742da094-486d-4f93-a371-f2650039753&title=&width=476.9696694015925" referrerpolicy="no-referrer" alt="image.png"></p>
+<p class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709778858494-b85ebdf6-88bf-4b7c-94c1-d9dccc7d1ae2.png#averageHue=%233c454f&clientId=u1acac59a-b2bd-4&from=paste&height=113&id=udaf047ac&originHeight=187&originWidth=787&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=82905&status=done&style=none&taskId=u742da094-486d-4f93-a371-f2650039753&title=&width=476.9696694015925'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709778858494-b85ebdf6-88bf-4b7c-94c1-d9dccc7d1ae2.png#averageHue=%233c454f&clientId=u1acac59a-b2bd-4&from=paste&height=113&id=udaf047ac&originHeight=187&originWidth=787&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=82905&status=done&style=none&taskId=u742da094-486d-4f93-a371-f2650039753&title=&width=476.9696694015925" referrerpolicy="no-referrer" alt="image.png"></p>
 <ul>
 <li>preHandle：该方法在控制器的处理请求方法前执行，其返回值表示是否中断后续操作，返回 true 表示继续向下执行，返回 false 表示中断后续操作。</li>
 <li>postHandle：该方法在控制器的处理请求方法调用之后、解析视图之前执行，可以通过此方法对请求域中的模型和视图做进一步的修改。</li>
@@ -506,9 +397,9 @@ m1<span class="token punctuation">.</span><span class="token function">invoke</s
         <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p>当我们访问 hello 路由时<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709780409533-fbcc9074-73cc-4444-968c-f59833f0114c.png#averageHue=%239db2b4&clientId=u1acac59a-b2bd-4&from=paste&height=137&id=u9ce7f38b&originHeight=226&originWidth=908&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=16222&status=done&style=none&taskId=u3a8ce0ab-9d59-4cf4-8adf-ca3f53aae1d&title=&width=550.3029984963736" referrerpolicy="no-referrer" alt="image.png"><br>会发现直接被拦截器阻断，返回 loginfirst 字符串<br>但如果我们访问 login 路由<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709780435038-6e559d7d-71d6-44ca-834b-908a049a9b21.png#averageHue=%23abcfbe&clientId=u1acac59a-b2bd-4&from=paste&height=132&id=ud2168b84&originHeight=218&originWidth=730&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=15075&status=done&style=none&taskId=ub6b966fc-146d-4f84-87f8-0b37fa1190c&title=&width=442.42421685281136" referrerpolicy="no-referrer" alt="image.png"><br>成功执行了 interceptor 的逻辑，但是 controller 的逻辑并没有执行，这是因为拦截器在接受到请求数据，并且执行完 handler 的逻辑之后，已经把结果写入 response 进行返回了，dispatchservlet 会假定拦截器本身已经处理完毕请求，不会再去执行后续的 controller 逻辑,所以我们之后 controller 该返回的 logintest 字符串就没出来</p>
-<h2 id="0x02-interceptor-的调用流程"><a href="#0x02-interceptor-的调用流程" class="headerlink" title="0x02 interceptor 的调用流程"></a>0x02 interceptor 的调用流程</h2><p>在 interceptor 的执行内容中下一个断点<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709790892112-c1e7eec8-e2f9-4588-bd2f-8a8677ed3be2.png#averageHue=%233f4850&clientId=u1acac59a-b2bd-4&from=paste&height=95&id=u314b2d34&originHeight=157&originWidth=1854&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=144980&status=done&style=none&taskId=u075464a1-f431-4da0-bf8c-566ec828359&title=&width=1123.6362986919346" referrerpolicy="no-referrer" alt="image.png"><br>然后访问 login 路由查看调用栈，会发现其实还是 filter 先执行，然后经过 dispatchservlet 之后才会被分配到执行 interceptor 的内容<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709790663320-723fd81d-465f-4d97-ae2a-30e9f32611dc.png#averageHue=%235c5d56&clientId=u1acac59a-b2bd-4&from=paste&height=341&id=uea7fae2e&originHeight=562&originWidth=978&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=385497&status=done&style=none&taskId=ua80287f3-3830-4c32-a1a1-a63067efa8e&title=&width=592.7272384685609" referrerpolicy="no-referrer" alt="image.png"><br>前面的内容就不探究了，我们到 disaptchservlet 的 dodispatch 方法<br>走到如下图的 <code>getHandler</code>处<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709791713535-eeceaff7-5038-4abd-bf6c-bd8ebca0d451.png#averageHue=%233d444d&clientId=u1acac59a-b2bd-4&from=paste&height=169&id=ubc6c43bf&originHeight=279&originWidth=1684&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=181274&status=done&style=none&taskId=ubc46d74c-c953-43cb-8101-0ec4b4f03f8&title=&width=1020.6060016166224" referrerpolicy="no-referrer" alt="image.png"><br>然后继续跟进到 getHandler 方法的具体内容<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709791762674-68facd33-9e14-4773-a34c-5491920a42c0.png#averageHue=%233c444c&clientId=u1acac59a-b2bd-4&from=paste&height=268&id=udc3cdaab&originHeight=443&originWidth=2021&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=351859&status=done&style=none&taskId=u671e5ee4-b732-42bd-835b-eb1b2f45984&title=&width=1224.8484140541532" referrerpolicy="no-referrer" alt="image.png"><br>最终还是调用到了 <code>AbstractHandlerMapping</code> 的 <code>getHandler</code> 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709791806939-9fa78dc7-b398-42fa-8eba-cdf7c4ef0c2c.png#averageHue=%233c444c&clientId=u1acac59a-b2bd-4&from=paste&height=355&id=u98f48aa9&originHeight=585&originWidth=2115&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=487622&status=done&style=none&taskId=u25f68e83-0c81-46e2-9e17-564e8f70e48&title=&width=1281.8181077310905" referrerpolicy="no-referrer" alt="image.png"><br>继续跟进到 <code>getHandlerExecutionChain</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792130230-17f71eeb-ea1f-406d-ad79-df04267153f9.png#averageHue=%233e464f&clientId=u8df47c52-911f-4&from=paste&height=238&id=u1fd700f2&originHeight=393&originWidth=1892&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=409825&status=done&style=none&taskId=u72ba2991-98e8-4246-a17d-1a795cfe3fd&title=&width=1146.666600391122" referrerpolicy="no-referrer" alt="image.png"><br>这里的逻辑是最终返回一串 HandlerChain，但是一开始进入方法的时候，HandlerChain 是为空的，我们需要从<code>adaptedInterceptors</code>中循环遍历获取 interceptor，add 到 chain 中，这里默认存在几个自带的 interceptor，最后才会加入我们自己写的 interceptor<br>跟进 addInterceptor<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792123167-8bee5670-3b3c-40ec-a58e-3c347197d085.png#averageHue=%233b424b&clientId=u8df47c52-911f-4&from=paste&height=261&id=u432d23d2&originHeight=431&originWidth=1894&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=440111&status=done&style=none&taskId=u327ca40e-fc8f-4aa4-b297-b3d88b0271b&title=&width=1147.8787215331845" referrerpolicy="no-referrer" alt="image.png"><br>直接就调用 add 方法添加了，没有任何过滤<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792436021-c419ccdd-699e-43e5-8936-92ee30dc4561.png#averageHue=%233e444c&clientId=u8df47c52-911f-4&from=paste&height=113&id=u8994262f&originHeight=187&originWidth=1645&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=117630&status=done&style=none&taskId=u10f62dc4-7e54-47ac-978f-e4d5ddb22e3&title=&width=996.9696393464037" referrerpolicy="no-referrer" alt="image.png"><br>最后直接返回刚才通过循环遍历添加的 interceptor 列表，其中就包括我们写的测试 interceptor<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792493882-7ea5a72f-8e6c-453c-a541-f8f8870174dd.png#averageHue=%233c434b&clientId=u8df47c52-911f-4&from=paste&height=533&id=u8f5a6319&originHeight=879&originWidth=1860&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=883435&status=done&style=none&taskId=u2bb7dc75-d819-49fc-8bea-1fa9cfd0ea9&title=&width=1127.272662118122" referrerpolicy="no-referrer" alt="image.png"></p>
-<p>返回到 dispatch 的逻辑，来到 applyPreHandle 方法，他这里就开始调用每一个 interceptor 的 preHandle 方法了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792650364-ea907d18-95b6-410b-b03c-b243706de5d6.png#averageHue=%233e444c&clientId=u8df47c52-911f-4&from=paste&height=105&id=uf1d884bf&originHeight=174&originWidth=1761&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=100259&status=done&style=none&taskId=u1dd5ba29-cc6b-4e0e-bca7-4a10b7fa258&title=&width=1067.2726655860286" referrerpolicy="no-referrer" alt="image.png"><br>直到这里就是整个 interceptor 从获取到调用 prehandle 的流程，其实做完整个 prehandle 就是直接开始调用 handle 到 controller 处理逻辑了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792780416-1aca7c8b-3079-4531-bb4e-cd380d893af1.png#averageHue=%233e444c&clientId=u8df47c52-911f-4&from=paste&height=86&id=u69fbac18&originHeight=142&originWidth=1127&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=63852&status=done&style=none&taskId=udb9cefcd-bf9d-417a-94ce-566447fd9e1&title=&width=683.030263552217" referrerpolicy="no-referrer" alt="image.png"><br>根据刚才调用栈和流程分析不难看出，其实 spring 这一层是要优先级低于 tomcat 的，因为毕竟其核心分配器<code>dispatchServlet</code>也属于是 servlet，肯定要执行的比 filter<br>整合一下大概的流程</p>
+<p>当我们访问 hello 路由时<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709780409533-fbcc9074-73cc-4444-968c-f59833f0114c.png#averageHue=%239db2b4&clientId=u1acac59a-b2bd-4&from=paste&height=137&id=u9ce7f38b&originHeight=226&originWidth=908&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=16222&status=done&style=none&taskId=u3a8ce0ab-9d59-4cf4-8adf-ca3f53aae1d&title=&width=550.3029984963736'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709780409533-fbcc9074-73cc-4444-968c-f59833f0114c.png#averageHue=%239db2b4&clientId=u1acac59a-b2bd-4&from=paste&height=137&id=u9ce7f38b&originHeight=226&originWidth=908&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=16222&status=done&style=none&taskId=u3a8ce0ab-9d59-4cf4-8adf-ca3f53aae1d&title=&width=550.3029984963736" referrerpolicy="no-referrer" alt="image.png"><br>会发现直接被拦截器阻断，返回 loginfirst 字符串<br>但如果我们访问 login 路由<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709780435038-6e559d7d-71d6-44ca-834b-908a049a9b21.png#averageHue=%23abcfbe&clientId=u1acac59a-b2bd-4&from=paste&height=132&id=ud2168b84&originHeight=218&originWidth=730&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=15075&status=done&style=none&taskId=ub6b966fc-146d-4f84-87f8-0b37fa1190c&title=&width=442.42421685281136'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709780435038-6e559d7d-71d6-44ca-834b-908a049a9b21.png#averageHue=%23abcfbe&clientId=u1acac59a-b2bd-4&from=paste&height=132&id=ud2168b84&originHeight=218&originWidth=730&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=15075&status=done&style=none&taskId=ub6b966fc-146d-4f84-87f8-0b37fa1190c&title=&width=442.42421685281136" referrerpolicy="no-referrer" alt="image.png"><br>成功执行了 interceptor 的逻辑，但是 controller 的逻辑并没有执行，这是因为拦截器在接受到请求数据，并且执行完 handler 的逻辑之后，已经把结果写入 response 进行返回了，dispatchservlet 会假定拦截器本身已经处理完毕请求，不会再去执行后续的 controller 逻辑,所以我们之后 controller 该返回的 logintest 字符串就没出来</p>
+<h2 id="0x02-interceptor-的调用流程"><a href="#0x02-interceptor-的调用流程" class="headerlink" title="0x02 interceptor 的调用流程"></a>0x02 interceptor 的调用流程</h2><p>在 interceptor 的执行内容中下一个断点<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709790892112-c1e7eec8-e2f9-4588-bd2f-8a8677ed3be2.png#averageHue=%233f4850&clientId=u1acac59a-b2bd-4&from=paste&height=95&id=u314b2d34&originHeight=157&originWidth=1854&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=144980&status=done&style=none&taskId=u075464a1-f431-4da0-bf8c-566ec828359&title=&width=1123.6362986919346'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709790892112-c1e7eec8-e2f9-4588-bd2f-8a8677ed3be2.png#averageHue=%233f4850&clientId=u1acac59a-b2bd-4&from=paste&height=95&id=u314b2d34&originHeight=157&originWidth=1854&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=144980&status=done&style=none&taskId=u075464a1-f431-4da0-bf8c-566ec828359&title=&width=1123.6362986919346" referrerpolicy="no-referrer" alt="image.png"><br>然后访问 login 路由查看调用栈，会发现其实还是 filter 先执行，然后经过 dispatchservlet 之后才会被分配到执行 interceptor 的内容<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709790663320-723fd81d-465f-4d97-ae2a-30e9f32611dc.png#averageHue=%235c5d56&clientId=u1acac59a-b2bd-4&from=paste&height=341&id=uea7fae2e&originHeight=562&originWidth=978&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=385497&status=done&style=none&taskId=ua80287f3-3830-4c32-a1a1-a63067efa8e&title=&width=592.7272384685609'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709790663320-723fd81d-465f-4d97-ae2a-30e9f32611dc.png#averageHue=%235c5d56&clientId=u1acac59a-b2bd-4&from=paste&height=341&id=uea7fae2e&originHeight=562&originWidth=978&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=385497&status=done&style=none&taskId=ua80287f3-3830-4c32-a1a1-a63067efa8e&title=&width=592.7272384685609" referrerpolicy="no-referrer" alt="image.png"><br>前面的内容就不探究了，我们到 disaptchservlet 的 dodispatch 方法<br>走到如下图的 <code>getHandler</code>处<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709791713535-eeceaff7-5038-4abd-bf6c-bd8ebca0d451.png#averageHue=%233d444d&clientId=u1acac59a-b2bd-4&from=paste&height=169&id=ubc6c43bf&originHeight=279&originWidth=1684&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=181274&status=done&style=none&taskId=ubc46d74c-c953-43cb-8101-0ec4b4f03f8&title=&width=1020.6060016166224'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709791713535-eeceaff7-5038-4abd-bf6c-bd8ebca0d451.png#averageHue=%233d444d&clientId=u1acac59a-b2bd-4&from=paste&height=169&id=ubc6c43bf&originHeight=279&originWidth=1684&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=181274&status=done&style=none&taskId=ubc46d74c-c953-43cb-8101-0ec4b4f03f8&title=&width=1020.6060016166224" referrerpolicy="no-referrer" alt="image.png"><br>然后继续跟进到 getHandler 方法的具体内容<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709791762674-68facd33-9e14-4773-a34c-5491920a42c0.png#averageHue=%233c444c&clientId=u1acac59a-b2bd-4&from=paste&height=268&id=udc3cdaab&originHeight=443&originWidth=2021&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=351859&status=done&style=none&taskId=u671e5ee4-b732-42bd-835b-eb1b2f45984&title=&width=1224.8484140541532'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709791762674-68facd33-9e14-4773-a34c-5491920a42c0.png#averageHue=%233c444c&clientId=u1acac59a-b2bd-4&from=paste&height=268&id=udc3cdaab&originHeight=443&originWidth=2021&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=351859&status=done&style=none&taskId=u671e5ee4-b732-42bd-835b-eb1b2f45984&title=&width=1224.8484140541532" referrerpolicy="no-referrer" alt="image.png"><br>最终还是调用到了 <code>AbstractHandlerMapping</code> 的 <code>getHandler</code> 方法<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709791806939-9fa78dc7-b398-42fa-8eba-cdf7c4ef0c2c.png#averageHue=%233c444c&clientId=u1acac59a-b2bd-4&from=paste&height=355&id=u98f48aa9&originHeight=585&originWidth=2115&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=487622&status=done&style=none&taskId=u25f68e83-0c81-46e2-9e17-564e8f70e48&title=&width=1281.8181077310905'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709791806939-9fa78dc7-b398-42fa-8eba-cdf7c4ef0c2c.png#averageHue=%233c444c&clientId=u1acac59a-b2bd-4&from=paste&height=355&id=u98f48aa9&originHeight=585&originWidth=2115&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=487622&status=done&style=none&taskId=u25f68e83-0c81-46e2-9e17-564e8f70e48&title=&width=1281.8181077310905" referrerpolicy="no-referrer" alt="image.png"><br>继续跟进到 <code>getHandlerExecutionChain</code><br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792130230-17f71eeb-ea1f-406d-ad79-df04267153f9.png#averageHue=%233e464f&clientId=u8df47c52-911f-4&from=paste&height=238&id=u1fd700f2&originHeight=393&originWidth=1892&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=409825&status=done&style=none&taskId=u72ba2991-98e8-4246-a17d-1a795cfe3fd&title=&width=1146.666600391122'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792130230-17f71eeb-ea1f-406d-ad79-df04267153f9.png#averageHue=%233e464f&clientId=u8df47c52-911f-4&from=paste&height=238&id=u1fd700f2&originHeight=393&originWidth=1892&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=409825&status=done&style=none&taskId=u72ba2991-98e8-4246-a17d-1a795cfe3fd&title=&width=1146.666600391122" referrerpolicy="no-referrer" alt="image.png"><br>这里的逻辑是最终返回一串 HandlerChain，但是一开始进入方法的时候，HandlerChain 是为空的，我们需要从<code>adaptedInterceptors</code>中循环遍历获取 interceptor，add 到 chain 中，这里默认存在几个自带的 interceptor，最后才会加入我们自己写的 interceptor<br>跟进 addInterceptor<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792123167-8bee5670-3b3c-40ec-a58e-3c347197d085.png#averageHue=%233b424b&clientId=u8df47c52-911f-4&from=paste&height=261&id=u432d23d2&originHeight=431&originWidth=1894&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=440111&status=done&style=none&taskId=u327ca40e-fc8f-4aa4-b297-b3d88b0271b&title=&width=1147.8787215331845'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792123167-8bee5670-3b3c-40ec-a58e-3c347197d085.png#averageHue=%233b424b&clientId=u8df47c52-911f-4&from=paste&height=261&id=u432d23d2&originHeight=431&originWidth=1894&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=440111&status=done&style=none&taskId=u327ca40e-fc8f-4aa4-b297-b3d88b0271b&title=&width=1147.8787215331845" referrerpolicy="no-referrer" alt="image.png"><br>直接就调用 add 方法添加了，没有任何过滤<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792436021-c419ccdd-699e-43e5-8936-92ee30dc4561.png#averageHue=%233e444c&clientId=u8df47c52-911f-4&from=paste&height=113&id=u8994262f&originHeight=187&originWidth=1645&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=117630&status=done&style=none&taskId=u10f62dc4-7e54-47ac-978f-e4d5ddb22e3&title=&width=996.9696393464037'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792436021-c419ccdd-699e-43e5-8936-92ee30dc4561.png#averageHue=%233e444c&clientId=u8df47c52-911f-4&from=paste&height=113&id=u8994262f&originHeight=187&originWidth=1645&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=117630&status=done&style=none&taskId=u10f62dc4-7e54-47ac-978f-e4d5ddb22e3&title=&width=996.9696393464037" referrerpolicy="no-referrer" alt="image.png"><br>最后直接返回刚才通过循环遍历添加的 interceptor 列表，其中就包括我们写的测试 interceptor<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792493882-7ea5a72f-8e6c-453c-a541-f8f8870174dd.png#averageHue=%233c434b&clientId=u8df47c52-911f-4&from=paste&height=533&id=u8f5a6319&originHeight=879&originWidth=1860&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=883435&status=done&style=none&taskId=u2bb7dc75-d819-49fc-8bea-1fa9cfd0ea9&title=&width=1127.272662118122'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792493882-7ea5a72f-8e6c-453c-a541-f8f8870174dd.png#averageHue=%233c434b&clientId=u8df47c52-911f-4&from=paste&height=533&id=u8f5a6319&originHeight=879&originWidth=1860&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=883435&status=done&style=none&taskId=u2bb7dc75-d819-49fc-8bea-1fa9cfd0ea9&title=&width=1127.272662118122" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>返回到 dispatch 的逻辑，来到 applyPreHandle 方法，他这里就开始调用每一个 interceptor 的 preHandle 方法了<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792650364-ea907d18-95b6-410b-b03c-b243706de5d6.png#averageHue=%233e444c&clientId=u8df47c52-911f-4&from=paste&height=105&id=uf1d884bf&originHeight=174&originWidth=1761&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=100259&status=done&style=none&taskId=u1dd5ba29-cc6b-4e0e-bca7-4a10b7fa258&title=&width=1067.2726655860286'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792650364-ea907d18-95b6-410b-b03c-b243706de5d6.png#averageHue=%233e444c&clientId=u8df47c52-911f-4&from=paste&height=105&id=uf1d884bf&originHeight=174&originWidth=1761&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=100259&status=done&style=none&taskId=u1dd5ba29-cc6b-4e0e-bca7-4a10b7fa258&title=&width=1067.2726655860286" referrerpolicy="no-referrer" alt="image.png"><br>直到这里就是整个 interceptor 从获取到调用 prehandle 的流程，其实做完整个 prehandle 就是直接开始调用 handle 到 controller 处理逻辑了<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792780416-1aca7c8b-3079-4531-bb4e-cd380d893af1.png#averageHue=%233e444c&clientId=u8df47c52-911f-4&from=paste&height=86&id=u69fbac18&originHeight=142&originWidth=1127&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=63852&status=done&style=none&taskId=udb9cefcd-bf9d-417a-94ce-566447fd9e1&title=&width=683.030263552217'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709792780416-1aca7c8b-3079-4531-bb4e-cd380d893af1.png#averageHue=%233e444c&clientId=u8df47c52-911f-4&from=paste&height=86&id=u69fbac18&originHeight=142&originWidth=1127&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=63852&status=done&style=none&taskId=udb9cefcd-bf9d-417a-94ce-566447fd9e1&title=&width=683.030263552217" referrerpolicy="no-referrer" alt="image.png"><br>根据刚才调用栈和流程分析不难看出，其实 spring 这一层是要优先级低于 tomcat 的，因为毕竟其核心分配器<code>dispatchServlet</code>也属于是 servlet，肯定要执行的比 filter<br>整合一下大概的流程</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">HttpRequest</span> <span class="token operator">--</span><span class="token operator">></span> <span class="token class-name">Filter</span> <span class="token operator">--</span><span class="token operator">></span> <span class="token class-name">DispactherServlet</span> <span class="token operator">--</span><span class="token operator">></span> <span class="token class-name">Interceptor</span> <span class="token operator">--</span><span class="token operator">></span> <span class="token class-name">Controller</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
 <h2 id="0x03-interceptor-内存马的实现流程"><a href="#0x03-interceptor-内存马的实现流程" class="headerlink" title="0x03 interceptor 内存马的实现流程"></a>0x03 interceptor 内存马的实现流程</h2><p>上面的流程分析其实只是在走 interceptor 被注册完之后走的流程，也就是 interceptor 如何执行的，我们注入 interceptor 内存马就必须直到 interceptor 如何先注册到 <code>adaptedInterceptors</code>中<br>既然是 Spring 型，那所有的想取到的类我们都能通过 IOC 容器去取，这里首先要明确目标，我们要找的是谁？—-&gt;根据刚才的流程分析，我们刚才添加的每一个 interceptor 都是从<code>adaptedInterceptors</code>属性值中取的，所以我们待会要获取的就是 <code>adaptedInterceptors</code>的所属对象—<code>AbstractHandlerMapping</code></p>
@@ -605,351 +496,5 @@ field1<span class="token punctuation">.</span><span class="token function">setAc
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span>
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>测试其他 4 种方式也是成功的<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709795113399-15ade1c7-1cb8-4be1-92b6-5f546d1c11cb.png#averageHue=%23dedddc&clientId=u8df47c52-911f-4&from=paste&height=513&id=uac6a0b89&originHeight=846&originWidth=2534&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=207982&status=done&style=none&taskId=u0eab628a-7133-4c47-9a84-8408883dbb5&title=&width=1535.7574869931836" referrerpolicy="no-referrer" alt="image.png"></p>
-
-      </div>
-      
-        <div class="prev-or-next">
-          <div class="post-foot-next">
-            
-              <a href="/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html" target="_self">
-                <i class="iconfont icon-chevronleft"></i>
-                <span>上一页</span>
-              </a>
-            
-          </div>
-          <div class="post-attach">
-            <span class="post-pubtime">
-              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-04-15 17:06:29
-            </span>
-            
-          </div>
-          <div class="post-foot-prev">
-            
-              <a href="/post/JNDIRe0.html" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-    </div>
-    
-  <div id="btn-catalog" class="btn-catalog">
-    <i class="iconfont icon-catalog"></i>
-  </div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">目录</div>
-    <div class="catalog-content">
-      
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-Spring-%E7%89%B9%E6%80%A7"><span class="toc-text">1 Spring 特性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%BB%BC%E8%BF%B0"><span class="toc-text">0x01 综述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Spring-%E4%BB%A5%E5%8F%8A-SprinMVC"><span class="toc-text">0x02 Spring 以及 SprinMVC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-IOC-%E5%AE%B9%E5%99%A8"><span class="toc-text">0x03 IOC 容器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-Controller-%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-text">2 Controller 型内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF-Controller%EF%BC%9F"><span class="toc-text">0x01 为什么是 Controller？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90"><span class="toc-text">0x02 实现分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%8E%B7%E5%8F%96%E5%88%B0%E4%B8%8A%E4%B8%8B%E6%96%87%E5%86%85%E5%AE%B9"><span class="toc-text">1x01 获取到上下文内容</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E8%AE%A1%E5%9B%9B%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="toc-text">总计四种方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-ContextLoaderListener"><span class="toc-text">1 ContextLoaderListener</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-WebApplicationContextUtils"><span class="toc-text">2  WebApplicationContextUtils</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-RequestContextUtils"><span class="toc-text">3 RequestContextUtils</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-getAttribute"><span class="toc-text">4 getAttribute</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C-Controller"><span class="toc-text">1x02 动态注册 Controller</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E5%88%B0%E6%98%A0%E5%B0%84%E6%B3%A8%E5%86%8C%E5%99%A8"><span class="toc-text">2x01 如何获取到映射注册器</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%92%88%E5%AF%B9%E4%BA%8E-RequestMappingHandlerMapping-%E6%98%A0%E5%B0%84%E5%99%A8%E7%9A%84%E8%8E%B7%E5%8F%96%E5%92%8C%E6%B3%A8%E5%86%8C"><span class="toc-text">针对于  RequestMappingHandlerMapping 映射器的获取和注册</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%9C%80%E7%BB%88%E5%AE%9E%E7%8E%B0-POC"><span class="toc-text">0x03 最终实现 POC</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-interceptor-%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-text">3 interceptor 型内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E4%BB%80%E4%B9%88%E6%98%AF-interceptor"><span class="toc-text">0x01 什么是 interceptor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-interceptor-%E7%9A%84%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B"><span class="toc-text">0x02 interceptor 的调用流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-interceptor-%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B"><span class="toc-text">0x03 interceptor 内存马的实现流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%8E%B7%E5%8F%96AbstractHandlerMapping"><span class="toc-text">1x01 获取AbstractHandlerMapping</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C-interceptor"><span class="toc-text">1x02 动态注册 interceptor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-%E5%AE%8C%E6%95%B4-POC"><span class="toc-text">1x03 完整 POC</span></a></li></ol></li></ol></li></ol>
-      
-    </div>
-  </div>
-
-  
-<script src="/js/catalog.js"></script>
-
-
-
-
-    
-      <div class="comments-container">
-        
-
-
-
-
-
-
-
-      </div>
-    
-  </div>
-
-
-        
-<div class="footer">
-  <div class="social">
-    <ul>
-      
-        <li>
-          
-              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
-                <i class="iconfont icon-github"></i>
-              </a>
-              
-        </li>
-        
-    </ul>
-  </div>
-  
-    
-    <div class="footer-more">
-      
-        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
-        
-    </div>
-  
-    
-    <div class="footer-more">
-      
-        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
-        
-    </div>
-  
-  
-</div>
-
-      </div>
-
-      <div class="tools-bar">
-        <div class="back-to-top tools-bar-item hidden">
-  <a href="javascript: void(0)">
-    <i class="iconfont icon-chevronup"></i>
-  </a>
-</div>
-
-
-<script src="/js/backtotop.js"></script>
-
-
-
-        
-  <div class="search-icon tools-bar-item" id="search-icon">
-    <a href="javascript: void(0)">
-      <i class="iconfont icon-search"></i>
-    </a>
-  </div>
-
-  <div class="search-overlay hidden">
-    <div class="search-content" tabindex="0">
-      <div class="search-title">
-        <span class="search-icon-input">
-          <a href="javascript: void(0)">
-            <i class="iconfont icon-search"></i>
-          </a>
-        </span>
-        
-          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
-        
-        <span class="search-close-icon" id="search-close-icon">
-          <a href="javascript: void(0)">
-            <i class="iconfont icon-close"></i>
-          </a>
-        </span>
-      </div>
-      <div class="search-result" id="search-result"></div>
-    </div>
-  </div>
-
-  <script type="text/javascript">
-    var inputArea = document.querySelector("#search-input")
-    var searchOverlayArea = document.querySelector(".search-overlay")
-
-    inputArea.onclick = function() {
-      getSearchFile()
-      this.onclick = null
-    }
-
-    inputArea.onkeydown = function() {
-      if(event.keyCode == 13)
-        return false
-    }
-
-    function openOrHideSearchContent() {
-      let isHidden = searchOverlayArea.classList.contains('hidden')
-      if (isHidden) {
-        searchOverlayArea.classList.remove('hidden')
-        document.body.classList.add('hidden')
-        // inputArea.focus()
-      } else {
-        searchOverlayArea.classList.add('hidden')
-        document.body.classList.remove('hidden')
-      }
-    }
-
-    function blurSearchContent(e) {
-      if (e.target === searchOverlayArea) {
-        openOrHideSearchContent()
-      }
-    }
-
-    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
-    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
-    searchOverlayArea.addEventListener("click", blurSearchContent, false)
-
-    var searchFunc = function (path, search_id, content_id) {
-      'use strict';
-      var $input = document.getElementById(search_id);
-      var $resultContent = document.getElementById(content_id);
-      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
-      $.ajax({
-        // 0x01. load xml file
-        url: path,
-        dataType: "xml",
-        success: function (xmlResponse) {
-          // 0x02. parse xml file
-          var datas = $("entry", xmlResponse).map(function () {
-            return {
-              title: $("title", this).text(),
-              content: $("content", this).text(),
-              url: $("url", this).text()
-            };
-          }).get();
-          $resultContent.innerHTML = "";
-
-          $input.addEventListener('input', function () {
-            // 0x03. parse query to keywords list
-            var str = '<ul class=\"search-result-list\">';
-            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
-            $resultContent.innerHTML = "";
-            if (this.value.trim().length <= 0) {
-              return;
-            }
-            // 0x04. perform local searching
-            datas.forEach(function (data) {
-              var isMatch = true;
-              var content_index = [];
-              if (!data.title || data.title.trim() === '') {
-                data.title = "Untitled";
-              }
-              var orig_data_title = data.title.trim();
-              var data_title = orig_data_title.toLowerCase();
-              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
-              var data_content = orig_data_content.toLowerCase();
-              var data_url = data.url;
-              var index_title = -1;
-              var index_content = -1;
-              var first_occur = -1;
-              // only match artiles with not empty contents
-              if (data_content !== '') {
-                keywords.forEach(function (keyword, i) {
-                  index_title = data_title.indexOf(keyword);
-                  index_content = data_content.indexOf(keyword);
-
-                  if (index_title < 0 && index_content < 0) {
-                    isMatch = false;
-                  } else {
-                    if (index_content < 0) {
-                      index_content = 0;
-                    }
-                    if (i == 0) {
-                      first_occur = index_content;
-                    }
-                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
-                  }
-                });
-              } else {
-                isMatch = false;
-              }
-              // 0x05. show search results
-              if (isMatch) {
-                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
-                var content = orig_data_content;
-                if (first_occur >= 0) {
-                  // cut out 100 characters
-                  var start = first_occur - 20;
-                  var end = first_occur + 80;
-
-                  if (start < 0) {
-                    start = 0;
-                  }
-
-                  if (start == 0) {
-                    end = 100;
-                  }
-
-                  if (end > content.length) {
-                    end = content.length;
-                  }
-
-                  var match_content = content.substr(start, end);
-
-                  // highlight all keywords
-                  keywords.forEach(function (keyword) {
-                    var regS = new RegExp(keyword, "gi");
-                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
-                  });
-
-                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
-                }
-                str += "</li>";
-              }
-            });
-            str += "</ul>";
-            if (str.indexOf('<li>') === -1) {
-              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
-            }
-            $resultContent.innerHTML = str;
-          });
-        },
-        error: function(xhr, status, error) {
-          $resultContent.innerHTML = ""
-          if (xhr.status === 404) {
-            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
-          } else {
-            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
-          }
-        }
-      });
-      $(document).on('click', '#search-close-icon', function() {
-        $('#search-input').val('');
-        $('#search-result').html('');
-      });
-    }
-
-    var getSearchFile = function() {
-        var path = "/search.xml";
-        searchFunc(path, 'search-input', 'search-result');
-    }
-  </script>
-
-
-
-
-        
-  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-    <a href="javascript: void(0)">
-      <i id="theme-icon" class="iconfont icon-moon"></i>
-    </a>
-  </div>
-
-  
-<script src="/js/colorscheme.js"></script>
-
-
-
-
-
-        
-  
-    <div class="share-icon tools-bar-item">
-      <a href="javascript: void(0)" id="share-icon">
-        <i class="iconfont iconshare"></i>
-      </a>
-      <div class="share-content hidden">
-        
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Spring%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FSpring%25E5%259E%258B%25E5%2586%2585%25E5%25AD%2598%25E9%25A9%25AC%25E5%2588%2586%25E6%259E%2590.html + '" target="_blank" title="Twitter">
-            <i class="iconfont icon-twitter"></i>
-          </a>
-        
-        
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/Spring%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E6%9E%90.html" target="_blank" title="Facebook">
-            <i class="iconfont icon-facebooksquare"></i>
-          </a>
-        
-      </div>
-    </div>
-  
-  
-<script src="/js/shares.js"></script>
-
-
-
-      </div>
-    </div>
-  </body>
-</html>
+<p>测试其他 4 种方式也是成功的<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1709795113399-15ade1c7-1cb8-4be1-92b6-5f546d1c11cb.png#averageHue=%23dedddc&clientId=u8df47c52-911f-4&from=paste&height=513&id=uac6a0b89&originHeight=846&originWidth=2534&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=207982&status=done&style=none&taskId=u0eab628a-7133-4c47-9a84-8408883dbb5&title=&width=1535.7574869931836'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709795113399-15ade1c7-1cb8-4be1-92b6-5f546d1c11cb.png#averageHue=%23dedddc&clientId=u8df47c52-911f-4&from=paste&height=513&id=uac6a0b89&originHeight=846&originWidth=2534&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=207982&status=done&style=none&taskId=u0eab628a-7133-4c47-9a84-8408883dbb5&title=&width=1535.7574869931836" referrerpolicy="no-referrer" alt="image.png"></p>
+<div id="paginator"></div></div><div id="post-footer"><div id="pages"><div class="footer-link" style="width: 50%;text-align:right;border-right:1px #fe2 solid"><a href="/post/JNDIRe0.html">← Next JNDIRe0</a></div><div class="footer-link" style="width: 50%;right:1px;border-left:1px #fe2 solid"><a href="/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html">JavaAgent型内存马分析 Prev →</a></div></div></div></div><div class="bottom-btn"><div><a class="i-top" id="to-top" onClick="scrolls.scrolltop();" title="To Top" style="opacity: 0; display: none;">∧ </a><a class="i-index" id="to-index" href="#toc-div" title="To Catalog">≡</a><a class="i-color" id="color-mode" onClick="colorMode.change()" title="Change Theme"></a></div></div></article><aside><div id="about"><a href="/" id="logo"><img src="https://bu.dusays.com/2024/06/25/667ac0f8ca940.png" alt="Logo"></a><h1 id="Dr"><a href="/">stoocea</a></h1><div id="description"><p>time thicking away</p></div></div><div id="aside-block"><div id="toc-div"><h1>Catalog</h1><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-Spring-%E7%89%B9%E6%80%A7"><span class="toc-number">1.</span> <span class="toc-text">1 Spring 特性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%BB%BC%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 综述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Spring-%E4%BB%A5%E5%8F%8A-SprinMVC"><span class="toc-number">1.2.</span> <span class="toc-text">0x02 Spring 以及 SprinMVC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-IOC-%E5%AE%B9%E5%99%A8"><span class="toc-number">1.3.</span> <span class="toc-text">0x03 IOC 容器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-Controller-%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">2.</span> <span class="toc-text">2 Controller 型内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF-Controller%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">0x01 为什么是 Controller？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90"><span class="toc-number">2.2.</span> <span class="toc-text">0x02 实现分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%8E%B7%E5%8F%96%E5%88%B0%E4%B8%8A%E4%B8%8B%E6%96%87%E5%86%85%E5%AE%B9"><span class="toc-number">2.2.1.</span> <span class="toc-text">1x01 获取到上下文内容</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E8%AE%A1%E5%9B%9B%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.1.1.</span> <span class="toc-text">总计四种方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-ContextLoaderListener"><span class="toc-number">2.2.1.2.</span> <span class="toc-text">1 ContextLoaderListener</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-WebApplicationContextUtils"><span class="toc-number">2.2.1.2.1.</span> <span class="toc-text">2  WebApplicationContextUtils</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-RequestContextUtils"><span class="toc-number">2.2.1.2.2.</span> <span class="toc-text">3 RequestContextUtils</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-getAttribute"><span class="toc-number">2.2.1.2.3.</span> <span class="toc-text">4 getAttribute</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C-Controller"><span class="toc-number">2.2.2.</span> <span class="toc-text">1x02 动态注册 Controller</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E5%88%B0%E6%98%A0%E5%B0%84%E6%B3%A8%E5%86%8C%E5%99%A8"><span class="toc-number">2.2.2.1.</span> <span class="toc-text">2x01 如何获取到映射注册器</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%92%88%E5%AF%B9%E4%BA%8E-RequestMappingHandlerMapping-%E6%98%A0%E5%B0%84%E5%99%A8%E7%9A%84%E8%8E%B7%E5%8F%96%E5%92%8C%E6%B3%A8%E5%86%8C"><span class="toc-number">2.2.2.1.1.</span> <span class="toc-text">针对于  RequestMappingHandlerMapping 映射器的获取和注册</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%9C%80%E7%BB%88%E5%AE%9E%E7%8E%B0-POC"><span class="toc-number">2.3.</span> <span class="toc-text">0x03 最终实现 POC</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-interceptor-%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-number">3.</span> <span class="toc-text">3 interceptor 型内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E4%BB%80%E4%B9%88%E6%98%AF-interceptor"><span class="toc-number">3.1.</span> <span class="toc-text">0x01 什么是 interceptor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-interceptor-%E7%9A%84%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B"><span class="toc-number">3.2.</span> <span class="toc-text">0x02 interceptor 的调用流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-interceptor-%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B"><span class="toc-number">3.3.</span> <span class="toc-text">0x03 interceptor 内存马的实现流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%8E%B7%E5%8F%96AbstractHandlerMapping"><span class="toc-number">3.3.1.</span> <span class="toc-text">1x01 获取AbstractHandlerMapping</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C-interceptor"><span class="toc-number">3.3.2.</span> <span class="toc-text">1x02 动态注册 interceptor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-%E5%AE%8C%E6%95%B4-POC"><span class="toc-number">3.3.3.</span> <span class="toc-text">1x03 完整 POC</span></a></li></ol></li></ol></li></ol></div></div><footer><nobr>Published with <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a></nobr><wbr><nobr> Theme <a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknights</a></nobr><wbr><nobr> by <a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main><canvas id="canvas-dust"></canvas></body></html>
