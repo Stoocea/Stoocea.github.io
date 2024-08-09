@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>JRMP - 标签 - stoocea&#39;s Blog</title>
+    <link>http://localhost:1313/tags/jrmp/</link>
+    <description>JRMP - 标签 | stoocea&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 06 Jul 2024 15:58:26 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/tags/jrmp/" rel="self" type="application/rss+xml" /><item>
+  <title>Ysoserial-JRMPListener/JRMPClient学习</title>
+  <link>http://localhost:1313/posts/jrmplistener-client%E5%AD%A6%E4%B9%A0/</link>
+  <pubDate>Sat, 06 Jul 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/jrmplistener-client%E5%AD%A6%E4%B9%A0/</guid>
+  <description><![CDATA[RMI 过程回顾 回顾一下 RMI 的流程，算是复习。我们就拿一段示例代码来举例子 import java.rmi.Naming; import java.rmi.registry.LocateRegistry; public class RemoteServer { public static void main(String[] args) throws Exception { LocateRegistry.createRegistry(1099); RemoteInterface remoteObject =new RemoteObject(); Naming.bind(&#34;rmi://127.0.0.1:1099/Hello&#34;,remoteObject); } }JDK 版本稍微高一点之后，Reg]]></description>
+</item>
+</channel>
+</rss>

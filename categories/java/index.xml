@@ -1,0 +1,87 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Java - 分类 - stoocea&#39;s Blog</title>
+    <link>http://localhost:1313/categories/java/</link>
+    <description>Java - 分类 | stoocea&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 08 Aug 2024 15:58:26 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/categories/java/" rel="self" type="application/rss+xml" /><item>
+  <title>JDBC-Mysql反序列化</title>
+  <link>http://localhost:1313/posts/jdbc-mysql%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</link>
+  <pubDate>Thu, 08 Aug 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/jdbc-mysql%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</guid>
+  <description><![CDATA[Mysql-JDBC反序列化 属于是必学项，但是不知道为什么学的这么晚。不过好歹还是开始了 ‍ Mysql-JDBC反序列化 JDBC基础回顾 先看一]]></description>
+</item>
+<item>
+  <title>Scala反序列化学习</title>
+  <link>http://localhost:1313/posts/scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</link>
+  <pubDate>Sat, 06 Jul 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</guid>
+  <description><![CDATA[复现 CVE 的时候遇到了，趁此机会学一下 原 CVE 的 issue https://github.com/scala/scala/pull/10118 环境链接： https://github.com/yarocher/lazylist-cve-poc 参考文章： https://www.freebuf.com/articles/network/375109.html 前置知识 scala 简介 scala 本身就是一门语言，它运行在 JVM 中，并且能够兼容现有的 java 程序]]></description>
+</item>
+<item>
+  <title>Ysoserial-JRMPListener/JRMPClient学习</title>
+  <link>http://localhost:1313/posts/jrmplistener-client%E5%AD%A6%E4%B9%A0/</link>
+  <pubDate>Sat, 06 Jul 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/jrmplistener-client%E5%AD%A6%E4%B9%A0/</guid>
+  <description><![CDATA[RMI 过程回顾 回顾一下 RMI 的流程，算是复习。我们就拿一段示例代码来举例子 import java.rmi.Naming; import java.rmi.registry.LocateRegistry; public class RemoteServer { public static void main(String[] args) throws Exception { LocateRegistry.createRegistry(1099); RemoteInterface remoteObject =new RemoteObject(); Naming.bind(&#34;rmi://127.0.0.1:1099/Hello&#34;,remoteObject); } }JDK 版本稍微高一点之后，Reg]]></description>
+</item>
+<item>
+  <title>Java字节码初步学习</title>
+  <link>http://localhost:1313/posts/java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0/</link>
+  <pubDate>Mon, 10 Jun 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0/</guid>
+  <description><![CDATA[背景引入 我们平常所写的 Java 是不能被 JVM 识别所运行的，必须将其编译成 class 文件，JVM 才能够识别代码，进行对应的程序操作。 Java 有着&quot;一次编译，]]></description>
+</item>
+<item>
+  <title>Java二次反序列化</title>
+  <link>http://localhost:1313/posts/java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</link>
+  <pubDate>Tue, 04 Jun 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</guid>
+  <description><![CDATA[前言 二次反序列化大多数时候是用来绕过黑名单或者解决不出网的问题，不会作为一条单独且完整的利用链存在，而是作为一个中间节点，用来绕过。 二次反序]]></description>
+</item>
+<item>
+  <title>Fastjson重看</title>
+  <link>http://localhost:1313/posts/fastjsonre0/</link>
+  <pubDate>Thu, 02 May 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/fastjsonre0/</guid>
+  <description><![CDATA[参考自： https://github.com/alibaba/fastjson https://su18.org/post/fastjson/#%E5%89%8D%E8%A8%80 https://drun1baby.top/ FastJson 工作流程及其组件分析 0x01 简介 FastJson 是阿里巴巴的开源 JSON 解析库，它可以解析 JSON 格式的字符串，支持 javaBean 序列化为 JSON 字符串，也可以从 JSON 字符串反序]]></description>
+</item>
+<item>
+  <title>ROME反序列化链学习</title>
+  <link>http://localhost:1313/posts/rome%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</link>
+  <pubDate>Sun, 31 Mar 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/rome%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</guid>
+  <description><![CDATA[什么是 ROME ROME 是一个关于 RSS 和 Atom 格式的 java 框架 那什么是 RSS 和 Atom 呢？ RSS 全称：RDF Site Summary 或 Really Simple Syndication，中文翻译为简易信息聚合，也叫做聚合内]]></description>
+</item>
+<item>
+  <title>C3P0链学习</title>
+  <link>http://localhost:1313/posts/c3p0%E9%93%BE%E5%88%86%E6%9E%90/</link>
+  <pubDate>Fri, 22 Mar 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/c3p0%E9%93%BE%E5%88%86%E6%9E%90/</guid>
+  <description><![CDATA[什么是 C3P0？ 起手可以先把依赖点上 &lt;dependencies&gt; &lt;dependency&gt; &lt;groupId&gt;com.mchange&lt;/groupId&gt; &lt;artifactId&gt;c3p0&lt;/artifactId&gt; &lt;version&gt;0.9.5.2&lt;/version&gt; &lt;/dependency&gt; &lt;/dependencies&gt;在记录学习 Spring 和 mybatis 时曾经遇到过，那时候的记忆是关于 java]]></description>
+</item>
+<item>
+  <title>Jackson反序列化初步学习</title>
+  <link>http://localhost:1313/posts/jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</link>
+  <pubDate>Mon, 18 Mar 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</guid>
+  <description><![CDATA[https://drun1baby.top/2023/12/07/Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86/ https://xz.aliyun.com/t/12966?time__1311=mqmhqIx%2BODkDCDlxGofDyAID8UuyaqRG%2BD&amp;alichlgref=https%3A%2F%2Fwww.google.com%2F#toc-6 http://www.mi1k7ea.com/2019/11/13/Jackson%E7%B3%BB%E5%88%97%E4%B8%80%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/ Jackson 基本使用 jackson 其实使用起来还是很广泛的，之前学习 springMVC 的时候就感受到过，它的默认解析器就是 jackson。 0x00 核心模块浅尝 jackson-co]]></description>
+</item>
+<item>
+  <title>JNDI回顾</title>
+  <link>http://localhost:1313/posts/jndire0/</link>
+  <pubDate>Wed, 06 Mar 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/jndire0/</guid>
+  <description><![CDATA[什么是 JNDI 英文全写为：Java Naming and Directory Interface，翻译叫做 JAVA 命名和目录接口，是 sun 公司提供的一种标准的 java 命令系统接口，JNDI 提供统一的客]]></description>
+</item>
+</channel>
+</rss>

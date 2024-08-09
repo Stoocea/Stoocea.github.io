@@ -1,0 +1,47 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Categories - 分类 - stoocea&#39;s Blog</title>
+    <link>http://localhost:1313/categories/</link>
+    <description>Categories - 分类 | stoocea&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 08 Aug 2024 15:58:26 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/categories/" rel="self" type="application/rss+xml" /><item>
+  <title>Java</title>
+  <link>http://localhost:1313/categories/java/</link>
+  <pubDate>Thu, 08 Aug 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/categories/java/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>Memshell</title>
+  <link>http://localhost:1313/categories/memshell/</link>
+  <pubDate>Tue, 06 Aug 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/categories/memshell/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>CodeReview</title>
+  <link>http://localhost:1313/categories/codereview/</link>
+  <pubDate>Thu, 02 May 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/categories/codereview/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>CVES</title>
+  <link>http://localhost:1313/categories/cves/</link>
+  <pubDate>Fri, 26 Apr 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/categories/cves/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>Life</title>
+  <link>http://localhost:1313/categories/life/</link>
+  <pubDate>Tue, 12 Mar 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/categories/life/</guid>
+  <description><![CDATA[]]></description>
+</item>
+</channel>
+</rss>

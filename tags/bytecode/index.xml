@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>ByteCode - 标签 - stoocea&#39;s Blog</title>
+    <link>http://localhost:1313/tags/bytecode/</link>
+    <description>ByteCode - 标签 | stoocea&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Mon, 10 Jun 2024 15:58:26 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/tags/bytecode/" rel="self" type="application/rss+xml" /><item>
+  <title>Java字节码初步学习</title>
+  <link>http://localhost:1313/posts/java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0/</link>
+  <pubDate>Mon, 10 Jun 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0/</guid>
+  <description><![CDATA[背景引入 我们平常所写的 Java 是不能被 JVM 识别所运行的，必须将其编译成 class 文件，JVM 才能够识别代码，进行对应的程序操作。 Java 有着&quot;一次编译，]]></description>
+</item>
+</channel>
+</rss>

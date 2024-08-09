@@ -1,0 +1,23 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>TomcatMemshell - 标签 - stoocea&#39;s Blog</title>
+    <link>http://localhost:1313/tags/tomcatmemshell/</link>
+    <description>TomcatMemshell - 标签 | stoocea&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 06 Aug 2024 15:58:26 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/tags/tomcatmemshell/" rel="self" type="application/rss+xml" /><item>
+  <title>Memshell再研究</title>
+  <link>http://localhost:1313/posts/memshell%E5%86%8D%E7%A0%94%E7%A9%B6/</link>
+  <pubDate>Tue, 06 Aug 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/memshell%E5%86%8D%E7%A0%94%E7%A9%B6/</guid>
+  <description><![CDATA[之前学习的通过反序列化或者其他能够代码执行的内存马回显技术，在一定版本下以及一定实验环境下，已经足够好用。但是问题在于如果我们放到JDK11]]></description>
+</item>
+<item>
+  <title>内存马回显技术</title>
+  <link>http://localhost:1313/posts/%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF/</link>
+  <pubDate>Mon, 05 Aug 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF/</guid>
+  <description><![CDATA[内存马回显技术 背景引入 多适用于对方机器不出网，无法弹 shell 的情况，用来获取命令执行的结果。如果是能够解析 JSP 的中间件就很好利用，落地一个 JSP 进行一个]]></description>
+</item>
+</channel>
+</rss>

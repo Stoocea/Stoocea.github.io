@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>JNDI - 标签 - stoocea&#39;s Blog</title>
+    <link>http://localhost:1313/tags/jndi/</link>
+    <description>JNDI - 标签 | stoocea&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Wed, 06 Mar 2024 15:58:26 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/tags/jndi/" rel="self" type="application/rss+xml" /><item>
+  <title>JNDI回顾</title>
+  <link>http://localhost:1313/posts/jndire0/</link>
+  <pubDate>Wed, 06 Mar 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/jndire0/</guid>
+  <description><![CDATA[什么是 JNDI 英文全写为：Java Naming and Directory Interface，翻译叫做 JAVA 命名和目录接口，是 sun 公司提供的一种标准的 java 命令系统接口，JNDI 提供统一的客]]></description>
+</item>
+</channel>
+</rss>

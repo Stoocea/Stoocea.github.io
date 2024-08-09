@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>AgentMemshell - 标签 - stoocea&#39;s Blog</title>
+    <link>http://localhost:1313/tags/agentmemshell/</link>
+    <description>AgentMemshell - 标签 | stoocea&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Wed, 06 Mar 2024 15:58:26 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/tags/agentmemshell/" rel="self" type="application/rss+xml" /><item>
+  <title>JavaAgent型内存马初步学习</title>
+  <link>http://localhost:1313/posts/javaagent%E5%86%85%E5%AD%98%E9%A9%AC/</link>
+  <pubDate>Wed, 06 Mar 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/javaagent%E5%86%85%E5%AD%98%E9%A9%AC/</guid>
+  <description><![CDATA[1.什么是 javaAgent？ Agent，意为“代理” java 是一种静态强类型的语言，在运行之前必须将其编译成.class 字节码，然后交给 JVM 去处理]]></description>
+</item>
+</channel>
+</rss>

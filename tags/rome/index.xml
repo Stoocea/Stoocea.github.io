@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>ROME - 标签 - stoocea&#39;s Blog</title>
+    <link>http://localhost:1313/tags/rome/</link>
+    <description>ROME - 标签 | stoocea&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 31 Mar 2024 15:58:26 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/tags/rome/" rel="self" type="application/rss+xml" /><item>
+  <title>ROME反序列化链学习</title>
+  <link>http://localhost:1313/posts/rome%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</link>
+  <pubDate>Sun, 31 Mar 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/rome%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</guid>
+  <description><![CDATA[什么是 ROME ROME 是一个关于 RSS 和 Atom 格式的 java 框架 那什么是 RSS 和 Atom 呢？ RSS 全称：RDF Site Summary 或 Really Simple Syndication，中文翻译为简易信息聚合，也叫做聚合内]]></description>
+</item>
+</channel>
+</rss>

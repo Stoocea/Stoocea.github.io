@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>CodeReview - 分类 - stoocea&#39;s Blog</title>
+    <link>http://localhost:1313/categories/codereview/</link>
+    <description>CodeReview - 分类 | stoocea&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 02 May 2024 15:58:26 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/categories/codereview/" rel="self" type="application/rss+xml" /><item>
+  <title>CodeQL初步学习笔记</title>
+  <link>http://localhost:1313/posts/codeql%E5%AD%A6%E4%B9%A0/</link>
+  <pubDate>Thu, 02 May 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/codeql%E5%AD%A6%E4%B9%A0/</guid>
+  <description><![CDATA[本文为个人学习笔记+一些个人的理解调试，仅供学习参考 首先存几个学习地点 https://drun1baby.top/2023/09/03/CodeQL-%E5%85%A5%E9%97%A8/ https://www.freebuf.com/articles/web/283795.html https://codeql.github.com/docs/codeql-overview/about-codeql/ 什么是 CodeQL 这里我本来想用一句话总结的，但是自己学的还不够，所以无法]]></description>
+</item>
+</channel>
+</rss>

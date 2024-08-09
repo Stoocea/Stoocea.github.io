@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>FastJson - 标签 - stoocea&#39;s Blog</title>
+    <link>http://localhost:1313/tags/fastjson/</link>
+    <description>FastJson - 标签 | stoocea&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 02 May 2024 15:58:26 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/tags/fastjson/" rel="self" type="application/rss+xml" /><item>
+  <title>Fastjson重看</title>
+  <link>http://localhost:1313/posts/fastjsonre0/</link>
+  <pubDate>Thu, 02 May 2024 15:58:26 &#43;0800</pubDate>
+  <author>stoocea</author>
+  <guid>http://localhost:1313/posts/fastjsonre0/</guid>
+  <description><![CDATA[参考自： https://github.com/alibaba/fastjson https://su18.org/post/fastjson/#%E5%89%8D%E8%A8%80 https://drun1baby.top/ FastJson 工作流程及其组件分析 0x01 简介 FastJson 是阿里巴巴的开源 JSON 解析库，它可以解析 JSON 格式的字符串，支持 javaBean 序列化为 JSON 字符串，也可以从 JSON 字符串反序]]></description>
+</item>
+</channel>
+</rss>
