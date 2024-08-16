@@ -1,191 +1,71 @@
-<!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
-
-  <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="author" content="stoocea" />
-  <!-- Open Graph Description 简短摘要-->
-  
-  <!-- 用于搜索引擎的文章摘要 -->
-  
-  <meta name="description" content="time thicking away" />
-  
-  
-  
-  <title>
-    
-      Scala反序列化学习 
-      
-      
-      |
-    
-     stoocea&#39;s blog
-  </title>
-
-  
-    <link rel="apple-touch-icon" href="https://bu.dusays.com/2024/08/09/66b6003e9e298.png">
-    <link rel="icon" href="https://bu.dusays.com/2024/08/09/66b6003e9e298.png">
-  
-
-  <!-- Raleway-Font -->
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
-
-  <!-- hexo site css -->
-  <link rel="stylesheet" href="/css/main.css" />
-  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
-  <!-- 代码块风格 -->
-  
-    
-<link rel="stylesheet" href="/css/figcaption/mac-block.css">
-
-  
-
-  <!-- jquery3.3.1 -->
-  
-    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
-  
-
-  <!-- fancybox -->
-  
-    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
-    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
-  
-  
-<script src="/js/fancybox.js"></script>
-
-
-  
-
-  
-
-  <script>
-    var html = document.documentElement
-    const colorMode = localStorage.getItem('color-mode')
-    if (colorMode) {
-      document.documentElement.setAttribute('color-mode', colorMode)
-    }
-  </script>
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-
-  <body>
-    <div id="app">
-      <div class="header">
-  <div class="avatar">
-    <a href="/">
-      <!-- 头像取消懒加载，添加no-lazy -->
-      
-        <img src="https://bu.dusays.com/2024/08/09/66b609e582b55.png" alt="">
-      
-    </a>
-    <div class="nickname"><a href="/">Stoocea</a></div>
-  </div>
-  <div class="navbar">
-    <ul>
-      
-        <li class="nav-item" data-path="/">
-          <a href="/">Home</a>
-        </li>
-      
-        <li class="nav-item" data-path="/archives/">
-          <a href="/archives/">Archives</a>
-        </li>
-      
-        <li class="nav-item" data-path="/tags/">
-          <a href="/tags/">Tags</a>
-        </li>
-      
-        <li class="nav-item" data-path="/friends/">
-          <a href="/friends/">Friends</a>
-        </li>
-      
-        <li class="nav-item" data-path="/about/">
-          <a href="/about/">About</a>
-        </li>
-      
-    </ul>
-  </div>
-</div>
-
-
-<script src="/js/activeNav.js"></script>
-
-
-
-      <div class="flex-container">
-        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
-<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
-
-
-  <!-- LaTex Display -->
-
-  
-    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
-  
-  <script>
-    MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-      }
-    }
-  </script>
-
-
-
-
-
-  <!-- clipboard -->
-
-  
-    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
-  
-  
-<script src="/js/codeCopy.js"></script>
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
-  <div class="container post-details" id="post-details">
-    <div class="post-content">
-      <div class="post-title">Scala反序列化学习</div>
-      <div class="post-attach">
-        <span class="post-pubtime">
-          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-08-09 18:25:11
-        </span>
-        
-              <span class="post-tags">
-                <i class="iconfont icon-tags mr-10" title="标签"></i>
-                
-                <span class="span--tag mr-8">
-                  <a href="/tags/Scala/" title="Scala">
-                    #Scala
-                  </a>
-                </span>
-                
-              </span>
-          
-      </div>
-      <div class="markdown-body">
-        <p>复现 CVE 的时候遇到了，趁此机会学一下<br>原 CVE 的 issue<br><a target="_blank" rel="noopener" href="https://github.com/scala/scala/pull/10118">https://github.com/scala/scala/pull/10118</a><br>环境链接：<br><a target="_blank" rel="noopener" href="https://github.com/yarocher/lazylist-cve-poc">https://github.com/yarocher/lazylist-cve-poc</a><br>参考文章：<br><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/network/375109.html">https://www.freebuf.com/articles/network/375109.html</a></p>
+<!DOCTYPE html><html lang="zh-CN" theme-mode="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Scala反序列化学习 | stoocea's blog</title><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="preload" as="font" crossorigin="anonymous" href="/font/Bender.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/BenderLight.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/JetBrainsMono-Regular.woff2"><link rel="stylesheet" href="/css/arknights.css"><style>@font-face {
+  font-family: Bender;
+  src: local('Bender'), url("/font/Bender.ttf"), url("/font/Bender.otf");
+}
+@font-face {
+  font-family: BenderLight;
+  src: local('BenderLight'), url("/font/BenderLight.ttf");
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}
+</style><script>var config = {"root":"/","search":{"preload":false,"activeHolder":"Enter here","blurHolder":"Search","noResult":"Data \"$0\" not found"},"code":{"codeInfo":"$0 - $1 lines","copy":"copy"}}</script><link type="text/css" rel="stylesheet" href="/lib/encrypt/hbe.style.css"><script src="//unpkg.com/mermaid@10.5.0/dist/mermaid.min.js"></script><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lightgallery.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-zoom.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-thumbnail.css"><link type="text/css" rel="stylesheet" href="/lib/fontawesome/css/all.min.css"><script>if (window.localStorage.getItem('theme-mode') === 'light')
+ document.documentElement.setAttribute('theme-mode', 'light')
+if (window.localStorage.getItem('theme-mode') === 'dark')
+ document.documentElement.setAttribute('theme-mode', 'dark')</script><style>@font-face {
+ font-family: BenderLight;
+ src: local('Bender'), url("/font/BenderLight.woff2") format('woff2');
+}
+@font-face {
+ font-family: 'JetBrains Mono';
+ src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}</style><style>:root {
+ --dark-background: url('/img/pc-bg.jpg');
+ --light-background: url('/img/bk.jpg');
+ --theme-encrypt-confirm: 'confirm'
+}</style><script defer src="/js/arknights.js"></script><script defer src="/js/search.js"></script><script defer type="module">import mermaid from '//unpkg.com/mermaid@10.5.0/dist/mermaid.esm.mjs';
+window.mermaid = mermaid;
+code.paintMermaid();
+</script><script async src="//unpkg.com/lightgallery@2.7.1/lightgallery.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script><script async src="/lib/encrypt/hbe.js"></script><script async src="/js/pjax.js"></script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js','data-pjax','.busuanzi'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
+lightGallery(document.getElementById('post-bg'), {
+  plugins: [lgZoom,lgThumbnail],
+  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
+ cacheBust: false,
+ selectors: ['title','article','#aside-block','.pjax-js'],
+ switches: {'article': Pjax.switches.sideBySide},
+ switchesOptions: {
+   'article': {
+     classNames: {
+       remove: "pjax-out",
+       add: "pjax-in"
+     }
+   }
+ }
+});
+document.addEventListener("pjax:complete", reset);reset()})</script><meta name="generator" content="Hexo 6.3.0"></head><body><div class="loading" style="opacity: 0;"><div class="loadingBar left"></div><div class="loadingBar right"></div></div><main><header class="closed"><div class="navBtn"><i class="navBtnIcon"><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span></i></div><nav><div class="navItem" id="search-header"><span class="navItemTitle"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="Search" spellcheck="false" maxlength="50" type="text" id="search-input"></span></div><div class="navItem" id="search-holder"></div><div class="search-popup" tabindex="0"><div id="search-result"></div></div><ol class="navContent"><li class="navItem"><a class="navBlock" href="/"><span class="navItemTitle">Home</span></a></li><li class="navItem" matchdata="categories,tags"><a class="navBlock" href="/archives/"><span class="navItemTitle">Archives</span></a></li><li class="navItem"><a class="navBlock" href="/about/"><span class="navItemTitle">About</span></a></li></ol></nav></header><article><div id="post-bg"><div id="post-title"><h1>Scala反序列化学习</h1><div id="post-info"><span>First Post: <div class="control"><time datetime="2024-07-06T07:41:00.000Z" id="date"> 2024-07-06</time></div></span><br><span>Last Update: <div class="control"><time datetime="2024-08-09T10:25:11.568Z" id="updated"> 2024-08-09</time></div></span></div></div><hr><div id="post-content"><p>复现 CVE 的时候遇到了，趁此机会学一下<br>原 CVE 的 issue<br><a target="_blank" rel="noopener" href="https://github.com/scala/scala/pull/10118">https://github.com/scala/scala/pull/10118</a><br>环境链接：<br><a target="_blank" rel="noopener" href="https://github.com/yarocher/lazylist-cve-poc">https://github.com/yarocher/lazylist-cve-poc</a><br>参考文章：<br><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/network/375109.html">https://www.freebuf.com/articles/network/375109.html</a></p>
 <h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="scala-简介"><a href="#scala-简介" class="headerlink" title="scala 简介"></a>scala 简介</h2><p>scala 本身就是一门语言，它运行在 JVM 中，并且能够兼容现有的 java 程序。scala 经过编译之后是生成的 java 字节码，这也是它能够运行在 JVM 上的理由，也可以调用 Java 现有的类库。<br>但是 Scala 也有着自己的语法规则，并且有一些区别于 Java 的特性，对于这些新东西或者特性，接下来的基础笔记会一一写到。</p>
 <h2 id="scala-新特性"><a href="#scala-新特性" class="headerlink" title="scala 新特性"></a>scala 新特性</h2><h3 id="匹配器-match"><a href="#匹配器-match" class="headerlink" title="匹配器 match"></a>匹配器 match</h3><p>一个 scala2 中的例子，整体代码如下（怎么感觉写起来像 python）</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">show</span></span>(result:<span class="type">String</span>):<span class="type">Unit</span>=&#123;</span><br><span class="line">    println(result)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> x=<span class="number">11</span></span><br><span class="line">    <span class="keyword">val</span> y=x <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span> =&gt; <span class="string">&quot;one&quot;</span></span><br><span class="line">      <span class="keyword">case</span> <span class="number">2</span> =&gt; <span class="string">&quot;two&quot;</span></span><br><span class="line">      <span class="keyword">case</span> other =&gt; <span class="string">s&quot;other: <span class="subst">$other</span>&quot;</span> <span class="comment">// other是一个变量名，它会接收除了1和2以外的任何值</span></span><br><span class="line">      <span class="keyword">case</span> _ =&gt; <span class="string">s&quot;other: _&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">    show(y)</span><br><span class="line">    <span class="comment">//other: 11</span></span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这里我们可以看出 match 的主要使用是在某一个变量后，也就是判断该变量为什么情况时，将对应值返回给该变量。<br>具体用法如下：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x <span class="keyword">match</span> &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">1</span>=&gt;</span><br><span class="line">  <span class="keyword">case</span> <span class="number">2</span>=&gt;</span><br><span class="line">  <span class="keyword">case</span> other =&gt;<span class="comment">//除了1 2情况，的其他情况</span></span><br><span class="line">  <span class="keyword">case</span> _=&gt;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">这里other的优先级是要比默认情况的_要高的，我们看运行结果也能看出来</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720083487768-84937eb9-bf48-40dc-b29a-69f841f5fbd8.png#averageHue=%232c2e2d&clientId=u565db21d-1766-4&from=paste&height=633&id=u62a8978d&originHeight=1186&originWidth=2478&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1076666&status=done&style=none&taskId=u8f3cf64e-78fa-4596-b855-f212b65dd8b&title=&width=1321.6" referrerpolicy="no-referrer" alt="image.png"><br>总之 match 就是一个选择器，返回不同情况下的结果，当然 match 还有更多用法，这里我们只是粗略学习</p>
+<p class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720083487768-84937eb9-bf48-40dc-b29a-69f841f5fbd8.png#averageHue=%232c2e2d&clientId=u565db21d-1766-4&from=paste&height=633&id=u62a8978d&originHeight=1186&originWidth=2478&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1076666&status=done&style=none&taskId=u8f3cf64e-78fa-4596-b855-f212b65dd8b&title=&width=1321.6'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720083487768-84937eb9-bf48-40dc-b29a-69f841f5fbd8.png#averageHue=%232c2e2d&clientId=u565db21d-1766-4&from=paste&height=633&id=u62a8978d&originHeight=1186&originWidth=2478&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1076666&status=done&style=none&taskId=u8f3cf64e-78fa-4596-b855-f212b65dd8b&title=&width=1321.6" referrerpolicy="no-referrer" alt="image.png"><br>总之 match 就是一个选择器，返回不同情况下的结果，当然 match 还有更多用法，这里我们只是粗略学习</p>
 <h3 id="伴生对象"><a href="#伴生对象" class="headerlink" title="伴生对象"></a>伴生对象</h3><p>具体定义：</p>
 <blockquote>
 <p> 伴生对象是Scala中一种特殊的<strong>单例对象</strong>，它与一个<strong>同名的类</strong>存在于同一个文件中，这个类被称为<strong>伴生类</strong></p>
@@ -241,10 +121,10 @@
 </tbody></table>
 <p>示例代码</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Main</span></span>&#123;</span><br><span class="line">  <span class="keyword">val</span> ones = <span class="type">LazyList</span>.continually(<span class="number">1</span>)</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    println(ones)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720088551679-dfa93ba6-a4eb-4293-a449-6c65f7302530.png#averageHue=%232f3030&clientId=uca9627dc-b4f2-4&from=paste&height=347&id=u55c70b5b&originHeight=650&originWidth=2507&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=660359&status=done&style=none&taskId=u2391c590-01bc-4d60-932e-1136ead8b15&title=&width=1337.0666666666666" referrerpolicy="no-referrer" alt="image.png"><br>会发现 LazyList 里面的内容为空，这个时候我们象征性地将他里面的第一个元素取出来,用到一开始提到的 head 方法</p>
+<p class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720088551679-dfa93ba6-a4eb-4293-a449-6c65f7302530.png#averageHue=%232f3030&clientId=uca9627dc-b4f2-4&from=paste&height=347&id=u55c70b5b&originHeight=650&originWidth=2507&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=660359&status=done&style=none&taskId=u2391c590-01bc-4d60-932e-1136ead8b15&title=&width=1337.0666666666666'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720088551679-dfa93ba6-a4eb-4293-a449-6c65f7302530.png#averageHue=%232f3030&clientId=uca9627dc-b4f2-4&from=paste&height=347&id=u55c70b5b&originHeight=650&originWidth=2507&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=660359&status=done&style=none&taskId=u2391c590-01bc-4d60-932e-1136ead8b15&title=&width=1337.0666666666666" referrerpolicy="no-referrer" alt="image.png"><br>会发现 LazyList 里面的内容为空，这个时候我们象征性地将他里面的第一个元素取出来,用到一开始提到的 head 方法</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Main</span></span>&#123;</span><br><span class="line">  <span class="keyword">val</span> ones = <span class="type">LazyList</span>.continually(<span class="number">1</span>)</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    println(ones.head)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720088664446-fabd6946-6566-493c-a581-5f5c9f41ab91.png#averageHue=%23333637&clientId=uca9627dc-b4f2-4&from=paste&height=305&id=u9e7efb7d&originHeight=572&originWidth=2484&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=541124&status=done&style=none&taskId=uaaf2bb74-a881-4088-9751-3e1c8e57dea&title=&width=1324.8" referrerpolicy="no-referrer" alt="image.png"><br>从一开始的 LazyList 创建开始，由于我们并没有直接 new 出 LazyList，而是直接调用continually 方法，所以会来到它伴生对象的 continually 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720095803635-d31c2c44-496c-4233-9655-cacc40976d6c.png#averageHue=%232e322f&clientId=ucf22a51f-efc1-4&from=paste&height=127&id=uac54c50e&originHeight=239&originWidth=1624&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=184226&status=done&style=none&taskId=u75617311-e18c-4fe7-b121-2317e52a348&title=&width=866.1333333333333" referrerpolicy="no-referrer" alt="image.png"><br>newLL 就是创建一个新的 LazyList，注意此时我们传入的参数 1 被作为参数 elem 传入，流入到 sCons 方法和下一轮的 continually 方法的循环。<br>先看 sCons 方法的具体内容<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720097149611-3698fa52-a199-4d18-8449-5ab37709bae0.png#averageHue=%232d2f2e&clientId=ucf22a51f-efc1-4&from=paste&height=73&id=ud4a09236&originHeight=137&originWidth=1762&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=117117&status=done&style=none&taskId=ud51ab803-e571-4c85-96b2-c23145f1671&title=&width=939.7333333333333" referrerpolicy="no-referrer" alt="image.png"><br>hd 是 1，tl 是通过 continually 创建好的新的一个 LazyList。具体的方法内容创建了一个新的 State trait实例。一开始我们提到 State 是一段特质，并且有它具体的伴生对象，里面共有两个方法，一个是 head 方法，一个是 tail 方法，对于 State 这个 trait 来说，它的 head 方法就是返回当前的元素，tail 方法方法就是返回存有无限个 1 的 LazyList<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720099820117-6e2bc04b-75d7-49b2-b79a-6976b512270c.png#averageHue=%232c2f2e&clientId=ucf22a51f-efc1-4&from=paste&height=262&id=u012e9722&originHeight=492&originWidth=1925&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=448155&status=done&style=none&taskId=u033cbf75-4332-493e-b818-7647585bcf4&title=&width=1026.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>再看 newLL 方法，具体内容就是将刚才创建好的 State 特质实例作为 <code>new LazyList</code>实例化构造的参数传入<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720096267815-c42d5ae9-795f-4c07-9b94-710d37d5b8e1.png#averageHue=%232e302f&clientId=ucf22a51f-efc1-4&from=paste&height=90&id=ue68e042b&originHeight=168&originWidth=1802&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=137584&status=done&style=none&taskId=u96772f85-32d5-4b3e-af8b-1e9b2a8e54d&title=&width=961.0666666666667" referrerpolicy="no-referrer" alt="image.png"><br>所以，整个 Continually 方法的返回值就是这一个装载了 State 实例对象的 LazyList，但是此时里面是空的，这也是为什么我们紧接着将其 println 的话，出来的结果就是<code>LazyList(&lt;not computed&gt;)</code>。因为我们并没有对 state 进行任何的调用或者赋值，那么就看下面的 head 方法的调用<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720100475779-bbb97f37-0485-4410-8d5e-dce370b09f9c.png#averageHue=%232f3331&clientId=ucf22a51f-efc1-4&from=paste&height=60&id=u09cfefb7&originHeight=112&originWidth=1125&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=52638&status=done&style=none&taskId=u02307df5-4aca-4b3e-a394-eb4ec7ecd11&title=&width=600" referrerpolicy="no-referrer" alt="image.png"><br>很简单的一段，直接去调用 state 的 head 参数，我们接着看 state 是怎么定义的<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720100645356-96f8d45d-9122-403a-9301-2a9a41d62098.png#averageHue=%232b2e2d&clientId=ucf22a51f-efc1-4&from=paste&height=333&id=u5ca6a7ce&originHeight=624&originWidth=2025&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=558079&status=done&style=none&taskId=u9185d3d0-4854-45c2-885a-299a8190546&title=&width=1080" referrerpolicy="no-referrer" alt="image.png"><br>具体的逻辑是通过调用 lazyState 方法获取到当前的 State，并且通过调用 State 的 head 和 tail 方法获取值。</p>
-<h1 id="LazyList-的反序列化"><a href="#LazyList-的反序列化" class="headerlink" title="LazyList 的反序列化"></a>LazyList 的反序列化</h1><h2 id="工作流程分析"><a href="#工作流程分析" class="headerlink" title="工作流程分析"></a>工作流程分析</h2><p>在研究 LazyList 的时候其实我们发现了它本身是继承 serializable 接口的，所以它能够反序列化，并且有个专门的类来处理反序列化和序列化<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720101173545-1afec4bc-d913-4085-a139-7671fe372e69.png#averageHue=%232b2d2c&clientId=ucf22a51f-efc1-4&from=paste&height=519&id=u1f662123&originHeight=973&originWidth=1656&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=653497&status=done&style=none&taskId=u142bc4c5-c068-4e0d-bc96-e5d749ad090&title=&width=883.2" referrerpolicy="no-referrer" alt="image.png"><br>writeObject 内容大致可以概括为：</p>
+<p class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720088664446-fabd6946-6566-493c-a581-5f5c9f41ab91.png#averageHue=%23333637&clientId=uca9627dc-b4f2-4&from=paste&height=305&id=u9e7efb7d&originHeight=572&originWidth=2484&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=541124&status=done&style=none&taskId=uaaf2bb74-a881-4088-9751-3e1c8e57dea&title=&width=1324.8'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720088664446-fabd6946-6566-493c-a581-5f5c9f41ab91.png#averageHue=%23333637&clientId=uca9627dc-b4f2-4&from=paste&height=305&id=u9e7efb7d&originHeight=572&originWidth=2484&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=541124&status=done&style=none&taskId=uaaf2bb74-a881-4088-9751-3e1c8e57dea&title=&width=1324.8" referrerpolicy="no-referrer" alt="image.png"><br>从一开始的 LazyList 创建开始，由于我们并没有直接 new 出 LazyList，而是直接调用continually 方法，所以会来到它伴生对象的 continually 方法<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720095803635-d31c2c44-496c-4233-9655-cacc40976d6c.png#averageHue=%232e322f&clientId=ucf22a51f-efc1-4&from=paste&height=127&id=uac54c50e&originHeight=239&originWidth=1624&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=184226&status=done&style=none&taskId=u75617311-e18c-4fe7-b121-2317e52a348&title=&width=866.1333333333333'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720095803635-d31c2c44-496c-4233-9655-cacc40976d6c.png#averageHue=%232e322f&clientId=ucf22a51f-efc1-4&from=paste&height=127&id=uac54c50e&originHeight=239&originWidth=1624&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=184226&status=done&style=none&taskId=u75617311-e18c-4fe7-b121-2317e52a348&title=&width=866.1333333333333" referrerpolicy="no-referrer" alt="image.png"><br>newLL 就是创建一个新的 LazyList，注意此时我们传入的参数 1 被作为参数 elem 传入，流入到 sCons 方法和下一轮的 continually 方法的循环。<br>先看 sCons 方法的具体内容<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720097149611-3698fa52-a199-4d18-8449-5ab37709bae0.png#averageHue=%232d2f2e&clientId=ucf22a51f-efc1-4&from=paste&height=73&id=ud4a09236&originHeight=137&originWidth=1762&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=117117&status=done&style=none&taskId=ud51ab803-e571-4c85-96b2-c23145f1671&title=&width=939.7333333333333'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720097149611-3698fa52-a199-4d18-8449-5ab37709bae0.png#averageHue=%232d2f2e&clientId=ucf22a51f-efc1-4&from=paste&height=73&id=ud4a09236&originHeight=137&originWidth=1762&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=117117&status=done&style=none&taskId=ud51ab803-e571-4c85-96b2-c23145f1671&title=&width=939.7333333333333" referrerpolicy="no-referrer" alt="image.png"><br>hd 是 1，tl 是通过 continually 创建好的新的一个 LazyList。具体的方法内容创建了一个新的 State trait实例。一开始我们提到 State 是一段特质，并且有它具体的伴生对象，里面共有两个方法，一个是 head 方法，一个是 tail 方法，对于 State 这个 trait 来说，它的 head 方法就是返回当前的元素，tail 方法方法就是返回存有无限个 1 的 LazyList<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720099820117-6e2bc04b-75d7-49b2-b79a-6976b512270c.png#averageHue=%232c2f2e&clientId=ucf22a51f-efc1-4&from=paste&height=262&id=u012e9722&originHeight=492&originWidth=1925&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=448155&status=done&style=none&taskId=u033cbf75-4332-493e-b818-7647585bcf4&title=&width=1026.6666666666667'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720099820117-6e2bc04b-75d7-49b2-b79a-6976b512270c.png#averageHue=%232c2f2e&clientId=ucf22a51f-efc1-4&from=paste&height=262&id=u012e9722&originHeight=492&originWidth=1925&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=448155&status=done&style=none&taskId=u033cbf75-4332-493e-b818-7647585bcf4&title=&width=1026.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>再看 newLL 方法，具体内容就是将刚才创建好的 State 特质实例作为 <code>new LazyList</code>实例化构造的参数传入<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720096267815-c42d5ae9-795f-4c07-9b94-710d37d5b8e1.png#averageHue=%232e302f&clientId=ucf22a51f-efc1-4&from=paste&height=90&id=ue68e042b&originHeight=168&originWidth=1802&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=137584&status=done&style=none&taskId=u96772f85-32d5-4b3e-af8b-1e9b2a8e54d&title=&width=961.0666666666667'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720096267815-c42d5ae9-795f-4c07-9b94-710d37d5b8e1.png#averageHue=%232e302f&clientId=ucf22a51f-efc1-4&from=paste&height=90&id=ue68e042b&originHeight=168&originWidth=1802&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=137584&status=done&style=none&taskId=u96772f85-32d5-4b3e-af8b-1e9b2a8e54d&title=&width=961.0666666666667" referrerpolicy="no-referrer" alt="image.png"><br>所以，整个 Continually 方法的返回值就是这一个装载了 State 实例对象的 LazyList，但是此时里面是空的，这也是为什么我们紧接着将其 println 的话，出来的结果就是<code>LazyList(&lt;not computed&gt;)</code>。因为我们并没有对 state 进行任何的调用或者赋值，那么就看下面的 head 方法的调用<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720100475779-bbb97f37-0485-4410-8d5e-dce370b09f9c.png#averageHue=%232f3331&clientId=ucf22a51f-efc1-4&from=paste&height=60&id=u09cfefb7&originHeight=112&originWidth=1125&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=52638&status=done&style=none&taskId=u02307df5-4aca-4b3e-a394-eb4ec7ecd11&title=&width=600'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720100475779-bbb97f37-0485-4410-8d5e-dce370b09f9c.png#averageHue=%232f3331&clientId=ucf22a51f-efc1-4&from=paste&height=60&id=u09cfefb7&originHeight=112&originWidth=1125&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=52638&status=done&style=none&taskId=u02307df5-4aca-4b3e-a394-eb4ec7ecd11&title=&width=600" referrerpolicy="no-referrer" alt="image.png"><br>很简单的一段，直接去调用 state 的 head 参数，我们接着看 state 是怎么定义的<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720100645356-96f8d45d-9122-403a-9301-2a9a41d62098.png#averageHue=%232b2e2d&clientId=ucf22a51f-efc1-4&from=paste&height=333&id=u5ca6a7ce&originHeight=624&originWidth=2025&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=558079&status=done&style=none&taskId=u9185d3d0-4854-45c2-885a-299a8190546&title=&width=1080'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720100645356-96f8d45d-9122-403a-9301-2a9a41d62098.png#averageHue=%232b2e2d&clientId=ucf22a51f-efc1-4&from=paste&height=333&id=u5ca6a7ce&originHeight=624&originWidth=2025&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=558079&status=done&style=none&taskId=u9185d3d0-4854-45c2-885a-299a8190546&title=&width=1080" referrerpolicy="no-referrer" alt="image.png"><br>具体的逻辑是通过调用 lazyState 方法获取到当前的 State，并且通过调用 State 的 head 和 tail 方法获取值。</p>
+<h1 id="LazyList-的反序列化"><a href="#LazyList-的反序列化" class="headerlink" title="LazyList 的反序列化"></a>LazyList 的反序列化</h1><h2 id="工作流程分析"><a href="#工作流程分析" class="headerlink" title="工作流程分析"></a>工作流程分析</h2><p>在研究 LazyList 的时候其实我们发现了它本身是继承 serializable 接口的，所以它能够反序列化，并且有个专门的类来处理反序列化和序列化<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720101173545-1afec4bc-d913-4085-a139-7671fe372e69.png#averageHue=%232b2d2c&clientId=ucf22a51f-efc1-4&from=paste&height=519&id=u1f662123&originHeight=973&originWidth=1656&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=653497&status=done&style=none&taskId=u142bc4c5-c068-4e0d-bc96-e5d749ad090&title=&width=883.2'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720101173545-1afec4bc-d913-4085-a139-7671fe372e69.png#averageHue=%232b2d2c&clientId=ucf22a51f-efc1-4&from=paste&height=519&id=u1f662123&originHeight=973&originWidth=1656&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=653497&status=done&style=none&taskId=u142bc4c5-c068-4e0d-bc96-e5d749ad090&title=&width=883.2" referrerpolicy="no-referrer" alt="image.png"><br>writeObject 内容大致可以概括为：</p>
 <ul>
 <li>调用 javaio 原生的序列化流的<code>defaultWriteObject()</code>方法，开一段 Object 的序列化数据流，准备序列化</li>
 <li>然后一个 while 循环去遍历 LazyList 已经计算出来的元素，并且将其每一个都进行序列化操作，然后递归到后续的元素，继续重复操作</li>
@@ -259,7 +139,7 @@
 <li>反序列化剩下没有计算的元素</li>
 <li>使用++方法链接 init 和 tail（噢那真的牛逼，还有这种方法）</li>
 </ul>
-<h2 id="漏洞点分析"><a href="#漏洞点分析" class="headerlink" title="漏洞点分析"></a>漏洞点分析</h2><p>乍一看好像 LazyList 的 readObject 没有可以利用的地方，我们跟进后续的链接操作，也就是 init 和 tail 链接的逻辑<code>coll = init ++: tail</code><br>我们跟进<code>++:</code>方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109109269-1ed81014-2258-4ce0-a9d7-88ea357970a5.png#averageHue=%232d2f2f&clientId=u61d5917a-db06-4&from=paste&height=89&id=u6e27197f&originHeight=166&originWidth=1897&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=140009&status=done&style=none&taskId=u8e660897-1b6d-4a3e-a324-a29721a69b4&title=&width=1011.7333333333333" referrerpolicy="no-referrer" alt="image.png"><br>具体的内容是将 prefix，链接操作的后半段 B 作为参数，调用进 prependedAll 方法。而 prependedAll 方法在 LazyList 中是被重构了的，跟进具体定义<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109236242-5ac53fa2-5cbd-442c-b097-be5ef3e61ddf.png#averageHue=%232d2f2e&clientId=u61d5917a-db06-4&from=paste&height=129&id=udc601407&originHeight=242&originWidth=1807&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=228864&status=done&style=none&taskId=ub0fdcdab-a205-4c2d-82e2-5cbc459bfe1&title=&width=963.7333333333333" referrerpolicy="no-referrer" alt="image.png"><br>这里首先是一段 if 判断，判断条件是调用 knownIsEmpty 的返回结果，这里接着跟进knownIsEmpty 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109331701-39a3b51d-d617-4637-a716-de1b4b502731.png#averageHue=%23333734&clientId=u61d5917a-db06-4&from=paste&height=37&id=u476b2595&originHeight=70&originWidth=1716&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=63820&status=done&style=none&taskId=uf0244719-d2b7-477b-88d0-42ca9e5428f&title=&width=915.2" referrerpolicy="no-referrer" alt="image.png"><br>具体方法内容是一段 合运算，当这里<code>stateEvaluated</code>为 true 时，后续才会调用 isEmpty 方法，这里继续跟进 isEmpty。方法具体逻辑为 state 字段和 State 的 Empty 实例进行比较，也就是判断 state 是否为空啦<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109387450-ea7eaf8f-59bf-4a58-a285-eb50be64a575.png#averageHue=%23303231&clientId=u61d5917a-db06-4&from=paste&height=58&id=u41783e5f&originHeight=108&originWidth=1218&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=52360&status=done&style=none&taskId=u50477feb-6326-4a7b-b322-997585e1add&title=&width=649.6" referrerpolicy="no-referrer" alt="image.png"><br>那么这里就跟我们之前提到过的 state 懒加载机制，当我们调用到 state 的时候会执行 state 的定义逻辑<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109542187-12410016-b8c4-45b5-9ca2-62f668ded63e.png#averageHue=%232a2c2b&clientId=u61d5917a-db06-4&from=paste&height=330&id=ue295500d&originHeight=619&originWidth=2018&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=560422&status=done&style=none&taskId=u3d34a7de-ed67-4470-a7fb-cf8d488fb98&title=&width=1076.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>这里稳定执行一段 lazyState 方法，这个方法是 LazyList 构造器传入的匿名函数，当我们对其跟进的时候，会发现如下情况：<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109618946-6b6b0c89-5ea6-4a8f-bd0f-5ab23916c968.png#averageHue=%2342464a&clientId=u61d5917a-db06-4&from=paste&height=114&id=u7952aec4&originHeight=214&originWidth=2385&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=142979&status=done&style=none&taskId=ub85f02bf-2c2e-4141-b75c-890d032f4a8&title=&width=1272" referrerpolicy="no-referrer" alt="image.png"><br><strong>他会生成一段伴生对象，并且带有 apply 方法</strong>。了解了这点，我们继续跟进，就会发现其本质是一段可控无参匿名函数<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109662908-efb175d1-d351-480c-b1b2-01ade599372a.png#averageHue=%232c2e2c&clientId=u61d5917a-db06-4&from=paste&height=237&id=ueda1332c&originHeight=445&originWidth=1895&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=394027&status=done&style=none&taskId=u1bf230fc-03f3-4315-99a6-0c9dec20f92&title=&width=1010.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>所以我们可以提前将其设置为一段符合条件的匿名函数，就能够进一步利用了。</p>
+<h2 id="漏洞点分析"><a href="#漏洞点分析" class="headerlink" title="漏洞点分析"></a>漏洞点分析</h2><p>乍一看好像 LazyList 的 readObject 没有可以利用的地方，我们跟进后续的链接操作，也就是 init 和 tail 链接的逻辑<code>coll = init ++: tail</code><br>我们跟进<code>++:</code>方法<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109109269-1ed81014-2258-4ce0-a9d7-88ea357970a5.png#averageHue=%232d2f2f&clientId=u61d5917a-db06-4&from=paste&height=89&id=u6e27197f&originHeight=166&originWidth=1897&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=140009&status=done&style=none&taskId=u8e660897-1b6d-4a3e-a324-a29721a69b4&title=&width=1011.7333333333333'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109109269-1ed81014-2258-4ce0-a9d7-88ea357970a5.png#averageHue=%232d2f2f&clientId=u61d5917a-db06-4&from=paste&height=89&id=u6e27197f&originHeight=166&originWidth=1897&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=140009&status=done&style=none&taskId=u8e660897-1b6d-4a3e-a324-a29721a69b4&title=&width=1011.7333333333333" referrerpolicy="no-referrer" alt="image.png"><br>具体的内容是将 prefix，链接操作的后半段 B 作为参数，调用进 prependedAll 方法。而 prependedAll 方法在 LazyList 中是被重构了的，跟进具体定义<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109236242-5ac53fa2-5cbd-442c-b097-be5ef3e61ddf.png#averageHue=%232d2f2e&clientId=u61d5917a-db06-4&from=paste&height=129&id=udc601407&originHeight=242&originWidth=1807&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=228864&status=done&style=none&taskId=ub0fdcdab-a205-4c2d-82e2-5cbc459bfe1&title=&width=963.7333333333333'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109236242-5ac53fa2-5cbd-442c-b097-be5ef3e61ddf.png#averageHue=%232d2f2e&clientId=u61d5917a-db06-4&from=paste&height=129&id=udc601407&originHeight=242&originWidth=1807&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=228864&status=done&style=none&taskId=ub0fdcdab-a205-4c2d-82e2-5cbc459bfe1&title=&width=963.7333333333333" referrerpolicy="no-referrer" alt="image.png"><br>这里首先是一段 if 判断，判断条件是调用 knownIsEmpty 的返回结果，这里接着跟进knownIsEmpty 方法<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109331701-39a3b51d-d617-4637-a716-de1b4b502731.png#averageHue=%23333734&clientId=u61d5917a-db06-4&from=paste&height=37&id=u476b2595&originHeight=70&originWidth=1716&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=63820&status=done&style=none&taskId=uf0244719-d2b7-477b-88d0-42ca9e5428f&title=&width=915.2'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109331701-39a3b51d-d617-4637-a716-de1b4b502731.png#averageHue=%23333734&clientId=u61d5917a-db06-4&from=paste&height=37&id=u476b2595&originHeight=70&originWidth=1716&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=63820&status=done&style=none&taskId=uf0244719-d2b7-477b-88d0-42ca9e5428f&title=&width=915.2" referrerpolicy="no-referrer" alt="image.png"><br>具体方法内容是一段 合运算，当这里<code>stateEvaluated</code>为 true 时，后续才会调用 isEmpty 方法，这里继续跟进 isEmpty。方法具体逻辑为 state 字段和 State 的 Empty 实例进行比较，也就是判断 state 是否为空啦<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109387450-ea7eaf8f-59bf-4a58-a285-eb50be64a575.png#averageHue=%23303231&clientId=u61d5917a-db06-4&from=paste&height=58&id=u41783e5f&originHeight=108&originWidth=1218&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=52360&status=done&style=none&taskId=u50477feb-6326-4a7b-b322-997585e1add&title=&width=649.6'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109387450-ea7eaf8f-59bf-4a58-a285-eb50be64a575.png#averageHue=%23303231&clientId=u61d5917a-db06-4&from=paste&height=58&id=u41783e5f&originHeight=108&originWidth=1218&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=52360&status=done&style=none&taskId=u50477feb-6326-4a7b-b322-997585e1add&title=&width=649.6" referrerpolicy="no-referrer" alt="image.png"><br>那么这里就跟我们之前提到过的 state 懒加载机制，当我们调用到 state 的时候会执行 state 的定义逻辑<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109542187-12410016-b8c4-45b5-9ca2-62f668ded63e.png#averageHue=%232a2c2b&clientId=u61d5917a-db06-4&from=paste&height=330&id=ue295500d&originHeight=619&originWidth=2018&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=560422&status=done&style=none&taskId=u3d34a7de-ed67-4470-a7fb-cf8d488fb98&title=&width=1076.2666666666667'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109542187-12410016-b8c4-45b5-9ca2-62f668ded63e.png#averageHue=%232a2c2b&clientId=u61d5917a-db06-4&from=paste&height=330&id=ue295500d&originHeight=619&originWidth=2018&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=560422&status=done&style=none&taskId=u3d34a7de-ed67-4470-a7fb-cf8d488fb98&title=&width=1076.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>这里稳定执行一段 lazyState 方法，这个方法是 LazyList 构造器传入的匿名函数，当我们对其跟进的时候，会发现如下情况：<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109618946-6b6b0c89-5ea6-4a8f-bd0f-5ab23916c968.png#averageHue=%2342464a&clientId=u61d5917a-db06-4&from=paste&height=114&id=u7952aec4&originHeight=214&originWidth=2385&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=142979&status=done&style=none&taskId=ub85f02bf-2c2e-4141-b75c-890d032f4a8&title=&width=1272'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109618946-6b6b0c89-5ea6-4a8f-bd0f-5ab23916c968.png#averageHue=%2342464a&clientId=u61d5917a-db06-4&from=paste&height=114&id=u7952aec4&originHeight=214&originWidth=2385&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=142979&status=done&style=none&taskId=ub85f02bf-2c2e-4141-b75c-890d032f4a8&title=&width=1272" referrerpolicy="no-referrer" alt="image.png"><br><strong>他会生成一段伴生对象，并且带有 apply 方法</strong>。了解了这点，我们继续跟进，就会发现其本质是一段可控无参匿名函数<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109662908-efb175d1-d351-480c-b1b2-01ade599372a.png#averageHue=%232c2e2c&clientId=u61d5917a-db06-4&from=paste&height=237&id=ueda1332c&originHeight=445&originWidth=1895&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=394027&status=done&style=none&taskId=u1bf230fc-03f3-4315-99a6-0c9dec20f92&title=&width=1010.6666666666666'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109662908-efb175d1-d351-480c-b1b2-01ade599372a.png#averageHue=%232c2e2c&clientId=u61d5917a-db06-4&from=paste&height=237&id=ueda1332c&originHeight=445&originWidth=1895&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=394027&status=done&style=none&taskId=u1bf230fc-03f3-4315-99a6-0c9dec20f92&title=&width=1010.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>所以我们可以提前将其设置为一段符合条件的匿名函数，就能够进一步利用了。</p>
 <h2 id="可利用匿名函数寻找"><a href="#可利用匿名函数寻找" class="headerlink" title="可利用匿名函数寻找"></a>可利用匿名函数寻找</h2><p>最终落到了寻找 scala 或者 java 中原生无参匿名函数，且可利用。单论这个条件是很难找到合适的方法的<br>我们最后多提了一嘴：</p>
 <blockquote>
 <p>他会生成一段伴生对象，并且带有 apply 方法</p>
@@ -272,390 +152,10 @@
 <blockquote>
 <p> 以 POC 中的 scala.sys.process.ProcessBuilderImpl$URLInput$$anonfun$$lessinit$greater$1为例<br>$URLInput:表示ProcessBuilderImpl的内部类<br>$$anonfun:表示匿名函数的前缀，表示这是一个自动生成的类。<br>$$lessinit$greater:是<init>的转义形式，表示这个匿名函数是在构造器中定义的。<br>$1:是匿名函数的序号，表示这是第一个匿名函数。</init></p>
 </blockquote>
-<p>具体跟进一下 ProcessBuilderImpl<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720111329418-fa4862ab-b8d4-4f27-ae49-7fe26ce67bd6.png#averageHue=%23383b3a&clientId=u61d5917a-db06-4&from=paste&height=427&id=u903b2371&originHeight=801&originWidth=885&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=386025&status=done&style=none&taskId=uf0b86291-4225-4bc8-aed2-2efeea6ad9d&title=&width=472" referrerpolicy="no-referrer" alt="image.png"><br>如果我们接着跟进 URLInput 的下一个子类，发现找不到了，只有这么多内容<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720111423212-ba854366-63af-4be6-84cf-0c62393e8c9d.png#averageHue=%233b3e3f&clientId=u61d5917a-db06-4&from=paste&height=37&id=u7d614f1e&originHeight=69&originWidth=1811&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=62915&status=done&style=none&taskId=ub2928dbc-2ddc-41e0-9ec6-2c6deca98a7&title=&width=965.8666666666667" referrerpolicy="no-referrer" alt="image.png"><br>那这个后续<code>$$anonfun$$lessinit$greater$1</code>是怎么生成的呢？我们一个一个来探究<br>就比如<code>$anonfun$$lessinit$greater</code>这一段生成，结合<code>ProcessBuilderImpl</code>类中关于 URLInput 的定义部分，我们猜测当一个类继承了一个父类，并且这个被继承的父类的构造方法参数调用了子类的构造参数的方法时，scala 会生成一段<code>$$anonfun$$lessinit$greater$</code>类名的类<br>来一段与之意思相近的示例代码</p>
+<p>具体跟进一下 ProcessBuilderImpl<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720111329418-fa4862ab-b8d4-4f27-ae49-7fe26ce67bd6.png#averageHue=%23383b3a&clientId=u61d5917a-db06-4&from=paste&height=427&id=u903b2371&originHeight=801&originWidth=885&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=386025&status=done&style=none&taskId=uf0b86291-4225-4bc8-aed2-2efeea6ad9d&title=&width=472'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720111329418-fa4862ab-b8d4-4f27-ae49-7fe26ce67bd6.png#averageHue=%23383b3a&clientId=u61d5917a-db06-4&from=paste&height=427&id=u903b2371&originHeight=801&originWidth=885&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=386025&status=done&style=none&taskId=uf0b86291-4225-4bc8-aed2-2efeea6ad9d&title=&width=472" referrerpolicy="no-referrer" alt="image.png"><br>如果我们接着跟进 URLInput 的下一个子类，发现找不到了，只有这么多内容<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720111423212-ba854366-63af-4be6-84cf-0c62393e8c9d.png#averageHue=%233b3e3f&clientId=u61d5917a-db06-4&from=paste&height=37&id=u7d614f1e&originHeight=69&originWidth=1811&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=62915&status=done&style=none&taskId=ub2928dbc-2ddc-41e0-9ec6-2c6deca98a7&title=&width=965.8666666666667'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720111423212-ba854366-63af-4be6-84cf-0c62393e8c9d.png#averageHue=%233b3e3f&clientId=u61d5917a-db06-4&from=paste&height=37&id=u7d614f1e&originHeight=69&originWidth=1811&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=62915&status=done&style=none&taskId=ub2928dbc-2ddc-41e0-9ec6-2c6deca98a7&title=&width=965.8666666666667" referrerpolicy="no-referrer" alt="image.png"><br>那这个后续<code>$$anonfun$$lessinit$greater$1</code>是怎么生成的呢？我们一个一个来探究<br>就比如<code>$anonfun$$lessinit$greater</code>这一段生成，结合<code>ProcessBuilderImpl</code>类中关于 URLInput 的定义部分，我们猜测当一个类继承了一个父类，并且这个被继承的父类的构造方法参数调用了子类的构造参数的方法时，scala 会生成一段<code>$$anonfun$$lessinit$greater$</code>类名的类<br>来一段与之意思相近的示例代码</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">a</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">msg</span></span>(): <span class="type">String</span> = &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;i am class a&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">b</span> (<span class="params">name:<span class="type">String</span></span>)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">c</span>(<span class="params">url:a</span>) <span class="keyword">extends</span> <span class="title">b</span>(<span class="params">url.msg(</span>))</span></span><br></pre></td></tr></table></figure>
-<p>大致逻辑就是 c 继承自 b，并且 b 的构造方法中调用了 c 构造方法的参数 url<br>看一下测试结果，好像并不是和我们猜测的那样，只是生成了 3 段 abc 字节码<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112333189-d82c82be-e9f6-4a67-83fd-85e7f644ac35.png#averageHue=%23303337&clientId=u2d8e4ee3-0855-4&from=paste&height=646&id=u6d6f0d30&originHeight=1212&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2655431&status=done&style=none&taskId=u0d16a410-f072-4e4b-9e46-5b0d7367087&title=&width=1124.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>具体再到 URLInput 的目标继承类<code>IStreamBuilder</code>看一下，发现他第一个传参的形式其实不是单纯的参数传递，而是<code>**传名参数**</code>，具体也可以算是一种惰性机制，他不会在函数被调用时立即执行作为传参数传入，而是在该函数的代码块执行逻辑时调用到了它，才会进行它的逻辑<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112472862-c337acb9-92d2-42d9-ab49-b4d2ffd693ea.png#averageHue=%232c2d2d&clientId=u2d8e4ee3-0855-4&from=paste&height=151&id=uc80891f6&originHeight=283&originWidth=1868&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=238930&status=done&style=none&taskId=u1a1adf7e-2e34-4259-84f7-852aaa48fe2&title=&width=996.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>那我们可以修改一下测试代码也给 b 里面设置一段传名参数</p>
+<p>大致逻辑就是 c 继承自 b，并且 b 的构造方法中调用了 c 构造方法的参数 url<br>看一下测试结果，好像并不是和我们猜测的那样，只是生成了 3 段 abc 字节码<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112333189-d82c82be-e9f6-4a67-83fd-85e7f644ac35.png#averageHue=%23303337&clientId=u2d8e4ee3-0855-4&from=paste&height=646&id=u6d6f0d30&originHeight=1212&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2655431&status=done&style=none&taskId=u0d16a410-f072-4e4b-9e46-5b0d7367087&title=&width=1124.2666666666667'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112333189-d82c82be-e9f6-4a67-83fd-85e7f644ac35.png#averageHue=%23303337&clientId=u2d8e4ee3-0855-4&from=paste&height=646&id=u6d6f0d30&originHeight=1212&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2655431&status=done&style=none&taskId=u0d16a410-f072-4e4b-9e46-5b0d7367087&title=&width=1124.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>具体再到 URLInput 的目标继承类<code>IStreamBuilder</code>看一下，发现他第一个传参的形式其实不是单纯的参数传递，而是<code>**传名参数**</code>，具体也可以算是一种惰性机制，他不会在函数被调用时立即执行作为传参数传入，而是在该函数的代码块执行逻辑时调用到了它，才会进行它的逻辑<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112472862-c337acb9-92d2-42d9-ab49-b4d2ffd693ea.png#averageHue=%232c2d2d&clientId=u2d8e4ee3-0855-4&from=paste&height=151&id=uc80891f6&originHeight=283&originWidth=1868&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=238930&status=done&style=none&taskId=u1a1adf7e-2e34-4259-84f7-852aaa48fe2&title=&width=996.2666666666667'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112472862-c337acb9-92d2-42d9-ab49-b4d2ffd693ea.png#averageHue=%232c2d2d&clientId=u2d8e4ee3-0855-4&from=paste&height=151&id=uc80891f6&originHeight=283&originWidth=1868&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=238930&status=done&style=none&taskId=u1a1adf7e-2e34-4259-84f7-852aaa48fe2&title=&width=996.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>那我们可以修改一下测试代码也给 b 里面设置一段传名参数</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">a</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">msg</span></span>(): <span class="type">String</span> = &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;i am class a&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">b</span> (<span class="params">name: =&gt;<span class="type">String</span></span>)<span class="comment">//这里注意冒号和等号之间的空格</span></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">c</span>(<span class="params">url:a</span>) <span class="keyword">extends</span> <span class="title">b</span>(<span class="params">url.msg(</span>))</span></span><br></pre></td></tr></table></figure>
-<p>这次验证了猜想<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112706423-ec09c0da-0a92-4d40-a431-b7a57b3b81e7.png#averageHue=%232b2e30&clientId=u2d8e4ee3-0855-4&from=paste&height=636&id=u280191cd&originHeight=1193&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2597463&status=done&style=none&taskId=u457ec2f3-44c0-4eaf-bef4-3cb67a55057&title=&width=1124.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>看一下该字节码的具体内容<code>javap -verbose -p 21.class</code>这里我把它字节码文件名改成了 21.class，windowsshell 中的$有转义。不影响具体内容：<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720116606719-662756d7-12f6-4f14-919b-1bf34f77ecb5.png#averageHue=%23323439&clientId=u43ab58bb-5ab5-4&from=paste&height=636&id=u22ae0fe1&originHeight=1193&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2675682&status=done&style=none&taskId=u05ab772a-02e1-46ac-98d6-7bb0534e859&title=&width=1124.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>发现它对 a 中定义的 msg 方法进行调用，结合传名参数的惰性机制，我们最开始并没有触发 b 中传名参数的逻辑执行，也并没有产生相应的<code>$$anonfun$$lessinit$greater$</code>类名的字节码文件。而当我们执行了传名参数的逻辑之后，才生成的<code>$$anonfun$$lessinit$greater$</code>类名的字节码文件。<br>也就是说：<br><code>scala.sys.process.ProcessBuilderImpl$URLInput$$anonfun$$lessinit$greater$1</code><strong>类的生成，是由</strong><code>url.openStream()</code><strong>的执行而触发的</strong><br>了解了这个部分，我们就能够知道为什么会找到<code>scala.sys.process.ProcessBuilderImpl$URLInput$$anonfun$$lessinit$greater$1</code>这个类了，接下来进行总结梳理</p>
-<h1 id="利用总结"><a href="#利用总结" class="headerlink" title="利用总结"></a>利用总结</h1><p>首先，匿名函数本身在经过 scalac 编译器编译之后的字节码，其实是一段类的字节码，类似于<code>$URLInput$$anonfun$$lessinit$greater$1</code>这种，所以我们可以通过寻找这种类，并通过 LazyList 的构造器将其传入。那么当触发 readObject 方法，直到触发该匿名函数时，在 JVM 中实际上就是在调用该类，并且实例化。观察该类的字节码，在该类的 apply 方法中，会调用其子类构造方法中的参数的方法，到达利用的目的，比如 URLInput 链就会调用到 <code>url.openStream()</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720116523573-c26422ef-4821-42d1-9ee7-06a31e0a05d4.png#averageHue=%232d2f2f&clientId=u43ab58bb-5ab5-4&from=paste&height=73&id=ue760d5cc&originHeight=136&originWidth=1920&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=120325&status=done&style=none&taskId=uc9cebf30-671b-412a-a243-8d376f63c6b&title=&width=1024" referrerpolicy="no-referrer" alt="image.png"><br>其他 scala 反序列化链也是如此</p>
-
-      </div>
-      
-        <div class="prev-or-next">
-          <div class="post-foot-next">
-            
-              <a href="/post/Java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0.html" target="_self">
-                <i class="iconfont icon-chevronleft"></i>
-                <span>上一页</span>
-              </a>
-            
-          </div>
-          <div class="post-attach">
-            <span class="post-pubtime">
-              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-08-09 18:25:11
-            </span>
-            
-                  <span class="post-tags">
-                    <i class="iconfont icon-tags mr-10" title="标签"></i>
-                    
-                    <span class="span--tag mr-8">
-                      <a href="/tags/Scala/" title="Scala">
-                        #Scala
-                      </a>
-                    </span>
-                    
-                  </span>
-              
-          </div>
-          <div class="post-foot-prev">
-            
-              <a href="/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-    </div>
-    
-  <div id="btn-catalog" class="btn-catalog">
-    <i class="iconfont icon-catalog"></i>
-  </div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">目录</div>
-    <div class="catalog-content">
-      
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-text">前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#scala-%E7%AE%80%E4%BB%8B"><span class="toc-text">scala 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#scala-%E6%96%B0%E7%89%B9%E6%80%A7"><span class="toc-text">scala 新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%B9%E9%85%8D%E5%99%A8-match"><span class="toc-text">匹配器 match</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%B4%E7%94%9F%E5%AF%B9%E8%B1%A1"><span class="toc-text">伴生对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#apply-%E6%96%B9%E6%B3%95"><span class="toc-text">apply 方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#trait"><span class="toc-text">trait</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0"><span class="toc-text">匿名函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%B0%E6%80%A7%E5%88%97%E8%A1%A8-LazyList"><span class="toc-text">惰性列表 LazyList*</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LazyList-%E7%9A%84%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">LazyList 的反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">工作流程分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-text">漏洞点分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E5%88%A9%E7%94%A8%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0%E5%AF%BB%E6%89%BE"><span class="toc-text">可利用匿名函数寻找</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93"><span class="toc-text">利用总结</span></a></li></ol>
-      
-    </div>
-  </div>
-
-  
-<script src="/js/catalog.js"></script>
-
-
-
-
-    
-      <div class="comments-container">
-        
-
-
-
-
-
-
-  <div id="gitalk-container"></div>
-
-  <script>
-    function loadGitalkSuc() {
-      const gitalk = new Gitalk({
-        clientID: '',
-        clientSecret: '',
-        repo: '',
-        owner: '',
-        admin: [''],
-        id: location.pathname,
-        distractionFreeMode: false
-      })
-
-      gitalk.render('gitalk-container')
-    }
-  </script>
-  
-    <link rel="stylesheet" href="/plugins/gitalk.css">
-    <script type="text/javascript" src="/plugins/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
-  
-
-
-
-      </div>
-    
-  </div>
-
-
-        
-<div class="footer">
-  <div class="social">
-    <ul>
-      
-        <li>
-          
-              <a title="github" href="">
-                <i class="iconfont icon-github"></i>
-              </a>
-              
-        </li>
-        
-    </ul>
-  </div>
-  
-    
-    <div class="footer-more">
-      
-        Copyright © 2024 Oranges
-        
-    </div>
-  
-    
-    <div class="footer-more">
-      
-        Theme by Oranges | Powered by Hexo
-        
-    </div>
-  
-  
-</div>
-
-      </div>
-
-      <div class="tools-bar">
-        <div class="back-to-top tools-bar-item hidden">
-  <a href="javascript: void(0)">
-    <i class="iconfont icon-chevronup"></i>
-  </a>
-</div>
-
-
-<script src="/js/backtotop.js"></script>
-
-
-
-        
-  <div class="search-icon tools-bar-item" id="search-icon">
-    <a href="javascript: void(0)">
-      <i class="iconfont icon-search"></i>
-    </a>
-  </div>
-
-  <div class="search-overlay hidden">
-    <div class="search-content" tabindex="0">
-      <div class="search-title">
-        <span class="search-icon-input">
-          <a href="javascript: void(0)">
-            <i class="iconfont icon-search"></i>
-          </a>
-        </span>
-        
-          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
-        
-        <span class="search-close-icon" id="search-close-icon">
-          <a href="javascript: void(0)">
-            <i class="iconfont icon-close"></i>
-          </a>
-        </span>
-      </div>
-      <div class="search-result" id="search-result"></div>
-    </div>
-  </div>
-
-  <script type="text/javascript">
-    var inputArea = document.querySelector("#search-input")
-    var searchOverlayArea = document.querySelector(".search-overlay")
-
-    inputArea.onclick = function() {
-      getSearchFile()
-      this.onclick = null
-    }
-
-    inputArea.onkeydown = function() {
-      if(event.keyCode == 13)
-        return false
-    }
-
-    function openOrHideSearchContent() {
-      let isHidden = searchOverlayArea.classList.contains('hidden')
-      if (isHidden) {
-        searchOverlayArea.classList.remove('hidden')
-        document.body.classList.add('hidden')
-        // inputArea.focus()
-      } else {
-        searchOverlayArea.classList.add('hidden')
-        document.body.classList.remove('hidden')
-      }
-    }
-
-    function blurSearchContent(e) {
-      if (e.target === searchOverlayArea) {
-        openOrHideSearchContent()
-      }
-    }
-
-    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
-    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
-    searchOverlayArea.addEventListener("click", blurSearchContent, false)
-
-    var searchFunc = function (path, search_id, content_id) {
-      'use strict';
-      var $input = document.getElementById(search_id);
-      var $resultContent = document.getElementById(content_id);
-      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
-      $.ajax({
-        // 0x01. load xml file
-        url: path,
-        dataType: "xml",
-        success: function (xmlResponse) {
-          // 0x02. parse xml file
-          var datas = $("entry", xmlResponse).map(function () {
-            return {
-              title: $("title", this).text(),
-              content: $("content", this).text(),
-              url: $("url", this).text()
-            };
-          }).get();
-          $resultContent.innerHTML = "";
-
-          $input.addEventListener('input', function () {
-            // 0x03. parse query to keywords list
-            var str = '<ul class=\"search-result-list\">';
-            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
-            $resultContent.innerHTML = "";
-            if (this.value.trim().length <= 0) {
-              return;
-            }
-            // 0x04. perform local searching
-            datas.forEach(function (data) {
-              var isMatch = true;
-              var content_index = [];
-              if (!data.title || data.title.trim() === '') {
-                data.title = "Untitled";
-              }
-              var orig_data_title = data.title.trim();
-              var data_title = orig_data_title.toLowerCase();
-              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
-              var data_content = orig_data_content.toLowerCase();
-              var data_url = data.url;
-              var index_title = -1;
-              var index_content = -1;
-              var first_occur = -1;
-              // only match artiles with not empty contents
-              if (data_content !== '') {
-                keywords.forEach(function (keyword, i) {
-                  index_title = data_title.indexOf(keyword);
-                  index_content = data_content.indexOf(keyword);
-
-                  if (index_title < 0 && index_content < 0) {
-                    isMatch = false;
-                  } else {
-                    if (index_content < 0) {
-                      index_content = 0;
-                    }
-                    if (i == 0) {
-                      first_occur = index_content;
-                    }
-                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
-                  }
-                });
-              } else {
-                isMatch = false;
-              }
-              // 0x05. show search results
-              if (isMatch) {
-                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
-                var content = orig_data_content;
-                if (first_occur >= 0) {
-                  // cut out 100 characters
-                  var start = first_occur - 20;
-                  var end = first_occur + 80;
-
-                  if (start < 0) {
-                    start = 0;
-                  }
-
-                  if (start == 0) {
-                    end = 100;
-                  }
-
-                  if (end > content.length) {
-                    end = content.length;
-                  }
-
-                  var match_content = content.substr(start, end);
-
-                  // highlight all keywords
-                  keywords.forEach(function (keyword) {
-                    var regS = new RegExp(keyword, "gi");
-                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
-                  });
-
-                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
-                }
-                str += "</li>";
-              }
-            });
-            str += "</ul>";
-            if (str.indexOf('<li>') === -1) {
-              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
-            }
-            $resultContent.innerHTML = str;
-          });
-        },
-        error: function(xhr, status, error) {
-          $resultContent.innerHTML = ""
-          if (xhr.status === 404) {
-            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
-          } else {
-            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
-          }
-        }
-      });
-      $(document).on('click', '#search-close-icon', function() {
-        $('#search-input').val('');
-        $('#search-result').html('');
-      });
-    }
-
-    var getSearchFile = function() {
-        var path = "/search.xml";
-        searchFunc(path, 'search-input', 'search-result');
-    }
-  </script>
-
-
-
-
-        
-  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-    <a href="javascript: void(0)">
-      <i id="theme-icon" class="iconfont icon-moon"></i>
-    </a>
-  </div>
-
-  
-<script src="/js/colorscheme.js"></script>
-
-
-
-
-
-        
-  
-    <div class="share-icon tools-bar-item">
-      <a href="javascript: void(0)" id="share-icon">
-        <i class="iconfont iconshare"></i>
-      </a>
-      <div class="share-content hidden">
-        
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FScala%25E5%258F%258D%25E5%25BA%258F%25E5%2588%2597%25E5%258C%2596.html + '" target="_blank" title="Twitter">
-            <i class="iconfont icon-twitter"></i>
-          </a>
-        
-        
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" target="_blank" title="Facebook">
-            <i class="iconfont icon-facebooksquare"></i>
-          </a>
-        
-      </div>
-    </div>
-  
-  
-<script src="/js/shares.js"></script>
-
-
-
-      </div>
-    </div>
-  </body>
-</html>
+<p>这次验证了猜想<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112706423-ec09c0da-0a92-4d40-a431-b7a57b3b81e7.png#averageHue=%232b2e30&clientId=u2d8e4ee3-0855-4&from=paste&height=636&id=u280191cd&originHeight=1193&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2597463&status=done&style=none&taskId=u457ec2f3-44c0-4eaf-bef4-3cb67a55057&title=&width=1124.2666666666667'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112706423-ec09c0da-0a92-4d40-a431-b7a57b3b81e7.png#averageHue=%232b2e30&clientId=u2d8e4ee3-0855-4&from=paste&height=636&id=u280191cd&originHeight=1193&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2597463&status=done&style=none&taskId=u457ec2f3-44c0-4eaf-bef4-3cb67a55057&title=&width=1124.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>看一下该字节码的具体内容<code>javap -verbose -p 21.class</code>这里我把它字节码文件名改成了 21.class，windowsshell 中的$有转义。不影响具体内容：<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720116606719-662756d7-12f6-4f14-919b-1bf34f77ecb5.png#averageHue=%23323439&clientId=u43ab58bb-5ab5-4&from=paste&height=636&id=u22ae0fe1&originHeight=1193&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2675682&status=done&style=none&taskId=u05ab772a-02e1-46ac-98d6-7bb0534e859&title=&width=1124.2666666666667'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720116606719-662756d7-12f6-4f14-919b-1bf34f77ecb5.png#averageHue=%23323439&clientId=u43ab58bb-5ab5-4&from=paste&height=636&id=u22ae0fe1&originHeight=1193&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2675682&status=done&style=none&taskId=u05ab772a-02e1-46ac-98d6-7bb0534e859&title=&width=1124.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>发现它对 a 中定义的 msg 方法进行调用，结合传名参数的惰性机制，我们最开始并没有触发 b 中传名参数的逻辑执行，也并没有产生相应的<code>$$anonfun$$lessinit$greater$</code>类名的字节码文件。而当我们执行了传名参数的逻辑之后，才生成的<code>$$anonfun$$lessinit$greater$</code>类名的字节码文件。<br>也就是说：<br><code>scala.sys.process.ProcessBuilderImpl$URLInput$$anonfun$$lessinit$greater$1</code><strong>类的生成，是由</strong><code>url.openStream()</code><strong>的执行而触发的</strong><br>了解了这个部分，我们就能够知道为什么会找到<code>scala.sys.process.ProcessBuilderImpl$URLInput$$anonfun$$lessinit$greater$1</code>这个类了，接下来进行总结梳理</p>
+<h1 id="利用总结"><a href="#利用总结" class="headerlink" title="利用总结"></a>利用总结</h1><p>首先，匿名函数本身在经过 scalac 编译器编译之后的字节码，其实是一段类的字节码，类似于<code>$URLInput$$anonfun$$lessinit$greater$1</code>这种，所以我们可以通过寻找这种类，并通过 LazyList 的构造器将其传入。那么当触发 readObject 方法，直到触发该匿名函数时，在 JVM 中实际上就是在调用该类，并且实例化。观察该类的字节码，在该类的 apply 方法中，会调用其子类构造方法中的参数的方法，到达利用的目的，比如 URLInput 链就会调用到 <code>url.openStream()</code><br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1720116523573-c26422ef-4821-42d1-9ee7-06a31e0a05d4.png#averageHue=%232d2f2f&clientId=u43ab58bb-5ab5-4&from=paste&height=73&id=ue760d5cc&originHeight=136&originWidth=1920&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=120325&status=done&style=none&taskId=uc9cebf30-671b-412a-a243-8d376f63c6b&title=&width=1024'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720116523573-c26422ef-4821-42d1-9ee7-06a31e0a05d4.png#averageHue=%232d2f2f&clientId=u43ab58bb-5ab5-4&from=paste&height=73&id=ue760d5cc&originHeight=136&originWidth=1920&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=120325&status=done&style=none&taskId=uc9cebf30-671b-412a-a243-8d376f63c6b&title=&width=1024" referrerpolicy="no-referrer" alt="image.png"><br>其他 scala 反序列化链也是如此</p>
+<div id="paginator"></div></div><div id="post-footer"><div id="pages"><div class="footer-link" style="width: 50%;text-align:right;border-right:1px #fe2 solid"><a href="/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html">← Next Ysoserial-JRMPListener/JRMPClient学习</a></div><div class="footer-link" style="width: 50%;right:1px;border-left:1px #fe2 solid"><a href="/post/Java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0.html">Java字节码初步学习 Prev →</a></div></div></div></div><div class="bottom-btn"><div><a class="i-top" id="to-top" onClick="scrolls.scrolltop();" title="To Top" style="opacity: 0; display: none;">∧ </a><a class="i-index" id="to-index" href="#toc-div" title="To Catalog">≡</a><a class="i-color" id="color-mode" onClick="colorMode.change()" title="Change Theme"></a></div></div></article><aside><div id="about"><a href="/" id="logo"><img src="/img/logo/D5B030D454D35C3F06BCF706E7F7948A.png" alt="Logo"></a><h1 id="Dr"><a href="/">stoocea</a></h1><div id="description"><p>time thicking away</p></div></div><div id="aside-block"><div id="toc-div"><h1>Catalog</h1><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#scala-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">scala 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#scala-%E6%96%B0%E7%89%B9%E6%80%A7"><span class="toc-number">1.2.</span> <span class="toc-text">scala 新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%B9%E9%85%8D%E5%99%A8-match"><span class="toc-number">1.2.1.</span> <span class="toc-text">匹配器 match</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%B4%E7%94%9F%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.2.2.</span> <span class="toc-text">伴生对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#apply-%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">apply 方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#trait"><span class="toc-number">1.2.3.</span> <span class="toc-text">trait</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.4.</span> <span class="toc-text">匿名函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%B0%E6%80%A7%E5%88%97%E8%A1%A8-LazyList"><span class="toc-number">1.2.5.</span> <span class="toc-text">惰性列表 LazyList*</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LazyList-%E7%9A%84%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">LazyList 的反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">2.1.</span> <span class="toc-text">工作流程分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-number">2.2.</span> <span class="toc-text">漏洞点分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E5%88%A9%E7%94%A8%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0%E5%AF%BB%E6%89%BE"><span class="toc-number">2.3.</span> <span class="toc-text">可利用匿名函数寻找</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">利用总结</span></a></li></ol></div></div><footer><nobr>Published with <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a></nobr><wbr><nobr> Theme <a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknights</a></nobr><wbr><nobr> by <a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main><canvas id="canvas-dust"></canvas></body></html>
