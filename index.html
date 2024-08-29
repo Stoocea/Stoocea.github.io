@@ -1,62 +1,451 @@
-<!DOCTYPE html><html lang="zh-CN" theme-mode="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>stoocea's blog</title><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="preload" as="font" crossorigin="anonymous" href="/font/Bender.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/BenderLight.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/JetBrainsMono-Regular.woff2"><link rel="stylesheet" href="/css/arknights.css"><style>@font-face {
-  font-family: Bender;
-  src: local('Bender'), url("/font/Bender.ttf"), url("/font/Bender.otf");
-}
-@font-face {
-  font-family: BenderLight;
-  src: local('BenderLight'), url("/font/BenderLight.ttf");
-}
-@font-face {
-  font-family: 'JetBrains Mono';
-  src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
-}
-</style><script>var config = {"root":"/","search":{"preload":false,"activeHolder":"键入以继续","blurHolder":"数据检索","noResult":"无 $0 相关数据"},"code":{"codeInfo":"$0 - $1 行","copy":"复制"}}</script><link type="text/css" rel="stylesheet" href="/lib/encrypt/hbe.style.css"><script src="//unpkg.com/mermaid@10.5.0/dist/mermaid.min.js"></script><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lightgallery.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-zoom.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-thumbnail.css"><link type="text/css" rel="stylesheet" href="/lib/fontawesome/css/all.min.css"><script>if (window.localStorage.getItem('theme-mode') === 'light')
- document.documentElement.setAttribute('theme-mode', 'light')
-if (window.localStorage.getItem('theme-mode') === 'dark')
- document.documentElement.setAttribute('theme-mode', 'dark')</script><style>@font-face {
- font-family: BenderLight;
- src: local('Bender'), url("/font/BenderLight.woff2") format('woff2');
-}
-@font-face {
- font-family: 'JetBrains Mono';
- src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
-}</style><style>:root {
- --dark-background: url('/img/pc-bg.jpg');
- --light-background: url('/img/bk.jpg');
- --theme-encrypt-confirm: '确认'
-}</style><script defer src="/js/arknights.js"></script><script defer src="/js/search.js"></script><script defer type="module">import mermaid from '//unpkg.com/mermaid@10.5.0/dist/mermaid.esm.mjs';
-window.mermaid = mermaid;
-code.paintMermaid();
-</script><script async src="//unpkg.com/lightgallery@2.7.1/lightgallery.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script><script async src="/lib/encrypt/hbe.js"></script><script async src="/js/pjax.js"></script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
-lightGallery(document.getElementById('post-bg'), {
-  plugins: [lgZoom,lgThumbnail],
-  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
- cacheBust: false,
- selectors: ['title','article','#aside-block','.pjax-js','data-pjax','.busuanzi'],
- switches: {'article': Pjax.switches.sideBySide},
- switchesOptions: {
-   'article': {
-     classNames: {
-       remove: "pjax-out",
-       add: "pjax-in"
-     }
-   }
- }
-});
-document.addEventListener("pjax:complete", reset);reset()})</script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
-lightGallery(document.getElementById('post-bg'), {
-  plugins: [lgZoom,lgThumbnail],
-  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
- cacheBust: false,
- selectors: ['title','article','#aside-block','.pjax-js'],
- switches: {'article': Pjax.switches.sideBySide},
- switchesOptions: {
-   'article': {
-     classNames: {
-       remove: "pjax-out",
-       add: "pjax-in"
-     }
-   }
- }
-});
-document.addEventListener("pjax:complete", reset);reset()})</script><meta name="generator" content="Hexo 6.3.0"></head><body><div class="loading" style="opacity: 0;"><div class="loadingBar left"></div><div class="loadingBar right"></div></div><main><header class="closed"><div class="navBtn"><i class="navBtnIcon"><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span></i></div><nav><div class="navItem" id="search-header"><span class="navItemTitle"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="数据检索" spellcheck="false" maxlength="50" type="text" id="search-input"></span></div><div class="navItem" id="search-holder"></div><div class="search-popup" tabindex="0"><div id="search-result"></div></div><ol class="navContent"><li class="navItem"><a class="navBlock" href="/"><span class="navItemTitle">Home</span></a></li><li class="navItem" matchdata="categories,tags"><a class="navBlock" href="/archives/"><span class="navItemTitle">Archives</span></a></li><li class="navItem"><a class="navBlock" href="/about/"><span class="navItemTitle">About</span></a></li></ol></nav></header><article><div class="posts"><a class="recent-post" href="/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html"><object><div class="recent-info"><span class="categories"><object><a href="/categories/Java/">Java</a></object></span><span class="tags"><object><a href="/tags/%E9%AB%98%E7%89%88%E6%9C%ACjdk%E6%89%93%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC/">高版本jdk打入内存马</a></object></span><time datetime="2024-08-28T20:36:00.000Z">2024-08-29</time></div><h1 class="recent-title">JDK高版本的模块化以及反射类加载限制绕过</h1><div class="recent-excerpt"></div><span class="read-more">阅读文章 +</span></object></a><a class="recent-post" href="/post/CVE-2024-38856%20Apache%20OFBiz18.12.15%20%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E.html"><object><div class="recent-info"><span class="categories"><object><a href="/categories/CVES/">CVES</a></object></span><span class="tags"><object><a href="/tags/ofbiz/">ofbiz</a></object></span><time datetime="2024-08-18T06:45:00.000Z">2024-08-18</time></div><h1 class="recent-title">CVE-2024-38856 Apache OFBiz18.12.15 任意代码执行漏洞分析</h1><div class="recent-excerpt"></div><span class="read-more">阅读文章 +</span></object></a><a class="recent-post" href="/post/JDBC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><object><div class="recent-info"><span class="categories"><object><a href="/categories/Java/">Java</a></object></span><span class="tags"><object><a href="/tags/JDBC/">JDBC</a></object></span><time datetime="2024-08-09T04:50:51.000Z">2024-08-09</time></div><h1 class="recent-title">JDBC-Mysql反序列化</h1><div class="recent-excerpt"></div><span class="read-more">阅读文章 +</span></object></a><a class="recent-post" href="/post/Spring%20Cloud%20Data%20Flow%20_%202.11.3%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%20CVE-2024-22263%E5%88%86%E6%9E%90.html"><object><div class="recent-info"><span class="categories"><object><a href="/categories/CVES/">CVES</a></object></span><span class="tags"><object><a href="/tags/Spring-Cloud-Skipper/">Spring Cloud Skipper</a></object></span><time datetime="2024-08-06T07:41:00.000Z">2024-08-06</time></div><h1 class="recent-title">Spring Cloud Skipper _ 2.11.3 任意文件写入 CVE-2024-22263分析</h1><div class="recent-excerpt"></div><span class="read-more">阅读文章 +</span></object></a><a class="recent-post" href="/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html"><object><div class="recent-info"><span class="categories"><object><a href="/categories/Memshell/">Memshell</a></object></span><span class="tags"><object><a href="/tags/memshellConstruct/">memshellConstruct</a></object></span><time datetime="2024-08-04T04:37:11.000Z">2024-08-04</time></div><h1 class="recent-title">Memshell再研究之Tomcat</h1><div class="recent-excerpt"></div><span class="read-more">阅读文章 +</span></object></a><a class="recent-post" href="/post/%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF.html"><object><div class="recent-info"><span class="categories"><object><a href="/categories/Memshell/">Memshell</a></object></span><span class="tags"><object><a href="/tags/EchoShell/">EchoShell</a></object></span><time datetime="2024-07-28T13:50:51.000Z">2024-07-28</time></div><h1 class="recent-title">Tomcat型内存马回显以及反序列化写入</h1><div class="recent-excerpt"></div><span class="read-more">阅读文章 +</span></object></a><a class="recent-post" href="/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html"><object><div class="recent-info"><span class="categories"><object><a href="/categories/Java/">Java</a></object></span><span class="tags"><object><a href="/tags/JRMP/">JRMP</a></object></span><time datetime="2024-07-06T07:41:00.000Z">2024-07-06</time></div><h1 class="recent-title">Ysoserial-JRMPListener/JRMPClient学习</h1><div class="recent-excerpt"></div><span class="read-more">阅读文章 +</span></object></a><a class="recent-post" href="/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><object><div class="recent-info"><span class="categories"><object><a href="/categories/Java/">Java</a></object></span><span class="tags"><object><a href="/tags/Scala/">Scala</a></object></span><time datetime="2024-07-06T07:41:00.000Z">2024-07-06</time></div><h1 class="recent-title">Scala反序列化学习</h1><div class="recent-excerpt"></div><span class="read-more">阅读文章 +</span></object></a><a class="recent-post" href="/post/Java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0.html"><object><div class="recent-info"><span class="categories"><object><a href="/categories/Java/">Java</a></object></span><span class="tags"><object><a href="/tags/ByteCode/">ByteCode</a></object></span><time datetime="2024-06-10T05:00:00.000Z">2024-06-10</time></div><h1 class="recent-title">Java字节码初步学习</h1><div class="recent-excerpt"></div><span class="read-more">阅读文章 +</span></object></a><a class="recent-post" href="/post/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><object><div class="recent-info"><span class="categories"><object><a href="/categories/Java/">Java</a></object></span><span class="tags"><object><a href="/tags/%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">二次反序列化</a></object></span><time datetime="2024-06-04T06:00:00.000Z">2024-06-04</time></div><h1 class="recent-title">Java二次反序列化学习</h1><div class="recent-excerpt"></div><span class="read-more">阅读文章 +</span></object></a></div><div id="paginator"><span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next</a></div><div class="bottom-btn"><div><a class="i-top" id="to-top" onClick="scrolls.scrolltop();" title="回到顶部" style="opacity: 0; display: none;">∧ </a><a class="i-color" id="color-mode" onClick="colorMode.change()" title="切换主题"></a></div></div></article><aside><div id="about"><a href="/" id="logo"><img src="/img/logo/D5B030D454D35C3F06BCF706E7F7948A.png" alt="Logo"></a><h1 id="Dr"><a href="/">stoocea</a></h1><div id="description"><p>time thicking away</p></div></div><div id="aside-block"><section id="total"><a id="total-archives" href="/archives"><span class="total-title">文章 总数:</span><span class="total-number">23</span></a><div id="total-tags"><span class="total-title">标签:</span><span class="total-number">22</span></div><div id="total-categories"><span class="total-title">分类:</span><span class="total-number">5</span></div></section></div><footer><nobr>构建自 <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a></nobr><wbr><nobr> 使用主题 <a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknights</a></nobr><wbr><nobr> 主题作者 <a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main><canvas id="canvas-dust"></canvas></body></html>
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="time thicking away">
+<meta property="og:type" content="website">
+<meta property="og:title" content="stoocea&#39;s blog">
+<meta property="og:url" content="http://example.com/index.html">
+<meta property="og:site_name" content="stoocea&#39;s blog">
+<meta property="og:description" content="time thicking away">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="stoocea">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
+        
+      
+    
+    <!-- title -->
+    <title>stoocea&#39;s blog</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+    <div class="content index py4 h-card">
+        
+          <header id="header">
+  <a class="u-url u-uid" href="/">
+  
+    
+      <img id="logo" alt class="u-logo" src="/images/B3B48CA0FF66D07276B92A99A08D3AF8.png" />
+    
+  
+    <div id="title">
+      <h1 class="p-name">stoocea&#39;s blog</h1>
+    </div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#" aria-label="目录"><i class="fa-solid fa-bars fa-2x"></i></a>
+      </li>
+      <!--
+     --><li><a href="/">首页</a></li><!--
+   --><!--
+     --><li><a href="/about/">关于</a></li><!--
+   --><!--
+     --><li><a href="/archives/">归档</a></li><!--
+   --><!--
+     --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
+   -->
+    </ul>
+  </div>
+</header>
+
+        
+        <section id="about" class="p-note">
+  
+    <p>time thicking away</p>
+
+  
+  
+    <p>
+      在这里找到我：
+      
+      
+      
+        
+        
+          <a class="icon u-url" target="_blank" rel="noopener me" href="https://github.com/Stoocea" aria-label="github" title="github">
+            <i class="fa-brands fa-github"></i><!--
+      ---></a><!--
+    ---><!--
+    --->， 
+        
+      
+        
+        
+          <a class="icon u-url" target="_blank" rel="noopener me" href="/" aria-label="twitter" title="twitter">
+            <i class="fa-brands fa-twitter"></i><!--
+      ---></a><!--
+    ---><!--
+    --->， 
+        
+      
+        
+        
+          <a class="icon u-url" target="_blank" rel="noopener me" href="/" aria-label="facebook" title="facebook">
+            <i class="fa-brands fa-facebook"></i><!--
+      ---></a><!--
+    ---><!--
+    --->， 
+        
+      
+        
+        
+          <a class="icon u-email" target="_blank" rel="noopener" href="1327956390@qq.com" aria-label="mail" title="mail">
+            <i class="fa-solid fa-envelope"></i><!--
+      ---></a>
+        <!--
+    --->， 
+        
+      
+        
+        
+          <a class="icon u-url" target="_blank" rel="noopener me" href="/" aria-label="mastodon.social" title="mastodon.social">
+            <i class="fa-brands fa-mastodon"></i><!--
+      ---></a><!--
+    ---><!--
+    ---> 和 
+        
+      
+        
+        
+          <a class="icon u-url" target="_blank" rel="noopener me" href="/" aria-label="fosstodon.org" title="fosstodon.org">
+            <i class="fa-brands fa-mastodon"></i><!--
+      ---></a><!--
+    ---><!--
+    --->.
+        
+      
+    </p>
+  
+</section>
+
+<section id="writing">
+  <span class="h1"><a href="/archives/">文章</a></span>
+  
+  <span class="h2">标签</span>
+  <span class="widget tagcloud">
+    <a href="/tags/AgentMemshell/" style="font-size: 10px;">AgentMemshell</a> <a href="/tags/Apache-DolphinScheduler/" style="font-size: 10px;">Apache DolphinScheduler</a> <a href="/tags/ByteCode/" style="font-size: 10px;">ByteCode</a> <a href="/tags/C3P0/" style="font-size: 10px;">C3P0</a> <a href="/tags/CodeQL/" style="font-size: 10px;">CodeQL</a> <a href="/tags/EchoShell/" style="font-size: 10px;">EchoShell</a> <a href="/tags/FastJson/" style="font-size: 10px;">FastJson</a> <a href="/tags/Felling/" style="font-size: 20px;">Felling</a> <a href="/tags/JDBC/" style="font-size: 10px;">JDBC</a> <a href="/tags/JNDI/" style="font-size: 10px;">JNDI</a> <a href="/tags/JRMP/" style="font-size: 10px;">JRMP</a> <a href="/tags/JackSon/" style="font-size: 10px;">JackSon</a> <a href="/tags/LOG4J/" style="font-size: 10px;">LOG4J</a> <a href="/tags/RMI/" style="font-size: 10px;">RMI</a> <a href="/tags/Rome/" style="font-size: 10px;">Rome</a> <a href="/tags/Scala/" style="font-size: 10px;">Scala</a> <a href="/tags/Spring/" style="font-size: 10px;">Spring</a> <a href="/tags/Spring-Cloud-Skipper/" style="font-size: 10px;">Spring Cloud Skipper</a> <a href="/tags/memshellConstruct/" style="font-size: 10px;">memshellConstruct</a> <a href="/tags/ofbiz/" style="font-size: 10px;">ofbiz</a> <a href="/tags/%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" style="font-size: 10px;">二次反序列化</a> <a href="/tags/%E9%AB%98%E7%89%88%E6%9C%ACjdk%E6%89%93%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC/" style="font-size: 10px;">高版本jdk打入内存马</a>
+  </span>
+  <span class="h2">最新发布</span>
+  
+  <ul class="post-list">
+    
+    
+      
+    
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2024-08-29T13:00:56.326Z" class="dt-updated" itemprop="dateModified">2024-08-29</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/post/CVE-2024-38856%20Apache%20OFBiz18.12.15%20%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E.html">CVE-2024-38856 Apache OFBiz18.12.15 任意代码执行漏洞分析</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2024-08-28T20:40:17.794Z" class="dt-updated" itemprop="dateModified">2024-08-29</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html">JDK高版本的模块化以及反射类加载限制绕过</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2024-08-26T11:38:10.254Z" class="dt-updated" itemprop="dateModified">2024-08-26</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/post/Spring%20Cloud%20Data%20Flow%20_%202.11.3%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%20CVE-2024-22263%E5%88%86%E6%9E%90.html">Spring Cloud Skipper _ 2.11.3 任意文件写入 CVE-2024-22263分析</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2024-08-09T10:25:11.568Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">Scala反序列化学习</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2024-08-09T10:24:48.720Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html">Memshell再研究之Tomcat</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2024-08-09T10:24:25.003Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html">Ysoserial-JRMPListener/JRMPClient学习</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2024-08-09T10:24:04.869Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/post/Java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0.html">Java字节码初步学习</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2024-08-09T10:23:56.351Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/post/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">Java二次反序列化学习</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2024-08-09T10:22:44.951Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/post/%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF.html">Tomcat型内存马回显以及反序列化写入</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
+          <time datetime="2024-08-09T10:22:17.743Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/post/JDBC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">JDBC-Mysql反序列化</a>
+    
+
+
+</span>
+      </li>
+    
+  </ul>
+  
+    
+    <div class="pagination">
+        
+        <span class="page-number">第 1 页，共 3 页</span>
+        
+            <a href="/page/2/"><i class="fa-solid fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+
+  
+</section>
+
+
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2024
+    stoocea
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

