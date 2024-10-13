@@ -1,184 +1,185 @@
 <!DOCTYPE html>
-<html lang=zh>
-<head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="打巅峰极客的时候遇到的一个东西，觉得很有必要学习一下。当时题目直接给出“JDK17+CB”反序列化，我由于对高版本JDK有一种陌生的恐惧感，写EXP时有点畏手畏脚，最终导致题目没有做出来，赛后观摩了其他做出来师傅的WP，发现其实这个问题只要熟悉了就还能做。 JDK9之后的模块化Java模块化主要是用来解决依赖的问题，以及给原生JDK瘦身这两个作用。 在此之前，java项目一般都是由一堆class文">
-<meta property="og:type" content="article">
-<meta property="og:title" content="JDK高版本的模块化以及反射类加载限制绕过">
-<meta property="og:url" content="http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html">
-<meta property="og:site_name" content="stoocea&#39;s blog">
-<meta property="og:description" content="打巅峰极客的时候遇到的一个东西，觉得很有必要学习一下。当时题目直接给出“JDK17+CB”反序列化，我由于对高版本JDK有一种陌生的恐惧感，写EXP时有点畏手畏脚，最终导致题目没有做出来，赛后观摩了其他做出来师傅的WP，发现其实这个问题只要熟悉了就还能做。 JDK9之后的模块化Java模块化主要是用来解决依赖的问题，以及给原生JDK瘦身这两个作用。 在此之前，java项目一般都是由一堆class文">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://b3logfile.com/siyuan/1722953976143/assets/image-20240824150624-dngd0ni.png">
-<meta property="og:image" content="https://b3logfile.com/siyuan/1722953976143/assets/image-20240827170221-7j4nhim.png">
-<meta property="og:image" content="https://b3logfile.com/siyuan/1722953976143/assets/image-20240827171002-ev3vs93.png">
-<meta property="og:image" content="https://b3logfile.com/siyuan/1722953976143/assets/image-20240827175323-8il6cua.png">
-<meta property="og:image" content="https://b3logfile.com/siyuan/1722953976143/assets/image-20240829032029-0xjonv1.png">
-<meta property="og:image" content="https://b3logfile.com/siyuan/1722953976143/assets/image-20240829031925-m9uxfd6.png">
-<meta property="og:image" content="https://b3logfile.com/siyuan/1722953976143/assets/image-20240829032830-45yemn1.png">
-<meta property="og:image" content="https://b3logfile.com/siyuan/1722953976143/assets/image-20240829040034-10pepl0.png">
-<meta property="og:image" content="https://b3logfile.com/siyuan/1722953976143/assets/image-20240829040603-e8jor4b.png">
-<meta property="og:image" content="https://b3logfile.com/siyuan/1722953976143/assets/image-20240829040516-b8tkl2n.png">
-<meta property="article:published_time" content="2024-08-28T20:36:00.000Z">
-<meta property="article:modified_time" content="2024-08-28T20:40:17.794Z">
-<meta property="article:author" content="stoocea">
-<meta property="article:tag" content="高版本jdk打入内存马">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://b3logfile.com/siyuan/1722953976143/assets/image-20240824150624-dngd0ni.png">
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
     
-    
-      
-        
-          <link rel="shortcut icon" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
+      JDK高版本的模块化以及反射类加载限制绕过 
       
       
-        
-          <link rel="icon" type="image/png" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
-      
+      |
     
-    <!-- title -->
-    <title>JDK高版本的模块化以及反射类加载限制绕过</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
+     stoocea&#39;s blog
+  </title>
 
-
-    <!-- Umami Analytics -->
-
-
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
-
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="上一篇" href="/post/%E8%B7%91%E6%AD%A5%E5%AF%B9%E4%BA%8E%E6%88%91%E8%80%8C%E8%A8%80.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="下一篇" href="/post/CVE-2024-38856%20Apache%20OFBiz18.12.15%20%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&text=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&title=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&is_video=false&description=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=JDK高版本的模块化以及反射类加载限制绕过&body=Check out this article: http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&title=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&title=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&title=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&title=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&name=JDK高版本的模块化以及反射类加载限制绕过&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&t=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JDK9%E4%B9%8B%E5%90%8E%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">JDK9之后的模块化</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JDK17%E6%96%B0%E7%89%B9%E6%80%A7%E2%80%93%E5%BC%BA%E5%B0%81%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">JDK17新特性–强封装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Unsafe%E4%BF%AE%E6%94%B9%E7%B1%BB%E6%89%80%E5%B1%9Emodule"><span class="toc-number">4.</span> <span class="toc-text">Unsafe修改类所属module</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E4%B8%BE%E4%BE%8B"><span class="toc-number">5.</span> <span class="toc-text">实战举例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E6%9E%84%E9%80%A0%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%BB%95%E8%BF%87%E7%82%B9"><span class="toc-number">5.1.</span> <span class="toc-text">反序列化链构造及其相关绕过点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E6%9C%80%E7%BB%88memshell%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87"><span class="toc-number">5.1.1.</span> <span class="toc-text">0x01 最终memshell注入绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-JDK17-module%E7%BB%95%E8%BF%87"><span class="toc-number">5.2.</span> <span class="toc-text">0x02 JDK17-module绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%B3%A8%E5%85%A5%E5%99%A8%E9%80%BB%E8%BE%91%E5%A4%84%E7%90%86"><span class="toc-number">5.3.</span> <span class="toc-text">0x03 注入器逻辑处理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83%EF%BC%9A"><span class="toc-number">6.</span> <span class="toc-text">参考：</span></a></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        JDK高版本的模块化以及反射类加载限制绕过
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">stoocea</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-08-28T20:36:00.000Z" class="dt-published" itemprop="datePublished">2024-08-29</time>
-        
-        (Updated: <time datetime="2024-08-28T20:40:17.794Z" class="dt-updated" itemprop="dateModified">2024-08-29</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/Java/">Java</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/%E9%AB%98%E7%89%88%E6%9C%ACjdk%E6%89%93%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC/" rel="tag">高版本jdk打入内存马</a>
-    </div>
-
-
-    </div>
-  </header>
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <h1 id><a href="#" class="headerlink" title></a></h1><p>打巅峰极客的时候遇到的一个东西，觉得很有必要学习一下。当时题目直接给出“JDK17+CB”反序列化，我由于对高版本JDK有一种陌生的恐惧感，写EXP时有点畏手畏脚，最终导致题目没有做出来，赛后观摩了其他做出来师傅的WP，发现其实这个问题只要熟悉了就还能做。</p>
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Oranges</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">JDK高版本的模块化以及反射类加载限制绕过</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-29 04:40:17
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/%E9%AB%98%E7%89%88%E6%9C%ACjdk%E6%89%93%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC/" title="高版本jdk打入内存马">
+                    #高版本jdk打入内存马
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id><a href="#" class="headerlink" title></a></h1><p>打巅峰极客的时候遇到的一个东西，觉得很有必要学习一下。当时题目直接给出“JDK17+CB”反序列化，我由于对高版本JDK有一种陌生的恐惧感，写EXP时有点畏手畏脚，最终导致题目没有做出来，赛后观摩了其他做出来师傅的WP，发现其实这个问题只要熟悉了就还能做。</p>
 <h1 id="JDK9之后的模块化"><a href="#JDK9之后的模块化" class="headerlink" title="JDK9之后的模块化"></a>JDK9之后的模块化</h1><p>Java模块化主要是用来解决依赖的问题，以及给原生JDK瘦身这两个作用。</p>
 <p>在此之前，java项目一般都是由一堆class文件组成，管理这一堆class文件东西叫jar。但是这些class的有分两类，一类是我们自己项目的class，一类是各种依赖的class。jar可不会管他们之前的关系，他只是用来存放这些class的。所以一旦出现漏写某个依赖class所对应的jar，程序就会报”ClassNotFoundException”的异常了。</p>
 <p>也正是为了避免这种问题，JDK9之后开始推行模块化，具体体现在：如果a.jar依赖于b.jar，那么对于a这个jar就需要写一份依赖说明，让a程序编译运行的时候能够直接定位到b.jar。这个功能主要就是通过<code>module-info.class</code>​中的定义的。</p>
@@ -267,143 +268,360 @@
 <p>‍</p>
 <p>‍</p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">首页</a></li>
-        
-          <li><a href="/about/">关于</a></li>
-        
-          <li><a href="/archives/">归档</a></li>
-        
-          <li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li>
-        
-      </ul>
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/CVE-2024-38856%20Apache%20OFBiz18.12.15%20%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-29 04:40:17
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/%E9%AB%98%E7%89%88%E6%9C%ACjdk%E6%89%93%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC/" title="高版本jdk打入内存马">
+                        #高版本jdk打入内存马
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/%E8%B7%91%E6%AD%A5%E5%AF%B9%E4%BA%8E%E6%88%91%E8%80%8C%E8%A8%80.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
     </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text"></span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JDK9%E4%B9%8B%E5%90%8E%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-text">JDK9之后的模块化</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JDK17%E6%96%B0%E7%89%B9%E6%80%A7%E2%80%93%E5%BC%BA%E5%B0%81%E8%A3%85"><span class="toc-text">JDK17新特性–强封装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Unsafe%E4%BF%AE%E6%94%B9%E7%B1%BB%E6%89%80%E5%B1%9Emodule"><span class="toc-text">Unsafe修改类所属module</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E4%B8%BE%E4%BE%8B"><span class="toc-text">实战举例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E6%9E%84%E9%80%A0%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%BB%95%E8%BF%87%E7%82%B9"><span class="toc-text">反序列化链构造及其相关绕过点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E6%9C%80%E7%BB%88memshell%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87"><span class="toc-text">0x01 最终memshell注入绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-JDK17-module%E7%BB%95%E8%BF%87"><span class="toc-text">0x02 JDK17-module绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%B3%A8%E5%85%A5%E5%99%A8%E9%80%BB%E8%BE%91%E5%A4%84%E7%90%86"><span class="toc-text">0x03 注入器逻辑处理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83%EF%BC%9A"><span class="toc-text">参考：</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
 
     
-    
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JDK9%E4%B9%8B%E5%90%8E%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">JDK9之后的模块化</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JDK17%E6%96%B0%E7%89%B9%E6%80%A7%E2%80%93%E5%BC%BA%E5%B0%81%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">JDK17新特性–强封装</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Unsafe%E4%BF%AE%E6%94%B9%E7%B1%BB%E6%89%80%E5%B1%9Emodule"><span class="toc-number">4.</span> <span class="toc-text">Unsafe修改类所属module</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E4%B8%BE%E4%BE%8B"><span class="toc-number">5.</span> <span class="toc-text">实战举例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E6%9E%84%E9%80%A0%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%BB%95%E8%BF%87%E7%82%B9"><span class="toc-number">5.1.</span> <span class="toc-text">反序列化链构造及其相关绕过点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E6%9C%80%E7%BB%88memshell%E6%B3%A8%E5%85%A5%E7%BB%95%E8%BF%87"><span class="toc-number">5.1.1.</span> <span class="toc-text">0x01 最终memshell注入绕过</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-JDK17-module%E7%BB%95%E8%BF%87"><span class="toc-number">5.2.</span> <span class="toc-text">0x02 JDK17-module绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%B3%A8%E5%85%A5%E5%99%A8%E9%80%BB%E8%BE%91%E5%A4%84%E7%90%86"><span class="toc-number">5.3.</span> <span class="toc-text">0x03 注入器逻辑处理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83%EF%BC%9A"><span class="toc-number">6.</span> <span class="toc-text">参考：</span></a></li></ol>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&text=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&title=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&is_video=false&description=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=JDK高版本的模块化以及反射类加载限制绕过&body=Check out this article: http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&title=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&title=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&title=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&title=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&name=JDK高版本的模块化以及反射类加载限制绕过&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html&t=JDK高版本的模块化以及反射类加载限制绕过"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
   </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
 </div>
 
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
         
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
-    
-    
-    2024
-    stoocea
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </nav>
-  </div>
-</footer>
 
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
     </div>
-    <!-- styles -->
+  </div>
 
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
-
-  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
   <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
       }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功！");
-      e.clearSelection();
-    })
-  })
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
 
-<!-- Baidu Analytics -->
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
 
-<!-- Cloudflare Analytics -->
+  
+<script src="/js/colorscheme.js"></script>
 
-<!-- Disqus Comments -->
 
-<!-- utterances Comments -->
 
-</body>
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FJDK%25E9%25AB%2598%25E7%2589%2588%25E6%259C%25AC%25E7%259A%2584%25E6%25A8%25A1%25E5%259D%2597%25E5%258C%2596%25E4%25BB%25A5%25E5%258F%258A%25E5%258F%258D%25E5%25B0%2584%25E7%25B1%25BB%25E5%258A%25A0%25E8%25BD%25BD%25E9%2599%2590%25E5%2588%25B6%25E7%25BB%2595%25E8%25BF%2587.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
 </html>

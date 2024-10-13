@@ -1,239 +1,185 @@
 <!DOCTYPE html>
-<html lang=zh>
-<head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="参考自：https:&#x2F;&#x2F;github.com&#x2F;alibaba&#x2F;fastjsonhttps:&#x2F;&#x2F;su18.org&#x2F;post&#x2F;fastjson&#x2F;#%E5%89%8D%E8%A8%80https:&#x2F;&#x2F;drun1baby.top&#x2F; FastJson 工作流程及其组件分析0x01 简介FastJson 是阿里巴巴的开源 JSON 解析库，它可以解析 JSON 格式的字符串，支持 javaBean 序列化为">
-<meta property="og:type" content="article">
-<meta property="og:title" content="FastJsonRe0">
-<meta property="og:url" content="http://example.com/post/FastJsonRe0.html">
-<meta property="og:site_name" content="stoocea&#39;s blog">
-<meta property="og:description" content="参考自：https:&#x2F;&#x2F;github.com&#x2F;alibaba&#x2F;fastjsonhttps:&#x2F;&#x2F;su18.org&#x2F;post&#x2F;fastjson&#x2F;#%E5%89%8D%E8%A8%80https:&#x2F;&#x2F;drun1baby.top&#x2F; FastJson 工作流程及其组件分析0x01 简介FastJson 是阿里巴巴的开源 JSON 解析库，它可以解析 JSON 格式的字符串，支持 javaBean 序列化为">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339183511-ad04a090-0432-46d7-b6ac-b3b8c2fabe5a.png#averageHue=%23576957&clientId=u945d9825-8c54-4&from=paste&height=310&id=ucec0051d&originHeight=465&originWidth=1819&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=260974&status=done&style=none&taskId=uc5d44dec-2ca5-4061-8cf1-9679983013d&title=&width=1212.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339326854-124703c8-d984-43c7-bb94-164718bb18b5.png#averageHue=%23333a41&clientId=u945d9825-8c54-4&from=paste&height=406&id=u7ab81456&originHeight=609&originWidth=1251&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=348293&status=done&style=none&taskId=u408d112d-e96f-4a50-b06e-b0fc73860fc&title=&width=834">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339675557-3f57be73-06de-4555-8176-3b47885f8fcc.png#averageHue=%233a3e46&clientId=u945d9825-8c54-4&from=paste&height=210&id=u52b6c195&originHeight=315&originWidth=847&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=80930&status=done&style=none&taskId=u11ce3a83-ac4f-4097-bd00-a0f4008d024&title=&width=564.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710342282453-1d17b97d-430b-4c34-b1d7-801ca9ce21b7.png#averageHue=%237c7c7c&clientId=u945d9825-8c54-4&from=paste&height=363&id=u627fa2de&originHeight=544&originWidth=906&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=118937&status=done&style=none&taskId=u1b136b5e-440a-4957-85aa-cfc130e1b26&title=&width=604">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384953668-6d29619d-97a6-400b-8803-b2f7a089c6d5.png#averageHue=%233d4048&clientId=ud4e25145-d315-4&from=paste&height=44&id=u4cf7fece&originHeight=66&originWidth=557&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=13993&status=done&style=none&taskId=u9c43ecd1-2041-4165-aa4b-6fc6aa78df7&title=&width=371.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385328620-3bf107fa-c564-4498-b046-f70d88f30f51.png#averageHue=%233e414a&clientId=ud4e25145-d315-4&from=paste&height=71&id=u559dc735&originHeight=107&originWidth=504&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=23846&status=done&style=none&taskId=u9c2bbcce-c0f1-4f7f-9b85-6668e3f9f02&title=&width=336">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385599600-3b05e3f9-1e72-4365-9a1a-c86bc67d99d2.png#averageHue=%233d4049&clientId=ud4e25145-d315-4&from=paste&height=48&id=u992ef72d&originHeight=72&originWidth=760&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=20169&status=done&style=none&taskId=ucc404d6f-1e41-4176-92d4-eb2c9e4f329&title=&width=506.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385616584-7f9462a8-4015-4480-99c8-7d31cf8aa49c.png#averageHue=%233f424a&clientId=ud4e25145-d315-4&from=paste&height=39&id=u3050d408&originHeight=58&originWidth=553&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=14301&status=done&style=none&taskId=u6bb87834-821c-484d-bdfe-782255c5fcc&title=&width=368.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384335528-1f5456c7-5756-4908-99a7-86d1991e5d8d.png#averageHue=%233d454d&clientId=ud4e25145-d315-4&from=paste&height=341&id=u74151a6f&originHeight=512&originWidth=1553&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=312505&status=done&style=none&taskId=u19a25aa3-2ed5-4b2b-8d21-fcdff24ddee&title=&width=1035.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384349205-8f1c1503-e058-4068-bc3f-a77d7e4a3c09.png#averageHue=%233b444d&clientId=ud4e25145-d315-4&from=paste&height=268&id=uc74e0714&originHeight=402&originWidth=1454&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=219290&status=done&style=none&taskId=ue9225a1a-1e1b-415e-bc94-cb2fcdddfb5&title=&width=969.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384430301-93c935ee-5449-4ad3-9906-7d82f0b7b49e.png#averageHue=%233c434a&clientId=ud4e25145-d315-4&from=paste&height=453&id=u80264a05&originHeight=680&originWidth=1567&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=354947&status=done&style=none&taskId=u1f9895b2-6d7b-42b5-a065-0f29cf37765&title=&width=1044.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710384606933-ed45fa2a-37d4-47f8-90ef-1844f9739a78.png#averageHue=%2331373e&clientId=ud4e25145-d315-4&from=paste&height=701&id=uf094493f&originHeight=1052&originWidth=1189&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=643176&status=done&style=none&taskId=u5295ab3f-6dd4-48ef-8640-01542ae8417&title=&width=792.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710385876215-2780965b-7550-420a-b77f-a749b238d18a.png#averageHue=%233c424c&clientId=ud4e25145-d315-4&from=paste&height=678&id=u0f615ec6&originHeight=1017&originWidth=1800&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=716629&status=done&style=none&taskId=u7b96be9d-20f2-40fc-9ab3-801118d7f77&title=&width=1200">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710407579894-5f39792f-626e-4427-8296-a4618f1cddc9.png#averageHue=%235d6176&clientId=u69d11c5b-0f3a-4&from=paste&height=114&id=u0621dea2&originHeight=171&originWidth=1568&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=102537&status=done&style=none&taskId=ua5adeb35-b320-4979-815b-2d85a9c2551&title=&width=1045.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710413981304-01ba44ad-46d9-483c-9f8f-d0e462c59f13.png#averageHue=%233a424a&clientId=uc4b17eff-485b-4&from=paste&height=179&id=uc32423f8&originHeight=268&originWidth=1459&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=157192&status=done&style=none&taskId=uaea7b508-c9ad-4a62-95a2-85ba655c321&title=&width=972.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710414025765-c44d000d-0939-4813-b78c-7dd19cd9352b.png#averageHue=%233c4d5f&clientId=uc4b17eff-485b-4&from=paste&height=87&id=uc98de7a3&originHeight=131&originWidth=1769&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=126291&status=done&style=none&taskId=u2c8a7a70-4d3c-4ee4-b087-4924c9b01ab&title=&width=1179.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710414301111-d1c2c203-fd5b-4af5-8f14-5adfc4b4a04b.png#averageHue=%233c444c&clientId=uc4b17eff-485b-4&from=paste&height=304&id=u373ac7d1&originHeight=456&originWidth=1744&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=275794&status=done&style=none&taskId=u1e86fc15-3e66-43cb-88dc-cd6caa96745&title=&width=1162.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710414641877-567bd601-c280-4664-bb83-a68dfe7e6ead.png#averageHue=%233b4c5e&clientId=uc4b17eff-485b-4&from=paste&height=83&id=ua4982ad0&originHeight=124&originWidth=1442&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=59958&status=done&style=none&taskId=uef016cd3-49e4-4f13-b604-af2c5457ef5&title=&width=961.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710730383797-b9128926-fdd3-4712-b75f-87db7be73a66.png#averageHue=%23464c59&clientId=uc6fd9fb4-b99e-4&from=paste&height=269&id=u9fa00bb6&originHeight=403&originWidth=1704&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=251588&status=done&style=none&taskId=u1d5ecb8b-ca51-4aab-8064-0025651661c&title=&width=1136">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710730562556-8eab2137-1a12-4f09-9119-4b3dd4ed47c8.png#averageHue=%233c424d&clientId=uc6fd9fb4-b99e-4&from=paste&height=750&id=ueb096123&originHeight=1125&originWidth=2486&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1084835&status=done&style=none&taskId=u20d09945-db2c-43c7-b1c8-bc8fb286085&title=&width=1657.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710730762923-64bebe44-b299-466f-8366-f22b3ae6a56d.png#averageHue=%23353c44&clientId=uc6fd9fb4-b99e-4&from=paste&height=410&id=uad48976f&originHeight=615&originWidth=2117&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=550878&status=done&style=none&taskId=u53f58c59-9d1f-422a-9b3c-1bead98427d&title=&width=1411.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710730920363-57b2b6b6-6255-4719-9d9f-61fd23fb920d.png#averageHue=%23404752&clientId=uc6fd9fb4-b99e-4&from=paste&height=303&id=udc504cc3&originHeight=454&originWidth=1367&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=261860&status=done&style=none&taskId=ue9aa8134-8d1f-4a6c-b71f-663b1d0d4cb&title=&width=911.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710731075040-df815dfc-da73-409d-82b3-45385a524e93.png#averageHue=%23363d45&clientId=uc6fd9fb4-b99e-4&from=paste&height=135&id=u9aeb8581&originHeight=202&originWidth=982&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=56442&status=done&style=none&taskId=u5ef444db-ef18-4ab0-954b-3383554f194&title=&width=654.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710731149831-8283f291-fc48-4505-a2b8-ead95a6104e1.png#averageHue=%23363d46&clientId=uc6fd9fb4-b99e-4&from=paste&height=367&id=ub0fa9ced&originHeight=550&originWidth=1073&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=189924&status=done&style=none&taskId=u4026d3fa-b7c9-4ed6-a096-c689ff80ffb&title=&width=715.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710731527309-aa50cdb3-3b0f-4e79-8fbf-a91534c86220.png#averageHue=%23353b43&clientId=uc6fd9fb4-b99e-4&from=paste&height=562&id=u39d7fe01&originHeight=927&originWidth=2457&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=973988&status=done&style=none&taskId=u5f92809c-7871-4206-99c2-3de80ec27a5&title=&width=1489.0908230237774">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710731719355-6e487d50-ad8c-49be-a07c-612f531f2db0.png#averageHue=%233f4551&clientId=uc6fd9fb4-b99e-4&from=paste&height=264&id=u15a3b1ac&originHeight=435&originWidth=1588&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=241293&status=done&style=none&taskId=ue888a20f-2f23-488a-a1e2-286f9fe82ff&title=&width=962.4241867976225">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732011257-b66be996-3e4c-4128-a1ad-0ca2f7764790.png#averageHue=%23363d46&clientId=uc6fd9fb4-b99e-4&from=paste&height=629&id=uf5021c0d&originHeight=1038&originWidth=2473&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1077492&status=done&style=none&taskId=u76d65448-81b9-4af5-98fe-9bd16c100a5&title=&width=1498.7877921602774">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732487683-11d8bd1d-859f-4858-97fd-8d030dbc1f1d.png#averageHue=%233a3f49&clientId=uc6fd9fb4-b99e-4&from=paste&height=633&id=ua5ea5382&originHeight=1045&originWidth=2556&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=927002&status=done&style=none&taskId=u7a05839c-2db1-4f1a-b1e4-c5e816bad45&title=&width=1549.090819555871">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732599865-8f1a78ad-ff02-43b2-8cc5-da0bd1d39902.png#averageHue=%233a404a&clientId=uc6fd9fb4-b99e-4&from=paste&height=730&id=u25dd7551&originHeight=1204&originWidth=2130&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1010006&status=done&style=none&taskId=ub9e1247a-8acd-4b94-868c-ac975788191&title=&width=1290.9090162965592">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710732664111-0b27aa88-1dc4-4dcf-9e1f-9ec53ff402d4.png#averageHue=%23363d47&clientId=uc6fd9fb4-b99e-4&from=paste&height=498&id=uf764e4ab&originHeight=821&originWidth=1942&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=679185&status=done&style=none&taskId=u99025488-aa7d-42ad-89b7-b760c12afd1&title=&width=1176.9696289426845">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710416903707-98080cd8-afc4-4bba-8900-8e1fbe70c364.png#averageHue=%233b3d3f&clientId=uc4b17eff-485b-4&from=paste&height=349&id=u875c7aa6&originHeight=524&originWidth=1121&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=221746&status=done&style=none&taskId=u1a08b5af-f0a8-44ae-8a20-149f94b4f16&title=&width=747.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710416969481-9d74a99e-8c3c-4ba7-9f81-29a0e366a445.png#averageHue=%233c403f&clientId=uc4b17eff-485b-4&from=paste&height=271&id=ua52d0d7f&originHeight=406&originWidth=1039&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=161258&status=done&style=none&taskId=u20a841f1-cf91-47f6-bc2b-c3e19e22f14&title=&width=692.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710416977008-81a76719-b42f-429c-bece-8237cf112339.png#averageHue=%233c3e3f&clientId=uc4b17eff-485b-4&from=paste&height=291&id=u8fa763be&originHeight=436&originWidth=1608&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=269661&status=done&style=none&taskId=udc5b008a-6e39-4a7f-940d-db286e6bc49&title=&width=1072">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710417168100-c7572f76-9fcf-4344-b30d-4d3697e3357d.png#averageHue=%2354595b&clientId=uc4b17eff-485b-4&from=paste&height=653&id=ua773a7e3&originHeight=979&originWidth=2402&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=642359&status=done&style=none&taskId=uc6cf5d54-f3b5-4e18-8563-fb0fe09d0ef&title=&width=1601.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710742537389-b6db61d9-19a7-4893-873c-67165aed53ad.png#averageHue=%233b414b&clientId=ue1f0f42a-3850-4&from=paste&height=630&id=u019fb7f4&originHeight=1040&originWidth=2560&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1026123&status=done&style=none&taskId=uc3fbbfe4-be11-4b33-a01e-26dade847d9&title=&width=1551.515061839996">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747589869-cf0190e4-bf63-4850-85b3-5806c7f49bb4.png#averageHue=%23484d5b&clientId=u59ce0523-5c63-4&from=paste&height=242&id=u110e2b7f&originHeight=399&originWidth=1390&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=224688&status=done&style=none&taskId=u3cfb6ce9-8b34-4ae9-a923-f1c1667353f&title=&width=842.4241937334353">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747511355-44f922cd-2dd3-4494-b329-20e754fcbfd0.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=259&id=ua56e2dde&originHeight=427&originWidth=1075&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=172056&status=done&style=none&taskId=u9c12c330-b477-40ee-b6a2-94eb5d61b98&title=&width=651.515113858592">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747647895-fc1f485c-a00e-4906-9ba0-29d1cb237798.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=332&id=uba8fba83&originHeight=547&originWidth=1423&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=288928&status=done&style=none&taskId=uaa70f0fd-6384-4aaf-b41b-c0a60b149a6&title=&width=862.4241925774666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747832652-d1c01fd9-55d2-4a63-bc49-67b13fdcffec.png#averageHue=%23383d45&clientId=u59ce0523-5c63-4&from=paste&height=159&id=u29f2b616&originHeight=299&originWidth=1669&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=151390&status=done&style=none&taskId=u456f6f34-05f9-46fe-986c-3bb217e225a&title=&width=890.1333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710747965310-97e4a1f6-01a3-4e83-b145-273bd3f3797a.png#averageHue=%23363d45&clientId=u59ce0523-5c63-4&from=paste&height=243&id=ufecf2516&originHeight=456&originWidth=1322&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=173518&status=done&style=none&taskId=u92f494c4-70fb-4321-8448-4ade78cf6a2&title=&width=705.0666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710748829169-d8c4dd93-1b24-4916-8a11-1dd9ed74efbe.png#averageHue=%2337414c&clientId=u59ce0523-5c63-4&from=paste&height=64&id=u50239fff&originHeight=120&originWidth=681&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=31879&status=done&style=none&taskId=u4e5a37fd-7a34-4c78-b63b-89383bff696&title=&width=363.2">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710749440675-f1769edd-8ec7-4e56-a415-c450b8e17d24.png#averageHue=%23383e48&clientId=u59ce0523-5c63-4&from=paste&height=45&id=u22a8f098&originHeight=84&originWidth=810&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=28980&status=done&style=none&taskId=u6eb056b8-b64e-4c6c-8e69-b9b8e2e04f6&title=&width=432">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710749480171-ecf41df9-7e17-4d6a-861b-24b0d564473b.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=67&id=uf8e664a4&originHeight=125&originWidth=960&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=54165&status=done&style=none&taskId=u8deb8c86-274d-4738-b721-bfe08bde6b7&title=&width=512">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753428551-e5fff72c-21b1-4220-bcc6-775725224140.png#averageHue=%2338414d&clientId=u59ce0523-5c63-4&from=paste&height=105&id=u780b0bc1&originHeight=196&originWidth=2022&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=123447&status=done&style=none&taskId=u8705b3ef-c246-44f0-8194-93766d1b937&title=&width=1078.4">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753469247-b348203d-211e-491a-9077-52aeef154e27.png#averageHue=%23383e47&clientId=u59ce0523-5c63-4&from=paste&height=71&id=uee0188b4&originHeight=134&originWidth=1582&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=66444&status=done&style=none&taskId=u0b56d8a2-9a3e-49e2-9f5f-1bfc3e8182f&title=&width=843.7333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753682976-adaafb61-b942-42b9-8f8b-11783129f0d0.png#averageHue=%23373d45&clientId=u59ce0523-5c63-4&from=paste&height=237&id=ucd8747df&originHeight=444&originWidth=1626&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=248377&status=done&style=none&taskId=u00e09436-c1e5-4d99-a3dc-d4189cd9f88&title=&width=867.2">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710753855619-415bd430-eb24-45f2-ac8b-9d1b21ad0f10.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=76&id=u2e0c7974&originHeight=143&originWidth=2207&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=112933&status=done&style=none&taskId=u898158bb-5d1b-4cbc-8cb6-21b53a9d857&title=&width=1177.0666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710756289095-fa4ddba1-e644-4fab-9ba3-c50676ae8870.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=316&id=uee28cba2&originHeight=593&originWidth=2033&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=375516&status=done&style=none&taskId=u43116b97-1de7-42a0-9e5d-87963f47f44&title=&width=1084.2666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710756679508-f34455f3-a3e9-4b4c-87aa-fd00be5b4e22.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=541&id=u68004b0c&originHeight=1014&originWidth=1791&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=549609&status=done&style=none&taskId=ub88cd837-670f-4190-a294-a26af740259&title=&width=955.2">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710757188128-6d8da548-8a4c-4efe-9888-dcc0e64b1bb8.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=241&id=u913c1e3b&originHeight=452&originWidth=1421&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=196625&status=done&style=none&taskId=u51b008ce-bf65-4224-a3b3-002f386bbdc&title=&width=757.8666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759429541-08367cfc-13d4-4058-a4c5-0d2cedd8b72f.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=317&id=u1f65ae9b&originHeight=595&originWidth=1542&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=308428&status=done&style=none&taskId=uac5e88c8-60d9-4e81-925f-22e3ace25ca&title=&width=822.4">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759440795-6d653c19-91e8-48f8-81a7-8c516440e681.png#averageHue=%23373d45&clientId=u59ce0523-5c63-4&from=paste&height=326&id=u36fa25da&originHeight=611&originWidth=1565&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=272616&status=done&style=none&taskId=u6d545ebe-9042-4a02-881e-86bc445a12e&title=&width=834.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759457887-45e9b576-4e1e-4afe-b050-3159de9005f6.png#averageHue=%23373c45&clientId=u59ce0523-5c63-4&from=paste&height=463&id=u5cf66b1e&originHeight=869&originWidth=1556&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=417889&status=done&style=none&taskId=ufc3349c7-6797-4b1b-8180-422e297c7bc&title=&width=829.8666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710759964975-edd47965-21a2-4a63-bf43-59b5071bb821.png#averageHue=%23373e47&clientId=u59ce0523-5c63-4&from=paste&height=89&id=u95d026c7&originHeight=167&originWidth=1179&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=74406&status=done&style=none&taskId=ueba22526-2896-4a1a-aaff-cea4a65165d&title=&width=628.8">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760060376-bdf8330e-2449-4951-b49e-c595dded31f7.png#averageHue=%23373c44&clientId=u59ce0523-5c63-4&from=paste&height=203&id=u6c15d57f&originHeight=380&originWidth=867&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=69811&status=done&style=none&taskId=u64217b73-a7e6-4c70-ac7f-50dc1471c5d&title=&width=462.4">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760474254-1311a315-63f9-47d4-8f0a-1d4002a83c3e.png#averageHue=%23383e47&clientId=u59ce0523-5c63-4&from=paste&height=48&id=u8ca70845&originHeight=90&originWidth=1430&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=53585&status=done&style=none&taskId=uc7d665e1-7755-4daa-8749-8765d74b860&title=&width=762.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760493308-8e775bcc-acd5-4711-a423-fb48f1c0eacf.png#averageHue=%23373d46&clientId=u59ce0523-5c63-4&from=paste&height=121&id=u90286091&originHeight=226&originWidth=1324&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=124476&status=done&style=none&taskId=uc927103c-4b5a-44af-9444-d3870ee45cc&title=&width=706.1333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760691314-1fa70a38-c908-48fe-ac1e-3e0aa0ac7a45.png#averageHue=%2339404b&clientId=u59ce0523-5c63-4&from=paste&height=249&id=uc234f505&originHeight=467&originWidth=1186&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=239267&status=done&style=none&taskId=uec4f3ca6-c6ac-4bd7-8257-09d37f97287&title=&width=632.5333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760841884-af26ac13-066f-497b-ac59-767ad8e6b7be.png#averageHue=%23373f48&clientId=u59ce0523-5c63-4&from=paste&height=68&id=u0627c15c&originHeight=127&originWidth=1422&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=59741&status=done&style=none&taskId=u5c78e354-8374-4f62-8d81-20597b2fe87&title=&width=758.4">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760926332-46eac8c6-36a5-4f16-96e3-5691535d4ab3.png#averageHue=%23373e48&clientId=u59ce0523-5c63-4&from=paste&height=108&id=ufa36e546&originHeight=202&originWidth=927&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=47683&status=done&style=none&taskId=u4f78ae44-ddd3-4a55-a29e-92992dd0b1d&title=&width=494.4">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710760999342-c90429aa-b02d-4c3c-90ef-1afe00695287.png#averageHue=%23373c45&clientId=u59ce0523-5c63-4&from=paste&height=428&id=u59347f96&originHeight=802&originWidth=1097&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=256174&status=done&style=none&taskId=uebd4de35-a58e-48d2-9229-ff7799a345e&title=&width=585.0666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710761805704-8a2b0430-2c05-461f-aa97-bacf3b55051c.png#averageHue=%23555a6c&clientId=u59ce0523-5c63-4&from=paste&height=76&id=u13405a69&originHeight=142&originWidth=1823&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=85562&status=done&style=none&taskId=u51c04b9d-4220-43b9-aada-de0ffc73dcc&title=&width=972.2666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710762229343-02ff32a1-3dc5-47e0-81ba-5bb09840a606.png#averageHue=%23373c45&clientId=u59ce0523-5c63-4&from=paste&height=466&id=u65ddbd94&originHeight=874&originWidth=1310&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=395803&status=done&style=none&taskId=u6de650b3-0247-4ed0-bcc8-7b8122b28c6&title=&width=698.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710762194669-244b4ccd-acda-4b65-b217-3c2ee3796258.png#averageHue=%23383d46&clientId=u59ce0523-5c63-4&from=paste&height=500&id=ufbd4272d&originHeight=937&originWidth=1227&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=544264&status=done&style=none&taskId=ub8ae00f8-6f7c-4777-b022-a15045fe3e9&title=&width=654.4">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710762431316-b3140e70-a5f1-454c-81e2-8c3f41266476.png#averageHue=%2339404c&clientId=u59ce0523-5c63-4&from=paste&height=44&id=u28aa8fc4&originHeight=82&originWidth=1252&originalType=binary&ratio=1.6500000953674316&rotation=0&showTitle=false&size=26844&status=done&style=none&taskId=u82b0f034-d698-4f82-8e2f-e8342cf6629&title=&width=667.7333333333333">
-<meta property="article:published_time" content="2024-03-18T09:00:00.000Z">
-<meta property="article:modified_time" content="2024-08-09T10:23:32.046Z">
-<meta property="article:author" content="stoocea">
-<meta property="article:tag" content="FastJson">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710339183511-ad04a090-0432-46d7-b6ac-b3b8c2fabe5a.png#averageHue=%23576957&clientId=u945d9825-8c54-4&from=paste&height=310&id=ucec0051d&originHeight=465&originWidth=1819&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=260974&status=done&style=none&taskId=uc5d44dec-2ca5-4061-8cf1-9679983013d&title=&width=1212.6666666666667">
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
     
-    
-      
-        
-          <link rel="shortcut icon" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
+      FastJsonRe0 
       
       
-        
-          <link rel="icon" type="image/png" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
-      
+      |
     
-    <!-- title -->
-    <title>FastJsonRe0</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
+     stoocea&#39;s blog
+  </title>
 
-
-    <!-- Umami Analytics -->
-
-
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
-
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="上一篇" href="/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="下一篇" href="/post/%E6%9C%80%E8%BF%91%E7%9A%84%E6%84%9F%E6%83%B3.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/FastJsonRe0.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/FastJsonRe0.html&text=FastJsonRe0"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/FastJsonRe0.html&title=FastJsonRe0"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/FastJsonRe0.html&is_video=false&description=FastJsonRe0"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=FastJsonRe0&body=Check out this article: http://example.com/post/FastJsonRe0.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/FastJsonRe0.html&title=FastJsonRe0"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/FastJsonRe0.html&title=FastJsonRe0"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/FastJsonRe0.html&title=FastJsonRe0"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/FastJsonRe0.html&title=FastJsonRe0"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/FastJsonRe0.html&name=FastJsonRe0&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/FastJsonRe0.html&t=FastJsonRe0"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FastJson-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%8F%8A%E5%85%B6%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">FastJson 工作流程及其组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-fastjson-%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">0x02 fastjson 使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-javabean-json"><span class="toc-number">1.2.1.</span> <span class="toc-text">1x01 javabean-&gt;json</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-json-javabean"><span class="toc-number">1.2.2.</span> <span class="toc-text">1x02 json-&gt;javabean</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-%E5%B8%B8%E8%A7%81%E7%89%B9%E6%80%A7"><span class="toc-number">1.2.3.</span> <span class="toc-text">1x03 常见特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-Fastjson-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">1.2.4.</span> <span class="toc-text">1x04 Fastjson 工作流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E9%80%89%E5%AE%9A%E8%A7%A3%E6%9E%90%E5%99%A8-DefaultJSONParser"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">2x01 选定解析器-DefaultJSONParser</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E8%8E%B7%E5%8F%96%E8%A7%A3%E6%9E%90%E5%99%A8%E2%80%93getDeserializer"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">2x02 获取解析器–getDeserializer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x03-deserialze-%E8%A7%A3%E6%9E%90%E2%80%94javaBeanDeserializer"><span class="toc-number">1.2.4.3.</span> <span class="toc-text">2x03 deserialze 解析—javaBeanDeserializer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">1.3.</span> <span class="toc-text">0x03 漏洞复现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-JdbcRowSetImpl-%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.1.</span> <span class="toc-text">1x01  JdbcRowSetImpl 利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-TemplateImpl-%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">1x02 TemplateImpl 利用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E6%B5%81%E7%A8%8B%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">2x01  流程简单分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E8%A1%A5%E4%B8%81%E4%BF%AE%E5%A4%8D%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">0x04 补丁修复分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-fastjson-1-2-25"><span class="toc-number">1.4.1.</span> <span class="toc-text">1x01 fastjson-1.2.25</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-fastjson-1-2-42-%E8%87%B3-1-2-44"><span class="toc-number">1.4.2.</span> <span class="toc-text">1x02 fastjson-1.2.42 至 1.2.44</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-fastjson-1-2-45"><span class="toc-number">1.4.3.</span> <span class="toc-text">1x03 fastjson-1.2.45</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-fastjson-1-2-47"><span class="toc-number">1.4.4.</span> <span class="toc-text">1x04 fastjson-1.2.47</span></a></li></ol></li></ol></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        FastJsonRe0
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">stoocea</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-03-18T09:00:00.000Z" class="dt-published" itemprop="datePublished">2024-03-18</time>
-        
-        (Updated: <time datetime="2024-08-09T10:23:32.046Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/Java/">Java</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/FastJson/" rel="tag">FastJson</a>
-    </div>
-
-
-    </div>
-  </header>
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <p>参考自：<br><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson">https://github.com/alibaba/fastjson</a><br><a target="_blank" rel="noopener" href="https://su18.org/post/fastjson/#%E5%89%8D%E8%A8%80">https://su18.org/post/fastjson/#%E5%89%8D%E8%A8%80</a><br><a target="_blank" rel="noopener" href="https://drun1baby.top/">https://drun1baby.top/</a></p>
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Oranges</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">FastJsonRe0</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-09 18:23:32
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/FastJson/" title="FastJson">
+                    #FastJson
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>参考自：<br><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson">https://github.com/alibaba/fastjson</a><br><a target="_blank" rel="noopener" href="https://su18.org/post/fastjson/#%E5%89%8D%E8%A8%80">https://su18.org/post/fastjson/#%E5%89%8D%E8%A8%80</a><br><a target="_blank" rel="noopener" href="https://drun1baby.top/">https://drun1baby.top/</a></p>
 <h1 id="FastJson-工作流程及其组件分析"><a href="#FastJson-工作流程及其组件分析" class="headerlink" title="FastJson 工作流程及其组件分析"></a>FastJson 工作流程及其组件分析</h1><h2 id="0x01-简介"><a href="#0x01-简介" class="headerlink" title="0x01 简介"></a>0x01 简介</h2><p>FastJson 是阿里巴巴的开源 JSON 解析库，它可以解析 JSON 格式的字符串，支持 javaBean 序列化为 JSON 字符串，也可以从 JSON 字符串反序列化到 javabean<br>特点就是快，性能好，也就是因为此，FastJson 使用的用户特别多。但是开源组件+用户大的特点，一旦爆出漏洞，危害也是巨大的</p>
 <h2 id="0x02-fastjson-使用"><a href="#0x02-fastjson-使用" class="headerlink" title="0x02 fastjson 使用"></a>0x02 fastjson 使用</h2><p>从显式上来说，fastjson 功能的实现连接于一个类<code>com.alibaba.fastjson.JSON</code><br>使用 fastjson 就是为了让类 转化得到 json 字符串，或者将 json 解析为 javabean，那功能组件和具体的工作流程也是绕不开这两者的<br>先看将 javabean 转化为 json</p>
 <h3 id="1x01-javabean-json"><a href="#1x01-javabean-json" class="headerlink" title="1x01 javabean-&gt;json"></a>1x01 javabean-&gt;json</h3><p>这里最常用的方法就是<code>JSON.toJSONString()</code>,该方法有很多重载方法，并且都带有不同的参数，最常用的是下面几个：<br>序列化特性：<code>com.alibaba.fastjson.serializer.SerializerFeature</code>，这个特性可以放到 <code>fastjsonconfig </code>中供全局使用，又或者直接在方法中指定使用，比如<code>JSON.toJSONString</code>中指定，就可以实现指定序列化类型，使序列化数据自带<code>@type</code>标记</p>
@@ -318,143 +264,360 @@
 
 <p>我个人的 FastJson 复习和学习暂时停在这里,后续还有其他的内容会继续补充到我这篇笔记性质的博客</p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">首页</a></li>
-        
-          <li><a href="/about/">关于</a></li>
-        
-          <li><a href="/archives/">归档</a></li>
-        
-          <li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li>
-        
-      </ul>
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/%E6%9C%80%E8%BF%91%E7%9A%84%E6%84%9F%E6%83%B3.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-09 18:23:32
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/FastJson/" title="FastJson">
+                        #FastJson
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
     </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FastJson-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%8F%8A%E5%85%B6%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">FastJson 工作流程及其组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%AE%80%E4%BB%8B"><span class="toc-text">0x01 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-fastjson-%E4%BD%BF%E7%94%A8"><span class="toc-text">0x02 fastjson 使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-javabean-json"><span class="toc-text">1x01 javabean-&gt;json</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-json-javabean"><span class="toc-text">1x02 json-&gt;javabean</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-%E5%B8%B8%E8%A7%81%E7%89%B9%E6%80%A7"><span class="toc-text">1x03 常见特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-Fastjson-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x04 Fastjson 工作流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E9%80%89%E5%AE%9A%E8%A7%A3%E6%9E%90%E5%99%A8-DefaultJSONParser"><span class="toc-text">2x01 选定解析器-DefaultJSONParser</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E8%8E%B7%E5%8F%96%E8%A7%A3%E6%9E%90%E5%99%A8%E2%80%93getDeserializer"><span class="toc-text">2x02 获取解析器–getDeserializer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x03-deserialze-%E8%A7%A3%E6%9E%90%E2%80%94javaBeanDeserializer"><span class="toc-text">2x03 deserialze 解析—javaBeanDeserializer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-text">0x03 漏洞复现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-JdbcRowSetImpl-%E5%88%A9%E7%94%A8"><span class="toc-text">1x01  JdbcRowSetImpl 利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-TemplateImpl-%E5%88%A9%E7%94%A8"><span class="toc-text">1x02 TemplateImpl 利用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E6%B5%81%E7%A8%8B%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90"><span class="toc-text">2x01  流程简单分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E8%A1%A5%E4%B8%81%E4%BF%AE%E5%A4%8D%E5%88%86%E6%9E%90"><span class="toc-text">0x04 补丁修复分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-fastjson-1-2-25"><span class="toc-text">1x01 fastjson-1.2.25</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-fastjson-1-2-42-%E8%87%B3-1-2-44"><span class="toc-text">1x02 fastjson-1.2.42 至 1.2.44</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-fastjson-1-2-45"><span class="toc-text">1x03 fastjson-1.2.45</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-fastjson-1-2-47"><span class="toc-text">1x04 fastjson-1.2.47</span></a></li></ol></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
 
     
-    
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FastJson-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%8F%8A%E5%85%B6%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">FastJson 工作流程及其组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-fastjson-%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">0x02 fastjson 使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-javabean-json"><span class="toc-number">1.2.1.</span> <span class="toc-text">1x01 javabean-&gt;json</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-json-javabean"><span class="toc-number">1.2.2.</span> <span class="toc-text">1x02 json-&gt;javabean</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-%E5%B8%B8%E8%A7%81%E7%89%B9%E6%80%A7"><span class="toc-number">1.2.3.</span> <span class="toc-text">1x03 常见特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-Fastjson-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">1.2.4.</span> <span class="toc-text">1x04 Fastjson 工作流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E9%80%89%E5%AE%9A%E8%A7%A3%E6%9E%90%E5%99%A8-DefaultJSONParser"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">2x01 选定解析器-DefaultJSONParser</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E8%8E%B7%E5%8F%96%E8%A7%A3%E6%9E%90%E5%99%A8%E2%80%93getDeserializer"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">2x02 获取解析器–getDeserializer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x03-deserialze-%E8%A7%A3%E6%9E%90%E2%80%94javaBeanDeserializer"><span class="toc-number">1.2.4.3.</span> <span class="toc-text">2x03 deserialze 解析—javaBeanDeserializer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">1.3.</span> <span class="toc-text">0x03 漏洞复现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-JdbcRowSetImpl-%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.1.</span> <span class="toc-text">1x01  JdbcRowSetImpl 利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-TemplateImpl-%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">1x02 TemplateImpl 利用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E6%B5%81%E7%A8%8B%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">2x01  流程简单分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E8%A1%A5%E4%B8%81%E4%BF%AE%E5%A4%8D%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">0x04 补丁修复分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-fastjson-1-2-25"><span class="toc-number">1.4.1.</span> <span class="toc-text">1x01 fastjson-1.2.25</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-fastjson-1-2-42-%E8%87%B3-1-2-44"><span class="toc-number">1.4.2.</span> <span class="toc-text">1x02 fastjson-1.2.42 至 1.2.44</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-fastjson-1-2-45"><span class="toc-number">1.4.3.</span> <span class="toc-text">1x03 fastjson-1.2.45</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-fastjson-1-2-47"><span class="toc-number">1.4.4.</span> <span class="toc-text">1x04 fastjson-1.2.47</span></a></li></ol></li></ol></li></ol>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/FastJsonRe0.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/FastJsonRe0.html&text=FastJsonRe0"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/FastJsonRe0.html&title=FastJsonRe0"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/FastJsonRe0.html&is_video=false&description=FastJsonRe0"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=FastJsonRe0&body=Check out this article: http://example.com/post/FastJsonRe0.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/FastJsonRe0.html&title=FastJsonRe0"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/FastJsonRe0.html&title=FastJsonRe0"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/FastJsonRe0.html&title=FastJsonRe0"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/FastJsonRe0.html&title=FastJsonRe0"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/FastJsonRe0.html&name=FastJsonRe0&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/FastJsonRe0.html&t=FastJsonRe0"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
   </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
 </div>
 
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
         
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
-    
-    
-    2024
-    stoocea
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </nav>
-  </div>
-</footer>
 
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
     </div>
-    <!-- styles -->
+  </div>
 
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
-
-  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
   <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
       }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功！");
-      e.clearSelection();
-    })
-  })
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
 
-<!-- Baidu Analytics -->
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
 
-<!-- Cloudflare Analytics -->
+  
+<script src="/js/colorscheme.js"></script>
 
-<!-- Disqus Comments -->
 
-<!-- utterances Comments -->
 
-</body>
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + FastJsonRe0 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FFastJsonRe0.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/FastJsonRe0.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
 </html>

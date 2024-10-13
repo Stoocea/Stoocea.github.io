@@ -1,201 +1,185 @@
 <!DOCTYPE html>
-<html lang=zh>
-<head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="RMI 过程回顾回顾一下 RMI 的流程，算是复习。我们就拿一段示例代码来举例子 123456789101112import java.rmi.Naming;import java.rmi.registry.LocateRegistry;public class RemoteServer &amp;#123;    public static void main(String[] args) throws">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Ysoserial-JRMPListener&#x2F;JRMPClient学习">
-<meta property="og:url" content="http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html">
-<meta property="og:site_name" content="stoocea&#39;s blog">
-<meta property="og:description" content="RMI 过程回顾回顾一下 RMI 的流程，算是复习。我们就拿一段示例代码来举例子 123456789101112import java.rmi.Naming;import java.rmi.registry.LocateRegistry;public class RemoteServer &amp;#123;    public static void main(String[] args) throws">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1707740600543-c50d2cc5-cb74-4562-8865-aadf7931ca5f.png?x-oss-process=image/format,webp/resize,w_1289,limit_0#averageHue=%23a8a6a6&from=url&id=e2ZjM&originHeight=605&originWidth=1289&originalType=binary&ratio=1.875&rotation=0&showTitle=false&status=done&style=none&title=">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720168922421-a58cd082-1239-48e0-be67-17ed15533674.png#averageHue=%23303336&clientId=ufd5d1ab4-ba12-4&from=paste&height=598&id=uf197016d&originHeight=1121&originWidth=1359&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=132057&status=done&style=none&taskId=ub73e33b1-bac7-4ef9-b94d-051c77987ab&title=&width=724.8">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720168974595-07a355f3-da92-4c32-8733-ea37e3f9f38f.png#averageHue=%232e302f&clientId=ufd5d1ab4-ba12-4&from=paste&height=730&id=ub83fa4ac&originHeight=1368&originWidth=2560&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=1268627&status=done&style=none&taskId=ubacff02e-4856-4bf0-b4e8-6559ed44c91&title=&width=1365.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720193486037-533c2200-84c6-4f3d-8471-d78177604a7d.png#averageHue=%23363930&clientId=ua6b13fb7-5313-4&from=paste&height=453&id=u5158e1b2&originHeight=849&originWidth=2070&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=872584&status=done&style=none&taskId=ue5bd735f-951c-4d6b-a957-c466e3c23f7&title=&width=1104">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720193085708-d56adc7f-8dcb-474b-ba6d-08e7f54e7622.png#averageHue=%23333531&clientId=ua6b13fb7-5313-4&from=paste&height=373&id=udef8f193&originHeight=700&originWidth=1887&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=610363&status=done&style=none&taskId=u5616ba53-68ae-416e-8cc7-83265d06261&title=&width=1006.4">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720193092586-e623478e-df99-4d41-b385-74a74e0239ce.png#averageHue=%23363f34&clientId=ua6b13fb7-5313-4&from=paste&height=278&id=u36376a3b&originHeight=522&originWidth=1925&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=442912&status=done&style=none&taskId=ue6ef73c9-8134-4ce2-ad1c-7d64f1fbbd7&title=&width=1026.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720193881559-00c82576-f80d-40a6-a983-a16a90cca30a.png#averageHue=%237b7b7a&clientId=ua6b13fb7-5313-4&from=paste&height=245&id=u27f73429&originHeight=460&originWidth=1720&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=119744&status=done&style=none&taskId=u9a892d8b-7c51-413f-a4bd-a30d0dda224&title=&width=917.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720233603949-369fda51-ad3e-467c-b04e-2747b2d74587.png#averageHue=%23333c35&clientId=u89804289-175c-4&from=paste&height=501&id=u6f0489e3&originHeight=940&originWidth=1697&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=740726&status=done&style=none&taskId=u5f674354-1395-499a-b0f6-34ef5cc2bd1&title=&width=905.0666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720234889712-56d72b72-da6c-4be0-adac-096482afe0a3.png#averageHue=%23404d40&clientId=ud3a01fc2-29ec-4&from=paste&height=330&id=u65bacb0c&originHeight=619&originWidth=1951&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=555627&status=done&style=none&taskId=u0b70e8b1-ad33-4a1a-bc15-dc090ea0510&title=&width=1040.5333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720235811394-64685cbf-89d9-4ea7-9275-636b147aa427.png#averageHue=%23484d40&clientId=ud3a01fc2-29ec-4&from=paste&height=345&id=ub7498dfc&originHeight=646&originWidth=1703&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=501750&status=done&style=none&taskId=u7c6b80ef-e38a-4c71-9ec5-cde94e73755&title=&width=908.2666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720237082400-141afd9e-9910-40c5-afc8-cef5f53c2920.png#averageHue=%233e4538&clientId=ud3a01fc2-29ec-4&from=paste&height=336&id=u737645d9&originHeight=630&originWidth=1561&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=504551&status=done&style=none&taskId=u5b6a53c6-7bd9-40b8-9139-7371e70d47c&title=&width=832.5333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720237176218-466bdab3-5802-4efb-927b-725546af5fdf.png#averageHue=%23383d34&clientId=ud3a01fc2-29ec-4&from=paste&height=375&id=uf0e9100b&originHeight=703&originWidth=1759&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=575511&status=done&style=none&taskId=ud1f3f7b8-2c1e-45a7-808e-3c516f0b24a&title=&width=938.1333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720237805666-4d54d803-95cb-43da-a54f-df46aed41b76.png#averageHue=%232e332d&clientId=ud3a01fc2-29ec-4&from=paste&height=171&id=ufb39dfbd&originHeight=321&originWidth=1801&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=256785&status=done&style=none&taskId=u807a02c0-a64e-4497-9053-d80331cdefc&title=&width=960.5333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720246131918-798019fc-8f95-47ba-8409-16026873e452.png#averageHue=%23323b32&clientId=ue8a12690-ad03-4&from=paste&height=485&id=u577df07e&originHeight=910&originWidth=1496&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=606924&status=done&style=none&taskId=udc1db323-f96b-4638-a519-855b455dd5c&title=&width=797.8666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720246207396-fd14d66f-f71c-441a-acbb-3d3e590d177f.png#averageHue=%23343831&clientId=ue8a12690-ad03-4&from=paste&height=125&id=ub68d644d&originHeight=234&originWidth=1363&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=164598&status=done&style=none&taskId=udedecc0f-408f-4ebf-bcaf-3d79f885b3e&title=&width=726.9333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720247084094-4ed3b397-3969-4b41-a0e8-9833661e20ee.png#averageHue=%23262827&clientId=ue8a12690-ad03-4&from=paste&height=534&id=ud7a72a41&originHeight=1001&originWidth=1862&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=804873&status=done&style=none&taskId=udf9fc215-e216-43d1-a6f5-e5f4669e4a0&title=&width=993.0666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720247200199-55d9e239-4c30-4e4b-adb7-5637faed9124.png#averageHue=%23354136&clientId=ue8a12690-ad03-4&from=paste&height=562&id=ua52854b4&originHeight=1054&originWidth=2143&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=1028687&status=done&style=none&taskId=u161ecd11-a9ce-4ca5-8cdd-4eb9a683c5a&title=&width=1142.9333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720248951330-772caa04-47e8-4c33-a4bc-f956b2354073.png#averageHue=%23363d32&clientId=u33ab5c00-e844-4&from=paste&height=456&id=u3203832f&originHeight=855&originWidth=2178&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=813461&status=done&style=none&taskId=u093d445e-db21-414d-a146-f59bad93ce7&title=&width=1161.6">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720249101953-105ff4cb-c0a4-40d8-8407-eff7485b5a35.png#averageHue=%23364236&clientId=u33ab5c00-e844-4&from=paste&height=529&id=u844bdcb3&originHeight=991&originWidth=1703&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=780968&status=done&style=none&taskId=u844fdd42-b528-4a72-b0b8-c905e8756a9&title=&width=908.2666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720249330081-2a854dab-af23-4ac4-b205-3beb2219799c.png#averageHue=%23373e32&clientId=u33ab5c00-e844-4&from=paste&height=478&id=u11d1fd82&originHeight=897&originWidth=1418&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=599068&status=done&style=none&taskId=u0c26d694-0e9f-4a64-a77e-33b25c9ee0f&title=&width=756.2666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720249231997-18d382ac-8f69-4c89-9500-08f9524b0203.png#averageHue=%23252626&clientId=u33ab5c00-e844-4&from=paste&height=584&id=u36528a7e&originHeight=1095&originWidth=2337&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=1035859&status=done&style=none&taskId=u3a32f4df-e95c-4627-8f8e-db19a59e685&title=&width=1246.4">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720250304083-d42134a5-f0b3-4d86-b20c-20d16ade482c.png#averageHue=%230f1419&clientId=u33ab5c00-e844-4&from=paste&height=265&id=ue9dfb4e9&originHeight=497&originWidth=1806&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=173803&status=done&style=none&taskId=u83211ce9-85cc-478b-8d98-fc18f105705&title=&width=963.2">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720250676413-738857cb-6c31-460e-bb3f-cec122401b12.png#averageHue=%234b5449&clientId=u33ab5c00-e844-4&from=paste&height=396&id=ud7484f10&originHeight=742&originWidth=928&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=451617&status=done&style=none&taskId=u8b11ef8c-54ee-4ee8-b201-727f019ff3e&title=&width=494.93333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720250902013-c5cbb8c0-7d83-4f50-a610-93b95658dbd6.png#averageHue=%23313236&clientId=u33ab5c00-e844-4&from=paste&height=598&id=u7a96d04f&originHeight=1121&originWidth=1359&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=136004&status=done&style=none&taskId=ue65ac826-46df-4f0d-abde-13bca44aed2&title=&width=724.8">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720250962062-32e537b8-54da-4d9d-b24e-ece10353723a.png#averageHue=%23333735&clientId=u33ab5c00-e844-4&from=paste&height=725&id=u70341f2a&originHeight=1360&originWidth=2552&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=1058570&status=done&style=none&taskId=ue818de93-8823-43d1-bdb6-932228871c0&title=&width=1361.0666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720251129976-ca9e8af9-5738-4266-8ca7-72e2ea5bb56f.png#averageHue=%230f1419&clientId=u33ab5c00-e844-4&from=paste&height=108&id=u210c9483&originHeight=202&originWidth=1841&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=76068&status=done&style=none&taskId=u25ab3b19-4df2-492a-9990-72810901377&title=&width=981.8666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720251214328-f133a839-8c70-430a-81b0-4b0108c62763.png#averageHue=%232b2d2e&clientId=u33ab5c00-e844-4&from=paste&height=725&id=ue8b171cc&originHeight=1360&originWidth=2552&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=1125840&status=done&style=none&taskId=u10c806d8-a3da-4c9c-8001-7f0c8b803dd&title=&width=1361.0666666666666">
-<meta property="article:published_time" content="2024-07-06T07:41:00.000Z">
-<meta property="article:modified_time" content="2024-08-09T10:24:25.003Z">
-<meta property="article:author" content="stoocea">
-<meta property="article:tag" content="JRMP">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1707740600543-c50d2cc5-cb74-4562-8865-aadf7931ca5f.png?x-oss-process=image/format,webp/resize,w_1289,limit_0#averageHue=%23a8a6a6&from=url&id=e2ZjM&originHeight=605&originWidth=1289&originalType=binary&ratio=1.875&rotation=0&showTitle=false&status=done&style=none&title=">
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
     
-    
-      
-        
-          <link rel="shortcut icon" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
+      Ysoserial-JRMPListener/JRMPClient学习 
       
       
-        
-          <link rel="icon" type="image/png" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
-      
+      |
     
-    <!-- title -->
-    <title>Ysoserial-JRMPListener/JRMPClient学习</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
+     stoocea&#39;s blog
+  </title>
 
-
-    <!-- Umami Analytics -->
-
-
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
-
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="上一篇" href="/post/%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="下一篇" href="/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&text=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&title=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&is_video=false&description=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Ysoserial-JRMPListener/JRMPClient学习&body=Check out this article: http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&title=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&title=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&title=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&title=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&name=Ysoserial-JRMPListener/JRMPClient学习&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&t=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RMI-%E8%BF%87%E7%A8%8B%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.</span> <span class="toc-text">RMI 过程回顾</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPListener-%E8%B0%83%E8%AF%95"><span class="toc-number">2.</span> <span class="toc-text">JRMPListener 调试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E6%AD%A5%E6%94%BB%E5%87%BB%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.1.</span> <span class="toc-text">初步攻击操作示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPListener-%E9%80%BB%E8%BE%91"><span class="toc-number">2.2.</span> <span class="toc-text">JRMPListener 逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A2%AB%E6%94%BB%E5%87%BB%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%80%BB%E8%BE%91"><span class="toc-number">2.3.</span> <span class="toc-text">被攻击客户端逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPClient-%E8%B0%83%E8%AF%95"><span class="toc-number">3.</span> <span class="toc-text">JRMPClient 调试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DGC-%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-number">3.1.</span> <span class="toc-text">DGC 创建过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DGC-%E5%A4%84%E7%90%86%E6%9C%8D%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="toc-number">3.2.</span> <span class="toc-text">DGC 处理服务逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPClient-%E9%80%BB%E8%BE%91"><span class="toc-number">3.3.</span> <span class="toc-text">JRMPClient 逻辑</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPListener-Client-Gadget"><span class="toc-number">4.</span> <span class="toc-text">JRMPListener&#x2F;Client Gadget</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPListener"><span class="toc-number">4.1.</span> <span class="toc-text">JRMPListener</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPClient"><span class="toc-number">4.2.</span> <span class="toc-text">JRMPClient</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        Ysoserial-JRMPListener/JRMPClient学习
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">stoocea</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-07-06T07:41:00.000Z" class="dt-published" itemprop="datePublished">2024-07-06</time>
-        
-        (Updated: <time datetime="2024-08-09T10:24:25.003Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/Java/">Java</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/JRMP/" rel="tag">JRMP</a>
-    </div>
-
-
-    </div>
-  </header>
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <h1 id="RMI-过程回顾"><a href="#RMI-过程回顾" class="headerlink" title="RMI 过程回顾"></a>RMI 过程回顾</h1><p>回顾一下 RMI 的流程，算是复习。我们就拿一段示例代码来举例子</p>
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Oranges</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Ysoserial-JRMPListener/JRMPClient学习</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-09 18:24:25
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/JRMP/" title="JRMP">
+                    #JRMP
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="RMI-过程回顾"><a href="#RMI-过程回顾" class="headerlink" title="RMI 过程回顾"></a>RMI 过程回顾</h1><p>回顾一下 RMI 的流程，算是复习。我们就拿一段示例代码来举例子</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RemoteServer</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        <span class="type">RemoteInterface</span> <span class="variable">remoteObject</span> <span class="operator">=</span><span class="keyword">new</span> <span class="title class_">RemoteObject</span>();</span><br><span class="line">        Naming.bind(<span class="string">&quot;rmi://127.0.0.1:1099/Hello&quot;</span>,remoteObject);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>JDK 版本稍微高一点之后，Registry 和 Server 端必须要在同一台机器上才能创建成功。<br>总共分为 3 步走，</p>
 <ol>
@@ -238,143 +222,360 @@
 <p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720251129976-ca9e8af9-5738-4266-8ca7-72e2ea5bb56f.png#averageHue=%230f1419&clientId=u33ab5c00-e844-4&from=paste&height=108&id=u210c9483&originHeight=202&originWidth=1841&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=76068&status=done&style=none&taskId=u25ab3b19-4df2-492a-9990-72810901377&title=&width=981.8666666666667" referrerpolicy="no-referrer" alt="image.png"><br>然后开启 JRMPListener<br><code>java -jar target/ysoserial-0.0.6-SNAPSHOT-all.jar JRMPListener 7777 CommonsCollections6 calc</code><br>再模拟一次反序列化触发该 Gadgets<br>攻击效果如下<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720251214328-f133a839-8c70-430a-81b0-4b0108c62763.png#averageHue=%232b2d2e&clientId=u33ab5c00-e844-4&from=paste&height=725&id=ue8b171cc&originHeight=1360&originWidth=2552&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=1125840&status=done&style=none&taskId=u10c806d8-a3da-4c9c-8001-7f0c8b803dd&title=&width=1361.0666666666666" referrerpolicy="no-referrer" alt="image.png"></p>
 <h1 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h1><p>关于 RMI 中两端（客户端 服务端）互打的具体实现，以及在实战时的攻击操作学习。重新过了一遍 RMI 的流程，更加清晰了，suki~</p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">首页</a></li>
-        
-          <li><a href="/about/">关于</a></li>
-        
-          <li><a href="/archives/">归档</a></li>
-        
-          <li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li>
-        
-      </ul>
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-09 18:24:25
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/JRMP/" title="JRMP">
+                        #JRMP
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
     </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RMI-%E8%BF%87%E7%A8%8B%E5%9B%9E%E9%A1%BE"><span class="toc-text">RMI 过程回顾</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPListener-%E8%B0%83%E8%AF%95"><span class="toc-text">JRMPListener 调试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E6%AD%A5%E6%94%BB%E5%87%BB%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="toc-text">初步攻击操作示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPListener-%E9%80%BB%E8%BE%91"><span class="toc-text">JRMPListener 逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A2%AB%E6%94%BB%E5%87%BB%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%80%BB%E8%BE%91"><span class="toc-text">被攻击客户端逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPClient-%E8%B0%83%E8%AF%95"><span class="toc-text">JRMPClient 调试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DGC-%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-text">DGC 创建过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DGC-%E5%A4%84%E7%90%86%E6%9C%8D%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="toc-text">DGC 处理服务逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPClient-%E9%80%BB%E8%BE%91"><span class="toc-text">JRMPClient 逻辑</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPListener-Client-Gadget"><span class="toc-text">JRMPListener&#x2F;Client Gadget</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPListener"><span class="toc-text">JRMPListener</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPClient"><span class="toc-text">JRMPClient</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
 
     
-    
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RMI-%E8%BF%87%E7%A8%8B%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.</span> <span class="toc-text">RMI 过程回顾</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPListener-%E8%B0%83%E8%AF%95"><span class="toc-number">2.</span> <span class="toc-text">JRMPListener 调试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E6%AD%A5%E6%94%BB%E5%87%BB%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.1.</span> <span class="toc-text">初步攻击操作示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPListener-%E9%80%BB%E8%BE%91"><span class="toc-number">2.2.</span> <span class="toc-text">JRMPListener 逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A2%AB%E6%94%BB%E5%87%BB%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%80%BB%E8%BE%91"><span class="toc-number">2.3.</span> <span class="toc-text">被攻击客户端逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">2.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPClient-%E8%B0%83%E8%AF%95"><span class="toc-number">3.</span> <span class="toc-text">JRMPClient 调试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DGC-%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-number">3.1.</span> <span class="toc-text">DGC 创建过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DGC-%E5%A4%84%E7%90%86%E6%9C%8D%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="toc-number">3.2.</span> <span class="toc-text">DGC 处理服务逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPClient-%E9%80%BB%E8%BE%91"><span class="toc-number">3.3.</span> <span class="toc-text">JRMPClient 逻辑</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPListener-Client-Gadget"><span class="toc-number">4.</span> <span class="toc-text">JRMPListener&#x2F;Client Gadget</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPListener"><span class="toc-number">4.1.</span> <span class="toc-text">JRMPListener</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPClient"><span class="toc-number">4.2.</span> <span class="toc-text">JRMPClient</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&text=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&title=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&is_video=false&description=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Ysoserial-JRMPListener/JRMPClient学习&body=Check out this article: http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&title=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&title=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&title=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&title=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&name=Ysoserial-JRMPListener/JRMPClient学习&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html&t=Ysoserial-JRMPListener/JRMPClient学习"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
   </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
 </div>
 
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
         
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
-    
-    
-    2024
-    stoocea
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </nav>
-  </div>
-</footer>
 
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
     </div>
-    <!-- styles -->
+  </div>
 
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
-
-  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
   <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
       }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功！");
-      e.clearSelection();
-    })
-  })
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
 
-<!-- Baidu Analytics -->
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
 
-<!-- Cloudflare Analytics -->
+  
+<script src="/js/colorscheme.js"></script>
 
-<!-- Disqus Comments -->
 
-<!-- utterances Comments -->
 
-</body>
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Ysoserial-JRMPListener%2FJRMPClient%E5%AD%A6%E4%B9%A0 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FJRMPListener%2520Client%25E5%25AD%25A6%25E4%25B9%25A0.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
 </html>

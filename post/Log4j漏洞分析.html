@@ -1,222 +1,185 @@
 <!DOCTYPE html>
-<html lang=zh>
-<head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="复习完 JNDI 之后想专门过来学一下 log4j demo 实现与具体组件分析0x01 环境搭建在分析漏洞之前 ，log4j 的具体工作流程和组成很有必要去了解和熟悉先把测试环境搭建好依赖 12345678910111213141516&lt;dependency&gt;  &lt;groupId&gt;org.apache.logging.log4j&lt;&#x2F;groupId&gt;  &lt;">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Log4j2漏洞分析">
-<meta property="og:url" content="http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html">
-<meta property="og:site_name" content="stoocea&#39;s blog">
-<meta property="og:description" content="复习完 JNDI 之后想专门过来学一下 log4j demo 实现与具体组件分析0x01 环境搭建在分析漏洞之前 ，log4j 的具体工作流程和组成很有必要去了解和熟悉先把测试环境搭建好依赖 12345678910111213141516&lt;dependency&gt;  &lt;groupId&gt;org.apache.logging.log4j&lt;&#x2F;groupId&gt;  &lt;">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710212142533-f8fc0add-2d60-4a78-8411-ba2062c66239.png#averageHue=%233b3e40&clientId=u9adf2b5e-1641-4&from=paste&height=359&id=u32e593b3&originHeight=538&originWidth=2347&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=583377&status=done&style=none&taskId=u2d870b2a-9c3a-489d-a7eb-a0e07ee0b0a&title=&width=1564.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710212155263-a49afc99-55cf-4d47-b20a-6c5c21e4cd52.png#averageHue=%2342474a&clientId=u9adf2b5e-1641-4&from=paste&height=392&id=u22acc5eb&originHeight=588&originWidth=2428&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=508000&status=done&style=none&taskId=u9f900db5-08e1-43f8-a81c-0bbdebb7d69&title=&width=1618.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710214649537-44ff100c-d7f1-42cf-b9b3-8aaa562c94d5.png#averageHue=%233b3c3e&clientId=u9adf2b5e-1641-4&from=paste&height=212&id=u0dc06ff7&originHeight=318&originWidth=1093&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=137582&status=done&style=none&taskId=ue15449cf-18fa-48c3-b0d7-b2581fba5d8&title=&width=728.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710214825621-7d647001-4e10-46fa-be33-2e04976f75d7.png#averageHue=%23466245&clientId=u9adf2b5e-1641-4&from=paste&height=246&id=ub875fa7e&originHeight=369&originWidth=1829&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=207347&status=done&style=none&taskId=ue824a26d-f8fb-472a-af32-c372daa683f&title=&width=1219.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710219265205-e4b18538-fd84-4744-9713-1d5cf9b9e3aa.png#averageHue=%23464c51&clientId=u9adf2b5e-1641-4&from=paste&height=285&id=u39d3a13a&originHeight=427&originWidth=931&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=159975&status=done&style=none&taskId=u1ae22810-b5c8-4a11-b56f-be0e80cb3c8&title=&width=620.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710215464941-76bda8b6-d418-46c9-b7b2-20342c4afaa2.png#averageHue=%233a3d3e&clientId=u9adf2b5e-1641-4&from=paste&height=623&id=u91764cda&originHeight=934&originWidth=2059&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=631288&status=done&style=none&taskId=uc721d226-620d-411a-80c9-e7929cd109d&title=&width=1372.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710215868634-822112e7-d777-4a06-a918-a92215f179ba.png#averageHue=%233a3d3e&clientId=u9adf2b5e-1641-4&from=paste&height=57&id=ufbb6a780&originHeight=86&originWidth=2297&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=99029&status=done&style=none&taskId=u92c391df-ac09-4642-9a28-81e4d0e0bfb&title=&width=1531.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710215921302-a837bce7-2d3b-42a4-9104-d1143e7d3ed6.png#averageHue=%233b4042&clientId=u9adf2b5e-1641-4&from=paste&height=122&id=ub2dcb156&originHeight=183&originWidth=1371&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=106869&status=done&style=none&taskId=udc42cef6-b251-46d0-8146-f61f3b26051&title=&width=914">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710219542994-e687ca62-4040-46cc-99a5-185b4b55e294.png#averageHue=%23373c45&clientId=u9adf2b5e-1641-4&from=paste&height=554&id=u524326c7&originHeight=831&originWidth=1980&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=542412&status=done&style=none&taskId=u158428d1-37e4-45b3-96e6-48b9d61dec1&title=&width=1320">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710219606882-37ef7b0e-1773-4cbd-974f-6a6d1eaa7348.png#averageHue=%23373e46&clientId=u9adf2b5e-1641-4&from=paste&height=631&id=ub17ab724&originHeight=946&originWidth=1670&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=629345&status=done&style=none&taskId=u6171be58-84ec-46a7-bfde-efc30e9f475&title=&width=1113.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710220413898-166581a5-7e26-4735-9e5e-990e4718fd42.png#averageHue=%23373c45&clientId=u9adf2b5e-1641-4&from=paste&height=540&id=u89b90a04&originHeight=810&originWidth=1685&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=503673&status=done&style=none&taskId=u40c85d15-0cda-4dcd-9bcb-3beabe1596e&title=&width=1123.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710221217261-22d3a09f-a22f-4dd5-b7e6-237a4c2c464c.png#averageHue=%23383e47&clientId=u9adf2b5e-1641-4&from=paste&height=357&id=ua0a17b0e&originHeight=536&originWidth=1576&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=352497&status=done&style=none&taskId=ufa17f968-f015-4734-9a9b-157dd1c2b99&title=&width=1050.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710221191342-53788248-faec-4bd5-aaad-1d9e9d5d2919.png#averageHue=%23393e47&clientId=u9adf2b5e-1641-4&from=paste&height=139&id=u1832f882&originHeight=208&originWidth=1222&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=121220&status=done&style=none&taskId=ufbcaeb62-41ad-467f-9a11-4b855656662&title=&width=814.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710221512947-246ee3e6-221e-4ef9-9e4f-3388162a6de6.png#averageHue=%23363d46&clientId=u9adf2b5e-1641-4&from=paste&height=364&id=ue095a088&originHeight=546&originWidth=1421&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=329367&status=done&style=none&taskId=u57278df7-1203-4c23-b755-88a1e9273aa&title=&width=947.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710221770681-2bd320f3-667f-45fc-a60c-b8840b55b5c5.png#averageHue=%23383e46&clientId=u9adf2b5e-1641-4&from=paste&height=715&id=u86207f3b&originHeight=1072&originWidth=1537&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=706933&status=done&style=none&taskId=u007f95a3-3b55-4707-a469-762590c008d&title=&width=1024.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710222192009-7dfadfed-61a4-4275-ac48-c8fb0830543b.png#averageHue=%23383e46&clientId=u9adf2b5e-1641-4&from=paste&height=347&id=u26a48ffa&originHeight=520&originWidth=949&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=177542&status=done&style=none&taskId=u099ca407-95d9-4294-866a-e2fa654f47e&title=&width=632.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710222376088-13cf4d38-034d-461e-853e-d23348037e78.png#averageHue=%23363c45&clientId=u64edae2b-8a46-4&from=paste&height=204&id=u55195f63&originHeight=306&originWidth=1467&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=154584&status=done&style=none&taskId=ue9051b32-f493-470f-9db5-c693bf6d1a1&title=&width=978">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710223008922-c59d66cf-4ce2-41e6-8114-c5c8ed3d35f4.png#averageHue=%23333940&clientId=u64edae2b-8a46-4&from=paste&height=448&id=uee9b44e0&originHeight=672&originWidth=866&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=258728&status=done&style=none&taskId=u2d76b23d-4c88-471b-bb5c-e4f114a9835&title=&width=577.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710223324287-06e90deb-c73e-4994-8b4a-ac5ad29d221c.png#averageHue=%23373d45&clientId=u64edae2b-8a46-4&from=paste&height=501&id=u22981040&originHeight=751&originWidth=1749&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=529584&status=done&style=none&taskId=u9fe85968-9852-4266-b9a9-a7953559a0c&title=&width=1166">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710223395964-8e329702-b6dd-459c-9924-75aaf8b19506.png#averageHue=%23373d45&clientId=u64edae2b-8a46-4&from=paste&height=747&id=ue1ddf259&originHeight=1121&originWidth=1470&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=641711&status=done&style=none&taskId=u9cedaeb0-72f5-42e4-a787-f0368715b9c&title=&width=980">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710223925328-61484279-1842-4a95-9a78-6d26d6d2b236.png#averageHue=%23383e47&clientId=u64edae2b-8a46-4&from=paste&height=385&id=ufad7014e&originHeight=577&originWidth=1505&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=332122&status=done&style=none&taskId=uac1ad129-875b-4568-940c-2f804c49b7a&title=&width=1003.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710224095570-28e29876-dc48-42bd-9b1e-dbd03a52ccf9.png#averageHue=%23373d46&clientId=u64edae2b-8a46-4&from=paste&height=229&id=u3809fada&originHeight=344&originWidth=1650&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=192422&status=done&style=none&taskId=uf0f1021a-5e6e-46c7-8017-27c2f6cc508&title=&width=1100">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710224255202-cb740638-416c-46bd-8282-e525a0b7d39d.png#averageHue=%23363f4a&clientId=u64edae2b-8a46-4&from=paste&height=315&id=uf8642703&originHeight=472&originWidth=799&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=206470&status=done&style=none&taskId=u76ad590f-f182-4d6d-8f90-593dd56e873&title=&width=532.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710224217807-b265f723-fce5-4a73-9f87-739a1e21c1c8.png#averageHue=%23373d45&clientId=u64edae2b-8a46-4&from=paste&height=344&id=hCqsD&originHeight=516&originWidth=1567&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=283554&status=done&style=none&taskId=ua2d7172a-2ef8-4f56-9f32-836defac43b&title=&width=1044.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710224545979-5675a20b-2eb4-4f88-b024-5b6cbccfe301.png#averageHue=%23373d46&clientId=u64edae2b-8a46-4&from=paste&height=133&id=u364e658f&originHeight=199&originWidth=1109&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=80651&status=done&style=none&taskId=u6588cd65-e22a-4503-b85e-3d60813c157&title=&width=739.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710225689374-73940b21-a5bd-4b95-875b-12fcec777aa6.png#averageHue=%23eae8e5&clientId=u64edae2b-8a46-4&from=paste&height=185&id=ua9db04b6&originHeight=277&originWidth=536&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=21560&status=done&style=none&taskId=u7628f756-0e36-4353-9034-7389bff8cb1&title=&width=357.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710225698557-726ac2af-7217-47c1-9213-95ca63926d92.png#averageHue=%235a6068&clientId=u64edae2b-8a46-4&from=paste&height=620&id=ue95b6d0d&originHeight=930&originWidth=2075&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=664854&status=done&style=none&taskId=u0ce96d73-696f-40b1-a172-10bd8d8a6c4&title=&width=1383.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710226996949-0292fe17-7962-4248-b050-8b51f6d08d59.png#averageHue=%234f4b42&clientId=u64edae2b-8a46-4&from=paste&height=586&id=u64564b0a&originHeight=879&originWidth=1207&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=548862&status=done&style=none&taskId=u2adcc7c6-7d65-4a06-a7b6-68b12bedf0a&title=&width=804.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710226979100-2c56df9c-86b9-420e-bc88-e5f932e6ca93.png#averageHue=%23515769&clientId=u64edae2b-8a46-4&from=paste&height=115&id=u8323eca9&originHeight=172&originWidth=1071&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=74837&status=done&style=none&taskId=uaddb9694-b47d-48b3-91c0-37914ad5df3&title=&width=714">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710227044167-511bbbaf-e5dd-4b4b-9f58-dff08ae79974.png#averageHue=%233f4550&clientId=u64edae2b-8a46-4&from=paste&height=383&id=uf6cd5535&originHeight=574&originWidth=1951&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=371705&status=done&style=none&taskId=ua0fd28e7-0775-4f89-9cb5-14dfc35a847&title=&width=1300.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710227383234-c2712a27-77d4-469f-8c7f-fae8ed433306.png#averageHue=%23373d46&clientId=u64edae2b-8a46-4&from=paste&height=687&id=u9d8f5932&originHeight=1030&originWidth=2075&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=951965&status=done&style=none&taskId=u834635be-aea3-4e33-8efb-860cca8fe59&title=&width=1383.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710227440804-9f58f986-f3e8-496c-8835-bcb6a2b5be94.png#averageHue=%233c424c&clientId=u64edae2b-8a46-4&from=paste&height=663&id=uec082381&originHeight=994&originWidth=2057&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=844738&status=done&style=none&taskId=u78041b8e-7729-4796-ae8e-a3bc88e8561&title=&width=1371.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710227540307-e69fda4a-8273-4261-9349-29a82495b7c8.png#averageHue=%23424854&clientId=u64edae2b-8a46-4&from=paste&height=258&id=uf22fcdcf&originHeight=387&originWidth=2124&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=307643&status=done&style=none&taskId=u4ac06edd-4801-41f2-8f9e-464c4eb7c99&title=&width=1416">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710227885639-b5400f05-55ea-4493-8592-6f2cd59f07d9.png#averageHue=%23373e46&clientId=u64edae2b-8a46-4&from=paste&height=155&id=uee50ade5&originHeight=232&originWidth=1194&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=118989&status=done&style=none&taskId=u1a994deb-3a78-4ce5-ba71-6dfdb353111&title=&width=796">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710227910868-a0f75de5-bbe7-4cb0-9662-c33b213d9426.png#averageHue=%23464c59&clientId=u64edae2b-8a46-4&from=paste&height=200&id=ufc1ec4bb&originHeight=300&originWidth=2224&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=214073&status=done&style=none&taskId=ua7d2e2a3-94ba-4c5e-8488-1f3bce88860&title=&width=1482.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710227944575-529f7750-1463-4095-907a-22f665d0fea8.png#averageHue=%23454b58&clientId=u64edae2b-8a46-4&from=paste&height=224&id=u20297855&originHeight=336&originWidth=2131&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=265670&status=done&style=none&taskId=u04422742-f10b-4e27-8afd-9cd2633171d&title=&width=1420.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710228093181-9b6845ac-0f61-45c1-9bd7-2bb8c3b7e591.png#averageHue=%233e444f&clientId=u64edae2b-8a46-4&from=paste&height=451&id=uf7bb5692&originHeight=677&originWidth=2118&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=540939&status=done&style=none&taskId=uf3fc0fe3-adbf-4ba1-aa6e-25d67613181&title=&width=1412">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710228168403-95b46332-1a60-4435-9bdc-10cd3c18f422.png#averageHue=%23414753&clientId=u64edae2b-8a46-4&from=paste&height=380&id=u1f7f762c&originHeight=570&originWidth=2084&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=447128&status=done&style=none&taskId=uba03caaa-d8da-439f-b278-53aa8321455&title=&width=1389.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710228238146-5d70a3e4-7367-42ec-833c-cf5f49a21ac9.png#averageHue=%234f5565&clientId=u64edae2b-8a46-4&from=paste&height=159&id=u4a65b927&originHeight=238&originWidth=2095&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=171332&status=done&style=none&taskId=ucdb43202-98c8-4adc-886a-a4d664d17c6&title=&width=1396.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710230285828-5e946d92-51ac-4bfb-b173-7aaa863d433d.png#averageHue=%23373e47&clientId=u64edae2b-8a46-4&from=paste&height=388&id=u3e5dbbf1&originHeight=582&originWidth=1557&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=365966&status=done&style=none&taskId=u37a33ceb-2591-49ae-85dc-1b0f2687f5b&title=&width=1038">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710215464941-76bda8b6-d418-46c9-b7b2-20342c4afaa2.png?x-oss-process=image/format,webp/resize,w_1125,limit_0#averageHue=%233a3d3e&from=url&id=k2XE7&originHeight=510&originWidth=1125&originalType=binary&ratio=1.5&rotation=0&showTitle=false&status=done&style=none&title=">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710230516266-11ed551d-8086-406a-bfbb-0c56e9913e5c.png#averageHue=%23353c44&clientId=u64edae2b-8a46-4&from=paste&height=301&id=u84d3123e&originHeight=451&originWidth=1216&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=211014&status=done&style=none&taskId=u929b155e-b467-4993-b058-e581332d968&title=&width=810.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710231892231-6e142419-8d30-4077-b6df-1b9aa89f76c2.png#averageHue=%23383e47&clientId=u64edae2b-8a46-4&from=paste&height=217&id=ub4478ed9&originHeight=325&originWidth=812&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=137427&status=done&style=none&taskId=uab3ee104-24cb-4c49-b877-a9a4d0e6709&title=&width=541.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710230301371-348bcc78-9d5d-4736-8c75-75a17da1507d.png#averageHue=%23383e47&clientId=u64edae2b-8a46-4&from=paste&height=263&id=DwDLm&originHeight=395&originWidth=920&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=127744&status=done&style=none&taskId=u3c7f28bf-e7c0-4f1d-83b4-a6143c327c8&title=&width=613.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710232253258-cdcb5714-f625-4275-964e-574408f02526.png#averageHue=%23393f49&clientId=u64edae2b-8a46-4&from=paste&height=700&id=u29431b37&originHeight=1050&originWidth=1698&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=713237&status=done&style=none&taskId=ue9e0334f-b375-40e3-9e45-043bd388a56&title=&width=1132">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710232416843-f3b96ad0-5637-4f49-8dff-b8e78f13364d.png#averageHue=%23373d46&clientId=u64edae2b-8a46-4&from=paste&height=566&id=u467f17f2&originHeight=849&originWidth=1521&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=548930&status=done&style=none&taskId=uc7670195-cea5-447b-b24b-37b325db3c0&title=&width=1014">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710232922287-851364a8-d373-4b72-bae3-cab28ee976c1.png#averageHue=%232d2b2b&clientId=u64edae2b-8a46-4&from=paste&height=421&id=u5f58f686&originHeight=632&originWidth=1748&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=148673&status=done&style=none&taskId=u3bbb45ca-ce58-42d7-af2d-117f91c3633&title=&width=1165.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710233027158-5b624bff-1f76-4403-8fa2-64f2c220d251.png#averageHue=%23363d46&clientId=u64edae2b-8a46-4&from=paste&height=142&id=u14d4b8ef&originHeight=213&originWidth=949&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=63724&status=done&style=none&taskId=u253e2e68-02e6-44f1-96f9-2750661c4ee&title=&width=632.6666666666666">
-<meta property="article:published_time" content="2024-03-12T09:00:00.000Z">
-<meta property="article:modified_time" content="2024-08-09T10:24:34.118Z">
-<meta property="article:author" content="stoocea">
-<meta property="article:tag" content="LOG4J">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710212142533-f8fc0add-2d60-4a78-8411-ba2062c66239.png#averageHue=%233b3e40&clientId=u9adf2b5e-1641-4&from=paste&height=359&id=u32e593b3&originHeight=538&originWidth=2347&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=583377&status=done&style=none&taskId=u2d870b2a-9c3a-489d-a7eb-a0e07ee0b0a&title=&width=1564.6666666666667">
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
     
-    
-      
-        
-          <link rel="shortcut icon" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
+      Log4j2漏洞分析 
       
       
-        
-          <link rel="icon" type="image/png" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
-      
+      |
     
-    <!-- title -->
-    <title>Log4j2漏洞分析</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
+     stoocea&#39;s blog
+  </title>
 
-
-    <!-- Umami Analytics -->
-
-
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
-
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="上一篇" href="/post/%E6%9C%80%E8%BF%91%E7%9A%84%E6%84%9F%E6%83%B3.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="下一篇" href="/post/JNDIRe0.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&text=Log4j2漏洞分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&title=Log4j2漏洞分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&is_video=false&description=Log4j2漏洞分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Log4j2漏洞分析&body=Check out this article: http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&title=Log4j2漏洞分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&title=Log4j2漏洞分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&title=Log4j2漏洞分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&title=Log4j2漏洞分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&name=Log4j2漏洞分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&t=Log4j2漏洞分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#demo-%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%85%B7%E4%BD%93%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">demo 实现与具体组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-log4j2-%E5%8A%9F%E8%83%BD%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">0x02 log4j2 功能组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95-%E8%A7%A6%E5%8F%91%E7%82%B9%E2%80%94-AbstractLogger"><span class="toc-number">1.2.1.</span> <span class="toc-text">1x01 日志记录&#x2F;触发点—-AbstractLogger</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E6%B6%88%E6%81%AF%E6%A0%BC%E5%BC%8F%E5%8C%96%E2%80%94-MessagePatternConverter"><span class="toc-number">1.2.2.</span> <span class="toc-text">1x02 消息格式化—-MessagePatternConverter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-%E5%AD%97%E7%AC%A6%E6%9B%BF%E6%8D%A2%E2%80%94-StrSubstitutor"><span class="toc-number">1.2.3.</span> <span class="toc-text">1x03 字符替换—-StrSubstitutor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-lookup-%E5%A4%84%E7%90%86%E2%80%94-Interpolator"><span class="toc-number">1.2.4.</span> <span class="toc-text">1x04 lookup 处理—-Interpolator</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">2.1.</span> <span class="toc-text">0x01 漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">2.2.</span> <span class="toc-text">0x02 流程分析</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E7%89%88%E6%9C%AC%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">高版本绕过分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rc1-%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="toc-number">3.1.</span> <span class="toc-text">0x01 rc1 及绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0%E7%82%B9%E5%88%86%E6%9E%90-1"><span class="toc-number">3.1.1.</span> <span class="toc-text">1x01 安全更新点分析 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0%E7%82%B9-2"><span class="toc-number">3.1.2.</span> <span class="toc-text">1x02 安全更新点 2</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">个人总结</span></a></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        Log4j2漏洞分析
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">stoocea</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-03-12T09:00:00.000Z" class="dt-published" itemprop="datePublished">2024-03-12</time>
-        
-        (Updated: <time datetime="2024-08-09T10:24:34.118Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/CVES/">CVES</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/LOG4J/" rel="tag">LOG4J</a>
-    </div>
-
-
-    </div>
-  </header>
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <p>复习完 JNDI 之后想专门过来学一下 log4j</p>
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Oranges</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Log4j2漏洞分析</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-09 18:24:34
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/LOG4J/" title="LOG4J">
+                    #LOG4J
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>复习完 JNDI 之后想专门过来学一下 log4j</p>
 <h1 id="demo-实现与具体组件分析"><a href="#demo-实现与具体组件分析" class="headerlink" title="demo 实现与具体组件分析"></a>demo 实现与具体组件分析</h1><h2 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a>0x01 环境搭建</h2><p>在分析漏洞之前 ，log4j 的具体工作流程和组成很有必要去了解和熟悉<br>先把测试环境搭建好<br>依赖</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>log4j 的配置和其他很多组件很像，都是通过获取一个配置文件中的内容来进行具体配置的。这里我们用 xml 配置文件来写 log4j 的配置<br>通常分为两个部分：1.设置日志信息输出目的地   2.定义 logger，也就是定位我们需要打日志的包中</p>
@@ -254,143 +217,360 @@
 <h1 id="个人总结"><a href="#个人总结" class="headerlink" title="个人总结"></a>个人总结</h1><p>这次的学习并不涉及 payload 绕过等操作，比如关键字截取，嵌套，带外等操作，感兴趣的师傅可以去<br><a target="_blank" rel="noopener" href="https://su18.org/post/log4j2/#%E5%89%8D%E8%A8%80">https://su18.org/post/log4j2/#%E5%89%8D%E8%A8%80</a> su18 师傅的博客<br><a target="_blank" rel="noopener" href="https://drun1baby.top/2022/08/09/Log4j2%E5%A4%8D%E7%8E%B0/#Log4j2-%E5%A4%8D%E7%8E%B0">https://drun1baby.top/2022/08/09/Log4j2%E5%A4%8D%E7%8E%B0/#Log4j2-%E5%A4%8D%E7%8E%B0</a>  drunkbaby 师傅的博客</p>
 <p>log4j 分析暂告一段落了，从 JNDI 的复习开始，有了一种新的感觉，新的学习的感觉，之前听队里的师傅说之前的漏洞调流程的时候要能够自己调出来，我并没有将这个事在自己心里强度，只是默认自己该这么做，也觉得自己现在可以有这样的能力，但还是缺少很多感觉，要走的路还有很长</p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">首页</a></li>
-        
-          <li><a href="/about/">关于</a></li>
-        
-          <li><a href="/archives/">归档</a></li>
-        
-          <li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li>
-        
-      </ul>
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/JNDIRe0.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-09 18:24:34
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/LOG4J/" title="LOG4J">
+                        #LOG4J
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/%E6%9C%80%E8%BF%91%E7%9A%84%E6%84%9F%E6%83%B3.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
     </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#demo-%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%85%B7%E4%BD%93%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">demo 实现与具体组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">0x01 环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-log4j2-%E5%8A%9F%E8%83%BD%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">0x02 log4j2 功能组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95-%E8%A7%A6%E5%8F%91%E7%82%B9%E2%80%94-AbstractLogger"><span class="toc-text">1x01 日志记录&#x2F;触发点—-AbstractLogger</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E6%B6%88%E6%81%AF%E6%A0%BC%E5%BC%8F%E5%8C%96%E2%80%94-MessagePatternConverter"><span class="toc-text">1x02 消息格式化—-MessagePatternConverter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-%E5%AD%97%E7%AC%A6%E6%9B%BF%E6%8D%A2%E2%80%94-StrSubstitutor"><span class="toc-text">1x03 字符替换—-StrSubstitutor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-lookup-%E5%A4%84%E7%90%86%E2%80%94-Interpolator"><span class="toc-text">1x04 lookup 处理—-Interpolator</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-text">漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-text">0x01 漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x02 流程分析</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E7%89%88%E6%9C%AC%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90"><span class="toc-text">高版本绕过分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rc1-%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="toc-text">0x01 rc1 及绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0%E7%82%B9%E5%88%86%E6%9E%90-1"><span class="toc-text">1x01 安全更新点分析 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0%E7%82%B9-2"><span class="toc-text">1x02 安全更新点 2</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93"><span class="toc-text">个人总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
 
     
-    
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#demo-%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%85%B7%E4%BD%93%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">demo 实现与具体组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-log4j2-%E5%8A%9F%E8%83%BD%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">0x02 log4j2 功能组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95-%E8%A7%A6%E5%8F%91%E7%82%B9%E2%80%94-AbstractLogger"><span class="toc-number">1.2.1.</span> <span class="toc-text">1x01 日志记录&#x2F;触发点—-AbstractLogger</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E6%B6%88%E6%81%AF%E6%A0%BC%E5%BC%8F%E5%8C%96%E2%80%94-MessagePatternConverter"><span class="toc-number">1.2.2.</span> <span class="toc-text">1x02 消息格式化—-MessagePatternConverter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-%E5%AD%97%E7%AC%A6%E6%9B%BF%E6%8D%A2%E2%80%94-StrSubstitutor"><span class="toc-number">1.2.3.</span> <span class="toc-text">1x03 字符替换—-StrSubstitutor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-lookup-%E5%A4%84%E7%90%86%E2%80%94-Interpolator"><span class="toc-number">1.2.4.</span> <span class="toc-text">1x04 lookup 处理—-Interpolator</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">2.1.</span> <span class="toc-text">0x01 漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">2.2.</span> <span class="toc-text">0x02 流程分析</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E7%89%88%E6%9C%AC%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">高版本绕过分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rc1-%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="toc-number">3.1.</span> <span class="toc-text">0x01 rc1 及绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0%E7%82%B9%E5%88%86%E6%9E%90-1"><span class="toc-number">3.1.1.</span> <span class="toc-text">1x01 安全更新点分析 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0%E7%82%B9-2"><span class="toc-number">3.1.2.</span> <span class="toc-text">1x02 安全更新点 2</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">个人总结</span></a></li></ol>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&text=Log4j2漏洞分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&title=Log4j2漏洞分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&is_video=false&description=Log4j2漏洞分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Log4j2漏洞分析&body=Check out this article: http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&title=Log4j2漏洞分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&title=Log4j2漏洞分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&title=Log4j2漏洞分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&title=Log4j2漏洞分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&name=Log4j2漏洞分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html&t=Log4j2漏洞分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
   </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
 </div>
 
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
         
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
-    
-    
-    2024
-    stoocea
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </nav>
-  </div>
-</footer>
 
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
     </div>
-    <!-- styles -->
+  </div>
 
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
-
-  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
   <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
       }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功！");
-      e.clearSelection();
-    })
-  })
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
 
-<!-- Baidu Analytics -->
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
 
-<!-- Cloudflare Analytics -->
+  
+<script src="/js/colorscheme.js"></script>
 
-<!-- Disqus Comments -->
 
-<!-- utterances Comments -->
 
-</body>
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Log4j2%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FLog4j%25E6%25BC%258F%25E6%25B4%259E%25E5%2588%2586%25E6%259E%2590.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
 </html>

@@ -1,198 +1,185 @@
 <!DOCTYPE html>
-<html lang=zh>
-<head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="复现 CVE 的时候遇到了，趁此机会学一下原 CVE 的 issuehttps:&#x2F;&#x2F;github.com&#x2F;scala&#x2F;scala&#x2F;pull&#x2F;10118环境链接：https:&#x2F;&#x2F;github.com&#x2F;yarocher&#x2F;lazylist-cve-poc参考文章：https:&#x2F;&#x2F;www.freebuf.com&#x2F;articles&#x2F;network&#x2F;375109.html 前置知识scala 简介scala">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Scala反序列化学习">
-<meta property="og:url" content="http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">
-<meta property="og:site_name" content="stoocea&#39;s blog">
-<meta property="og:description" content="复现 CVE 的时候遇到了，趁此机会学一下原 CVE 的 issuehttps:&#x2F;&#x2F;github.com&#x2F;scala&#x2F;scala&#x2F;pull&#x2F;10118环境链接：https:&#x2F;&#x2F;github.com&#x2F;yarocher&#x2F;lazylist-cve-poc参考文章：https:&#x2F;&#x2F;www.freebuf.com&#x2F;articles&#x2F;network&#x2F;375109.html 前置知识scala 简介scala">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720083487768-84937eb9-bf48-40dc-b29a-69f841f5fbd8.png#averageHue=%232c2e2d&clientId=u565db21d-1766-4&from=paste&height=633&id=u62a8978d&originHeight=1186&originWidth=2478&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1076666&status=done&style=none&taskId=u8f3cf64e-78fa-4596-b855-f212b65dd8b&title=&width=1321.6">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720088551679-dfa93ba6-a4eb-4293-a449-6c65f7302530.png#averageHue=%232f3030&clientId=uca9627dc-b4f2-4&from=paste&height=347&id=u55c70b5b&originHeight=650&originWidth=2507&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=660359&status=done&style=none&taskId=u2391c590-01bc-4d60-932e-1136ead8b15&title=&width=1337.0666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720088664446-fabd6946-6566-493c-a581-5f5c9f41ab91.png#averageHue=%23333637&clientId=uca9627dc-b4f2-4&from=paste&height=305&id=u9e7efb7d&originHeight=572&originWidth=2484&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=541124&status=done&style=none&taskId=uaaf2bb74-a881-4088-9751-3e1c8e57dea&title=&width=1324.8">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720095803635-d31c2c44-496c-4233-9655-cacc40976d6c.png#averageHue=%232e322f&clientId=ucf22a51f-efc1-4&from=paste&height=127&id=uac54c50e&originHeight=239&originWidth=1624&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=184226&status=done&style=none&taskId=u75617311-e18c-4fe7-b121-2317e52a348&title=&width=866.1333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720097149611-3698fa52-a199-4d18-8449-5ab37709bae0.png#averageHue=%232d2f2e&clientId=ucf22a51f-efc1-4&from=paste&height=73&id=ud4a09236&originHeight=137&originWidth=1762&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=117117&status=done&style=none&taskId=ud51ab803-e571-4c85-96b2-c23145f1671&title=&width=939.7333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720099820117-6e2bc04b-75d7-49b2-b79a-6976b512270c.png#averageHue=%232c2f2e&clientId=ucf22a51f-efc1-4&from=paste&height=262&id=u012e9722&originHeight=492&originWidth=1925&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=448155&status=done&style=none&taskId=u033cbf75-4332-493e-b818-7647585bcf4&title=&width=1026.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720096267815-c42d5ae9-795f-4c07-9b94-710d37d5b8e1.png#averageHue=%232e302f&clientId=ucf22a51f-efc1-4&from=paste&height=90&id=ue68e042b&originHeight=168&originWidth=1802&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=137584&status=done&style=none&taskId=u96772f85-32d5-4b3e-af8b-1e9b2a8e54d&title=&width=961.0666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720100475779-bbb97f37-0485-4410-8d5e-dce370b09f9c.png#averageHue=%232f3331&clientId=ucf22a51f-efc1-4&from=paste&height=60&id=u09cfefb7&originHeight=112&originWidth=1125&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=52638&status=done&style=none&taskId=u02307df5-4aca-4b3e-a394-eb4ec7ecd11&title=&width=600">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720100645356-96f8d45d-9122-403a-9301-2a9a41d62098.png#averageHue=%232b2e2d&clientId=ucf22a51f-efc1-4&from=paste&height=333&id=u5ca6a7ce&originHeight=624&originWidth=2025&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=558079&status=done&style=none&taskId=u9185d3d0-4854-45c2-885a-299a8190546&title=&width=1080">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720101173545-1afec4bc-d913-4085-a139-7671fe372e69.png#averageHue=%232b2d2c&clientId=ucf22a51f-efc1-4&from=paste&height=519&id=u1f662123&originHeight=973&originWidth=1656&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=653497&status=done&style=none&taskId=u142bc4c5-c068-4e0d-bc96-e5d749ad090&title=&width=883.2">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109109269-1ed81014-2258-4ce0-a9d7-88ea357970a5.png#averageHue=%232d2f2f&clientId=u61d5917a-db06-4&from=paste&height=89&id=u6e27197f&originHeight=166&originWidth=1897&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=140009&status=done&style=none&taskId=u8e660897-1b6d-4a3e-a324-a29721a69b4&title=&width=1011.7333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109236242-5ac53fa2-5cbd-442c-b097-be5ef3e61ddf.png#averageHue=%232d2f2e&clientId=u61d5917a-db06-4&from=paste&height=129&id=udc601407&originHeight=242&originWidth=1807&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=228864&status=done&style=none&taskId=ub0fdcdab-a205-4c2d-82e2-5cbc459bfe1&title=&width=963.7333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109331701-39a3b51d-d617-4637-a716-de1b4b502731.png#averageHue=%23333734&clientId=u61d5917a-db06-4&from=paste&height=37&id=u476b2595&originHeight=70&originWidth=1716&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=63820&status=done&style=none&taskId=uf0244719-d2b7-477b-88d0-42ca9e5428f&title=&width=915.2">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109387450-ea7eaf8f-59bf-4a58-a285-eb50be64a575.png#averageHue=%23303231&clientId=u61d5917a-db06-4&from=paste&height=58&id=u41783e5f&originHeight=108&originWidth=1218&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=52360&status=done&style=none&taskId=u50477feb-6326-4a7b-b322-997585e1add&title=&width=649.6">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109542187-12410016-b8c4-45b5-9ca2-62f668ded63e.png#averageHue=%232a2c2b&clientId=u61d5917a-db06-4&from=paste&height=330&id=ue295500d&originHeight=619&originWidth=2018&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=560422&status=done&style=none&taskId=u3d34a7de-ed67-4470-a7fb-cf8d488fb98&title=&width=1076.2666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109618946-6b6b0c89-5ea6-4a8f-bd0f-5ab23916c968.png#averageHue=%2342464a&clientId=u61d5917a-db06-4&from=paste&height=114&id=u7952aec4&originHeight=214&originWidth=2385&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=142979&status=done&style=none&taskId=ub85f02bf-2c2e-4141-b75c-890d032f4a8&title=&width=1272">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720109662908-efb175d1-d351-480c-b1b2-01ade599372a.png#averageHue=%232c2e2c&clientId=u61d5917a-db06-4&from=paste&height=237&id=ueda1332c&originHeight=445&originWidth=1895&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=394027&status=done&style=none&taskId=u1bf230fc-03f3-4315-99a6-0c9dec20f92&title=&width=1010.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720111329418-fa4862ab-b8d4-4f27-ae49-7fe26ce67bd6.png#averageHue=%23383b3a&clientId=u61d5917a-db06-4&from=paste&height=427&id=u903b2371&originHeight=801&originWidth=885&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=386025&status=done&style=none&taskId=uf0b86291-4225-4bc8-aed2-2efeea6ad9d&title=&width=472">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720111423212-ba854366-63af-4be6-84cf-0c62393e8c9d.png#averageHue=%233b3e3f&clientId=u61d5917a-db06-4&from=paste&height=37&id=u7d614f1e&originHeight=69&originWidth=1811&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=62915&status=done&style=none&taskId=ub2928dbc-2ddc-41e0-9ec6-2c6deca98a7&title=&width=965.8666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112333189-d82c82be-e9f6-4a67-83fd-85e7f644ac35.png#averageHue=%23303337&clientId=u2d8e4ee3-0855-4&from=paste&height=646&id=u6d6f0d30&originHeight=1212&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2655431&status=done&style=none&taskId=u0d16a410-f072-4e4b-9e46-5b0d7367087&title=&width=1124.2666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112472862-c337acb9-92d2-42d9-ab49-b4d2ffd693ea.png#averageHue=%232c2d2d&clientId=u2d8e4ee3-0855-4&from=paste&height=151&id=uc80891f6&originHeight=283&originWidth=1868&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=238930&status=done&style=none&taskId=u1a1adf7e-2e34-4259-84f7-852aaa48fe2&title=&width=996.2666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112706423-ec09c0da-0a92-4d40-a431-b7a57b3b81e7.png#averageHue=%232b2e30&clientId=u2d8e4ee3-0855-4&from=paste&height=636&id=u280191cd&originHeight=1193&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2597463&status=done&style=none&taskId=u457ec2f3-44c0-4eaf-bef4-3cb67a55057&title=&width=1124.2666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720116606719-662756d7-12f6-4f14-919b-1bf34f77ecb5.png#averageHue=%23323439&clientId=u43ab58bb-5ab5-4&from=paste&height=636&id=u22ae0fe1&originHeight=1193&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2675682&status=done&style=none&taskId=u05ab772a-02e1-46ac-98d6-7bb0534e859&title=&width=1124.2666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720116523573-c26422ef-4821-42d1-9ee7-06a31e0a05d4.png#averageHue=%232d2f2f&clientId=u43ab58bb-5ab5-4&from=paste&height=73&id=ue760d5cc&originHeight=136&originWidth=1920&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=120325&status=done&style=none&taskId=uc9cebf30-671b-412a-a243-8d376f63c6b&title=&width=1024">
-<meta property="article:published_time" content="2024-07-06T07:41:00.000Z">
-<meta property="article:modified_time" content="2024-08-09T10:25:11.568Z">
-<meta property="article:author" content="stoocea">
-<meta property="article:tag" content="Scala">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720083487768-84937eb9-bf48-40dc-b29a-69f841f5fbd8.png#averageHue=%232c2e2d&clientId=u565db21d-1766-4&from=paste&height=633&id=u62a8978d&originHeight=1186&originWidth=2478&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1076666&status=done&style=none&taskId=u8f3cf64e-78fa-4596-b855-f212b65dd8b&title=&width=1321.6">
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
     
-    
-      
-        
-          <link rel="shortcut icon" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
+      Scala反序列化学习 
       
       
-        
-          <link rel="icon" type="image/png" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
-      
+      |
     
-    <!-- title -->
-    <title>Scala反序列化学习</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
+     stoocea&#39;s blog
+  </title>
 
-
-    <!-- Umami Analytics -->
-
-
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
-
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="上一篇" href="/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="下一篇" href="/post/Java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&text=Scala反序列化学习"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Scala反序列化学习"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&is_video=false&description=Scala反序列化学习"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Scala反序列化学习&body=Check out this article: http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Scala反序列化学习"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Scala反序列化学习"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Scala反序列化学习"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Scala反序列化学习"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&name=Scala反序列化学习&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&t=Scala反序列化学习"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#scala-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">scala 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#scala-%E6%96%B0%E7%89%B9%E6%80%A7"><span class="toc-number">1.2.</span> <span class="toc-text">scala 新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%B9%E9%85%8D%E5%99%A8-match"><span class="toc-number">1.2.1.</span> <span class="toc-text">匹配器 match</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%B4%E7%94%9F%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.2.2.</span> <span class="toc-text">伴生对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#apply-%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">apply 方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#trait"><span class="toc-number">1.2.3.</span> <span class="toc-text">trait</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.4.</span> <span class="toc-text">匿名函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%B0%E6%80%A7%E5%88%97%E8%A1%A8-LazyList"><span class="toc-number">1.2.5.</span> <span class="toc-text">惰性列表 LazyList*</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LazyList-%E7%9A%84%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">LazyList 的反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">2.1.</span> <span class="toc-text">工作流程分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-number">2.2.</span> <span class="toc-text">漏洞点分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E5%88%A9%E7%94%A8%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0%E5%AF%BB%E6%89%BE"><span class="toc-number">2.3.</span> <span class="toc-text">可利用匿名函数寻找</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">利用总结</span></a></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        Scala反序列化学习
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">stoocea</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-07-06T07:41:00.000Z" class="dt-published" itemprop="datePublished">2024-07-06</time>
-        
-        (Updated: <time datetime="2024-08-09T10:25:11.568Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/Java/">Java</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/Scala/" rel="tag">Scala</a>
-    </div>
-
-
-    </div>
-  </header>
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <p>复现 CVE 的时候遇到了，趁此机会学一下<br>原 CVE 的 issue<br><a target="_blank" rel="noopener" href="https://github.com/scala/scala/pull/10118">https://github.com/scala/scala/pull/10118</a><br>环境链接：<br><a target="_blank" rel="noopener" href="https://github.com/yarocher/lazylist-cve-poc">https://github.com/yarocher/lazylist-cve-poc</a><br>参考文章：<br><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/network/375109.html">https://www.freebuf.com/articles/network/375109.html</a></p>
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Oranges</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Scala反序列化学习</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-09 18:25:11
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Scala/" title="Scala">
+                    #Scala
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>复现 CVE 的时候遇到了，趁此机会学一下<br>原 CVE 的 issue<br><a target="_blank" rel="noopener" href="https://github.com/scala/scala/pull/10118">https://github.com/scala/scala/pull/10118</a><br>环境链接：<br><a target="_blank" rel="noopener" href="https://github.com/yarocher/lazylist-cve-poc">https://github.com/yarocher/lazylist-cve-poc</a><br>参考文章：<br><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/network/375109.html">https://www.freebuf.com/articles/network/375109.html</a></p>
 <h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="scala-简介"><a href="#scala-简介" class="headerlink" title="scala 简介"></a>scala 简介</h2><p>scala 本身就是一门语言，它运行在 JVM 中，并且能够兼容现有的 java 程序。scala 经过编译之后是生成的 java 字节码，这也是它能够运行在 JVM 上的理由，也可以调用 Java 现有的类库。<br>但是 Scala 也有着自己的语法规则，并且有一些区别于 Java 的特性，对于这些新东西或者特性，接下来的基础笔记会一一写到。</p>
 <h2 id="scala-新特性"><a href="#scala-新特性" class="headerlink" title="scala 新特性"></a>scala 新特性</h2><h3 id="匹配器-match"><a href="#匹配器-match" class="headerlink" title="匹配器 match"></a>匹配器 match</h3><p>一个 scala2 中的例子，整体代码如下（怎么感觉写起来像 python）</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">show</span></span>(result:<span class="type">String</span>):<span class="type">Unit</span>=&#123;</span><br><span class="line">    println(result)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> x=<span class="number">11</span></span><br><span class="line">    <span class="keyword">val</span> y=x <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span> =&gt; <span class="string">&quot;one&quot;</span></span><br><span class="line">      <span class="keyword">case</span> <span class="number">2</span> =&gt; <span class="string">&quot;two&quot;</span></span><br><span class="line">      <span class="keyword">case</span> other =&gt; <span class="string">s&quot;other: <span class="subst">$other</span>&quot;</span> <span class="comment">// other是一个变量名，它会接收除了1和2以外的任何值</span></span><br><span class="line">      <span class="keyword">case</span> _ =&gt; <span class="string">s&quot;other: _&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">    show(y)</span><br><span class="line">    <span class="comment">//other: 11</span></span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -292,143 +279,360 @@
 <p>这次验证了猜想<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112706423-ec09c0da-0a92-4d40-a431-b7a57b3b81e7.png#averageHue=%232b2e30&clientId=u2d8e4ee3-0855-4&from=paste&height=636&id=u280191cd&originHeight=1193&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2597463&status=done&style=none&taskId=u457ec2f3-44c0-4eaf-bef4-3cb67a55057&title=&width=1124.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>看一下该字节码的具体内容<code>javap -verbose -p 21.class</code>这里我把它字节码文件名改成了 21.class，windowsshell 中的$有转义。不影响具体内容：<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720116606719-662756d7-12f6-4f14-919b-1bf34f77ecb5.png#averageHue=%23323439&clientId=u43ab58bb-5ab5-4&from=paste&height=636&id=u22ae0fe1&originHeight=1193&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2675682&status=done&style=none&taskId=u05ab772a-02e1-46ac-98d6-7bb0534e859&title=&width=1124.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>发现它对 a 中定义的 msg 方法进行调用，结合传名参数的惰性机制，我们最开始并没有触发 b 中传名参数的逻辑执行，也并没有产生相应的<code>$$anonfun$$lessinit$greater$</code>类名的字节码文件。而当我们执行了传名参数的逻辑之后，才生成的<code>$$anonfun$$lessinit$greater$</code>类名的字节码文件。<br>也就是说：<br><code>scala.sys.process.ProcessBuilderImpl$URLInput$$anonfun$$lessinit$greater$1</code><strong>类的生成，是由</strong><code>url.openStream()</code><strong>的执行而触发的</strong><br>了解了这个部分，我们就能够知道为什么会找到<code>scala.sys.process.ProcessBuilderImpl$URLInput$$anonfun$$lessinit$greater$1</code>这个类了，接下来进行总结梳理</p>
 <h1 id="利用总结"><a href="#利用总结" class="headerlink" title="利用总结"></a>利用总结</h1><p>首先，匿名函数本身在经过 scalac 编译器编译之后的字节码，其实是一段类的字节码，类似于<code>$URLInput$$anonfun$$lessinit$greater$1</code>这种，所以我们可以通过寻找这种类，并通过 LazyList 的构造器将其传入。那么当触发 readObject 方法，直到触发该匿名函数时，在 JVM 中实际上就是在调用该类，并且实例化。观察该类的字节码，在该类的 apply 方法中，会调用其子类构造方法中的参数的方法，到达利用的目的，比如 URLInput 链就会调用到 <code>url.openStream()</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720116523573-c26422ef-4821-42d1-9ee7-06a31e0a05d4.png#averageHue=%232d2f2f&clientId=u43ab58bb-5ab5-4&from=paste&height=73&id=ue760d5cc&originHeight=136&originWidth=1920&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=120325&status=done&style=none&taskId=uc9cebf30-671b-412a-a243-8d376f63c6b&title=&width=1024" referrerpolicy="no-referrer" alt="image.png"><br>其他 scala 反序列化链也是如此</p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">首页</a></li>
-        
-          <li><a href="/about/">关于</a></li>
-        
-          <li><a href="/archives/">归档</a></li>
-        
-          <li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li>
-        
-      </ul>
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/Java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-09 18:25:11
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Scala/" title="Scala">
+                        #Scala
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
     </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-text">前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#scala-%E7%AE%80%E4%BB%8B"><span class="toc-text">scala 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#scala-%E6%96%B0%E7%89%B9%E6%80%A7"><span class="toc-text">scala 新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%B9%E9%85%8D%E5%99%A8-match"><span class="toc-text">匹配器 match</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%B4%E7%94%9F%E5%AF%B9%E8%B1%A1"><span class="toc-text">伴生对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#apply-%E6%96%B9%E6%B3%95"><span class="toc-text">apply 方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#trait"><span class="toc-text">trait</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0"><span class="toc-text">匿名函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%B0%E6%80%A7%E5%88%97%E8%A1%A8-LazyList"><span class="toc-text">惰性列表 LazyList*</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LazyList-%E7%9A%84%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">LazyList 的反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">工作流程分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-text">漏洞点分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E5%88%A9%E7%94%A8%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0%E5%AF%BB%E6%89%BE"><span class="toc-text">可利用匿名函数寻找</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93"><span class="toc-text">利用总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
 
     
-    
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#scala-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">scala 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#scala-%E6%96%B0%E7%89%B9%E6%80%A7"><span class="toc-number">1.2.</span> <span class="toc-text">scala 新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%B9%E9%85%8D%E5%99%A8-match"><span class="toc-number">1.2.1.</span> <span class="toc-text">匹配器 match</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%B4%E7%94%9F%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.2.2.</span> <span class="toc-text">伴生对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#apply-%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">apply 方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#trait"><span class="toc-number">1.2.3.</span> <span class="toc-text">trait</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0"><span class="toc-number">1.2.4.</span> <span class="toc-text">匿名函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%B0%E6%80%A7%E5%88%97%E8%A1%A8-LazyList"><span class="toc-number">1.2.5.</span> <span class="toc-text">惰性列表 LazyList*</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LazyList-%E7%9A%84%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">LazyList 的反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">2.1.</span> <span class="toc-text">工作流程分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-number">2.2.</span> <span class="toc-text">漏洞点分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E5%88%A9%E7%94%A8%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0%E5%AF%BB%E6%89%BE"><span class="toc-number">2.3.</span> <span class="toc-text">可利用匿名函数寻找</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">利用总结</span></a></li></ol>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&text=Scala反序列化学习"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Scala反序列化学习"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&is_video=false&description=Scala反序列化学习"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Scala反序列化学习&body=Check out this article: http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Scala反序列化学习"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Scala反序列化学习"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Scala反序列化学习"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Scala反序列化学习"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&name=Scala反序列化学习&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&t=Scala反序列化学习"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
   </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
 </div>
 
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
         
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
-    
-    
-    2024
-    stoocea
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </nav>
-  </div>
-</footer>
 
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
     </div>
-    <!-- styles -->
+  </div>
 
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
-
-  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
   <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
       }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功！");
-      e.clearSelection();
-    })
-  })
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
 
-<!-- Baidu Analytics -->
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
 
-<!-- Cloudflare Analytics -->
+  
+<script src="/js/colorscheme.js"></script>
 
-<!-- Disqus Comments -->
 
-<!-- utterances Comments -->
 
-</body>
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FScala%25E5%258F%258D%25E5%25BA%258F%25E5%2588%2597%25E5%258C%2596.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
 </html>

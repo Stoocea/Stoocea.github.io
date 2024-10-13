@@ -1,252 +1,185 @@
 <!DOCTYPE html>
-<html lang=zh>
-<head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="什么是 JNDI英文全写为：Java Naming and Directory Interface，翻译叫做 JAVA 命名和目录接口，是 sun 公司提供的一种标准的	java 命令系统接口，JNDI 提供统一的客户端 API,并由管理者将服务端映射为 JNDI 上的特定服务和对象，简单来说就是： JNDI，能够让用户通过统一的方式访问获取网络上的各种资源和服务  （键值对找东西）Naming">
-<meta property="og:type" content="article">
-<meta property="og:title" content="JNDI重看">
-<meta property="og:url" content="http://example.com/post/JNDIRe0.html">
-<meta property="og:site_name" content="stoocea&#39;s blog">
-<meta property="og:description" content="什么是 JNDI英文全写为：Java Naming and Directory Interface，翻译叫做 JAVA 命名和目录接口，是 sun 公司提供的一种标准的	java 命令系统接口，JNDI 提供统一的客户端 API,并由管理者将服务端映射为 JNDI 上的特定服务和对象，简单来说就是： JNDI，能够让用户通过统一的方式访问获取网络上的各种资源和服务  （键值对找东西）Naming">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709878054437-6a112ecc-4601-4fa1-bb9f-c4252c6c5366.png#averageHue=%23be9b34&clientId=uc227c08e-913c-4&from=paste&height=386&id=u3507a37d&originHeight=579&originWidth=850&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=85892&status=done&style=none&taskId=u0885bb26-e3f5-4556-bfa0-2678f5f6d1c&title=&width=566.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709881726884-296c72f9-c169-4fb6-9bf7-9f1305ae0647.png#averageHue=%233f434c&clientId=u3dcabff8-befb-4&from=paste&height=86&id=ue3bc9478&originHeight=129&originWidth=772&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=34813&status=done&style=none&taskId=u4d1b64e6-9f5f-432b-bd42-4905f157296&title=&width=514.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709958482095-1b3cbfad-8fb1-40b5-8cf2-25565f77066f.png#averageHue=%233c414a&clientId=u1db2a60e-ea5c-4&from=paste&height=285&id=S1R4D&originHeight=428&originWidth=1040&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=217100&status=done&style=none&taskId=ue0a53bb7-7ab3-4ab9-ac34-a8845a585d4&title=&width=693.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709960790782-f8b6eb11-8aa4-408e-a245-4840911c3e82.png#averageHue=%233b3f48&clientId=u1db2a60e-ea5c-4&from=paste&height=103&id=ufb536bf0&originHeight=155&originWidth=553&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=42849&status=done&style=none&taskId=uc319a1a8-3960-4412-bdd7-fa82213109c&title=&width=368.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709960852314-59e9baee-1377-43e7-9681-cdd8bcd16140.png#averageHue=%233e444f&clientId=u1db2a60e-ea5c-4&from=paste&height=91&id=u35582505&originHeight=136&originWidth=892&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=54271&status=done&style=none&taskId=u9a80c55f-c893-45ee-82ee-0699050856f&title=&width=594.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709960874141-34d29a29-30f7-4f78-8b81-2a28da85d7c0.png#averageHue=%233d434d&clientId=u1db2a60e-ea5c-4&from=paste&height=327&id=uc6d20593&originHeight=490&originWidth=1171&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=254651&status=done&style=none&taskId=u5ef480c5-b930-4954-9fb0-b9c6d036209&title=&width=780.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709962859359-b3d0792c-80f0-4824-9db3-b9e0b03e5c7b.png#averageHue=%233e444d&clientId=u1db2a60e-ea5c-4&from=paste&height=231&id=uef32c070&originHeight=346&originWidth=1809&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=297125&status=done&style=none&taskId=u9bf5dbad-2637-4d31-b152-67864075202&title=&width=1206">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709963021470-6782f214-c516-4622-8ad3-9bf522701e79.png#averageHue=%233d434c&clientId=u1db2a60e-ea5c-4&from=paste&height=231&id=ue19f3aab&originHeight=347&originWidth=1019&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=143299&status=done&style=none&taskId=ub9161b29-c6f2-4f52-b54d-2ce178cfa96&title=&width=679.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709963003765-9e30d29f-a28a-4606-8ac2-ce98fcf24024.png#averageHue=%233d434d&clientId=u1db2a60e-ea5c-4&from=paste&height=332&id=ue092f1e6&originHeight=498&originWidth=1222&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=248715&status=done&style=none&taskId=u4af5563d-1678-4d70-9683-b1cf812908f&title=&width=814.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709963127706-537baf2b-d819-48da-aa30-d8a36b6953ce.png#averageHue=%23444a55&clientId=u1db2a60e-ea5c-4&from=paste&height=457&id=u2e44740f&originHeight=685&originWidth=1381&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=417841&status=done&style=none&taskId=u8dd2c531-0c7e-4bf0-89d0-938e9ac8dfe&title=&width=920.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709963494884-d01fe898-5e1c-4007-8e17-bde81fbd4441.png#averageHue=%23434a55&clientId=u1db2a60e-ea5c-4&from=paste&height=405&id=ufe9049a4&originHeight=608&originWidth=1214&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=289622&status=done&style=none&taskId=uf82fb388-9213-4632-898b-b9e91d29b9d&title=&width=809.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709964014420-cec5e139-283d-4569-bee8-4a21b2d0ad57.png#averageHue=%23555555&clientId=u1db2a60e-ea5c-4&from=paste&height=84&id=u638989ea&originHeight=126&originWidth=880&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=11083&status=done&style=none&taskId=udbf996e7-ca81-4a20-aeeb-ac3c7589894&title=&width=586.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709964466086-fd5af5f0-8471-46fd-9776-f040c843ef97.png#averageHue=%2352666c&clientId=u1db2a60e-ea5c-4&from=paste&height=166&id=u9b392616&originHeight=249&originWidth=1188&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=111952&status=done&style=none&taskId=u1de5d9fc-fa3e-4bb0-b3d5-986892b57be&title=&width=792">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709964200592-4b3056d9-bc20-4bf0-b930-c285b2fc05f2.png#averageHue=%23424853&clientId=u1db2a60e-ea5c-4&from=paste&height=527&id=u1a05f4b6&originHeight=790&originWidth=1857&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=580106&status=done&style=none&taskId=u5c8f57e5-5f21-40e6-b89f-70989394da1&title=&width=1238">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709964335769-5e04ef94-399e-46d2-a419-efbe64d375a5.png#averageHue=%23424853&clientId=u1db2a60e-ea5c-4&from=paste&height=540&id=ufe00a006&originHeight=810&originWidth=1423&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=497125&status=done&style=none&taskId=u329bdd2f-599f-41df-a4f8-bd932409f37&title=&width=948.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709971563591-feaf0944-60e8-4b94-8b67-01e162d64b92.png#averageHue=%234b505e&clientId=u1db2a60e-ea5c-4&from=paste&height=257&id=u56a07f33&originHeight=385&originWidth=1755&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=287991&status=done&style=none&taskId=u7784f39e-fca1-4a88-b48c-b86566f7706&title=&width=1170">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709971859094-5dab14d4-30b5-4b60-9369-29b28a16cea5.png#averageHue=%23474e59&clientId=u1db2a60e-ea5c-4&from=paste&height=298&id=udede1636&originHeight=447&originWidth=1963&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=354789&status=done&style=none&taskId=u83023e36-779e-4b75-b843-d0216c92ad8&title=&width=1308.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709973476747-caa5cb1f-6cd1-42bb-ac1b-86c0c34b0749.png#averageHue=%233d444e&clientId=u1db2a60e-ea5c-4&from=paste&height=264&id=u259c4202&originHeight=396&originWidth=1634&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=252501&status=done&style=none&taskId=u6c71e4e0-2e2a-4159-b77e-aac4aa678c7&title=&width=1089.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709973543311-de3f7f84-bc9c-43bd-8e7e-c3e0d8402eef.png#averageHue=%233d434c&clientId=u1db2a60e-ea5c-4&from=paste&height=342&id=u1706948c&originHeight=513&originWidth=1243&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=264857&status=done&style=none&taskId=u6c801d7f-26ca-4d9d-be5e-ad51b4ac17d&title=&width=828.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709973680235-ff5a722a-0c4f-4cb5-b8d4-45d89dfb139f.png#averageHue=%23363d44&clientId=u1db2a60e-ea5c-4&from=paste&height=178&id=u4e74f29e&originHeight=267&originWidth=1547&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=241764&status=done&style=none&taskId=u37acdd0b-6d6b-41d0-a084-19df6c38fc8&title=&width=1031.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709974088022-665467ec-8893-4ce2-b335-f7457001da86.png#averageHue=%23494f5b&clientId=u1db2a60e-ea5c-4&from=paste&height=288&id=u2140d9b9&originHeight=432&originWidth=1289&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=254765&status=done&style=none&taskId=ue426557b-547b-413a-aaad-61aa5a2e0c9&title=&width=859.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709974369618-691e8d72-d5d1-4b19-a6c0-372b6441aea0.png#averageHue=%23404752&clientId=u1db2a60e-ea5c-4&from=paste&height=723&id=u41761343&originHeight=1084&originWidth=1769&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=879836&status=done&style=none&taskId=uc00e5dc6-7b5d-44a0-9093-9e4cf059996&title=&width=1179.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709974498812-0edf82ef-d9c1-4ff2-acb0-c80909e67965.png#averageHue=%23494f5b&clientId=u1db2a60e-ea5c-4&from=paste&height=271&id=ucdc2e7cd&originHeight=406&originWidth=1366&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=262634&status=done&style=none&taskId=u48a0cf21-cd88-40e9-a1bf-c583c3fb9b9&title=&width=910.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709974510355-d449ad6e-51b6-4b4c-99b2-5108c1c13a5f.png#averageHue=%23404040&clientId=u1db2a60e-ea5c-4&from=paste&height=170&id=uc5364164&originHeight=255&originWidth=1024&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=59770&status=done&style=none&taskId=ucb2e5ff3-285a-4797-80a5-5e5b10d8bb9&title=&width=682.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709975273525-4288d439-01f4-42fd-bc45-921e64ee17af.png#averageHue=%233e434c&clientId=u1db2a60e-ea5c-4&from=paste&height=135&id=u5052951e&originHeight=202&originWidth=901&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=57647&status=done&style=none&taskId=ubdad0d78-2c43-42fd-94b6-fb4786fd125&title=&width=600.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709975523916-c8064b0f-125a-429b-aa5a-9ade7c070847.png#averageHue=%233c434d&clientId=u1db2a60e-ea5c-4&from=paste&height=704&id=u22df5022&originHeight=1056&originWidth=1319&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=682689&status=done&style=none&taskId=u2a733897-c3d3-4358-9eb2-8e5994181a9&title=&width=879.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709975741782-4ea225c2-ba07-4c09-92dc-c42ec813f401.png#averageHue=%23454b57&clientId=u1db2a60e-ea5c-4&from=paste&height=330&id=ua4d26afe&originHeight=495&originWidth=1548&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=323383&status=done&style=none&taskId=ufef311be-3057-4f7c-b922-7f147a22760&title=&width=1032">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709975958801-f4caf920-256a-4c10-a471-4a840fad5557.png#averageHue=%23454a55&clientId=u1db2a60e-ea5c-4&from=paste&height=405&id=u55f3f6aa&originHeight=607&originWidth=1733&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=407945&status=done&style=none&taskId=udbba462a-e09c-456f-83ff-147d8abb9e0&title=&width=1155.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709976017546-ccbfbfd5-6477-4367-9ffd-e946740ad4f3.png#averageHue=%23424853&clientId=u1db2a60e-ea5c-4&from=paste&height=497&id=u3c57b1d5&originHeight=745&originWidth=1358&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=441998&status=done&style=none&taskId=u81010180-5f8d-4215-b2b7-f7cffb8a0b9&title=&width=905.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709976046434-d4bdc194-65c5-4ec6-8edc-d8ff420e5b2d.png#averageHue=%233c424a&clientId=u1db2a60e-ea5c-4&from=paste&height=82&id=u37147473&originHeight=123&originWidth=909&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=43283&status=done&style=none&taskId=u8769d02b-7270-464f-849e-7f50df083dd&title=&width=606">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709976294728-11ddfd24-57f9-41c1-810f-7358e585f8b4.png#averageHue=%232c3138&clientId=u1db2a60e-ea5c-4&from=paste&height=300&id=ucd34c010&originHeight=450&originWidth=1233&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=121309&status=done&style=none&taskId=u37e292b4-d129-42f7-a685-bb8580854b4&title=&width=822">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709980320214-ecd0a1db-9781-4382-8e11-36baaef075ec.png#averageHue=%23373f46&clientId=u270414de-1e6d-4&from=paste&height=484&id=u9de119d8&originHeight=726&originWidth=730&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=271421&status=done&style=none&taskId=uda91758c-0517-4684-b6c7-35487d61de2&title=&width=486.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709980437584-8198d58e-93c3-46ff-a0a8-e0591a212581.png#averageHue=%233d434c&clientId=u270414de-1e6d-4&from=paste&height=187&id=u2131c3ec&originHeight=280&originWidth=1070&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=128019&status=done&style=none&taskId=uc8fb356a-72fa-49bb-a8f7-e10138ca18a&title=&width=713.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1709981196302-8a1a1bd5-b5a6-4ec0-9dc5-9da514674774.jpeg">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710060632030-7da153fc-ffaa-4096-9ac5-14316c81b944.png#averageHue=%235e656d&clientId=u632663d2-e5d7-4&from=paste&height=625&id=uce964003&originHeight=938&originWidth=1655&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=471093&status=done&style=none&taskId=u1809c8d7-2186-41b6-b4a6-0231daf3dbb&title=&width=1103.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710062665563-d91b6696-e693-4fba-90c3-5bef4d1834d4.png#averageHue=%233e434c&clientId=u632663d2-e5d7-4&from=paste&height=272&id=u0ec07c44&originHeight=408&originWidth=1213&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=215457&status=done&style=none&taskId=u372e4768-ca16-4f9a-a77e-b1f4fb4f1c1&title=&width=808.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710062693579-3514793a-29d2-4e5c-83f9-ba8381b68410.png#averageHue=%233e4652&clientId=u632663d2-e5d7-4&from=paste&height=129&id=uc9c32251&originHeight=194&originWidth=1038&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=97801&status=done&style=none&taskId=u5e354e6f-4ee2-4551-9d4a-7b36888a236&title=&width=692">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710062736878-34fc59c8-2d06-4c9f-8038-0d925487ca39.png#averageHue=%23464c58&clientId=u632663d2-e5d7-4&from=paste&height=410&id=u861bae45&originHeight=615&originWidth=1722&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=435980&status=done&style=none&taskId=uccfb3b08-9995-4bcc-abb5-9a3de8aede9&title=&width=1148">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710062882587-faac3889-635a-4ecb-acae-1138766c8a5b.png#averageHue=%23454a56&clientId=u632663d2-e5d7-4&from=paste&height=427&id=u29869884&originHeight=640&originWidth=1554&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=404388&status=done&style=none&taskId=uecef2672-3b09-4141-9f8b-904a4ddfff3&title=&width=1036">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710062950864-2dac57a6-195b-4e36-b121-8173aa692184.png#averageHue=%23454b56&clientId=u632663d2-e5d7-4&from=paste&height=432&id=ua2e6e902&originHeight=648&originWidth=1697&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=482611&status=done&style=none&taskId=ua1081dec-4d8d-4966-a837-8151b9850af&title=&width=1131.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710062980334-565914fe-1242-4f5c-8072-ca56e21d6693.png#averageHue=%23353c44&clientId=u632663d2-e5d7-4&from=paste&height=234&id=u392db9b7&originHeight=351&originWidth=933&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=207194&status=done&style=none&taskId=u726564fe-9b34-4afa-b0f6-fd6cc949d9e&title=&width=622">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710063051233-69c5f2b1-9d3c-409d-b3e9-a1ba8d973a0e.png#averageHue=%23494f5b&clientId=u632663d2-e5d7-4&from=paste&height=353&id=uf50628d8&originHeight=529&originWidth=1742&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=386353&status=done&style=none&taskId=u1008e49c-bf24-4a57-bb86-2fd34043011&title=&width=1161.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710063367421-7153a436-120f-4d6d-9a6d-27dab9e1638d.png#averageHue=%23414955&clientId=u632663d2-e5d7-4&from=paste&height=648&id=u6da1f32b&originHeight=972&originWidth=1662&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=765667&status=done&style=none&taskId=u655cbf5a-b149-418b-963b-40a53696595&title=&width=1108">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710063474248-a50294d7-5e08-4070-80ac-912eafd3c484.png#averageHue=%23464c57&clientId=u632663d2-e5d7-4&from=paste&height=349&id=ua30ce734&originHeight=524&originWidth=1404&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=325269&status=done&style=none&taskId=u8edc569e-1e54-4728-9a1f-23eb80255ce&title=&width=936">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710063545706-c3d5d128-3321-457a-b8da-b5a4af365d5b.png#averageHue=%23454c58&clientId=u632663d2-e5d7-4&from=paste&height=311&id=ucaaa39e9&originHeight=467&originWidth=1977&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=392441&status=done&style=none&taskId=u40daf98b-4543-4082-b8a2-f8a4f630d64&title=&width=1318">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710063671734-a0f4f4f9-6334-4c1b-a3be-3c68bb735811.png#averageHue=%23494f5b&clientId=u632663d2-e5d7-4&from=paste&height=293&id=udb4df194&originHeight=440&originWidth=1815&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=330395&status=done&style=none&taskId=u44716f8c-8312-408d-88fe-5227816a9eb&title=&width=1210">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710060698734-e6225a8a-b378-4575-b710-588627598dbe.png#averageHue=%23333f47&clientId=u632663d2-e5d7-4&from=paste&height=223&id=u5f4c223f&originHeight=334&originWidth=495&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=57658&status=done&style=none&taskId=u8c6727c7-9025-4aa7-94de-1c8c4261305&title=&width=330">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710070803294-b6d94bda-c880-42ac-81a3-1422ac72fc68.png#averageHue=%23f6f5f5&clientId=uad2256d1-92e8-4&from=paste&height=469&id=u070e807d&originHeight=704&originWidth=2559&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=125506&status=done&style=none&taskId=u706651e4-d8e4-4d9f-9a74-e24e60cd494&title=&width=1706">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710070919465-19258383-2340-4a80-b2f0-a54d8eb5d7ab.png#averageHue=%233b454e&clientId=uad2256d1-92e8-4&from=paste&height=600&id=u7a3871d2&originHeight=900&originWidth=2096&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=532532&status=done&style=none&taskId=u62723e86-3d9a-459b-a6c1-03bc7bdb05b&title=&width=1397.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071058356-c2c295c2-db7f-4659-981e-0c67f89e8acd.png#averageHue=%23494e5a&clientId=uad2256d1-92e8-4&from=paste&height=271&id=u87908237&originHeight=407&originWidth=1901&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=310136&status=done&style=none&taskId=u4feb1297-bf5b-480d-9859-4f3af19dd96&title=&width=1267.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071131051-100276ea-3344-4d51-b632-a19ff2bc042e.png#averageHue=%23474d59&clientId=uad2256d1-92e8-4&from=paste&height=340&id=u9d94d7de&originHeight=510&originWidth=1751&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=389090&status=done&style=none&taskId=u628d085e-31d9-4bff-882d-ec28f69e7a2&title=&width=1167.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071198229-57bc7af5-6bbe-44d3-867d-5562301ed5bf.png#averageHue=%234f5462&clientId=uad2256d1-92e8-4&from=paste&height=196&id=u8ee46423&originHeight=294&originWidth=1820&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=216592&status=done&style=none&taskId=u36a5fe8f-1d4a-4770-a431-e1f051d483a&title=&width=1213.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071268093-eb1c57f1-2c7a-4f5b-a11f-f71aee626bb8.png#averageHue=%23484e5a&clientId=uad2256d1-92e8-4&from=paste&height=338&id=u21e67fc8&originHeight=507&originWidth=1795&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=390701&status=done&style=none&taskId=u67da0f43-b9c0-4028-9c13-40dd3a97f4f&title=&width=1196.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071458532-82346718-0253-4c35-8f3a-bd9368e00235.png#averageHue=%233e454f&clientId=uad2256d1-92e8-4&from=paste&height=349&id=ue55d6791&originHeight=524&originWidth=1863&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=424984&status=done&style=none&taskId=u50de15cf-7e09-40fb-889b-c1a06019e43&title=&width=1242">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071601329-0c5a909c-2f35-44a3-9e7e-69758eb89918.png#averageHue=%233d454f&clientId=uad2256d1-92e8-4&from=paste&height=356&id=u13c50132&originHeight=534&originWidth=1991&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=449304&status=done&style=none&taskId=u06ec767f-bc3f-473e-b784-4290ba647b1&title=&width=1327.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071638706-df7c75fc-7232-4b59-96cc-108f8aa365d0.png#averageHue=%233d444e&clientId=uad2256d1-92e8-4&from=paste&height=386&id=u2d8fcc5f&originHeight=579&originWidth=2076&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=484265&status=done&style=none&taskId=uf1c3be4c-9af3-472f-824a-ff1b1f192ab&title=&width=1384">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071723681-ab205012-bdb2-446b-941b-2fd1f6fcfd61.png#averageHue=%233d454f&clientId=uad2256d1-92e8-4&from=paste&height=336&id=u122b2ae0&originHeight=504&originWidth=2023&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=400987&status=done&style=none&taskId=u72ee599f-6d7a-4d85-8acf-1429ba6b423&title=&width=1348.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710071661410-a83c6be9-8f5a-4cf5-a667-e59606ac1a51.png#averageHue=%23474e5b&clientId=uad2256d1-92e8-4&from=paste&height=290&id=u1eb4fda0&originHeight=435&originWidth=2163&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=366601&status=done&style=none&taskId=ub0e6ebdf-d1f4-4567-9a76-416f72d3998&title=&width=1442">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710073730270-d54002ce-5a16-4067-be1a-5229e83e0555.png#averageHue=%233d444d&clientId=ufd46421e-3273-4&from=paste&height=403&id=uc2822095&originHeight=605&originWidth=1325&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=323398&status=done&style=none&taskId=u411e3294-78ec-49e6-a950-221a0586092&title=&width=883.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710074151159-461a15d5-d65c-4b1a-8e26-aeeaf39880be.png#averageHue=%233c424b&clientId=ufd46421e-3273-4&from=paste&height=324&id=u3050fcb1&originHeight=486&originWidth=1157&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=225130&status=done&style=none&taskId=u8d4864a7-0c7a-4eda-bfeb-9d7d17d1c17&title=&width=771.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710074773573-de02eea7-6076-4ef1-96ae-5ccda0164839.png#averageHue=%233a414a&clientId=ufd46421e-3273-4&from=paste&height=37&id=ucc526e2e&originHeight=55&originWidth=1771&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=59803&status=done&style=none&taskId=u585743a5-06f2-437b-ab09-d68bb6c3c1e&title=&width=1180.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710075083827-b41f01c2-b3f3-4ff2-9f8e-e3d06cd468ed.png#averageHue=%233c444d&clientId=ufd46421e-3273-4&from=paste&height=373&id=QOQi4&originHeight=559&originWidth=1715&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=419213&status=done&style=none&taskId=u40670ce5-2e97-4c05-a3cc-d4018f964fc&title=&width=1143.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710075061235-86de9153-2e0c-40bd-90dd-e8ea109cc24d.png#averageHue=%233c434c&clientId=ufd46421e-3273-4&from=paste&height=332&id=p3Luk&originHeight=498&originWidth=2120&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=430563&status=done&style=none&taskId=u3701d801-4fe8-4b7c-9270-cb23be77c27&title=&width=1413.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710076244495-e4273533-a63b-4291-9689-5aff08e3ebae.png#averageHue=%233e434c&clientId=ufd46421e-3273-4&from=paste&height=396&id=xkoeo&originHeight=594&originWidth=1095&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=302890&status=done&style=none&taskId=u4f94613c-37f0-4fbc-9bf8-35de321b0b3&title=&width=730">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710122431753-8cca3d68-4b80-4b94-b12e-fffbe78ccd3f.png#averageHue=%23f8f6f5&clientId=u4c4ac00c-9379-4&from=paste&height=353&id=b8lqt&originHeight=529&originWidth=1076&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=123239&status=done&style=none&taskId=ucef05d10-dd93-435f-a89d-46e1ce024a5&title=&width=717.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710122589034-4fe48556-16ab-41e8-80cd-575128841e6f.png#averageHue=%23464c51&clientId=u4c4ac00c-9379-4&from=paste&height=287&id=D9P8o&originHeight=430&originWidth=1241&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=214163&status=done&style=none&taskId=u752002ac-76a5-454c-8d38-7b07c1cbe37&title=&width=827.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123145331-ef2cdb6e-e90e-4a9b-9618-fbc8cedfa7a5.png#averageHue=%23424748&clientId=u4c4ac00c-9379-4&from=paste&height=575&id=uJi96&originHeight=863&originWidth=1872&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=398445&status=done&style=none&taskId=u62fccede-570e-4996-8722-478466e0a80&title=&width=1248">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123229340-1b140ec6-ce30-4eee-a528-947bbee3466b.png#averageHue=%233c4752&clientId=u4c4ac00c-9379-4&from=paste&height=136&id=KhvWG&originHeight=204&originWidth=1705&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=120128&status=done&style=none&taskId=u1476a04e-cdfc-49f7-a0bc-e02f98a44b6&title=&width=1136.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123280748-273795fe-0d93-465b-966e-64e4bcf19a13.png#averageHue=%233c4248&clientId=u4c4ac00c-9379-4&from=paste&height=417&id=RT3Oi&originHeight=626&originWidth=1773&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=404425&status=done&style=none&taskId=u33155071-6488-45c8-902c-8e6e234cd70&title=&width=1182">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123331633-9aa43ccd-e558-451f-b9c4-1201506076e2.png#averageHue=%233c4248&clientId=u4c4ac00c-9379-4&from=paste&height=395&id=B7uJJ&originHeight=592&originWidth=1684&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=424177&status=done&style=none&taskId=u68917654-f221-4a52-98a8-9084f350c97&title=&width=1122.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123376134-6afb9763-0993-46fa-8225-bd45b22fb056.png#averageHue=%233a4147&clientId=u4c4ac00c-9379-4&from=paste&height=349&id=Azumj&originHeight=524&originWidth=2161&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=438120&status=done&style=none&taskId=u902455fd-e7a8-4468-8ae7-16aa76b8705&title=&width=1440.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123537043-71d47d26-99e5-406d-8add-641a1dd32e47.png#averageHue=%23464d53&clientId=u4c4ac00c-9379-4&from=paste&height=416&id=goq0q&originHeight=624&originWidth=2203&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=664069&status=done&style=none&taskId=u8105e9b6-1e3b-4414-8b57-decaa138869&title=&width=1468.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123802662-83b41c63-705f-4916-a18c-8a8370980250.png#averageHue=%233a4045&clientId=u4c4ac00c-9379-4&from=paste&height=210&id=EYkUs&originHeight=571&originWidth=2262&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=467312&status=done&style=none&taskId=uf299781c-9080-42c1-beab-1a2a03d3e9e&title=&width=830">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710123958654-cf11d07c-0195-4b8b-b3cb-9706ffc013a2.png#averageHue=%234a4f53&clientId=u4c4ac00c-9379-4&from=paste&height=287&id=vkGR9&originHeight=431&originWidth=1692&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=399222&status=done&style=none&taskId=ud2d50bf2-a848-4ed5-b17c-d14a82dcaaa&title=&width=1128">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710124082446-e7541c0f-8e1f-42d7-9126-445159425e19.png#averageHue=%233b4248&clientId=u4c4ac00c-9379-4&from=paste&height=445&id=p3lBe&originHeight=667&originWidth=2119&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=516891&status=done&style=none&taskId=u890d45f5-49c3-479e-9b08-0d55eb1bb7a&title=&width=1412.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710124344767-b20c574c-e2a6-4887-b2e0-00ab58c18946.png#averageHue=%233b4146&clientId=u4c4ac00c-9379-4&from=paste&height=520&id=Q5ss2&originHeight=780&originWidth=2091&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=597147&status=done&style=none&taskId=uc5c5f773-1e83-4ce4-ba90-78d311f0877&title=&width=1394">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710124432777-c96210d7-a9c7-44eb-9ff5-4c9f6f2035ef.png#averageHue=%233e4141&clientId=u4c4ac00c-9379-4&from=paste&height=569&id=w8MZ1&originHeight=854&originWidth=2331&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=599369&status=done&style=none&taskId=uc81daa45-0d40-4fad-9365-0634c71e09d&title=&width=1554">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709964014420-cec5e139-283d-4569-bee8-4a21b2d0ad57.png?x-oss-process=image/format,webp#averageHue=%23555555&from=url&id=LTJYt&originHeight=126&originWidth=880&originalType=binary&ratio=1.5&rotation=0&showTitle=false&status=done&style=none&title=">
-<meta property="article:published_time" content="2024-03-11T03:10:00.000Z">
-<meta property="article:modified_time" content="2024-08-09T10:24:16.608Z">
-<meta property="article:author" content="stoocea">
-<meta property="article:tag" content="JNDI">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1709878054437-6a112ecc-4601-4fa1-bb9f-c4252c6c5366.png#averageHue=%23be9b34&clientId=uc227c08e-913c-4&from=paste&height=386&id=u3507a37d&originHeight=579&originWidth=850&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=85892&status=done&style=none&taskId=u0885bb26-e3f5-4556-bfa0-2678f5f6d1c&title=&width=566.6666666666666">
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
     
-    
-      
-        
-          <link rel="shortcut icon" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
+      JNDI重看 
       
       
-        
-          <link rel="icon" type="image/png" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
-      
+      |
     
-    <!-- title -->
-    <title>JNDI重看</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
+     stoocea&#39;s blog
+  </title>
 
-
-    <!-- Umami Analytics -->
-
-
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
-
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="上一篇" href="/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="下一篇" href="/post/Spring%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E6%9E%90.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/JNDIRe0.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/JNDIRe0.html&text=JNDI重看"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/JNDIRe0.html&title=JNDI重看"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/JNDIRe0.html&is_video=false&description=JNDI重看"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=JNDI重看&body=Check out this article: http://example.com/post/JNDIRe0.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/JNDIRe0.html&title=JNDI重看"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/JNDIRe0.html&title=JNDI重看"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/JNDIRe0.html&title=JNDI重看"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/JNDIRe0.html&title=JNDI重看"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/JNDIRe0.html&name=JNDI重看&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/JNDIRe0.html&t=JNDI重看"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-JNDI"><span class="toc-number">1.</span> <span class="toc-text">什么是 JNDI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Naming-%E5%91%BD%E5%90%8D%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 Naming 命名服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Directory-%E7%9B%AE%E5%BD%95%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.2.</span> <span class="toc-text">0x02 Directory 目录服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-JNDI-SPI"><span class="toc-number">1.3.</span> <span class="toc-text">0x03 JNDI SPI</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.</span> <span class="toc-text">JNDI 代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-JNDI-RMI-%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.0.1.</span> <span class="toc-text">0x01 JNDI_RMI 实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">JNDI 工作流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-context-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E5%AF%B9%E5%BA%94%E5%B1%9E%E6%80%A7%E8%AE%BE%E7%BD%AE"><span class="toc-number">3.1.</span> <span class="toc-text">0x01 context 初始化和对应属性设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-JNDI-%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.2.</span> <span class="toc-text">0x02 JNDI 底层实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%8E%B7%E5%8F%96-contect-%E7%9A%84-factor-%E6%9E%84%E9%80%A0%E7%B1%BB"><span class="toc-number">3.2.1.</span> <span class="toc-text">1x01 获取 contect 的 factor 构造类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E8%8E%B7%E5%8F%96-context-%E5%86%85%E5%AE%B9"><span class="toc-number">3.2.2.</span> <span class="toc-text">1x02 获取 context 内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNDI-%E5%8A%A8%E6%80%81%E5%8D%8F%E8%AE%AE%E8%BD%AC%E5%8C%96"><span class="toc-number">3.3.</span> <span class="toc-text">JNDI 动态协议转化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E5%8A%A8%E6%80%81%E5%8D%8F%E8%AE%AE%E8%BD%AC%E5%8C%96%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">3.3.1.</span> <span class="toc-text">0x01 动态协议转化流程分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-Refernce-%E7%B1%BB"><span class="toc-number">4.</span> <span class="toc-text">JNDI-Refernce 类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-%E6%B3%A8%E5%85%A5"><span class="toc-number">5.</span> <span class="toc-text">JNDI 注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-JNDI-RMI"><span class="toc-number">5.1.</span> <span class="toc-text">0x01 JNDI+RMI</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">5.1.1.</span> <span class="toc-text">1x01 流程分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95"><span class="toc-number">5.2.</span> <span class="toc-text">0x02 踩坑实录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-JNDI-LDAP"><span class="toc-number">5.3.</span> <span class="toc-text">0x03 JNDI+LDAP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E4%BB%80%E4%B9%88%E6%98%AF-LDAP"><span class="toc-number">5.3.1.</span> <span class="toc-text">0x01 什么是 LDAP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-JNDI-LDAP-%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.3.2.</span> <span class="toc-text">0x02 JNDI+LDAP 攻击实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x01-%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">5.3.2.1.</span> <span class="toc-text">1x01 攻击流程分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNDI-%E6%B3%A8%E5%85%A5%E9%AB%98%E7%89%88%E6%9C%AC%E7%BB%95%E8%BF%87"><span class="toc-number">5.4.</span> <span class="toc-text">JNDI 注入高版本绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-JNDI-RMI-%E9%99%90%E5%88%B6"><span class="toc-number">5.4.1.</span> <span class="toc-text">0x01 JNDI-RMI 限制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x01-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">5.4.1.1.</span> <span class="toc-text">1x01 源码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-JNDI-LDAP-%E9%99%90%E5%88%B6"><span class="toc-number">5.4.2.</span> <span class="toc-text">0x02 JNDI-LDAP 限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E7%BB%95%E8%BF%87%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90"><span class="toc-number">5.4.3.</span> <span class="toc-text">0x03 绕过实现分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x03-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.4.3.1.</span> <span class="toc-text">1x03 代码实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1x04-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">5.4.3.2.</span> <span class="toc-text">1x04 流程分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        JNDI重看
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">stoocea</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-03-11T03:10:00.000Z" class="dt-published" itemprop="datePublished">2024-03-11</time>
-        
-        (Updated: <time datetime="2024-08-09T10:24:16.608Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/Java/">Java</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/JNDI/" rel="tag">JNDI</a>
-    </div>
-
-
-    </div>
-  </header>
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <h1 id="什么是-JNDI"><a href="#什么是-JNDI" class="headerlink" title="什么是 JNDI"></a>什么是 JNDI</h1><p>英文全写为：<code>Java Naming and Directory Interface</code>，翻译叫做 JAVA 命名和目录接口，是 sun 公司提供的一种标准的	java 命令系统接口，JNDI 提供统一的客户端 API,并由管理者将服务端映射为 JNDI 上的特定服务和对象，简单来说就是： <strong>JNDI，能够让用户通过统一的方式访问获取网络上的各种资源和服务  （键值对找东西）</strong><br>Naming 和 Directroy</p>
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Oranges</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">JNDI重看</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-09 18:24:16
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/JNDI/" title="JNDI">
+                    #JNDI
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="什么是-JNDI"><a href="#什么是-JNDI" class="headerlink" title="什么是 JNDI"></a>什么是 JNDI</h1><p>英文全写为：<code>Java Naming and Directory Interface</code>，翻译叫做 JAVA 命名和目录接口，是 sun 公司提供的一种标准的	java 命令系统接口，JNDI 提供统一的客户端 API,并由管理者将服务端映射为 JNDI 上的特定服务和对象，简单来说就是： <strong>JNDI，能够让用户通过统一的方式访问获取网络上的各种资源和服务  （键值对找东西）</strong><br>Naming 和 Directroy</p>
 <h2 id="0x01-Naming-命名服务"><a href="#0x01-Naming-命名服务" class="headerlink" title="0x01 Naming 命名服务"></a>0x01 Naming 命名服务</h2><p>提供一种由键值对构成的通过名称来查找实际对象的服务，比如 RMI 协议，就是客户端通过注册中心上的对象名称得到远程对象的引用，有几个名词需要解释一下</p>
 <ul>
 <li>Bindings：表示<strong>一个</strong>名称和对应对象的绑定关系，也就是 DNS 域名绑定到对应 IP 上，RMI 中一个远程对象去绑定一个名称</li>
@@ -354,143 +287,360 @@
 <li>调用工厂类的getObjectInstance 去完成（高版本与低版本的区别就在此是否有对类型的限制，以及trustURLCodebase 默认是否为 false）</li>
 </ul>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">首页</a></li>
-        
-          <li><a href="/about/">关于</a></li>
-        
-          <li><a href="/archives/">归档</a></li>
-        
-          <li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li>
-        
-      </ul>
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/Spring%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E6%9E%90.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-09 18:24:16
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/JNDI/" title="JNDI">
+                        #JNDI
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/Log4j%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
     </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-JNDI"><span class="toc-text">什么是 JNDI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Naming-%E5%91%BD%E5%90%8D%E6%9C%8D%E5%8A%A1"><span class="toc-text">0x01 Naming 命名服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Directory-%E7%9B%AE%E5%BD%95%E6%9C%8D%E5%8A%A1"><span class="toc-text">0x02 Directory 目录服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-JNDI-SPI"><span class="toc-text">0x03 JNDI SPI</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">JNDI 代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-JNDI-RMI-%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x01 JNDI_RMI 实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">JNDI 工作流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-context-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E5%AF%B9%E5%BA%94%E5%B1%9E%E6%80%A7%E8%AE%BE%E7%BD%AE"><span class="toc-text">0x01 context 初始化和对应属性设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-JNDI-%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x02 JNDI 底层实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%8E%B7%E5%8F%96-contect-%E7%9A%84-factor-%E6%9E%84%E9%80%A0%E7%B1%BB"><span class="toc-text">1x01 获取 contect 的 factor 构造类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E8%8E%B7%E5%8F%96-context-%E5%86%85%E5%AE%B9"><span class="toc-text">1x02 获取 context 内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNDI-%E5%8A%A8%E6%80%81%E5%8D%8F%E8%AE%AE%E8%BD%AC%E5%8C%96"><span class="toc-text">JNDI 动态协议转化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E5%8A%A8%E6%80%81%E5%8D%8F%E8%AE%AE%E8%BD%AC%E5%8C%96%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x01 动态协议转化流程分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-Refernce-%E7%B1%BB"><span class="toc-text">JNDI-Refernce 类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-%E6%B3%A8%E5%85%A5"><span class="toc-text">JNDI 注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-JNDI-RMI"><span class="toc-text">0x01 JNDI+RMI</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x01 流程分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95"><span class="toc-text">0x02 踩坑实录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-JNDI-LDAP"><span class="toc-text">0x03 JNDI+LDAP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E4%BB%80%E4%B9%88%E6%98%AF-LDAP"><span class="toc-text">0x01 什么是 LDAP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-JNDI-LDAP-%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x02 JNDI+LDAP 攻击实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x01-%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x01 攻击流程分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNDI-%E6%B3%A8%E5%85%A5%E9%AB%98%E7%89%88%E6%9C%AC%E7%BB%95%E8%BF%87"><span class="toc-text">JNDI 注入高版本绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-JNDI-RMI-%E9%99%90%E5%88%B6"><span class="toc-text">0x01 JNDI-RMI 限制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x01-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-text">1x01 源码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-JNDI-LDAP-%E9%99%90%E5%88%B6"><span class="toc-text">0x02 JNDI-LDAP 限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E7%BB%95%E8%BF%87%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90"><span class="toc-text">0x03 绕过实现分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x03-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">1x03 代码实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1x04-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x04 流程分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
 
     
-    
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-JNDI"><span class="toc-number">1.</span> <span class="toc-text">什么是 JNDI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-Naming-%E5%91%BD%E5%90%8D%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.1.</span> <span class="toc-text">0x01 Naming 命名服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Directory-%E7%9B%AE%E5%BD%95%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.2.</span> <span class="toc-text">0x02 Directory 目录服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-JNDI-SPI"><span class="toc-number">1.3.</span> <span class="toc-text">0x03 JNDI SPI</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.</span> <span class="toc-text">JNDI 代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-JNDI-RMI-%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.0.1.</span> <span class="toc-text">0x01 JNDI_RMI 实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">JNDI 工作流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-context-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E5%AF%B9%E5%BA%94%E5%B1%9E%E6%80%A7%E8%AE%BE%E7%BD%AE"><span class="toc-number">3.1.</span> <span class="toc-text">0x01 context 初始化和对应属性设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-JNDI-%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.2.</span> <span class="toc-text">0x02 JNDI 底层实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%8E%B7%E5%8F%96-contect-%E7%9A%84-factor-%E6%9E%84%E9%80%A0%E7%B1%BB"><span class="toc-number">3.2.1.</span> <span class="toc-text">1x01 获取 contect 的 factor 构造类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E8%8E%B7%E5%8F%96-context-%E5%86%85%E5%AE%B9"><span class="toc-number">3.2.2.</span> <span class="toc-text">1x02 获取 context 内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNDI-%E5%8A%A8%E6%80%81%E5%8D%8F%E8%AE%AE%E8%BD%AC%E5%8C%96"><span class="toc-number">3.3.</span> <span class="toc-text">JNDI 动态协议转化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E5%8A%A8%E6%80%81%E5%8D%8F%E8%AE%AE%E8%BD%AC%E5%8C%96%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">3.3.1.</span> <span class="toc-text">0x01 动态协议转化流程分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-Refernce-%E7%B1%BB"><span class="toc-number">4.</span> <span class="toc-text">JNDI-Refernce 类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-%E6%B3%A8%E5%85%A5"><span class="toc-number">5.</span> <span class="toc-text">JNDI 注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-JNDI-RMI"><span class="toc-number">5.1.</span> <span class="toc-text">0x01 JNDI+RMI</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">5.1.1.</span> <span class="toc-text">1x01 流程分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95"><span class="toc-number">5.2.</span> <span class="toc-text">0x02 踩坑实录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-JNDI-LDAP"><span class="toc-number">5.3.</span> <span class="toc-text">0x03 JNDI+LDAP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E4%BB%80%E4%B9%88%E6%98%AF-LDAP"><span class="toc-number">5.3.1.</span> <span class="toc-text">0x01 什么是 LDAP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-JNDI-LDAP-%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.3.2.</span> <span class="toc-text">0x02 JNDI+LDAP 攻击实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x01-%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">5.3.2.1.</span> <span class="toc-text">1x01 攻击流程分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNDI-%E6%B3%A8%E5%85%A5%E9%AB%98%E7%89%88%E6%9C%AC%E7%BB%95%E8%BF%87"><span class="toc-number">5.4.</span> <span class="toc-text">JNDI 注入高版本绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-JNDI-RMI-%E9%99%90%E5%88%B6"><span class="toc-number">5.4.1.</span> <span class="toc-text">0x01 JNDI-RMI 限制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x01-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">5.4.1.1.</span> <span class="toc-text">1x01 源码分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-JNDI-LDAP-%E9%99%90%E5%88%B6"><span class="toc-number">5.4.2.</span> <span class="toc-text">0x02 JNDI-LDAP 限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E7%BB%95%E8%BF%87%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90"><span class="toc-number">5.4.3.</span> <span class="toc-text">0x03 绕过实现分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x03-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.4.3.1.</span> <span class="toc-text">1x03 代码实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1x04-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">5.4.3.2.</span> <span class="toc-text">1x04 流程分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/JNDIRe0.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/JNDIRe0.html&text=JNDI重看"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/JNDIRe0.html&title=JNDI重看"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/JNDIRe0.html&is_video=false&description=JNDI重看"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=JNDI重看&body=Check out this article: http://example.com/post/JNDIRe0.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/JNDIRe0.html&title=JNDI重看"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/JNDIRe0.html&title=JNDI重看"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/JNDIRe0.html&title=JNDI重看"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/JNDIRe0.html&title=JNDI重看"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/JNDIRe0.html&name=JNDI重看&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/JNDIRe0.html&t=JNDI重看"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
   </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
 </div>
 
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
         
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
-    
-    
-    2024
-    stoocea
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </nav>
-  </div>
-</footer>
 
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
     </div>
-    <!-- styles -->
+  </div>
 
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
-
-  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
   <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
       }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功！");
-      e.clearSelection();
-    })
-  })
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
 
-<!-- Baidu Analytics -->
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
 
-<!-- Cloudflare Analytics -->
+  
+<script src="/js/colorscheme.js"></script>
 
-<!-- Disqus Comments -->
 
-<!-- utterances Comments -->
 
-</body>
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + JNDI%E9%87%8D%E7%9C%8B + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FJNDIRe0.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/JNDIRe0.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
 </html>

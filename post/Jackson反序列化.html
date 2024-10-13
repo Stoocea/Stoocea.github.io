@@ -1,240 +1,185 @@
 <!DOCTYPE html>
-<html lang=zh>
-<head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="https:&#x2F;&#x2F;drun1baby.top&#x2F;2023&#x2F;12&#x2F;07&#x2F;Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86&#x2F;https:&#x2F;&#x2F;xz.aliyun.com&#x2F;t&#x2F;12966?time__1311&#x3D;mqmhqIx%2BODk">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Jackson反序列化初步学习">
-<meta property="og:url" content="http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">
-<meta property="og:site_name" content="stoocea&#39;s blog">
-<meta property="og:description" content="https:&#x2F;&#x2F;drun1baby.top&#x2F;2023&#x2F;12&#x2F;07&#x2F;Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86&#x2F;https:&#x2F;&#x2F;xz.aliyun.com&#x2F;t&#x2F;12966?time__1311&#x3D;mqmhqIx%2BODk">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710483206856-33cbe15f-0766-41ca-a845-b23303b00fb7.png#averageHue=%2371899f&clientId=ucb2b9ec1-2be2-4&from=paste&height=37&id=ud361491f&originHeight=56&originWidth=465&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=11197&status=done&style=none&taskId=uee643f85-3664-47fe-9b68-a8008aa7853&title=&width=310">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710483137818-f7419be1-e7bb-44da-b20a-3598f5533e63.png#averageHue=%239fb3b8&clientId=ucb2b9ec1-2be2-4&from=paste&height=37&id=ub309dc1b&originHeight=55&originWidth=520&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=11729&status=done&style=none&taskId=u8a207312-270c-4c15-a76e-6f453de632a&title=&width=346.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710484195346-c4ba000a-0e76-4ed7-aff4-e00a12b87dac.png#averageHue=%23373b3d&clientId=u20247fd2-a5d8-4&from=paste&height=227&id=ue006a4a8&originHeight=340&originWidth=774&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=62414&status=done&style=none&taskId=u3e4c4e8d-f1d6-4db0-be54-2cfb72de3cf&title=&width=516">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710484100297-6b4eb244-2102-4a9a-bda8-c74c4e3f275d.png#averageHue=%23494e53&clientId=u20247fd2-a5d8-4&from=paste&height=255&id=ua705d281&originHeight=382&originWidth=587&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=114062&status=done&style=none&taskId=uc809272b-e082-4141-b8b2-53c7913b064&title=&width=391.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710484957545-d6dbb83d-33b6-4546-a1ab-a3f238d8e5f1.png#averageHue=%23b1b7b3&clientId=u20247fd2-a5d8-4&from=paste&height=135&id=u67d0e098&originHeight=202&originWidth=442&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=20386&status=done&style=none&taskId=u8716ad36-e009-4314-9921-cdb04bfca49&title=&width=294.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710485398908-ef1eeabb-55ab-450d-8d2b-dad070d911a8.png#averageHue=%23454a4c&clientId=u20247fd2-a5d8-4&from=paste&height=99&id=u00de1508&originHeight=148&originWidth=1128&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=65898&status=done&style=none&taskId=u746e5272-01e0-4839-a986-bd709fab336&title=&width=752">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710487277442-86c47853-640e-4943-8ade-30e25187df41.png#averageHue=%233f434c&clientId=u20247fd2-a5d8-4&from=paste&height=411&id=u62dda23c&originHeight=616&originWidth=598&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=170563&status=done&style=none&taskId=u74a58702-4b54-44ac-bc9a-968f4129222&title=&width=398.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710488805969-de4776eb-f936-4d03-92a5-a80185b51b0e.png#averageHue=%2340444c&clientId=u20247fd2-a5d8-4&from=paste&height=93&id=uc27e19f7&originHeight=140&originWidth=880&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=50353&status=done&style=none&taskId=u99f32b04-1f0b-4d01-b09e-fcc42df0558&title=&width=586.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710488840010-e03fcbcf-5b91-479b-9061-c83ea8ec9f19.png#averageHue=%2342454e&clientId=u20247fd2-a5d8-4&from=paste&height=76&id=u3e1e9839&originHeight=114&originWidth=790&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=40677&status=done&style=none&taskId=uaf2f130a-7012-4696-940f-7722e9935e6&title=&width=526.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710489326925-2bbc5554-7b89-459b-b270-7c09e8a42c4b.png#averageHue=%2341454e&clientId=u20247fd2-a5d8-4&from=paste&height=83&id=u4672fa86&originHeight=124&originWidth=1113&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=61778&status=done&style=none&taskId=u7d1bdad6-7579-47c3-a2d5-8a353a39e43&title=&width=742">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710489814471-161787a0-2578-467a-9193-67cbf25b9d5a.png#averageHue=%23444750&clientId=u20247fd2-a5d8-4&from=paste&height=99&id=uafe7486c&originHeight=148&originWidth=883&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=66493&status=done&style=none&taskId=u4057355a-e89b-4e71-8689-274c271badd&title=&width=588.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710490295450-854c907a-7153-4cea-a495-834af316c359.png#averageHue=%2342464f&clientId=u20247fd2-a5d8-4&from=paste&height=110&id=u9c3dee77&originHeight=165&originWidth=1313&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=100041&status=done&style=none&taskId=udb8c3311-9b67-4a61-b9b2-0dd8c736b22&title=&width=875.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710490387589-77d6d31d-d1f5-46c9-918e-f347fc1d7c9f.png#averageHue=%2342464f&clientId=u20247fd2-a5d8-4&from=paste&height=116&id=uf27f8f0f&originHeight=174&originWidth=1121&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=91847&status=done&style=none&taskId=ue6289d89-b73e-4cb3-92d9-2c520534458&title=&width=747.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710490813717-3ee1fe3b-caef-4030-9910-55135f1ac90b.png#averageHue=%233e424b&clientId=u20247fd2-a5d8-4&from=paste&height=264&id=u0d7d3ee7&originHeight=396&originWidth=755&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=154414&status=done&style=none&taskId=uf0701856-1fc8-414b-a0a9-a8566b06bc5&title=&width=503.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710490846686-55664fc3-f43a-40b9-b452-bec61581b6a5.png#averageHue=%233f444e&clientId=u20247fd2-a5d8-4&from=paste&height=100&id=u8af37f9b&originHeight=150&originWidth=2233&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=175054&status=done&style=none&taskId=u0ac8ad5b-5c84-4539-b741-3c5d01e0d73&title=&width=1488.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710492181782-b88ea2f9-740e-4fd5-ad52-27a5f030b97a.png#averageHue=%233e434c&clientId=u3a678ee7-4c5f-4&from=paste&height=296&id=u3613ed8f&originHeight=444&originWidth=854&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=183273&status=done&style=none&taskId=u743a2fc2-f00b-4f1c-9990-8cb295c4007&title=&width=569.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710492289261-2e94a225-48a0-4a6f-bda5-488b88571193.png#averageHue=%23434750&clientId=u3a678ee7-4c5f-4&from=paste&height=112&id=uc70efe88&originHeight=168&originWidth=1338&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=113167&status=done&style=none&taskId=uc70fd651-f39c-4708-8de6-826f83a7a75&title=&width=892">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710492206181-7804e113-bcac-4593-8960-246341022825.png#averageHue=%233e434c&clientId=u3a678ee7-4c5f-4&from=paste&height=338&id=u25f30c30&originHeight=507&originWidth=864&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=223359&status=done&style=none&taskId=uba691bec-fb19-4e30-aae8-a0cf4486c00&title=&width=576">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710492261925-26b4da5e-5a18-473f-8385-562ff0f20ef6.png#averageHue=%233e434d&clientId=u3a678ee7-4c5f-4&from=paste&height=154&id=ue57d32c9&originHeight=231&originWidth=1880&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=209780&status=done&style=none&taskId=u3cd2aab0-f6ac-436f-abbd-a9369f7cea2&title=&width=1253.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710492611051-be3e874a-80b9-4530-924e-91847d73e729.png#averageHue=%233f444d&clientId=u3a678ee7-4c5f-4&from=paste&height=122&id=u930fd130&originHeight=183&originWidth=2368&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=264187&status=done&style=none&taskId=u5b28779c-1b4c-40b9-8d73-46107fc6338&title=&width=1578.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710492915804-412e426c-12f7-46c2-af0c-506ee34ee4ad.png#averageHue=%2340454f&clientId=u79bd535a-d81e-4&from=paste&height=130&id=u5ca8e7f1&originHeight=195&originWidth=1686&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=169434&status=done&style=none&taskId=uc9d427cd-4bfd-4ca8-9427-7f1bae9bce4&title=&width=1124">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710567641743-242f4067-fffe-4b2a-a1dd-eb715d832037.png#averageHue=%2342454d&clientId=uf4eba0d9-e83c-4&from=paste&height=123&id=u6973636d&originHeight=185&originWidth=798&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=60421&status=done&style=none&taskId=u3f167579-878a-4d1e-8a63-aab84d51435&title=&width=532">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710567897897-de9857c5-eb85-48a1-92be-200a14eb9470.png#averageHue=%2341434c&clientId=uf4eba0d9-e83c-4&from=paste&height=148&id=u239325d8&originHeight=222&originWidth=800&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=70047&status=done&style=none&taskId=u4d5876c8-5126-4b70-a645-cc0adfbf9a7&title=&width=533.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710568088198-2f4b025f-fe58-4b59-9f64-64a558323a0a.png#averageHue=%233d454e&clientId=uf4eba0d9-e83c-4&from=paste&height=322&id=u73512eca&originHeight=483&originWidth=781&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=154628&status=done&style=none&taskId=u9898787d-6cee-4c68-ba96-89c3b0e6cdc&title=&width=520.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710568701091-c21539f2-0675-441c-bad0-c7bdc13060d7.png#averageHue=%233e444e&clientId=uf4eba0d9-e83c-4&from=paste&height=100&id=uee4ab50e&originHeight=150&originWidth=1515&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=113113&status=done&style=none&taskId=u3ac0e47d-bcf5-420b-a439-510b0d83e91&title=&width=1010">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710568633751-dc779c40-66fe-4b3f-a75e-d6a311aaa3fb.png#averageHue=%23434953&clientId=uf4eba0d9-e83c-4&from=paste&height=599&id=u33921e8d&originHeight=898&originWidth=1940&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=820012&status=done&style=none&taskId=u80759fee-1538-4c73-a003-dec6ce2ed3e&title=&width=1293.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710569419890-e524c36f-30c2-4ad2-8b36-7737873dee59.png#averageHue=%234c515e&clientId=uf4eba0d9-e83c-4&from=paste&height=259&id=ufb459729&originHeight=388&originWidth=1368&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=243367&status=done&style=none&taskId=u57913721-4ac3-403e-917d-4ace7f29ab8&title=&width=912">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710569642078-4f4d3a53-6136-4362-9a08-c44a5da48612.png#averageHue=%233e444e&clientId=uf4eba0d9-e83c-4&from=paste&height=605&id=u6c65d7d9&originHeight=908&originWidth=1103&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=470020&status=done&style=none&taskId=u258c2dea-b4a0-450c-b637-607188030bf&title=&width=735.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710569677785-b04d5f57-ab7c-4399-b0dd-f0ea1a422519.png#averageHue=%233f454f&clientId=uf4eba0d9-e83c-4&from=paste&height=409&id=ueddc3e61&originHeight=613&originWidth=1512&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=417739&status=done&style=none&taskId=u0aa85551-fe98-4cb9-8c76-24c609ed926&title=&width=1008">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710569851898-83b98e21-1dcc-46cb-8244-a43fcaba42fd.png#averageHue=%23565a6a&clientId=uf4eba0d9-e83c-4&from=paste&height=179&id=ubb7d6e4c&originHeight=268&originWidth=1238&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=124428&status=done&style=none&taskId=u1ab327dd-6645-45c0-89b1-62cd8f38962&title=&width=825.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710569901527-e2e8651f-c993-4898-8e31-b77f9d7704af.png#averageHue=%2344454d&clientId=uf4eba0d9-e83c-4&from=paste&height=45&id=u600c3a4e&originHeight=68&originWidth=489&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=12826&status=done&style=none&taskId=u73f908b4-1e1c-4b21-b77e-c2dc56c720d&title=&width=326">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710570259332-a8746b3c-b2ae-4d79-9307-c7fb138e4965.png#averageHue=%233f454f&clientId=uf4eba0d9-e83c-4&from=paste&height=325&id=u0ac240ab&originHeight=488&originWidth=1032&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=224185&status=done&style=none&taskId=u092d4239-42c3-4daa-a72a-37d565e70a4&title=&width=688">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710570123302-f8c6299f-7446-4827-b06d-19681e60fedb.png#averageHue=%23444954&clientId=uf4eba0d9-e83c-4&from=paste&height=465&id=uaae7451e&originHeight=697&originWidth=1799&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=528107&status=done&style=none&taskId=udedd9659-1128-4f3b-8523-64f96bdd8ae&title=&width=1199.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710570458128-56fb787b-7112-458c-9e7f-68a35ababa93.png#averageHue=%23393e46&clientId=uf4eba0d9-e83c-4&from=paste&height=308&id=ub93ed4a8&originHeight=462&originWidth=2059&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=555858&status=done&style=none&taskId=u6cd1a329-c985-4739-8e58-5e4140eb25d&title=&width=1372.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710570632780-18d44578-6da7-4b9b-9a84-f8bf496bcf30.png#averageHue=%23474c58&clientId=uf4eba0d9-e83c-4&from=paste&height=293&id=u8bfc3588&originHeight=440&originWidth=1275&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=283299&status=done&style=none&taskId=u65ca6cb1-ee68-4024-889f-0ce8f8855ce&title=&width=850">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710570529731-6efeafa7-765d-4bb5-b0c5-a848be08b25d.png#averageHue=%23393e46&clientId=uf4eba0d9-e83c-4&from=paste&height=314&id=u4ddd127d&originHeight=471&originWidth=2020&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=543948&status=done&style=none&taskId=u2c56e17a-a480-4423-86bd-ed1f359d9f8&title=&width=1346.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710570705111-29d85fa3-49ca-4f5c-b266-bce1e3973c5d.png#averageHue=%234d515e&clientId=uf4eba0d9-e83c-4&from=paste&height=221&id=u57ffeae2&originHeight=331&originWidth=1616&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=242930&status=done&style=none&taskId=u9756fecf-3ef5-4558-a5b7-b0266987eae&title=&width=1077.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710570853449-646c2938-78ae-4aa6-ba98-0bb5ed34d8f8.png#averageHue=%233f4753&clientId=uf4eba0d9-e83c-4&from=paste&height=125&id=u4fb0ee27&originHeight=187&originWidth=1158&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=118545&status=done&style=none&taskId=u34c10a2d-8a8c-4f88-96f7-48a43fb0db4&title=&width=772">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710570894211-6b161791-04fb-4af4-877f-02cce1cd3b14.png#averageHue=%233f454f&clientId=uf4eba0d9-e83c-4&from=paste&height=254&id=u44efb794&originHeight=381&originWidth=1210&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=224275&status=done&style=none&taskId=uf3d616d0-2085-4256-a644-3b28c081f6e&title=&width=806.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710571076850-9d3fa5b1-0484-4aed-b2ee-6be37f0e138d.png#averageHue=%233d444e&clientId=uf4eba0d9-e83c-4&from=paste&height=826&id=ua029c0ea&originHeight=1239&originWidth=2221&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1344477&status=done&style=none&taskId=ue06347c4-1f8d-41ad-869c-2e2573d8925&title=&width=1480.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710571114909-69beb1a6-27b0-4504-bbfe-a11c0bd6f1dd.png#averageHue=%2343454d&clientId=uf4eba0d9-e83c-4&from=paste&height=88&id=ue257a315&originHeight=132&originWidth=483&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=23778&status=done&style=none&taskId=uc4aead24-ee73-4878-ac1a-351303cfd72&title=&width=322">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710573314671-ef157a48-7a42-4e4f-8f46-c16d9c74aa9e.png#averageHue=%235f656d&clientId=uf4eba0d9-e83c-4&from=paste&height=518&id=ufa5ef229&originHeight=777&originWidth=1732&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=417801&status=done&style=none&taskId=u1ef081dc-a59a-477f-9402-eb92b13863b&title=&width=1154.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710573555671-e9f127f9-632d-4957-89ae-1621a9c59c3b.png#averageHue=%233d444e&clientId=uf4eba0d9-e83c-4&from=paste&height=711&id=udf467bfb&originHeight=1067&originWidth=1776&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=787212&status=done&style=none&taskId=u91364d77-4ad3-4669-8ca1-c24b3b2cd31&title=&width=1184">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710573658683-7109cec4-5afb-45e8-a3a2-2c8e5508fb56.png#averageHue=%234c5161&clientId=uf4eba0d9-e83c-4&from=paste&height=192&id=uc0d7589e&originHeight=288&originWidth=1501&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=154359&status=done&style=none&taskId=uab48cb5d-8d05-4d01-b2e3-721c78c0c90&title=&width=1000.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710573699080-71332a1d-e10c-4ef7-8068-e04103a0adaf.png#averageHue=%23454c59&clientId=uf4eba0d9-e83c-4&from=paste&height=288&id=uefecad5f&originHeight=432&originWidth=1840&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=282779&status=done&style=none&taskId=u7c8c11e5-a3da-48ae-88bb-c6d91bdff30&title=&width=1226.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710574373737-c054397a-7573-4824-9ac2-9f831f394e4c.png#averageHue=%233b414b&clientId=uf4eba0d9-e83c-4&from=paste&height=554&id=u215ae1c0&originHeight=831&originWidth=1726&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=591205&status=done&style=none&taskId=u7b63071b-4428-4845-99af-9cc0c071641&title=&width=1150.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710575274797-afd8e3a4-b125-4a53-a898-affc3b106a62.png#averageHue=%2331373e&clientId=uf4eba0d9-e83c-4&from=paste&height=358&id=XBCXA&originHeight=537&originWidth=1437&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=470024&status=done&style=none&taskId=u880c32d1-8866-4ed3-991f-1303ef93afe&title=&width=958">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710575335256-fbfb49cd-51b6-4652-8f6f-00391c4fccfc.png#averageHue=%233e444f&clientId=uf4eba0d9-e83c-4&from=paste&height=445&id=u371a15ea&originHeight=667&originWidth=1366&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=360229&status=done&style=none&taskId=u2ec04593-8b9c-4061-9819-4b4bd589b9b&title=&width=910.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710575431953-a4853e97-c171-48d5-9305-5bdb99402a6d.png#averageHue=%234b505e&clientId=uf4eba0d9-e83c-4&from=paste&height=166&id=ue0193a05&originHeight=249&originWidth=1639&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=182153&status=done&style=none&taskId=u656f9eac-df7d-4790-966a-700f3e71ad5&title=&width=1092.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710576228178-138f6617-33ac-481e-8d81-595f47d5479a.png#averageHue=%233c424d&clientId=uf4eba0d9-e83c-4&from=paste&height=608&id=u1e0ad882&originHeight=912&originWidth=1775&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=615308&status=done&style=none&taskId=ue86ecee7-3072-4d08-96b6-1e720217094&title=&width=1183.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710576362729-9c449c56-c960-479d-9404-5997365ea0b2.png#averageHue=%23373e47&clientId=uf4eba0d9-e83c-4&from=paste&height=398&id=u4a1bc1df&originHeight=597&originWidth=1581&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=348487&status=done&style=none&taskId=uaf1bf494-28a2-4f0b-a6b0-8e7859d3a8e&title=&width=1054">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710576736402-25cd2279-1da9-49b8-8d27-faa9588639bd.png#averageHue=%234e5363&clientId=uf4eba0d9-e83c-4&from=paste&height=180&id=u0754ee4d&originHeight=270&originWidth=1408&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=132063&status=done&style=none&taskId=u62a1222c-8f0b-45bc-b54d-f60688c0e8e&title=&width=938.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710577570204-4687a514-940e-4431-90dc-809a82882b0b.png#averageHue=%23464b57&clientId=uf4eba0d9-e83c-4&from=paste&height=241&id=u2d3d2703&originHeight=361&originWidth=1310&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=198738&status=done&style=none&taskId=u61bed50e-a6d7-429b-925d-3c6a264305e&title=&width=873.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710577654537-3dc7a05b-89b0-47ad-84e5-bc3104aa0b0e.png#averageHue=%233e4450&clientId=uf4eba0d9-e83c-4&from=paste&height=565&id=u75393678&originHeight=848&originWidth=1454&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=484070&status=done&style=none&taskId=u521efde1-68f5-4142-9bd9-4f5986ab760&title=&width=969.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710578217830-03c1fa96-f7a6-4ce1-b30e-25e20b72b186.png#averageHue=%233b414c&clientId=uf4eba0d9-e83c-4&from=paste&height=685&id=ufc786bf0&originHeight=1027&originWidth=2415&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1063807&status=done&style=none&taskId=u6449d690-99a7-49b2-ac47-0c1aadc9f5b&title=&width=1610">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710578307133-4ff2bc76-f5ae-42a8-8030-157c02e0144c.png#averageHue=%23444a57&clientId=uf4eba0d9-e83c-4&from=paste&height=202&id=u78cbf782&originHeight=303&originWidth=1677&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=201461&status=done&style=none&taskId=ud3db4bb8-931c-4278-8772-c5302c26f85&title=&width=1118">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710578430546-aae75e18-05f6-4fc4-b953-ba3e98c63b83.png#averageHue=%23505768&clientId=uf4eba0d9-e83c-4&from=paste&height=169&id=u1f422efc&originHeight=254&originWidth=2115&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=214546&status=done&style=none&taskId=u797d8df4-cba6-4ec3-b059-6f7a15f1642&title=&width=1410">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710578831430-756fb1f6-4fea-43fd-871e-6b77c0220295.png#averageHue=%23444b59&clientId=u8815f3df-d898-4&from=paste&height=260&id=uf3c726cf&originHeight=390&originWidth=1647&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=285968&status=done&style=none&taskId=uac37c599-1cc4-44ed-9a98-fcf4b29bf61&title=&width=1098">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710578916666-b336f710-6cb3-43e5-90c4-386004000d18.png#averageHue=%233b414c&clientId=u8815f3df-d898-4&from=paste&height=606&id=uba6afa4f&originHeight=909&originWidth=2422&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=982722&status=done&style=none&taskId=ud994feae-d756-4fd2-9275-fca4c897131&title=&width=1614.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710579111578-15e34976-1ea4-4ee8-a9c9-565828ef4d49.png#averageHue=%23404651&clientId=u8815f3df-d898-4&from=paste&height=431&id=u97804c1e&originHeight=647&originWidth=1926&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=511102&status=done&style=none&taskId=ua8d212ca-fcc0-42ee-80f9-578c604b382&title=&width=1284">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710579729732-64486252-c67d-4f62-897e-2a0e8768914c.png#averageHue=%23363c45&clientId=u8815f3df-d898-4&from=paste&height=778&id=u4d037aef&originHeight=1167&originWidth=2380&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1278099&status=done&style=none&taskId=u4f1969a9-88b4-4b60-bd2d-ba989795daa&title=&width=1586.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710579755416-766281eb-ba66-4ae5-b7a6-a7d431baf89f.png#averageHue=%23575d70&clientId=u8815f3df-d898-4&from=paste&height=125&id=u6b4a65bd&originHeight=187&originWidth=949&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=42441&status=done&style=none&taskId=u62a1980c-a581-4266-83fd-36da833b7bb&title=&width=632.6666666666666">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710579901218-19518cb8-05e6-4c5c-8490-ddec535f3d6c.png#averageHue=%233c424c&clientId=u8815f3df-d898-4&from=paste&height=652&id=ue3363718&originHeight=978&originWidth=1978&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=791833&status=done&style=none&taskId=u75f2c645-bea1-4869-b9be-3c24c350efd&title=&width=1318.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710579992404-7064d5c2-d308-45c1-97ad-7b3492aac90c.png#averageHue=%233f4550&clientId=u8815f3df-d898-4&from=paste&height=429&id=u533546f7&originHeight=643&originWidth=2163&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=483379&status=done&style=none&taskId=u41eccf18-4113-4b23-a445-fa064741191&title=&width=1442">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710580162681-c813f69f-22cf-4ee6-9336-67dfd63faae1.png#averageHue=%2331383f&clientId=u8815f3df-d898-4&from=paste&height=255&id=ucd9e384c&originHeight=383&originWidth=1410&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=352178&status=done&style=none&taskId=u1d7caed6-fc4f-4f8a-943d-334b4b194eb&title=&width=940">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710580375795-1257c6c5-18d9-4550-869b-5fc2c9d183f1.png#averageHue=%233b414c&clientId=u8815f3df-d898-4&from=paste&height=499&id=HZK9a&originHeight=749&originWidth=1514&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=517592&status=done&style=none&taskId=u1f32ed63-c745-47b0-8431-949e19be617&title=&width=1009.3333333333334">
-<meta property="article:published_time" content="2024-03-18T09:01:00.000Z">
-<meta property="article:modified_time" content="2024-08-09T10:23:41.091Z">
-<meta property="article:author" content="stoocea">
-<meta property="article:tag" content="JackSon">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1710483206856-33cbe15f-0766-41ca-a845-b23303b00fb7.png#averageHue=%2371899f&clientId=ucb2b9ec1-2be2-4&from=paste&height=37&id=ud361491f&originHeight=56&originWidth=465&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=11197&status=done&style=none&taskId=uee643f85-3664-47fe-9b68-a8008aa7853&title=&width=310">
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
     
-    
-      
-        
-          <link rel="shortcut icon" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
+      Jackson反序列化初步学习 
       
       
-        
-          <link rel="icon" type="image/png" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
-      
+      |
     
-    <!-- title -->
-    <title>Jackson反序列化初步学习</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
+     stoocea&#39;s blog
+  </title>
 
-
-    <!-- Umami Analytics -->
-
-
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
-
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="上一篇" href="/post/C3P0%E9%93%BE%E5%88%86%E6%9E%90.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="下一篇" href="/post/FastJsonRe0.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&text=Jackson反序列化初步学习"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Jackson反序列化初步学习"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&is_video=false&description=Jackson反序列化初步学习"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Jackson反序列化初步学习&body=Check out this article: http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Jackson反序列化初步学习"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Jackson反序列化初步学习"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Jackson反序列化初步学习"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Jackson反序列化初步学习"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&name=Jackson反序列化初步学习&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&t=Jackson反序列化初步学习"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Jackson-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">Jackson 基本使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E6%B5%85%E5%B0%9D"><span class="toc-number">1.1.</span> <span class="toc-text">0x00 核心模块浅尝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.2.</span> <span class="toc-text">0x01 环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">0x02 组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-ObjectMapper"><span class="toc-number">1.3.1.</span> <span class="toc-text">1x01 ObjectMapper</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%B0%86-json-%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">2x01 将 json 转化为对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E5%B0%86%E5%AF%B9%E8%B1%A1%E8%BD%AC%E5%8C%96%E4%B8%BA-json"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">2x02 将对象转化为 json</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-JsonParser"><span class="toc-number">1.3.2.</span> <span class="toc-text">1x02 JsonParser</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-JsonGenerator"><span class="toc-number">1.3.3.</span> <span class="toc-text">1x03 JsonGenerator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-%E5%A4%9A%E6%80%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E2%80%93-JacksonPolymorphicDeserialization"><span class="toc-number">1.3.4.</span> <span class="toc-text">1x04 多态问题解决– JacksonPolymorphicDeserialization</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-DefaultTyping"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">2x01 DefaultTyping</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-JAVA-LANG-OBJECT"><span class="toc-number">1.3.4.1.1.</span> <span class="toc-text">3x01 JAVA_LANG_OBJECT</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-OBJECT-AND-NON-CONCRETE"><span class="toc-number">1.3.4.1.2.</span> <span class="toc-text">3x02 OBJECT_AND_NON_CONCRETE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x03-NON-CONCRETE-AND-ARRAYS"><span class="toc-number">1.3.4.1.3.</span> <span class="toc-text">3x03 NON_CONCRETE_AND_ARRAYS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x04-NON-FINAL"><span class="toc-number">1.3.4.1.4.</span> <span class="toc-text">3x04 NON_FINAL</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-JsonTypeInfo%E6%B3%A8%E8%A7%A3"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">2x02 @JsonTypeInfo注解</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-JsonTypeInfo-Id-NONE"><span class="toc-number">1.3.4.2.1.</span> <span class="toc-text">3x01 JsonTypeInfo.Id.NONE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-number">1.3.4.2.2.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-JsonTypeInfo-Id-CLASS"><span class="toc-number">1.3.4.2.3.</span> <span class="toc-text">3x02 JsonTypeInfo.Id.CLASS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#-1"><span class="toc-number">1.3.4.2.4.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x03-JsonTypeInfo-Id-NAME"><span class="toc-number">1.3.4.2.5.</span> <span class="toc-text">3x03 JsonTypeInfo.Id.NAME</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x04-JsonTypeInfo-Id-CUSTOM"><span class="toc-number">1.3.4.2.6.</span> <span class="toc-text">3x04 JsonTypeInfo.Id.CUSTOM</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x05-JsonTypeInfo-Id-MINIMAL-CLASS"><span class="toc-number">1.3.4.2.7.</span> <span class="toc-text">3x05  JsonTypeInfo.Id.MINIMAL_CLASS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x05-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%AD%E7%B1%BB%E5%B1%9E%E6%80%A7%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-number">1.3.5.</span> <span class="toc-text">1x05 反序列化中类属性方法调用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-enableDefaultTyping"><span class="toc-number">1.3.5.1.</span> <span class="toc-text">2x01 enableDefaultTyping</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-JsonTypeInfo-Id-CLASS"><span class="toc-number">1.3.5.2.</span> <span class="toc-text">2x02 JsonTypeInfo.Id.CLASS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">0x03 工作流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.4.1.</span> <span class="toc-text">1x00 环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-BeanDeserialzer%E2%80%93%E7%B1%BB%E7%9A%84%E6%9E%84%E9%80%A0%E5%92%8C-set-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-number">1.4.2.</span> <span class="toc-text">1x01 BeanDeserialzer–类的构造和 set 方法调用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E8%A7%A3%E6%9E%90"><span class="toc-number">1.5.</span> <span class="toc-text">0x04 jackson 反序列化漏洞解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.5.1.</span> <span class="toc-text">1x01 前置条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-CVE-2017-17485-ClassPathXmlApplicationContext%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-number">1.5.2.</span> <span class="toc-text">1x02  CVE-2017-17485  ClassPathXmlApplicationContext利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">2x01 影响版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">2x02 环境搭建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x03-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">1.5.2.3.</span> <span class="toc-text">2x03 流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-objectMapper%E2%80%93%E5%88%9D%E6%AD%A5%E5%A4%84%E7%90%86%E8%A7%A3%E6%9E%90"><span class="toc-number">1.5.2.3.1.</span> <span class="toc-text">3x01 objectMapper–初步处理解析</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-CPX-%E6%9C%89%E5%8F%82%E6%9E%84%E9%80%A0%E8%A7%A6%E5%8F%91"><span class="toc-number">1.5.2.3.2.</span> <span class="toc-text">3x02 CPX 有参构造触发</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        Jackson反序列化初步学习
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">stoocea</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-03-18T09:01:00.000Z" class="dt-published" itemprop="datePublished">2024-03-18</time>
-        
-        (Updated: <time datetime="2024-08-09T10:23:41.091Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/Java/">Java</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/JackSon/" rel="tag">JackSon</a>
-    </div>
-
-
-    </div>
-  </header>
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <p><a target="_blank" rel="noopener" href="https://drun1baby.top/2023/12/07/Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86/">https://drun1baby.top/2023/12/07/Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86/</a><br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12966?time__1311=mqmhqIx+ODkDCDlxGofDyAID8UuyaqRG+D&alichlgref=https://www.google.com/#toc-6">https://xz.aliyun.com/t/12966?time__1311&#x3D;mqmhqIx%2BODkDCDlxGofDyAID8UuyaqRG%2BD&amp;alichlgref&#x3D;https%3A%2F%2Fwww.google.com%2F#toc-6</a><br><a target="_blank" rel="noopener" href="http://www.mi1k7ea.com/2019/11/13/Jackson%E7%B3%BB%E5%88%97%E4%B8%80%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">http://www.mi1k7ea.com/2019/11/13/Jackson%E7%B3%BB%E5%88%97%E4%B8%80%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</a></p>
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Oranges</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Jackson反序列化初步学习</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-09 18:23:41
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/JackSon/" title="JackSon">
+                    #JackSon
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p><a target="_blank" rel="noopener" href="https://drun1baby.top/2023/12/07/Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86/">https://drun1baby.top/2023/12/07/Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86/</a><br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12966?time__1311=mqmhqIx+ODkDCDlxGofDyAID8UuyaqRG+D&alichlgref=https://www.google.com/#toc-6">https://xz.aliyun.com/t/12966?time__1311&#x3D;mqmhqIx%2BODkDCDlxGofDyAID8UuyaqRG%2BD&amp;alichlgref&#x3D;https%3A%2F%2Fwww.google.com%2F#toc-6</a><br><a target="_blank" rel="noopener" href="http://www.mi1k7ea.com/2019/11/13/Jackson%E7%B3%BB%E5%88%97%E4%B8%80%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">http://www.mi1k7ea.com/2019/11/13/Jackson%E7%B3%BB%E5%88%97%E4%B8%80%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</a></p>
 <h1 id="Jackson-基本使用"><a href="#Jackson-基本使用" class="headerlink" title="Jackson 基本使用"></a>Jackson 基本使用</h1><p>jackson 其实使用起来还是很广泛的，之前学习 springMVC 的时候就感受到过，它的默认解析器就是 jackson。</p>
 <h2 id="0x00-核心模块浅尝"><a href="#0x00-核心模块浅尝" class="headerlink" title="0x00 核心模块浅尝"></a>0x00 核心模块浅尝</h2><ul>
 <li>jackson-core：核心包，提供最重要的基于流模式的解析功能相关的 API，包括 JsonParser 和 JsonGenerator</li>
@@ -368,143 +313,360 @@
 
 
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">首页</a></li>
-        
-          <li><a href="/about/">关于</a></li>
-        
-          <li><a href="/archives/">归档</a></li>
-        
-          <li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li>
-        
-      </ul>
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/FastJsonRe0.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-09 18:23:41
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/JackSon/" title="JackSon">
+                        #JackSon
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/C3P0%E9%93%BE%E5%88%86%E6%9E%90.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
     </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Jackson-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-text">Jackson 基本使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E6%B5%85%E5%B0%9D"><span class="toc-text">0x00 核心模块浅尝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-text">0x01 环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">0x02 组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-ObjectMapper"><span class="toc-text">1x01 ObjectMapper</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%B0%86-json-%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%AF%B9%E8%B1%A1"><span class="toc-text">2x01 将 json 转化为对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E5%B0%86%E5%AF%B9%E8%B1%A1%E8%BD%AC%E5%8C%96%E4%B8%BA-json"><span class="toc-text">2x02 将对象转化为 json</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-JsonParser"><span class="toc-text">1x02 JsonParser</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-JsonGenerator"><span class="toc-text">1x03 JsonGenerator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-%E5%A4%9A%E6%80%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E2%80%93-JacksonPolymorphicDeserialization"><span class="toc-text">1x04 多态问题解决– JacksonPolymorphicDeserialization</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-DefaultTyping"><span class="toc-text">2x01 DefaultTyping</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-JAVA-LANG-OBJECT"><span class="toc-text">3x01 JAVA_LANG_OBJECT</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-OBJECT-AND-NON-CONCRETE"><span class="toc-text">3x02 OBJECT_AND_NON_CONCRETE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x03-NON-CONCRETE-AND-ARRAYS"><span class="toc-text">3x03 NON_CONCRETE_AND_ARRAYS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x04-NON-FINAL"><span class="toc-text">3x04 NON_FINAL</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-JsonTypeInfo%E6%B3%A8%E8%A7%A3"><span class="toc-text">2x02 @JsonTypeInfo注解</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-JsonTypeInfo-Id-NONE"><span class="toc-text">3x01 JsonTypeInfo.Id.NONE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-JsonTypeInfo-Id-CLASS"><span class="toc-text">3x02 JsonTypeInfo.Id.CLASS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#-1"><span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x03-JsonTypeInfo-Id-NAME"><span class="toc-text">3x03 JsonTypeInfo.Id.NAME</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x04-JsonTypeInfo-Id-CUSTOM"><span class="toc-text">3x04 JsonTypeInfo.Id.CUSTOM</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x05-JsonTypeInfo-Id-MINIMAL-CLASS"><span class="toc-text">3x05  JsonTypeInfo.Id.MINIMAL_CLASS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x05-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%AD%E7%B1%BB%E5%B1%9E%E6%80%A7%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-text">1x05 反序列化中类属性方法调用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-enableDefaultTyping"><span class="toc-text">2x01 enableDefaultTyping</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-JsonTypeInfo-Id-CLASS"><span class="toc-text">2x02 JsonTypeInfo.Id.CLASS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x03 工作流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">1x00 环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-BeanDeserialzer%E2%80%93%E7%B1%BB%E7%9A%84%E6%9E%84%E9%80%A0%E5%92%8C-set-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-text">1x01 BeanDeserialzer–类的构造和 set 方法调用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E8%A7%A3%E6%9E%90"><span class="toc-text">0x04 jackson 反序列化漏洞解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="toc-text">1x01 前置条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-CVE-2017-17485-ClassPathXmlApplicationContext%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">1x02  CVE-2017-17485  ClassPathXmlApplicationContext利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-text">2x01 影响版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">2x02 环境搭建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x03-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">2x03 流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-objectMapper%E2%80%93%E5%88%9D%E6%AD%A5%E5%A4%84%E7%90%86%E8%A7%A3%E6%9E%90"><span class="toc-text">3x01 objectMapper–初步处理解析</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-CPX-%E6%9C%89%E5%8F%82%E6%9E%84%E9%80%A0%E8%A7%A6%E5%8F%91"><span class="toc-text">3x02 CPX 有参构造触发</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
 
     
-    
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Jackson-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">Jackson 基本使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E6%B5%85%E5%B0%9D"><span class="toc-number">1.1.</span> <span class="toc-text">0x00 核心模块浅尝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.2.</span> <span class="toc-text">0x01 环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">0x02 组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-ObjectMapper"><span class="toc-number">1.3.1.</span> <span class="toc-text">1x01 ObjectMapper</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%B0%86-json-%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">2x01 将 json 转化为对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E5%B0%86%E5%AF%B9%E8%B1%A1%E8%BD%AC%E5%8C%96%E4%B8%BA-json"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">2x02 将对象转化为 json</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-JsonParser"><span class="toc-number">1.3.2.</span> <span class="toc-text">1x02 JsonParser</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-JsonGenerator"><span class="toc-number">1.3.3.</span> <span class="toc-text">1x03 JsonGenerator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-%E5%A4%9A%E6%80%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E2%80%93-JacksonPolymorphicDeserialization"><span class="toc-number">1.3.4.</span> <span class="toc-text">1x04 多态问题解决– JacksonPolymorphicDeserialization</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-DefaultTyping"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">2x01 DefaultTyping</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-JAVA-LANG-OBJECT"><span class="toc-number">1.3.4.1.1.</span> <span class="toc-text">3x01 JAVA_LANG_OBJECT</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-OBJECT-AND-NON-CONCRETE"><span class="toc-number">1.3.4.1.2.</span> <span class="toc-text">3x02 OBJECT_AND_NON_CONCRETE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x03-NON-CONCRETE-AND-ARRAYS"><span class="toc-number">1.3.4.1.3.</span> <span class="toc-text">3x03 NON_CONCRETE_AND_ARRAYS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x04-NON-FINAL"><span class="toc-number">1.3.4.1.4.</span> <span class="toc-text">3x04 NON_FINAL</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-JsonTypeInfo%E6%B3%A8%E8%A7%A3"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">2x02 @JsonTypeInfo注解</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-JsonTypeInfo-Id-NONE"><span class="toc-number">1.3.4.2.1.</span> <span class="toc-text">3x01 JsonTypeInfo.Id.NONE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-number">1.3.4.2.2.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-JsonTypeInfo-Id-CLASS"><span class="toc-number">1.3.4.2.3.</span> <span class="toc-text">3x02 JsonTypeInfo.Id.CLASS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#-1"><span class="toc-number">1.3.4.2.4.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x03-JsonTypeInfo-Id-NAME"><span class="toc-number">1.3.4.2.5.</span> <span class="toc-text">3x03 JsonTypeInfo.Id.NAME</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x04-JsonTypeInfo-Id-CUSTOM"><span class="toc-number">1.3.4.2.6.</span> <span class="toc-text">3x04 JsonTypeInfo.Id.CUSTOM</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x05-JsonTypeInfo-Id-MINIMAL-CLASS"><span class="toc-number">1.3.4.2.7.</span> <span class="toc-text">3x05  JsonTypeInfo.Id.MINIMAL_CLASS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x05-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%AD%E7%B1%BB%E5%B1%9E%E6%80%A7%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-number">1.3.5.</span> <span class="toc-text">1x05 反序列化中类属性方法调用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-enableDefaultTyping"><span class="toc-number">1.3.5.1.</span> <span class="toc-text">2x01 enableDefaultTyping</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-JsonTypeInfo-Id-CLASS"><span class="toc-number">1.3.5.2.</span> <span class="toc-text">2x02 JsonTypeInfo.Id.CLASS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">0x03 工作流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.4.1.</span> <span class="toc-text">1x00 环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-BeanDeserialzer%E2%80%93%E7%B1%BB%E7%9A%84%E6%9E%84%E9%80%A0%E5%92%8C-set-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-number">1.4.2.</span> <span class="toc-text">1x01 BeanDeserialzer–类的构造和 set 方法调用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E8%A7%A3%E6%9E%90"><span class="toc-number">1.5.</span> <span class="toc-text">0x04 jackson 反序列化漏洞解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.5.1.</span> <span class="toc-text">1x01 前置条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-CVE-2017-17485-ClassPathXmlApplicationContext%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-number">1.5.2.</span> <span class="toc-text">1x02  CVE-2017-17485  ClassPathXmlApplicationContext利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">2x01 影响版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">2x02 环境搭建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x03-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-number">1.5.2.3.</span> <span class="toc-text">2x03 流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-objectMapper%E2%80%93%E5%88%9D%E6%AD%A5%E5%A4%84%E7%90%86%E8%A7%A3%E6%9E%90"><span class="toc-number">1.5.2.3.1.</span> <span class="toc-text">3x01 objectMapper–初步处理解析</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-CPX-%E6%9C%89%E5%8F%82%E6%9E%84%E9%80%A0%E8%A7%A6%E5%8F%91"><span class="toc-number">1.5.2.3.2.</span> <span class="toc-text">3x02 CPX 有参构造触发</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&text=Jackson反序列化初步学习"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Jackson反序列化初步学习"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&is_video=false&description=Jackson反序列化初步学习"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Jackson反序列化初步学习&body=Check out this article: http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Jackson反序列化初步学习"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Jackson反序列化初步学习"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Jackson反序列化初步学习"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&title=Jackson反序列化初步学习"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&name=Jackson反序列化初步学习&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html&t=Jackson反序列化初步学习"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
   </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
 </div>
 
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
         
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
-    
-    
-    2024
-    stoocea
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </nav>
-  </div>
-</footer>
 
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
     </div>
-    <!-- styles -->
+  </div>
 
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
-
-  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
   <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
       }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功！");
-      e.clearSelection();
-    })
-  })
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
 
-<!-- Baidu Analytics -->
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
 
-<!-- Cloudflare Analytics -->
+  
+<script src="/js/colorscheme.js"></script>
 
-<!-- Disqus Comments -->
 
-<!-- utterances Comments -->
 
-</body>
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FJackson%25E5%258F%258D%25E5%25BA%258F%25E5%2588%2597%25E5%258C%2596.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
 </html>

@@ -1,192 +1,185 @@
 <!DOCTYPE html>
-<html lang=zh>
-<head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="1.什么是 javaAgent？Agent，意为“代理”java 是一种静态强类型的语言，在运行之前必须将其编译成.class 字节码，然后交给 JVM 去处理运行。java Agent 就是一种能够在不影响正常编译的前提下，修改 java 字节码，进行动态修改已加载或者未加载的类，属性和方法的技术平常我们见到的一些技术，比如热加载，或者 RASP 都是基于 Agent 工具实现的，它具体是怎么实">
-<meta property="og:type" content="article">
-<meta property="og:title" content="JavaAgent型内存马分析">
-<meta property="og:url" content="http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html">
-<meta property="og:site_name" content="stoocea&#39;s blog">
-<meta property="og:description" content="1.什么是 javaAgent？Agent，意为“代理”java 是一种静态强类型的语言，在运行之前必须将其编译成.class 字节码，然后交给 JVM 去处理运行。java Agent 就是一种能够在不影响正常编译的前提下，修改 java 字节码，进行动态修改已加载或者未加载的类，属性和方法的技术平常我们见到的一些技术，比如热加载，或者 RASP 都是基于 Agent 工具实现的，它具体是怎么实">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990843458-83a08530-567a-4173-89bc-9e8193e2592b.jpeg#averageHue=%23f9f9f9&clientId=ua6718e02-a329-4&from=paste&height=215&id=u7d2fb3c1&originHeight=322&originWidth=1742&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=29182&status=done&style=none&taskId=u20685936-e08f-445c-9713-ae78767af47&title=&width=1161.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990852067-3b4192bb-91ed-41af-94c9-c9d2771f135c.jpeg#averageHue=%23fbfbfb&clientId=ua6718e02-a329-4&from=paste&height=415&id=u93b2e673&originHeight=622&originWidth=1382&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=32466&status=done&style=none&taskId=uda67e32e-241d-43af-a2ec-8246fe2131c&title=&width=921.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1705996869963-eb93d807-2430-476f-8b18-3b0e359cc092.png#averageHue=%232e3746&clientId=ua6718e02-a329-4&from=paste&height=404&id=uea841312&originHeight=606&originWidth=1587&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=381792&status=done&style=none&taskId=uac0d498f-498d-405f-b7d5-dbe5502bc5c&title=&width=1058">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1705996904627-ffa0c452-e376-44cf-aee6-135dafaa5b2c.png#averageHue=%23494135&clientId=ua6718e02-a329-4&from=paste&height=63&id=u9bcd21b3&originHeight=94&originWidth=591&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=45319&status=done&style=none&taskId=ue70896c7-0ee0-4745-94c1-c72e65c802e&title=&width=394">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1705997087781-42c30fc3-ed32-4f55-a8cd-c1469901de7f.png#averageHue=%232c3035&clientId=ua6718e02-a329-4&from=paste&height=835&id=u242d7086&originHeight=1253&originWidth=1904&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=410788&status=done&style=none&taskId=u03acbaf3-3a61-4044-82d6-8d6c70add34&title=&width=1269.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1705997320485-10a292aa-402a-450f-9fbb-5f85e37cd739.png#averageHue=%232b3036&clientId=ua6718e02-a329-4&from=paste&height=237&id=u86f754ee&originHeight=355&originWidth=872&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=205945&status=done&style=none&taskId=ub8f1ba40-2e54-47a0-a103-3cc2f95a429&title=&width=581.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706159054417-bb7b9a5e-663e-4a3a-b2df-d17bba87093b.png#averageHue=%232d3e5c&clientId=u59ee69b3-79ec-4&from=paste&height=485&id=u46b1ef77&originHeight=727&originWidth=1744&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=887626&status=done&style=none&taskId=u3b6cf096-927e-4927-8e25-a749a4b5243&title=&width=1162.6666666666667">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706159114151-785383af-bec0-4559-a3af-f350e180bf70.png#averageHue=%232d2f32&clientId=u59ee69b3-79ec-4&from=paste&height=243&id=u376c33c9&originHeight=365&originWidth=1257&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=28858&status=done&style=none&taskId=ub2735ff1-4ff1-44ea-af07-9156520754d&title=&width=838">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706161384395-caf28db1-93b0-46b9-be3c-bd029a43996e.png#averageHue=%232d3a52&clientId=u59ee69b3-79ec-4&from=paste&height=758&id=u90b69262&originHeight=1137&originWidth=2547&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1743562&status=done&style=none&taskId=ue0d49de0-2454-483f-a71e-dce9fb307d1&title=&width=1698">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706161721609-5ddb9bd5-e179-4df9-89b7-784faeafc3ab.png#averageHue=%232a2f36&clientId=u8d72d196-18f8-4&from=paste&height=30&id=u70d3f390&originHeight=45&originWidth=1403&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=59970&status=done&style=none&taskId=u0d6aeaac-f1d6-44ab-9035-c571885cadd&title=&width=935.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706162973893-47e206f9-557b-4e50-9534-f544d0f32e84.png#averageHue=%23363a41&clientId=u5595a040-f3b4-4&from=paste&height=390&id=uca763f93&originHeight=585&originWidth=761&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=452663&status=done&style=none&taskId=u9679f3ee-738b-4129-9dcc-05095039396&title=&width=507.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706165353064-43e75c2e-05ee-4098-a7f4-323140facc16.png#averageHue=%232c384c&clientId=u5595a040-f3b4-4&from=paste&height=777&id=u910ed04e&originHeight=1166&originWidth=2486&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1791856&status=done&style=none&taskId=u1e5663c4-c91a-4f91-9683-b0a4d791117&title=&width=1657.3333333333333">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706166068955-609b6489-616c-4ae1-a412-35e89305a3d7.png#averageHue=%232a2e34&clientId=u5595a040-f3b4-4&from=paste&height=189&id=uad7cd01e&originHeight=283&originWidth=824&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=207632&status=done&style=none&taskId=u49c6d260-4a23-4526-9f87-73f43614bf1&title=&width=549.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706169455331-ec153c93-14b8-465f-adb5-877e4d501796.png#averageHue=%232c3038&clientId=u5595a040-f3b4-4&from=paste&height=457&id=u55b55734&originHeight=686&originWidth=1650&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=842070&status=done&style=none&taskId=u1bb135e8-d855-4fe1-9fd4-b17afd4e28d&title=&width=1100">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706170701054-7478aa2e-3a1f-47a9-8c99-d3af73cd4aff.png#averageHue=%232c3036&clientId=u5595a040-f3b4-4&from=paste&height=626&id=u962312c6&originHeight=1112&originWidth=1014&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=969347&status=done&style=none&taskId=u681686a4-7c18-419c-b418-80b1ce080ea&title=&width=571">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706173739606-b6c8ee68-cfca-45fe-9630-c8078aecf8b5.png#averageHue=%232d3037&clientId=u5595a040-f3b4-4&from=paste&height=747&id=u97990302&originHeight=1120&originWidth=2487&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=1886694&status=done&style=none&taskId=u4c1f97e3-0f7d-4c41-be18-018a3b5f24e&title=&width=1658">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706249152119-688b526a-868a-445e-9184-c60b3a145ad5.png#averageHue=%232a2d33&clientId=uc9d4b41e-c695-4&from=paste&height=109&id=u40bccdab&originHeight=163&originWidth=1247&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=156919&status=done&style=none&taskId=u9b61b101-da2d-4810-87cc-c88d1e91de7&title=&width=831.3333333333334">
-<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/36078896/1706249165800-c60da297-472d-472b-ad82-7c63438da01b.png#averageHue=%232a2e34&clientId=uc9d4b41e-c695-4&from=paste&height=193&id=uc294bf54&originHeight=289&originWidth=1515&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=323639&status=done&style=none&taskId=u625455c3-8c92-4522-86d5-a61433d1b16&title=&width=1010">
-<meta property="article:published_time" content="2024-03-06T09:50:51.000Z">
-<meta property="article:modified_time" content="2024-08-09T10:22:35.468Z">
-<meta property="article:author" content="stoocea">
-<meta property="article:tag" content="AgentMemshell">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990843458-83a08530-567a-4173-89bc-9e8193e2592b.jpeg#averageHue=%23f9f9f9&clientId=ua6718e02-a329-4&from=paste&height=215&id=u7d2fb3c1&originHeight=322&originWidth=1742&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=29182&status=done&style=none&taskId=u20685936-e08f-445c-9713-ae78767af47&title=&width=1161.3333333333333">
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
     
-    
-      
-        
-          <link rel="shortcut icon" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
+      JavaAgent型内存马分析 
       
       
-        
-          <link rel="icon" type="image/png" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/pvrwl7fla5itwv4jxl2lwffkz9ihruk.png">
-        
-      
+      |
     
-    <!-- title -->
-    <title>JavaAgent型内存马分析</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
+     stoocea&#39;s blog
+  </title>
 
-
-    <!-- Umami Analytics -->
-
-
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
-
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="上一篇" href="/post/Spring%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E6%9E%90.html"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="下一篇" href="/post/RMIRe0.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&text=JavaAgent型内存马分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&title=JavaAgent型内存马分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&is_video=false&description=JavaAgent型内存马分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=JavaAgent型内存马分析&body=Check out this article: http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&title=JavaAgent型内存马分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&title=JavaAgent型内存马分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&title=JavaAgent型内存马分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&title=JavaAgent型内存马分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&name=JavaAgent型内存马分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&t=JavaAgent型内存马分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-javaAgent%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">1.什么是 javaAgent？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#premain-Agent"><span class="toc-number">2.</span> <span class="toc-text">premain-Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#agentmain-Agent"><span class="toc-number">3.</span> <span class="toc-text">agentmain-Agent</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachine%E7%B1%BB"><span class="toc-number">3.1.</span> <span class="toc-text">VirtualMachine类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachineDescriptor%E7%B1%BB"><span class="toc-number">3.2.</span> <span class="toc-text">VirtualMachineDescriptor类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#agentmain-%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.3.</span> <span class="toc-text">agentmain 注入过程详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agentmain-Instrumentation"><span class="toc-number">4.</span> <span class="toc-text">Agentmain-Instrumentation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#addTransformer"><span class="toc-number">4.1.</span> <span class="toc-text">addTransformer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Javassist"><span class="toc-number">4.2.</span> <span class="toc-text">Javassist</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Javassist-%E5%88%9B%E5%BB%BA%E7%B1%BB"><span class="toc-number">4.2.1.</span> <span class="toc-text">使用 Javassist 创建类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E6%80%BB%E7%BB%93"><span class="toc-number">4.2.2.</span> <span class="toc-text">步骤总结</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E7%94%9F%E6%88%90%E7%9A%84-class-%E6%96%87%E4%BB%B6"><span class="toc-number">4.2.3.</span> <span class="toc-text">调用生成的 class 文件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%B7%B2%E5%8A%A0%E8%BD%BD%E7%B1%BB%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-number">5.</span> <span class="toc-text">修改已加载类的字节码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0"><span class="toc-number">6.</span> <span class="toc-text">Agent 内存马实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B"><span class="toc-number">6.1.</span> <span class="toc-text">注入过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE%E4%B8%80%E4%B8%8B"><span class="toc-number">7.</span> <span class="toc-text">回顾一下</span></a></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        JavaAgent型内存马分析
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">stoocea</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-03-06T09:50:51.000Z" class="dt-published" itemprop="datePublished">2024-03-06</time>
-        
-        (Updated: <time datetime="2024-08-09T10:22:35.468Z" class="dt-updated" itemprop="dateModified">2024-08-09</time>)
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="/categories/Memshell/">Memshell</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/AgentMemshell/" rel="tag">AgentMemshell</a>
-    </div>
-
-
-    </div>
-  </header>
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <h2 id="1-什么是-javaAgent？"><a href="#1-什么是-javaAgent？" class="headerlink" title="1.什么是 javaAgent？"></a>1.什么是 javaAgent？</h2><p><strong>Agent，意为“代理”</strong><br>java 是一种静态强类型的语言，在运行之前必须将其编译成.class 字节码，然后交给 JVM 去处理运行。java Agent 就是一种能够在不影响正常编译的前提下，修改 java 字节码，进行动态修改已加载或者未加载的类，属性和方法的技术<br>平常我们见到的一些技术，比如热加载，或者 RASP 都是基于 Agent 工具实现的，它具体是怎么实现的呢？</p>
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">Oranges</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">JavaAgent型内存马分析</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-09 18:22:35
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/AgentMemshell/" title="AgentMemshell">
+                    #AgentMemshell
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="1-什么是-javaAgent？"><a href="#1-什么是-javaAgent？" class="headerlink" title="1.什么是 javaAgent？"></a>1.什么是 javaAgent？</h2><p><strong>Agent，意为“代理”</strong><br>java 是一种静态强类型的语言，在运行之前必须将其编译成.class 字节码，然后交给 JVM 去处理运行。java Agent 就是一种能够在不影响正常编译的前提下，修改 java 字节码，进行动态修改已加载或者未加载的类，属性和方法的技术<br>平常我们见到的一些技术，比如热加载，或者 RASP 都是基于 Agent 工具实现的，它具体是怎么实现的呢？</p>
 <p>有两种形式<br>一种是在 JVM 启动前就加载 premain-Agent，另一种是 JVM 启动之后加载 agentmain-Agent，这里我们可以将其功能理解为一种特殊 Interceptor  （拦截器）<br><strong>Premain-Agent</strong><br><img src="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990843458-83a08530-567a-4173-89bc-9e8193e2592b.jpeg#averageHue=%23f9f9f9&clientId=ua6718e02-a329-4&from=paste&height=215&id=u7d2fb3c1&originHeight=322&originWidth=1742&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=29182&status=done&style=none&taskId=u20685936-e08f-445c-9713-ae78767af47&title=&width=1161.3333333333333" referrerpolicy="no-referrer" alt="PreAgent.jpg"></p>
 <p><strong>agentmain-Agent</strong><br><img src="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990852067-3b4192bb-91ed-41af-94c9-c9d2771f135c.jpeg#averageHue=%23fbfbfb&clientId=ua6718e02-a329-4&from=paste&height=415&id=u93b2e673&originHeight=622&originWidth=1382&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=32466&status=done&style=none&taskId=uda67e32e-241d-43af-a2ec-8246fe2131c&title=&width=921.3333333333334" referrerpolicy="no-referrer" alt="agentmain-Agent.jpg"></p>
 <p>我们可以通过两个例子来看看 agentmain-Agent 和premain-Agent 到底是如何发挥作用的</p>
@@ -295,143 +288,360 @@
 <p>之后的实现就不做了，因为 Spring 这块的知识还在补习</p>
 <h2 id="回顾一下"><a href="#回顾一下" class="headerlink" title="回顾一下"></a>回顾一下</h2><p>其实学 agent 内存马我的目的不是其本身，而是它的前置知识很诱人，就是 JAVAagent 和 javassist，所以这块的重点也自然放在这两个上，然后现阶段的主要工作是在做前面知识的复习，以及后续知识的推进，JAVAagent 这块的知识对于我来说是新的知识，所以接下来是对前面旧知识的复习，包括 Spring 基础，RMI，JNDI 等</p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="/">首页</a></li>
-        
-          <li><a href="/about/">关于</a></li>
-        
-          <li><a href="/archives/">归档</a></li>
-        
-          <li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li>
-        
-      </ul>
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/RMIRe0.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-09 18:22:35
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/AgentMemshell/" title="AgentMemshell">
+                        #AgentMemshell
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/Spring%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E6%9E%90.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
     </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-javaAgent%EF%BC%9F"><span class="toc-text">1.什么是 javaAgent？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#premain-Agent"><span class="toc-text">premain-Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#agentmain-Agent"><span class="toc-text">agentmain-Agent</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachine%E7%B1%BB"><span class="toc-text">VirtualMachine类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachineDescriptor%E7%B1%BB"><span class="toc-text">VirtualMachineDescriptor类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#agentmain-%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-text">agentmain 注入过程详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agentmain-Instrumentation"><span class="toc-text">Agentmain-Instrumentation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#addTransformer"><span class="toc-text">addTransformer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Javassist"><span class="toc-text">Javassist</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Javassist-%E5%88%9B%E5%BB%BA%E7%B1%BB"><span class="toc-text">使用 Javassist 创建类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E6%80%BB%E7%BB%93"><span class="toc-text">步骤总结</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E7%94%9F%E6%88%90%E7%9A%84-class-%E6%96%87%E4%BB%B6"><span class="toc-text">调用生成的 class 文件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%B7%B2%E5%8A%A0%E8%BD%BD%E7%B1%BB%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-text">修改已加载类的字节码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0"><span class="toc-text">Agent 内存马实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B"><span class="toc-text">注入过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE%E4%B8%80%E4%B8%8B"><span class="toc-text">回顾一下</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
 
     
-    
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-javaAgent%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">1.什么是 javaAgent？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#premain-Agent"><span class="toc-number">2.</span> <span class="toc-text">premain-Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#agentmain-Agent"><span class="toc-number">3.</span> <span class="toc-text">agentmain-Agent</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachine%E7%B1%BB"><span class="toc-number">3.1.</span> <span class="toc-text">VirtualMachine类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachineDescriptor%E7%B1%BB"><span class="toc-number">3.2.</span> <span class="toc-text">VirtualMachineDescriptor类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#agentmain-%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.3.</span> <span class="toc-text">agentmain 注入过程详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agentmain-Instrumentation"><span class="toc-number">4.</span> <span class="toc-text">Agentmain-Instrumentation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#addTransformer"><span class="toc-number">4.1.</span> <span class="toc-text">addTransformer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Javassist"><span class="toc-number">4.2.</span> <span class="toc-text">Javassist</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Javassist-%E5%88%9B%E5%BB%BA%E7%B1%BB"><span class="toc-number">4.2.1.</span> <span class="toc-text">使用 Javassist 创建类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E6%80%BB%E7%BB%93"><span class="toc-number">4.2.2.</span> <span class="toc-text">步骤总结</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E7%94%9F%E6%88%90%E7%9A%84-class-%E6%96%87%E4%BB%B6"><span class="toc-number">4.2.3.</span> <span class="toc-text">调用生成的 class 文件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%B7%B2%E5%8A%A0%E8%BD%BD%E7%B1%BB%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-number">5.</span> <span class="toc-text">修改已加载类的字节码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0"><span class="toc-number">6.</span> <span class="toc-text">Agent 内存马实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B"><span class="toc-number">6.1.</span> <span class="toc-text">注入过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE%E4%B8%80%E4%B8%8B"><span class="toc-number">7.</span> <span class="toc-text">回顾一下</span></a></li></ol>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&text=JavaAgent型内存马分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&title=JavaAgent型内存马分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&is_video=false&description=JavaAgent型内存马分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=JavaAgent型内存马分析&body=Check out this article: http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&title=JavaAgent型内存马分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&title=JavaAgent型内存马分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&title=JavaAgent型内存马分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&title=JavaAgent型内存马分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&name=JavaAgent型内存马分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html&t=JavaAgent型内存马分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
   </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
 </div>
 
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
         
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
-    
-    
-    2024
-    stoocea
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-        <!--
-       --><li><a href="/">首页</a></li><!--
-     --><!--
-       --><li><a href="/about/">关于</a></li><!--
-     --><!--
-       --><li><a href="/archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Stoocea">项目</a></li><!--
-     -->
-      </ul>
-    </nav>
-  </div>
-</footer>
 
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
     </div>
-    <!-- styles -->
+  </div>
 
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
-
-  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
   <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
       }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功！");
-      e.clearSelection();
-    })
-  })
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
 
-<!-- Baidu Analytics -->
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
 
-<!-- Cloudflare Analytics -->
+  
+<script src="/js/colorscheme.js"></script>
 
-<!-- Disqus Comments -->
 
-<!-- utterances Comments -->
 
-</body>
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + JavaAgent%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E6%9E%90 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FJavaAgent%25E5%2586%2585%25E5%25AD%2598%25E9%25A9%25AC.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
 </html>
