@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
+    
+      Windows认证机制学习笔记(实时更新) 
+      
+      
+      |
+    
+     stoocea&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">stoocea</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Windows认证机制学习笔记(实时更新)</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-11-07 16:18:23
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Windows-Protocols/" title="Windows Protocols">
+                    #Windows Protocols
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="Windows认证机制学习"><a href="#Windows认证机制学习" class="headerlink" title="Windows认证机制学习"></a>Windows认证机制学习</h1><p>了解和学习一下windows间的认证，用来维持权限和提权。</p>
+<p> 一般分为三种：</p>
+<ul>
+<li>网络认证</li>
+<li>Kerberos域认证</li>
+<li>Windows Access Token认证</li>
+</ul>
+<p>从这三个方面入手学习，但在正式学习之前，要补充下windows本地认证</p>
+<h1 id="0x00-本地认证"><a href="#0x00-本地认证" class="headerlink" title="0x00 本地认证"></a>0x00 本地认证</h1><p>其实在我们用户开机输入完密码之后进行登录，系统会读取我们机器上的<code>%SystemRoot%\system32\config\sam</code>​文件（一般SystemRoot为<code>C://windows</code>​），进行比对。这个sam文件它里面的密文不是明文，而是密码的hash值，这里的hash有着具体的类别:LM-Hash，NTLM-Hash,下面具体解析一下它们两者不同和联系。</p>
+<h2 id="LM-Hash"><a href="#LM-Hash" class="headerlink" title="LM Hash"></a>LM Hash</h2><p>LM出现的版本要比NTLM早，全名LAN Manager，唯一和NTLM的区别就在于他们所采用的加密算法不同。认证机制都是挑战&#x2F;响应这一套的认证模式。</p>
+<p>具体的LM加密算法简略的记一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">将所有小写字母转换为大写字母</span><br><span class="line">• &gt;123ABC <span class="comment">// 未达到7个字符</span></span><br><span class="line">• 将密码转化为<span class="number">16</span>进制，分两组，填充为<span class="number">14</span>个字符,空余位使用<span class="number">0x00</span>字符填补</span><br><span class="line">• &gt;<span class="number">31323341424300000000000000</span></span><br><span class="line">• 将密码分割为两组<span class="number">7</span>个字节的块</span><br><span class="line">• &gt;<span class="number">31323341424300</span> <span class="number">00000000000000</span> <span class="comment">// 16进制</span></span><br><span class="line">• 将每组转化为比特流，不足56Bit则在左边加<span class="number">0</span></span><br><span class="line">• &gt;<span class="number">31323341424300</span> -&gt;(转换为二进制) <span class="number">110001001100100011001101000001010000100100001100000000</span>-&gt; (补 足56Bit) <span class="number">00110001001100100011001101000001010000100100001100000000</span></span><br><span class="line">• 将比特流按照<span class="number">7</span>比特一组，分出<span class="number">8</span>组，末尾加<span class="number">0</span></span><br><span class="line"></span><br><span class="line">由于后者都为<span class="number">0</span>，结果可想而知，那就都是<span class="number">0</span>;</span><br><span class="line">• 将每组比特流转换为<span class="number">16</span>进制作为被加密的值，使用DES加密，字符串 “KGS!@#$%”为Key(<span class="number">0x4B47532140232425</span>)，得到<span class="number">8</span>个结果 ，每个 结果转换为<span class="number">16</span>进制。</span><br><span class="line">• -&gt; <span class="number">00110000100110001000110001101000000101000001001000001100</span> <span class="number">00000000</span></span><br><span class="line">• -&gt;30988C6814120C00 -&gt; DES(30988C6814120C00) -&gt; <span class="number">48</span>-D7-EB-<span class="number">91</span>- <span class="number">2F</span>-<span class="number">5E-69</span>-7C</span><br><span class="line">• 由于我们的密码不超过<span class="number">7</span>字节，所以后面的一半是固定的:</span><br><span class="line">• AA-D3-B4-<span class="number">35</span>-B5-<span class="number">14</span>-<span class="number">04</span>-EE</span><br><span class="line">• 连接两个DES加密字符串。这是LM哈希。</span><br><span class="line">• <span class="number">48</span>-D7-EB-<span class="number">91</span>-<span class="number">2F</span>-<span class="number">5E-69</span>-7C-AA-D3-B4-<span class="number">35</span>-B5-<span class="number">14</span>-<span class="number">04</span>-EE</span><br></pre></td></tr></table></figure>
+
+<p>这很明显有两个缺点，一个就是如果后面56bit全为0的话，说明密码小于7位，然后是DES加密的密钥为”KGS!@#$%”,结果算出来结合第一个条件，后面的一半结果是固定。加上本身的密钥就是固定的，所以是存在很大的爆破空间的。</p>
+<h2 id="NTLM-Hash"><a href="#NTLM-Hash" class="headerlink" title="NTLM Hash"></a>NTLM Hash</h2><p>全名<code>NT LAN Manager</code>​</p>
+<p>虽然LM比NTLM早出现，但是现在windows计算机大部分都是NTLM的Hash认证机制。NTLM本身是一种认证协议，他认证的根本途径就是这个Hash。比如我们刚才提到的本地认证机制，其实就是用户输入的密码经过Hash算法算出来这段NTLM Hash和sam文件里面的Hash进行比较，匹配就让你进去。而NTLM和LM本质没有什么不同，他们的认证机制还是那么一套，只是加密算法的不同，也就是算出来的hash不同。这个hash其实就是根据用户的密码以及LM或者NTLM算法算出来的。</p>
+<p>具体的NTLM Hash算法可以举个例子,假设管理员用户的密码为admin：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">admin  -&gt; hex(16进制编码) = 61646d696e</span><br><span class="line">61646d696e -&gt; Unicode = 610064006d0069006e00</span><br><span class="line">610064006d0069006e00 -&gt; MD4 = 209c6174da490caeb422f3fa5a7ae634</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>此时的209c6174da490caeb422f3fa5a7ae634就是一段NTLM Hash</p>
+<p>‍</p>
+<p>两种Hash在进行本地认证的时候，默认采用如下过程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">winlogon.exe -&gt; 用户输入 -&gt; lsass.exe -&gt; 认证</span><br></pre></td></tr></table></figure>
+
+<p>winlogon.exe是用来管理用户登录和登出的，相当于就是弹个登录框和登出框，然后接收用户的输入，并将其送给lsass.exe（windows<strong>本地</strong>安全策略和登录策略）进程，将该密文密码加密成NTLM Hash和SAM文件中的hash进行对比和认证。</p>
+<p>而实际上lsass.exe内存中就存有密码，平常所说的抓密码就是抓lsass内存中的密码。</p>
+<h1 id="0x01-网络认证"><a href="#0x01-网络认证" class="headerlink" title="0x01 网络认证"></a>0x01 网络认证</h1><p>内网渗透一般会遇到两种环境，一个是工作组，一个是域。工作的话没有一个大的管理机构，仅凭工作组中各台机器单对单的进行认证，而这个认证就是LM,NTLM,以及之后要学的kerberos，虽然kerberos用于域管理的环境中，但是他们三者都算是网络认证。</p>
+<h2 id="NTLM具体认证机制"><a href="#NTLM具体认证机制" class="headerlink" title="NTLM具体认证机制"></a>NTLM具体认证机制</h2><p>单按照概念来说，其实就是一句话：接受挑战！（NTLM只支持windows）</p>
+<h3 id="Chanllnge-Reponse"><a href="#Chanllnge-Reponse" class="headerlink" title="Chanllnge&#x2F;Reponse"></a>Chanllnge&#x2F;Reponse</h3><p>三个步骤：1.协商 2.质询 3.认证。1和3其实都没什么好讲的，1是为了协商双端的协议版本，3是将2中质询的结果和进行进一步验证。整个NTLM认证核心是其中质询的步骤。</p>
+<h4 id="质询具体步骤"><a href="#质询具体步骤" class="headerlink" title="质询具体步骤"></a>质询具体步骤</h4><ol>
+<li>客户端向服务器首先发起一个挑战的请求，其中包含自己的用户名</li>
+<li>服务器接收到这个请求之后，开始在本地进行一个<strong>16位随机数的生成（暂时叫做Challenge1）</strong> ，这个生成的随机数本身不是密文，他只是一个媒介。之后服务端就会利用客户端发送过来的用户名在本地对应的NTLM hash对这个随机数进行加密（<strong>生成的叫做Chanllenge2</strong>），此时该随机数会暂存于本地内存。之后服务端将<strong>Chanllenge1</strong>返回给客户端。</li>
+<li>客户端接收到<strong>Chanllnge1</strong>，开始利用本地自己输入的密码算出来的NTLM Hash对这个<strong>Chanllnge1</strong>进行同样的加密生成一段密文（<strong>结果称为Client-Response</strong>）。将该Response发送过服务端。</li>
+</ol>
+<p>质询的过程就完毕了，之后就是认证，很简单比较这两者的区别。然后还有一个概念，这个经由服务端本地NTLM Hash加密生成的<strong>Challenge2</strong>在整个认证过程中还叫做Net-NTLM Hash。但其实本质上<strong>Client-Response也叫做Net-NTLM Hash</strong>。只要是经过两端NTLM Hash综合加密的密文，都叫做这个。</p>
+<p>‍</p>
+<h3 id="NLTM-V2"><a href="#NLTM-V2" class="headerlink" title="NLTM V2"></a>NLTM V2</h3><p>和V1的区别在哪？实际上我们上面说的Challenge是16位的，说的就是NTLM V2，V1只有8位。然后其实看完上面的内容肯定还有会疑问，经由NTLM Hash加密的这个Net NTLM Hash具体的加密算法是什么？V1是传统的DES加密，V2是HMAC-MD5算法（就是平常口中说的MD5）。</p>
+<h3 id="PTH（Pass-the-HASH）"><a href="#PTH（Pass-the-HASH）" class="headerlink" title="PTH（Pass the HASH）"></a>PTH（Pass the HASH）</h3><p>其实只要对上面的NTLM认证的过程理解，就能够发现一个问题。服务器本地认证的东西是算出来的这个Net NTLM HASH。这就给我们的攻击提供了另一种可能，只要能够获取到这个Net NTLM Hash，或者我们只要获取服务端上存于内存（SAMhash或者system注册表hash）的NTLM Hash，就能够完成质询这一段过程。</p>
+<p>实战一下：</p>
+<p>首先上个shell，dump出服务端的sam.hive和system.hive，然后下下来。这个hive文件本身是数据库文件，那前缀加一个sam，其实就是存储sam的存储的文件，以及system的存储文件。reg save就是对<strong>注册表操作</strong>中某一个部分的内容保存在文件的指令。然后sam文件在注册表中的位置是hklm\sam，system同理。这条命令的简单意思就是将注册表中hklm下的sam和system文件内容全部dump到c:\programdata目录下。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg save hklm\sam c:\programdata\sam.hive &amp;&amp; reg save hklm\system c:\programdata\system.hive</span><br></pre></td></tr></table></figure>
+
+<p>从被攻击机上拿下来之后，可以考虑直接上mimikatz解，也可以拿到自己本机解</p>
+<p>本机用mimikatz解一下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimikatz <span class="string">&quot;log&quot;</span> <span class="string">&quot;lsadump::sam /sam:sam.hive /system:system.hive&quot;</span>  <span class="string">&quot;exit&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>​<img src="/images/windows/assets/image-20241024204804-4w3u9m8.png" alt="image">​</p>
+<p>这个时候就得到了服务端内存的NTLM hash了，接下来两种选择，一种是用MD5解密解一下，或者可以直接进行PTH了。（当然前提是服务端开启了NTLM认证，既然拿到了shell又想尝试的话，其实可以拿命令开一下）</p>
+<p>这么做其实就是初步拿到shell之后进一步内网渗透的一个小过程，虽然抓的是已经获取到shell的机器的NTLM Hash，但是我们还是可以进一步通过这个NTLM Hash进行下一步的移动和权限维持。</p>
+<h1 id="Kerberos-域认证"><a href="#Kerberos-域认证" class="headerlink" title="Kerberos 域认证"></a>Kerberos 域认证</h1><p>上面所提到的认证机制都是存在于结构或者说小型的网络环境下的认证机制，而域是windows给大型企业管理资产服务提供一种方式。如果要搭建一个域环境，就必须安装一个活动目录服务。</p>
+<h2 id="0X02-Active-Directory（活动目录）"><a href="#0X02-Active-Directory（活动目录）" class="headerlink" title="0X02 Active Directory（活动目录）"></a>0X02 Active Directory（活动目录）</h2><h3 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h3><p>从上到下，Active Directory存储的内容是有关的网络对象的信息，具有管理员权限的用户能够完全访问和使用这些网络对象的信息。相关权限的用户也能够使用对应的信息。</p>
+<p>那么什么是网络对象呢？如果按照比较浅显的认知来说，网络对象其实就是一个公司里面所有的网络设备，包括PC,服务器，打印机等等，但是在AD中，网络对象有着很明确的定义，包括：用户，用户组，域，组织单位等等，将多个PC或者多个网络设备看作一个理论集合的概念，也算作网络单位。</p>
+<p>AD的主要作用包括服务器以及客户端的管理，用户个人使用服务，资源管理（主要包括打印机以及文件共享这类公共网络对象服务），桌面配置用于PC上统一管理，应用程序（包括各种OA，HR系统等）等。其实可以说掌握了AD就能够掌握当前域中所有设备了。</p>
+<p>本身网络设备之间是可以互相访问的，这些在域控环境下的网络设备如果要相互访问，认证的协议就是kerberos协议。</p>
+<h2 id="kerberos介绍"><a href="#kerberos介绍" class="headerlink" title="kerberos介绍"></a>kerberos介绍</h2><p>kerberos认证的三个主体部分：</p>
+<ul>
+<li>client</li>
+<li>server</li>
+<li>KDC（Key Distribution Center）&#x3D;DC (Domain Controller)</li>
+</ul>
+<p>Client和server不必多说，KDC是什么？首先从翻译上就能看出来，是一个域中管理机构，实际上和Active Directionary的作用差不多，都叫域控制器。要讲清楚KDC的作用，得留到Kerberos的认证流程中才能体现，这里先提几个基本概念。</p>
+<ul>
+<li><p>票据（Ticket）：这个是网络对象能够互相访问的凭证</p>
+</li>
+<li><p>TGT（Ticket Granting Ticket）：用来向KDC申请获取Ticket的入场券，是一种临时凭证。</p>
+</li>
+<li><p>KDC本身的功能实现是由三部分组成：</p>
+<ul>
+<li>Authentication Service(AS)：用来给Client生成初版TGT的，就是TGT检测Client的用户名在AD中是白名单，这个时候就让AS生成TGT发送给请求的Client端。</li>
+<li>Ticket Granting Service（TGS）：主要是为了给Client生成某一个server的TGT，因为一个TGT只能去访问一个Server，那么对应的其他server的TGT就需要TGS来生成。</li>
+<li>account database(AD):存储着所有的Client白名单。这个注意和Active Directionary区分一下。AD可以说是包含在ActiveDirectory中，两者发挥作用的时候其实统称AD即可</li>
+</ul>
+</li>
+<li><p>krbtgt账户：是系统在创建域时自动生成的一个帐号，其作用是密钥分发中心的服务账号，其密码是系统随机生成的，无法登录主机。主要作用是生成TGT的时候用到的，后面会提到。</p>
+</li>
+</ul>
+<h3 id="Kerberos认证机制流程"><a href="#Kerberos认证机制流程" class="headerlink" title="Kerberos认证机制流程"></a>Kerberos认证机制流程</h3><ul>
+<li><strong>AS-REQ:</strong> Client端向KDC发送一段请求信息，这段信息包括自己的用户名以及用Clienthash加密过的一段时间戳信息。然后KDC交由AS去根据用户名在AD中查找该Client端是否在白名单，并在本地提取出对应<strong>NTLM HASH</strong>。</li>
+<li><strong>AS-REP:</strong> KDC此时随机生成一段字符串，叫做Sessionkey，然后利用用户名的NTLM Hash进行加密，此时这一段经过加密的随机字符串就是Client之后能够和TGS服务通信的一段凭证。之后KDC再利用<strong>krbtgt</strong>账户的NTLM HASH对sessionkey和Client的一些信息（Client的SID以及用户Client所在的组）进行加密，生成TGT。此时，KDC端已经生成了两份加密内容，一个是AS内容，也就是初步通过Clienthash生成的TGS访问凭证。一个是TGT内容，是通过<strong>krbtgt</strong>账户HASH加密随机字符串sessionkey和Client信息生成的。这两个东西全部返回给Client。其中TGT的到期时间是8个小时。</li>
+</ul>
+<p>这第一段检验其实目的就是一个，验证Client是个好人，并且关键性验证是Client在AD的白名单中。作用主体是AS。所以是不太好操作的。</p>
+<p>当Client经过了初步认证之后，下一步就是开始正式向KDC提出访问对应Server的请求了，上一步结尾Client拿到了TGT，以及用它自己NTLM HASH加密的SessionKEY密文。可以想象，TGT由于是KDC通过<strong>krbtgt</strong>用户的HASH加密过来的，所以这一段信息即使中间人获取到了，在不得知krbtgt账户的情况下，想要爆破出来还是有点难度的。默认情况下，TGT相当于KDC的一个官方凭证，有这个TGT你才能跟我提要求。</p>
+<p>一图流回顾一下：</p>
+<p>​<img src="/images/windows/assets/image-20241106162347-twx6keh.png" alt="image">​</p>
+<p>​<img src="/images/windows/assets/image-20241106162359-uuwfxy4.png" alt="image">​</p>
+<p>‍</p>
+<p>下面开始看Client如何向KDC提要求</p>
+<ul>
+<li><strong>TGS-REQ:</strong> Client端开始拿着刚才获得的TGT以及通过AS传输过来的加密seessionkey，解密之后用它来加密自身客户端信息和想要去<strong>请求的Server端的信息</strong>，时间戳这三个部分生成的内容，发送给KDC</li>
+<li><strong>TGS-REP:</strong> KDC接收到数据之后，会首先解密TGT，从TGT中提取sessionKEY，这个sessionkey是通过KDC中的krbtgt账户的hash加密过来的，然后用sessionkey去解密Client发送过来的加密时间戳和自身其他信息以及请求的Server端信息，初步检验该Client是否授信。验证通过之后，KDC会新生成一个Server Session KEY，然后从AD中找到Server的NTLM hash，对三个部分：SeverSessionkey+CLient信息+ENDTIME进行综合加密，该密文被称为Ticket。也是最后Client用来访问Server端的凭证了。</li>
+</ul>
+<p>稍微回顾一下此时的情况，Client最后接收到ServerSessionkey以及Ticket，此时这个sessionkey就是一段随机字符串，真正有用这段Ticket，但他本身是通过AD中查找比对用Server的HASH加密过来的，所以加密内容也没什么用。中间获取到这段信息也很难得到有效信息。</p>
+<p>一图流回顾：</p>
+<p>​<img src="/images/windows/assets/image-20241106162316-yhbnmpd.png" alt="image">​</p>
+<p>​<img src="/images/windows/assets/image-20241106162417-botc06b.png" alt="image">​</p>
+<p>‍</p>
+<p>之后Client终于可以去找Server了</p>
+<ul>
+<li><strong>AP-REQ:</strong> Client拿着KDC返回过来的Ticket以及用serverSession加密过的客户端信息和时间戳密文，发送给Server端</li>
+<li><strong>AP-REP:</strong> 由于这段Ticket的加密部分是由Server端的NTLM HASH加密过来的，客户端如果没有AD权限的话还是很难得到这段HASH的。Server端通过它自己本地内存中的NTLM HASH对其进行解密之后得到Client端信息以及ServerSessionkey和时间戳，对比时间段和key之后，认证Client的身份。之后就可以愉快的玩耍了</li>
+</ul>
+<p>这里有一个致命的问题，假设，攻击机通过某种途径拿到了TGT，然后就可以向KDC申请TGS，这里的指定的Server端可以是任何一个网络对象，包括域控服务器！这个过程利用被记为了MS14068。</p>
+<h3 id="白银票据"><a href="#白银票据" class="headerlink" title="白银票据"></a>白银票据</h3><p>检验成功之后，客户端本地内存会一直存着这段Ticket。但是这里验证会有一个问题，Server一开始并不知道ServerSessionkey是什么，它只是把Ticket的内容解密之后认定某个部分是ServerSessionKey。然后就是解决时间戳的问题。这个也好解决，因为Ticket中存储的END TIME，这个可以伪造。我们只需要微调一下通过ServerSessionKey加密的客户端信息+时间戳的内容，就能够满足时间时间长度正确。</p>
+<p>综上，实现白银票据的条件只有一个：获取到存储在对应Server的NTLM Hash即可。然后其实理解一下白银票据，它本身是针对于Client最后去访问Server这个过程，前面的AS-REQ和AS-REP的过程实际上都是在获取TGT的过程，也就是说白银票据绕过了从AD中进行白名单匹配的这一个过程，感觉不算是漏洞，算是它本身的一种机制。</p>
+<p>‍</p>
+<p>而且防御起来也容易，直接开启PAC(Privileged Attribute Certificate),将这一部分的授权验证交给kerberos服务，由kerberos服务来检验票据是否有效。</p>
+<p>开启方式如下：</p>
+<p>通过注册表</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKEY_LOCAL_MACHINE\SYSTEM \ CurrentControlSet\Control\Lsa\Kerberos\Parameters</span><br></pre></td></tr></table></figure>
+
+<p>将 <code>ValidateKdcPacSignature</code>​ 值设为 <code>1</code>​</p>
+<p>这个时候Server的认证过程就不一样了，并且引入了一种全新的认证方式，这种方式就叫做PAC</p>
+<h3 id="PAC认证"><a href="#PAC认证" class="headerlink" title="PAC认证"></a>PAC认证</h3><p>在我们上面提到的kerberos认证过程中，PAC被塞进了一开始的AS认证中，也就是Client初次向KDC发送AS-REQ,这个时候KDC会调用AS去DC中查找白名单，如果确实当前Client存于白名单，那么就会用krbtgt账户的NLTM HASH对sessionkey+clientinfo+endtime进行加密，如果开启了PAC认证，那么此时还会新增一条一起加密，整体的加密结构如下：</p>
+<p>​<img src="/images/windows/assets/image-20241107110334-cfo4c9y.png" alt="image">​</p>
+<p>PAC包含用户的权限、组成员身份、特权信息等。这些信息都是从ActiveDirectory中获取到的，属于</p>
+<p>之后就是一样的流程，Client拿这段TGT向KDC申请TGS。KDC开始根据krbtgt账户的NLTM HASH对TGT进行解密，只要这一步解密没问题了，其实KDC就能够把TGS发给Client。所以实际上只要我们能够拿到krbtgt账户的HASH，就理论上实现了访问任何服务。</p>
+<p>之后Client拿着这段TGS去访问Server，Server拿自己hash解密完之后，拿到PAC,再去问KDC这个Client有没有权限访问我，然后再交给域控去解密PAC，获取到用户所在的组和SID，再据此判断用户是否有访问该server的权限。</p>
+<p>这么一看其实PAC就是加了一层双层保险，并且全流程下来，Client都看不见PAC（没有KDC账户krbtgt的前提下）。PAC的制作也是KDC通过查找AD中存储的Client的相关信息才得到的，这一点也是Client无法得到的。不过拿到了域控之后啥都好说。</p>
+<p>‍</p>
+<h3 id="黄金票据"><a href="#黄金票据" class="headerlink" title="黄金票据"></a>黄金票据</h3><p>很明显，从名字上就能看出来，著名语言艺术家OTTO曾经说过，白银这个位置是最尴尬的，上不去下不来的这个段位，卡在这了。那黄金票据的攻击可行性就远远要比白银票据多多了。但是条件也更苛刻。</p>
+<p>其实黄金票据的原理就是TGT本身的加密规则是知道的，并且加密的密钥就是KDC Hash，只要我们拿到了这个KDC的hash，就能够实现单一Client向KDC请求任意Server，只要将TGT本身需要的内容和信息通过这个Hash加密，然后按照TGS-REQ的格式发送即可。</p>
+<p>总共有如下两个条件：</p>
+<ul>
+<li>需要和DC，也就是域控服务器进行访问</li>
+<li>需要获取到KDC hash</li>
+</ul>
+<p>‍</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这些内容应该放到实战中或者自己练习的时候去验证，但是我个人现在只能先把这些理论的东西理解一遍，然后按照自己的思路记录。之后会实时更新以及重新修订一些内容。这篇就相当于动态笔记分享了，希望能够帮助到其他师傅。<br>参考：<a target="_blank" rel="noopener" href="https://payloads.online/archivers/2018-11-30/1/#0x00-%E6%9C%AC%E5%9C%B0%E8%AE%A4%E8%AF%81">https://payloads.online/archivers/2018-11-30/1/#0x00-%E6%9C%AC%E5%9C%B0%E8%AE%A4%E8%AF%81</a><br>     <a target="_blank" rel="noopener" href="https://daiker.gitbook.io/windows-protocol">https://daiker.gitbook.io/windows-protocol</a></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/%E5%9C%A8%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-11-07 16:18:23
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Windows-Protocols/" title="Windows Protocols">
+                        #Windows Protocols
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Windows%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6%E5%AD%A6%E4%B9%A0"><span class="toc-text">Windows认证机制学习</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-%E6%9C%AC%E5%9C%B0%E8%AE%A4%E8%AF%81"><span class="toc-text">0x00 本地认证</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#LM-Hash"><span class="toc-text">LM Hash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NTLM-Hash"><span class="toc-text">NTLM Hash</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-%E7%BD%91%E7%BB%9C%E8%AE%A4%E8%AF%81"><span class="toc-text">0x01 网络认证</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#NTLM%E5%85%B7%E4%BD%93%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-text">NTLM具体认证机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Chanllnge-Reponse"><span class="toc-text">Chanllnge&#x2F;Reponse</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B4%A8%E8%AF%A2%E5%85%B7%E4%BD%93%E6%AD%A5%E9%AA%A4"><span class="toc-text">质询具体步骤</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NLTM-V2"><span class="toc-text">NLTM V2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PTH%EF%BC%88Pass-the-HASH%EF%BC%89"><span class="toc-text">PTH（Pass the HASH）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Kerberos-%E5%9F%9F%E8%AE%A4%E8%AF%81"><span class="toc-text">Kerberos 域认证</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0X02-Active-Directory%EF%BC%88%E6%B4%BB%E5%8A%A8%E7%9B%AE%E5%BD%95%EF%BC%89"><span class="toc-text">0X02 Active Directory（活动目录）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="toc-text">基本介绍</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kerberos%E4%BB%8B%E7%BB%8D"><span class="toc-text">kerberos介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Kerberos%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6%E6%B5%81%E7%A8%8B"><span class="toc-text">Kerberos认证机制流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BD%E9%93%B6%E7%A5%A8%E6%8D%AE"><span class="toc-text">白银票据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PAC%E8%AE%A4%E8%AF%81"><span class="toc-text">PAC认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE"><span class="toc-text">黄金票据</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Windows%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(%E5%AE%9E%E6%97%B6%E6%9B%B4%E6%96%B0) + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FWindows%25E8%25AE%25A4%25E8%25AF%2581%25E6%259C%25BA%25E5%2588%25B6%25E5%25AD%25A6%25E4%25B9%25A0.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/Windows%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6%E5%AD%A6%E4%B9%A0.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
