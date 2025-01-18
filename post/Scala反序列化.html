@@ -1,185 +1,229 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN">
 
-  <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="author" content="stoocea" />
-  <!-- Open Graph Description 简短摘要-->
-  
-  <!-- 用于搜索引擎的文章摘要 -->
-  
-  <meta name="description" content="time thicking away" />
-  
-  
-  
-  <title>
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="stoocea">
+
+
+
+    <meta name="description" content="time thicking away">
+
+
+
+<title>Scala反序列化学习 | stoocea&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
     
-      Scala反序列化学习 
-      
-      
-      |
+    <link rel="stylesheet" href="/css/style.css">
     
-     stoocea&#39;s blog
-  </title>
 
-  
-    <link rel="apple-touch-icon" href="/images/favicon.png">
-    <link rel="icon" href="/images/favicon.png">
-  
 
-  <!-- Raleway-Font -->
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
 
-  <!-- hexo site css -->
-  <link rel="stylesheet" href="/css/main.css" />
-  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
-  <!-- 代码块风格 -->
-  
+    <!-- scripts list from _config.yml -->
     
-<link rel="stylesheet" href="/css/figcaption/mac-block.css">
-
-  
-
-  <!-- jquery3.3.1 -->
-  
-    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
-  
-
-  <!-- fancybox -->
-  
-    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
-    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
-  
-  
-<script src="/js/fancybox.js"></script>
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
 
 
-  
 
-  
+    
+    
+        
+    
 
-  <script>
-    var html = document.documentElement
-    const colorMode = localStorage.getItem('color-mode')
-    if (colorMode) {
-      document.documentElement.setAttribute('color-mode', colorMode)
-    }
-  </script>
+
 <meta name="generator" content="Hexo 6.3.0"></head>
 
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
 
-  <body>
-    <div id="app">
-      <div class="header">
-  <div class="avatar">
-    <a href="/">
-      <!-- 头像取消懒加载，添加no-lazy -->
-      
-        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
-      
-    </a>
-    <div class="nickname"><a href="/">stoocea</a></div>
-  </div>
-  <div class="navbar">
-    <ul>
-      
-        <li class="nav-item" data-path="/">
-          <a href="/">Home</a>
-        </li>
-      
-        <li class="nav-item" data-path="/archives/">
-          <a href="/archives/">Archives</a>
-        </li>
-      
-        <li class="nav-item" data-path="/tags/">
-          <a href="/tags/">Tags</a>
-        </li>
-      
-        <li class="nav-item" data-path="/friends/">
-          <a href="/friends/">Friends</a>
-        </li>
-      
-        <li class="nav-item" data-path="/about/">
-          <a href="/about/">About</a>
-        </li>
-      
-    </ul>
-  </div>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">stoocea&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">stoocea&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
 </div>
 
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
 
-<script src="/js/activeNav.js"></script>
-
-
-
-      <div class="flex-container">
-        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
-<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
-
-
-  <!-- LaTex Display -->
-
-  
-    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
-  
-  <script>
-    MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-      }
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
     }
-  </script>
 
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
 
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
 
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
 
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
 
-  <!-- clipboard -->
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
 
-  
-    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
-  
-  
-<script src="/js/codeCopy.js"></script>
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Scala反序列化学习</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">stoocea</a>
+                    
 
+                    
+                        <span class="post-time">
+                        Date: <a href="#">七月 6, 2024&nbsp;&nbsp;15:41:00</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Java/">Java</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
 
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
-  <div class="container post-details" id="post-details">
-    <div class="post-content">
-      <div class="post-title">Scala反序列化学习</div>
-      <div class="post-attach">
-        <span class="post-pubtime">
-          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-08-09 18:25:11
-        </span>
-        
-              <span class="post-tags">
-                <i class="iconfont icon-tags mr-10" title="标签"></i>
-                
-                <span class="span--tag mr-8">
-                  <a href="/tags/Scala/" title="Scala">
-                    #Scala
-                  </a>
-                </span>
-                
-              </span>
-          
-      </div>
-      <div class="markdown-body">
-        <p>复现 CVE 的时候遇到了，趁此机会学一下<br>原 CVE 的 issue<br><a target="_blank" rel="noopener" href="https://github.com/scala/scala/pull/10118">https://github.com/scala/scala/pull/10118</a><br>环境链接：<br><a target="_blank" rel="noopener" href="https://github.com/yarocher/lazylist-cve-poc">https://github.com/yarocher/lazylist-cve-poc</a><br>参考文章：<br><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/network/375109.html">https://www.freebuf.com/articles/network/375109.html</a></p>
+        <div class="post-content">
+            <p>复现 CVE 的时候遇到了，趁此机会学一下<br>原 CVE 的 issue<br><a target="_blank" rel="noopener" href="https://github.com/scala/scala/pull/10118">https://github.com/scala/scala/pull/10118</a><br>环境链接：<br><a target="_blank" rel="noopener" href="https://github.com/yarocher/lazylist-cve-poc">https://github.com/yarocher/lazylist-cve-poc</a><br>参考文章：<br><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/network/375109.html">https://www.freebuf.com/articles/network/375109.html</a></p>
 <h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h1><h2 id="scala-简介"><a href="#scala-简介" class="headerlink" title="scala 简介"></a>scala 简介</h2><p>scala 本身就是一门语言，它运行在 JVM 中，并且能够兼容现有的 java 程序。scala 经过编译之后是生成的 java 字节码，这也是它能够运行在 JVM 上的理由，也可以调用 Java 现有的类库。<br>但是 Scala 也有着自己的语法规则，并且有一些区别于 Java 的特性，对于这些新东西或者特性，接下来的基础笔记会一一写到。</p>
 <h2 id="scala-新特性"><a href="#scala-新特性" class="headerlink" title="scala 新特性"></a>scala 新特性</h2><h3 id="匹配器-match"><a href="#匹配器-match" class="headerlink" title="匹配器 match"></a>匹配器 match</h3><p>一个 scala2 中的例子，整体代码如下（怎么感觉写起来像 python）</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">show</span></span>(result:<span class="type">String</span>):<span class="type">Unit</span>=&#123;</span><br><span class="line">    println(result)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">val</span> x=<span class="number">11</span></span><br><span class="line">    <span class="keyword">val</span> y=x <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span> =&gt; <span class="string">&quot;one&quot;</span></span><br><span class="line">      <span class="keyword">case</span> <span class="number">2</span> =&gt; <span class="string">&quot;two&quot;</span></span><br><span class="line">      <span class="keyword">case</span> other =&gt; <span class="string">s&quot;other: <span class="subst">$other</span>&quot;</span> <span class="comment">// other是一个变量名，它会接收除了1和2以外的任何值</span></span><br><span class="line">      <span class="keyword">case</span> _ =&gt; <span class="string">s&quot;other: _&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">    show(y)</span><br><span class="line">    <span class="comment">//other: 11</span></span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -279,360 +323,75 @@
 <p>这次验证了猜想<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720112706423-ec09c0da-0a92-4d40-a431-b7a57b3b81e7.png#averageHue=%232b2e30&clientId=u2d8e4ee3-0855-4&from=paste&height=636&id=u280191cd&originHeight=1193&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2597463&status=done&style=none&taskId=u457ec2f3-44c0-4eaf-bef4-3cb67a55057&title=&width=1124.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>看一下该字节码的具体内容<code>javap -verbose -p 21.class</code>这里我把它字节码文件名改成了 21.class，windowsshell 中的$有转义。不影响具体内容：<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720116606719-662756d7-12f6-4f14-919b-1bf34f77ecb5.png#averageHue=%23323439&clientId=u43ab58bb-5ab5-4&from=paste&height=636&id=u22ae0fe1&originHeight=1193&originWidth=2108&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=2675682&status=done&style=none&taskId=u05ab772a-02e1-46ac-98d6-7bb0534e859&title=&width=1124.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>发现它对 a 中定义的 msg 方法进行调用，结合传名参数的惰性机制，我们最开始并没有触发 b 中传名参数的逻辑执行，也并没有产生相应的<code>$$anonfun$$lessinit$greater$</code>类名的字节码文件。而当我们执行了传名参数的逻辑之后，才生成的<code>$$anonfun$$lessinit$greater$</code>类名的字节码文件。<br>也就是说：<br><code>scala.sys.process.ProcessBuilderImpl$URLInput$$anonfun$$lessinit$greater$1</code><strong>类的生成，是由</strong><code>url.openStream()</code><strong>的执行而触发的</strong><br>了解了这个部分，我们就能够知道为什么会找到<code>scala.sys.process.ProcessBuilderImpl$URLInput$$anonfun$$lessinit$greater$1</code>这个类了，接下来进行总结梳理</p>
 <h1 id="利用总结"><a href="#利用总结" class="headerlink" title="利用总结"></a>利用总结</h1><p>首先，匿名函数本身在经过 scalac 编译器编译之后的字节码，其实是一段类的字节码，类似于<code>$URLInput$$anonfun$$lessinit$greater$1</code>这种，所以我们可以通过寻找这种类，并通过 LazyList 的构造器将其传入。那么当触发 readObject 方法，直到触发该匿名函数时，在 JVM 中实际上就是在调用该类，并且实例化。观察该类的字节码，在该类的 apply 方法中，会调用其子类构造方法中的参数的方法，到达利用的目的，比如 URLInput 链就会调用到 <code>url.openStream()</code><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1720116523573-c26422ef-4821-42d1-9ee7-06a31e0a05d4.png#averageHue=%232d2f2f&clientId=u43ab58bb-5ab5-4&from=paste&height=73&id=ue760d5cc&originHeight=136&originWidth=1920&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=120325&status=done&style=none&taskId=uc9cebf30-671b-412a-a243-8d376f63c6b&title=&width=1024" referrerpolicy="no-referrer" alt="image.png"><br>其他 scala 反序列化链也是如此</p>
 
-      </div>
-      
-        <div class="prev-or-next">
-          <div class="post-foot-next">
-            
-              <a href="/post/Java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0.html" target="_self">
-                <i class="iconfont icon-chevronleft"></i>
-                <span>上一页</span>
-              </a>
-            
-          </div>
-          <div class="post-attach">
-            <span class="post-pubtime">
-              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-08-09 18:25:11
-            </span>
-            
-                  <span class="post-tags">
-                    <i class="iconfont icon-tags mr-10" title="标签"></i>
-                    
-                    <span class="span--tag mr-8">
-                      <a href="/tags/Scala/" title="Scala">
-                        #Scala
-                      </a>
-                    </span>
-                    
-                  </span>
-              
-          </div>
-          <div class="post-foot-prev">
-            
-              <a href="/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
-            
-          </div>
         </div>
-      
-    </div>
-    
-  <div id="btn-catalog" class="btn-catalog">
-    <i class="iconfont icon-catalog"></i>
-  </div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">目录</div>
-    <div class="catalog-content">
-      
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-text">前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#scala-%E7%AE%80%E4%BB%8B"><span class="toc-text">scala 简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#scala-%E6%96%B0%E7%89%B9%E6%80%A7"><span class="toc-text">scala 新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%B9%E9%85%8D%E5%99%A8-match"><span class="toc-text">匹配器 match</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%B4%E7%94%9F%E5%AF%B9%E8%B1%A1"><span class="toc-text">伴生对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#apply-%E6%96%B9%E6%B3%95"><span class="toc-text">apply 方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#trait"><span class="toc-text">trait</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0"><span class="toc-text">匿名函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%83%B0%E6%80%A7%E5%88%97%E8%A1%A8-LazyList"><span class="toc-text">惰性列表 LazyList*</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LazyList-%E7%9A%84%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">LazyList 的反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">工作流程分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-text">漏洞点分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E5%88%A9%E7%94%A8%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0%E5%AF%BB%E6%89%BE"><span class="toc-text">可利用匿名函数寻找</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E6%80%BB%E7%BB%93"><span class="toc-text">利用总结</span></a></li></ol>
-      
-    </div>
-  </div>
-
-  
-<script src="/js/catalog.js"></script>
-
-
-
-
-    
-      <div class="comments-container">
-        
-
-
-
-
-
-
-
-      </div>
-    
-  </div>
-
 
         
-<div class="footer">
-  <div class="social">
-    <ul>
-      
-        <li>
-          
-              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
-                <i class="iconfont icon-github"></i>
-              </a>
-              
-        </li>
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>stoocea</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span></span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
         
-    </ul>
-  </div>
-  
-    
-    <div class="footer-more">
-      
-        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2025 Oranges</a>
-        
-    </div>
-  
-    
-    <div class="footer-more">
-      
-        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
-        
-    </div>
-  
-  
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Scala/"># Scala</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html">Ysoserial-JRMPListener/JRMPClient学习</a>
+            
+            
+            <a class="next" rel="next" href="/post/Java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0.html">Java字节码初步学习</a>
+            
+        </section>
+
+
+    </article>
 </div>
 
-      </div>
-
-      <div class="tools-bar">
-        <div class="back-to-top tools-bar-item hidden">
-  <a href="javascript: void(0)">
-    <i class="iconfont icon-chevronup"></i>
-  </a>
-</div>
-
-
-<script src="/js/backtotop.js"></script>
-
-
-
-        
-  <div class="search-icon tools-bar-item" id="search-icon">
-    <a href="javascript: void(0)">
-      <i class="iconfont icon-search"></i>
-    </a>
-  </div>
-
-  <div class="search-overlay hidden">
-    <div class="search-content" tabindex="0">
-      <div class="search-title">
-        <span class="search-icon-input">
-          <a href="javascript: void(0)">
-            <i class="iconfont icon-search"></i>
-          </a>
-        </span>
-        
-          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
-        
-        <span class="search-close-icon" id="search-close-icon">
-          <a href="javascript: void(0)">
-            <i class="iconfont icon-close"></i>
-          </a>
-        </span>
-      </div>
-      <div class="search-result" id="search-result"></div>
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© stoocea | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
     </div>
-  </div>
+</footer>
 
-  <script type="text/javascript">
-    var inputArea = document.querySelector("#search-input")
-    var searchOverlayArea = document.querySelector(".search-overlay")
-
-    inputArea.onclick = function() {
-      getSearchFile()
-      this.onclick = null
-    }
-
-    inputArea.onkeydown = function() {
-      if(event.keyCode == 13)
-        return false
-    }
-
-    function openOrHideSearchContent() {
-      let isHidden = searchOverlayArea.classList.contains('hidden')
-      if (isHidden) {
-        searchOverlayArea.classList.remove('hidden')
-        document.body.classList.add('hidden')
-        // inputArea.focus()
-      } else {
-        searchOverlayArea.classList.add('hidden')
-        document.body.classList.remove('hidden')
-      }
-    }
-
-    function blurSearchContent(e) {
-      if (e.target === searchOverlayArea) {
-        openOrHideSearchContent()
-      }
-    }
-
-    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
-    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
-    searchOverlayArea.addEventListener("click", blurSearchContent, false)
-
-    var searchFunc = function (path, search_id, content_id) {
-      'use strict';
-      var $input = document.getElementById(search_id);
-      var $resultContent = document.getElementById(content_id);
-      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
-      $.ajax({
-        // 0x01. load xml file
-        url: path,
-        dataType: "xml",
-        success: function (xmlResponse) {
-          // 0x02. parse xml file
-          var datas = $("entry", xmlResponse).map(function () {
-            return {
-              title: $("title", this).text(),
-              content: $("content", this).text(),
-              url: $("url", this).text()
-            };
-          }).get();
-          $resultContent.innerHTML = "";
-
-          $input.addEventListener('input', function () {
-            // 0x03. parse query to keywords list
-            var str = '<ul class=\"search-result-list\">';
-            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
-            $resultContent.innerHTML = "";
-            if (this.value.trim().length <= 0) {
-              return;
-            }
-            // 0x04. perform local searching
-            datas.forEach(function (data) {
-              var isMatch = true;
-              var content_index = [];
-              if (!data.title || data.title.trim() === '') {
-                data.title = "Untitled";
-              }
-              var orig_data_title = data.title.trim();
-              var data_title = orig_data_title.toLowerCase();
-              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
-              var data_content = orig_data_content.toLowerCase();
-              var data_url = data.url;
-              var index_title = -1;
-              var index_content = -1;
-              var first_occur = -1;
-              // only match artiles with not empty contents
-              if (data_content !== '') {
-                keywords.forEach(function (keyword, i) {
-                  index_title = data_title.indexOf(keyword);
-                  index_content = data_content.indexOf(keyword);
-
-                  if (index_title < 0 && index_content < 0) {
-                    isMatch = false;
-                  } else {
-                    if (index_content < 0) {
-                      index_content = 0;
-                    }
-                    if (i == 0) {
-                      first_occur = index_content;
-                    }
-                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
-                  }
-                });
-              } else {
-                isMatch = false;
-              }
-              // 0x05. show search results
-              if (isMatch) {
-                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
-                var content = orig_data_content;
-                if (first_occur >= 0) {
-                  // cut out 100 characters
-                  var start = first_occur - 20;
-                  var end = first_occur + 80;
-
-                  if (start < 0) {
-                    start = 0;
-                  }
-
-                  if (start == 0) {
-                    end = 100;
-                  }
-
-                  if (end > content.length) {
-                    end = content.length;
-                  }
-
-                  var match_content = content.substr(start, end);
-
-                  // highlight all keywords
-                  keywords.forEach(function (keyword) {
-                    var regS = new RegExp(keyword, "gi");
-                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
-                  });
-
-                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
-                }
-                str += "</li>";
-              }
-            });
-            str += "</ul>";
-            if (str.indexOf('<li>') === -1) {
-              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
-            }
-            $resultContent.innerHTML = str;
-          });
-        },
-        error: function(xhr, status, error) {
-          $resultContent.innerHTML = ""
-          if (xhr.status === 404) {
-            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
-          } else {
-            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
-          }
-        }
-      });
-      $(document).on('click', '#search-close-icon', function() {
-        $('#search-input').val('');
-        $('#search-result').html('');
-      });
-    }
-
-    var getSearchFile = function() {
-        var path = "/search.xml";
-        searchFunc(path, 'search-input', 'search-result');
-    }
-  </script>
-
-
-
-
-        
-  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-    <a href="javascript: void(0)">
-      <i id="theme-icon" class="iconfont icon-moon"></i>
-    </a>
-  </div>
-
-  
-<script src="/js/colorscheme.js"></script>
-
-
-
-
-
-        
-  
-    <div class="share-icon tools-bar-item">
-      <a href="javascript: void(0)" id="share-icon">
-        <i class="iconfont iconshare"></i>
-      </a>
-      <div class="share-content hidden">
-        
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FScala%25E5%258F%258D%25E5%25BA%258F%25E5%2588%2597%25E5%258C%2596.html + '" target="_blank" title="Twitter">
-            <i class="iconfont icon-twitter"></i>
-          </a>
-        
-        
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" target="_blank" title="Facebook">
-            <i class="iconfont icon-facebooksquare"></i>
-          </a>
-        
-      </div>
     </div>
-  
-  
-<script src="/js/shares.js"></script>
+</body>
 
-
-
-      </div>
-    </div>
-  </body>
 </html>

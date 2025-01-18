@@ -1,185 +1,229 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN">
 
-  <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="author" content="stoocea" />
-  <!-- Open Graph Description 简短摘要-->
-  
-  <!-- 用于搜索引擎的文章摘要 -->
-  
-  <meta name="description" content="time thicking away" />
-  
-  
-  
-  <title>
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="stoocea">
+
+
+
+    <meta name="description" content="time thicking away">
+
+
+
+<title>RMIRe0 | stoocea&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
     
-      RMIRe0 
-      
-      
-      |
+    <link rel="stylesheet" href="/css/style.css">
     
-     stoocea&#39;s blog
-  </title>
 
-  
-    <link rel="apple-touch-icon" href="/images/favicon.png">
-    <link rel="icon" href="/images/favicon.png">
-  
 
-  <!-- Raleway-Font -->
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
 
-  <!-- hexo site css -->
-  <link rel="stylesheet" href="/css/main.css" />
-  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
-  <!-- 代码块风格 -->
-  
+    <!-- scripts list from _config.yml -->
     
-<link rel="stylesheet" href="/css/figcaption/mac-block.css">
-
-  
-
-  <!-- jquery3.3.1 -->
-  
-    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
-  
-
-  <!-- fancybox -->
-  
-    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
-    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
-  
-  
-<script src="/js/fancybox.js"></script>
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
 
 
-  
 
-  
+    
+    
+        
+    
 
-  <script>
-    var html = document.documentElement
-    const colorMode = localStorage.getItem('color-mode')
-    if (colorMode) {
-      document.documentElement.setAttribute('color-mode', colorMode)
-    }
-  </script>
+
 <meta name="generator" content="Hexo 6.3.0"></head>
 
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
 
-  <body>
-    <div id="app">
-      <div class="header">
-  <div class="avatar">
-    <a href="/">
-      <!-- 头像取消懒加载，添加no-lazy -->
-      
-        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
-      
-    </a>
-    <div class="nickname"><a href="/">stoocea</a></div>
-  </div>
-  <div class="navbar">
-    <ul>
-      
-        <li class="nav-item" data-path="/">
-          <a href="/">Home</a>
-        </li>
-      
-        <li class="nav-item" data-path="/archives/">
-          <a href="/archives/">Archives</a>
-        </li>
-      
-        <li class="nav-item" data-path="/tags/">
-          <a href="/tags/">Tags</a>
-        </li>
-      
-        <li class="nav-item" data-path="/friends/">
-          <a href="/friends/">Friends</a>
-        </li>
-      
-        <li class="nav-item" data-path="/about/">
-          <a href="/about/">About</a>
-        </li>
-      
-    </ul>
-  </div>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">stoocea&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">stoocea&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
 </div>
 
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
 
-<script src="/js/activeNav.js"></script>
-
-
-
-      <div class="flex-container">
-        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
-<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
-
-
-  <!-- LaTex Display -->
-
-  
-    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
-  
-  <script>
-    MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-      }
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
     }
-  </script>
 
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
 
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
 
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
 
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
 
-  <!-- clipboard -->
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
 
-  
-    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
-  
-  
-<script src="/js/codeCopy.js"></script>
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">RMIRe0</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">stoocea</a>
+                    
 
+                    
+                        <span class="post-time">
+                        Date: <a href="#">三月 6, 2024&nbsp;&nbsp;17:50:51</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Java/">Java</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
 
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
-  <div class="container post-details" id="post-details">
-    <div class="post-content">
-      <div class="post-title">RMIRe0</div>
-      <div class="post-attach">
-        <span class="post-pubtime">
-          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-08-09 18:24:56
-        </span>
-        
-              <span class="post-tags">
-                <i class="iconfont icon-tags mr-10" title="标签"></i>
-                
-                <span class="span--tag mr-8">
-                  <a href="/tags/RMI/" title="RMI">
-                    #RMI
-                  </a>
-                </span>
-                
-              </span>
-          
-      </div>
-      <div class="markdown-body">
-        <p><a target="_blank" rel="noopener" href="https://su18.org/post/rmi-attack/#%E9%9B%B6-%E5%89%8D%E8%A8%80">https://su18.org/post/rmi-attack/#%E9%9B%B6-%E5%89%8D%E8%A8%80</a></p>
+        <div class="post-content">
+            <p><a target="_blank" rel="noopener" href="https://su18.org/post/rmi-attack/#%E9%9B%B6-%E5%89%8D%E8%A8%80">https://su18.org/post/rmi-attack/#%E9%9B%B6-%E5%89%8D%E8%A8%80</a></p>
 <p>学完之后感觉 SU18 师傅这一段内容很精华，也算是对 RMI 的整个流程都概括进来了，想到要复习了可以先看看下面这段：</p>
 <ol>
 <li>RMI 客户端在调用远程方法时会先创建 Stub ( sun.rmi.registry.RegistryImpl_Stub )。</li>
@@ -280,355 +324,73 @@
 <p>他有两个实现类，一个是 DGCImpl，一个 DGCImpl_Stub<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1708140177225-b979575d-75df-4dae-af67-265714c44b94.png#averageHue=%2341506c&clientId=u3bd86663-b765-4&from=paste&height=94&id=wzTbI&originHeight=141&originWidth=737&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=41116&status=done&style=none&taskId=u91294fb2-615c-4bf1-8386-de89d762069&title=&width=491.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>这里可能查找出来只有这两个，但其实还有一个 DGCImpl_Skel<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1708140328881-e7d5236d-be77-435e-ab94-49ebefa0e2b4.png#averageHue=%232e343e&clientId=u3bd86663-b765-4&from=paste&height=311&id=u30b7c2dc&originHeight=466&originWidth=2537&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=269645&status=done&style=none&taskId=uae295d51-30fa-47dd-b804-505a52f206a&title=&width=1691.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>它并没有继承自 DGC 这个接口，而是实现自 Skelton 接口<br>那 DGC 是什么时候创建的呢？<br>服务端在创建远程对象的时候，流程走到创建完集成类 UnicastServerRef 之后，开始调用它的 exportObject 方法，一直走到 TCPTransport 的 exportObject 方法这里<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1708143086595-51862f68-292e-4a63-8cb0-027cd3e08efe.png#averageHue=%23373c47&clientId=u3bd86663-b765-4&from=paste&height=283&id=uc3297a52&originHeight=424&originWidth=1549&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=168333&status=done&style=none&taskId=u7fe22739-be50-45bc-8b9e-ba1a160ba0b&title=&width=1032.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>前面的流程就不讲了，看 try 块中的 <code>super.exportObject </code>方法<br>跟进<img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1708143285289-31dedcf6-67d8-4612-90fc-17ba12428a4c.png#averageHue=%23303844&clientId=u3bd86663-b765-4&from=paste&height=137&id=ua3c19c97&originHeight=206&originWidth=1145&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=69781&status=done&style=none&taskId=u1494c931-063e-41ae-9fcc-dfe66d50027&title=&width=763.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>上面 setExportedTransport 就不看了，跟进到 putTarget 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1708143275324-48fddf2d-cd09-45be-9f2a-24f5738e469c.png#averageHue=%23454a5a&clientId=u3bd86663-b765-4&from=paste&height=168&id=uc0795e07&originHeight=252&originWidth=1725&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=151357&status=done&style=none&taskId=ufbf825af-efb6-496c-aadb-d851621d309&title=&width=1150" referrerpolicy="no-referrer" alt="image.png"><br>这里有一个 if 判断的内容，调用了 DGCImpl 的 dgclog 静态变量，之前有了解过，当调用一个类的静态变量时，他会自动完成类的实例化，我们跟进，实例化就不看了，当实例化完成时肯定会调用它的静态代码区<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1708143624201-7d5f0c25-fcf6-4b55-a555-18ead52e1f61.png#averageHue=%232e343d&clientId=u3bd86663-b765-4&from=paste&height=675&id=uf453b64a&originHeight=1013&originWidth=1697&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=535823&status=done&style=none&taskId=udf885504-10ec-40ed-b0c2-8b8fe7ad9d2&title=&width=1131.3333333333333" referrerpolicy="no-referrer" alt="image.png"><br>这里的创建逻辑有点像注册中心，不仅会创建动态代理的 Stub，还会 set 完 Skel，最后将代理类封装起来成为 Target 类，然后 put 进 ObjectTable 的 hash 键值对表<br>然后再看看具体的Skel<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1708144202237-679b4dd2-de33-437f-849a-b2856ba6eb0b.png#averageHue=%232b3239&clientId=u3bd86663-b765-4&from=paste&height=161&id=udfd511f3&originHeight=242&originWidth=658&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=57484&status=done&style=none&taskId=u60de1c85-c197-44d2-abef-9461f1c9fe3&title=&width=438.6666666666667" referrerpolicy="no-referrer" alt="image.png"><br>重点关注 dispatch<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1708144177440-56bd6cc4-1456-4b34-b9a5-80a6318fb173.png#averageHue=%232e333c&clientId=u3bd86663-b765-4&from=paste&height=698&id=uc2689193&originHeight=1047&originWidth=1124&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=317719&status=done&style=none&taskId=u90639b13-5ff4-44ba-b060-7a3a40d6cd6&title=&width=749.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>两个 case，一个是 clean，一个是 dirty，两者的作用我们上面已经提到了，我们只看关于两者是否存在可攻击点</p>
 <p><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1708147792089-6cfb9ad8-f0ed-4c52-802d-9a1e6953a929.png#averageHue=%2330353f&clientId=u3bd86663-b765-4&from=paste&height=226&id=u877bd477&originHeight=339&originWidth=805&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=88694&status=done&style=none&taskId=u60371661-b5fc-4b76-8ca4-accb6d60335&title=&width=536.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1708147863525-620be98f-8b3b-4710-be25-8d38afc1bbb2.png#averageHue=%232f353e&clientId=u3bd86663-b765-4&from=paste&height=193&id=ua1e6a79b&originHeight=290&originWidth=853&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=70716&status=done&style=none&taskId=u1db255b4-6385-4664-8793-91793e2906e&title=&width=568.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>两者其实都存在被攻击的可能</p>
 
-      </div>
-      
-        <div class="prev-or-next">
-          <div class="post-foot-next">
-            
-          </div>
-          <div class="post-attach">
-            <span class="post-pubtime">
-              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-08-09 18:24:56
-            </span>
-            
-                  <span class="post-tags">
-                    <i class="iconfont icon-tags mr-10" title="标签"></i>
-                    
-                    <span class="span--tag mr-8">
-                      <a href="/tags/RMI/" title="RMI">
-                        #RMI
-                      </a>
-                    </span>
-                    
-                  </span>
-              
-          </div>
-          <div class="post-foot-prev">
-            
-              <a href="/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
-            
-          </div>
         </div>
-      
-    </div>
-    
-  <div id="btn-catalog" class="btn-catalog">
-    <i class="iconfont icon-catalog"></i>
-  </div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">目录</div>
-    <div class="catalog-content">
-      
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-RMI-%E4%BB%8B%E7%BB%8D"><span class="toc-text">1.RMI 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%9A%84%E8%BF%9C%E7%A8%8B%E5%AF%B9%E8%B1%A1%E5%A4%A7%E8%87%B4%E4%BB%8B%E7%BB%8D"><span class="toc-text">服务端的远程对象大致介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E7%9A%84%E5%A4%A7%E8%87%B4%E4%BB%8B%E7%BB%8D"><span class="toc-text">注册中心的大致介绍</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-text">2.源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C"><span class="toc-text">1.服务注册</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#0x01-%E8%BF%9C%E7%A8%8B%E5%AF%B9%E8%B1%A1%E5%88%9B%E5%BB%BA"><span class="toc-text">0x01 远程对象创建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x02-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E5%88%9B%E5%BB%BA"><span class="toc-text">0x02 注册中心创建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E6%9C%8D%E5%8A%A1%E5%8A%9F%E8%83%BD"><span class="toc-text">2.注册中心服务功能</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#0x01-%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C-bind"><span class="toc-text">0x01 服务注册-bind</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x02-%E6%9C%8D%E5%8A%A1%E5%AF%BB%E6%89%BE-lookup"><span class="toc-text">0x02 服务寻找-lookup</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x03-%E8%BF%9C%E7%A8%8B%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-text">0x03 远程方法调用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93"><span class="toc-text">原理流程总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E6%B5%81%E7%A8%8B"><span class="toc-text">网络通信流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-RMI-%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">3.RMI 攻击流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E6%94%BB%E5%87%BB%E5%AF%B9%E8%B1%A1%E4%B8%BA-Server"><span class="toc-text">0x01 攻击对象为 Server</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x01-%E6%81%B6%E6%84%8F%E5%8F%82%E6%95%B0%E6%94%BB%E5%87%BB"><span class="toc-text">1x01 恶意参数攻击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1x02-%E5%8A%A8%E6%80%81%E7%B1%BB%E5%8A%A0%E8%BD%BD"><span class="toc-text">1x02 动态类加载</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E6%94%BB%E5%87%BB%E5%AF%B9%E8%B1%A1%E4%B8%BA-Registry"><span class="toc-text">0x02 攻击对象为 Registry</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1x01-%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%94%BB%E5%87%BB-Registry"><span class="toc-text">1x01 客户端攻击 Registry</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1x02-Server-%E6%94%BB%E5%87%BB-Registry"><span class="toc-text">1x02 Server 攻击 Registry</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-%E6%94%BB%E5%87%BB%E5%AF%B9%E8%B1%A1%E4%B8%BA-Client"><span class="toc-text">0x03 攻击对象为 Client</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-%E6%94%BB%E5%87%BB%E5%AF%B9%E8%B1%A1%E4%B8%BA-DGC"><span class="toc-text">0x04 攻击对象为 DGC</span></a></li></ol></li></ol>
-      
-    </div>
-  </div>
-
-  
-<script src="/js/catalog.js"></script>
-
-
-
-
-    
-      <div class="comments-container">
-        
-
-
-
-
-
-
-
-      </div>
-    
-  </div>
-
 
         
-<div class="footer">
-  <div class="social">
-    <ul>
-      
-        <li>
-          
-              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
-                <i class="iconfont icon-github"></i>
-              </a>
-              
-        </li>
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>stoocea</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/post/RMIRe0.html">http://example.com/post/RMIRe0.html</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span></span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
         
-    </ul>
-  </div>
-  
-    
-    <div class="footer-more">
-      
-        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2025 Oranges</a>
-        
-    </div>
-  
-    
-    <div class="footer-more">
-      
-        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
-        
-    </div>
-  
-  
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/RMI/"># RMI</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/post/JavaAgent%E5%86%85%E5%AD%98%E9%A9%AC.html">JavaAgent型内存马分析</a>
+            
+            
+        </section>
+
+
+    </article>
 </div>
 
-      </div>
-
-      <div class="tools-bar">
-        <div class="back-to-top tools-bar-item hidden">
-  <a href="javascript: void(0)">
-    <i class="iconfont icon-chevronup"></i>
-  </a>
-</div>
-
-
-<script src="/js/backtotop.js"></script>
-
-
-
-        
-  <div class="search-icon tools-bar-item" id="search-icon">
-    <a href="javascript: void(0)">
-      <i class="iconfont icon-search"></i>
-    </a>
-  </div>
-
-  <div class="search-overlay hidden">
-    <div class="search-content" tabindex="0">
-      <div class="search-title">
-        <span class="search-icon-input">
-          <a href="javascript: void(0)">
-            <i class="iconfont icon-search"></i>
-          </a>
-        </span>
-        
-          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
-        
-        <span class="search-close-icon" id="search-close-icon">
-          <a href="javascript: void(0)">
-            <i class="iconfont icon-close"></i>
-          </a>
-        </span>
-      </div>
-      <div class="search-result" id="search-result"></div>
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© stoocea | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
     </div>
-  </div>
+</footer>
 
-  <script type="text/javascript">
-    var inputArea = document.querySelector("#search-input")
-    var searchOverlayArea = document.querySelector(".search-overlay")
-
-    inputArea.onclick = function() {
-      getSearchFile()
-      this.onclick = null
-    }
-
-    inputArea.onkeydown = function() {
-      if(event.keyCode == 13)
-        return false
-    }
-
-    function openOrHideSearchContent() {
-      let isHidden = searchOverlayArea.classList.contains('hidden')
-      if (isHidden) {
-        searchOverlayArea.classList.remove('hidden')
-        document.body.classList.add('hidden')
-        // inputArea.focus()
-      } else {
-        searchOverlayArea.classList.add('hidden')
-        document.body.classList.remove('hidden')
-      }
-    }
-
-    function blurSearchContent(e) {
-      if (e.target === searchOverlayArea) {
-        openOrHideSearchContent()
-      }
-    }
-
-    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
-    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
-    searchOverlayArea.addEventListener("click", blurSearchContent, false)
-
-    var searchFunc = function (path, search_id, content_id) {
-      'use strict';
-      var $input = document.getElementById(search_id);
-      var $resultContent = document.getElementById(content_id);
-      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
-      $.ajax({
-        // 0x01. load xml file
-        url: path,
-        dataType: "xml",
-        success: function (xmlResponse) {
-          // 0x02. parse xml file
-          var datas = $("entry", xmlResponse).map(function () {
-            return {
-              title: $("title", this).text(),
-              content: $("content", this).text(),
-              url: $("url", this).text()
-            };
-          }).get();
-          $resultContent.innerHTML = "";
-
-          $input.addEventListener('input', function () {
-            // 0x03. parse query to keywords list
-            var str = '<ul class=\"search-result-list\">';
-            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
-            $resultContent.innerHTML = "";
-            if (this.value.trim().length <= 0) {
-              return;
-            }
-            // 0x04. perform local searching
-            datas.forEach(function (data) {
-              var isMatch = true;
-              var content_index = [];
-              if (!data.title || data.title.trim() === '') {
-                data.title = "Untitled";
-              }
-              var orig_data_title = data.title.trim();
-              var data_title = orig_data_title.toLowerCase();
-              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
-              var data_content = orig_data_content.toLowerCase();
-              var data_url = data.url;
-              var index_title = -1;
-              var index_content = -1;
-              var first_occur = -1;
-              // only match artiles with not empty contents
-              if (data_content !== '') {
-                keywords.forEach(function (keyword, i) {
-                  index_title = data_title.indexOf(keyword);
-                  index_content = data_content.indexOf(keyword);
-
-                  if (index_title < 0 && index_content < 0) {
-                    isMatch = false;
-                  } else {
-                    if (index_content < 0) {
-                      index_content = 0;
-                    }
-                    if (i == 0) {
-                      first_occur = index_content;
-                    }
-                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
-                  }
-                });
-              } else {
-                isMatch = false;
-              }
-              // 0x05. show search results
-              if (isMatch) {
-                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
-                var content = orig_data_content;
-                if (first_occur >= 0) {
-                  // cut out 100 characters
-                  var start = first_occur - 20;
-                  var end = first_occur + 80;
-
-                  if (start < 0) {
-                    start = 0;
-                  }
-
-                  if (start == 0) {
-                    end = 100;
-                  }
-
-                  if (end > content.length) {
-                    end = content.length;
-                  }
-
-                  var match_content = content.substr(start, end);
-
-                  // highlight all keywords
-                  keywords.forEach(function (keyword) {
-                    var regS = new RegExp(keyword, "gi");
-                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
-                  });
-
-                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
-                }
-                str += "</li>";
-              }
-            });
-            str += "</ul>";
-            if (str.indexOf('<li>') === -1) {
-              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
-            }
-            $resultContent.innerHTML = str;
-          });
-        },
-        error: function(xhr, status, error) {
-          $resultContent.innerHTML = ""
-          if (xhr.status === 404) {
-            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
-          } else {
-            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
-          }
-        }
-      });
-      $(document).on('click', '#search-close-icon', function() {
-        $('#search-input').val('');
-        $('#search-result').html('');
-      });
-    }
-
-    var getSearchFile = function() {
-        var path = "/search.xml";
-        searchFunc(path, 'search-input', 'search-result');
-    }
-  </script>
-
-
-
-
-        
-  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-    <a href="javascript: void(0)">
-      <i id="theme-icon" class="iconfont icon-moon"></i>
-    </a>
-  </div>
-
-  
-<script src="/js/colorscheme.js"></script>
-
-
-
-
-
-        
-  
-    <div class="share-icon tools-bar-item">
-      <a href="javascript: void(0)" id="share-icon">
-        <i class="iconfont iconshare"></i>
-      </a>
-      <div class="share-content hidden">
-        
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + RMIRe0 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FRMIRe0.html + '" target="_blank" title="Twitter">
-            <i class="iconfont icon-twitter"></i>
-          </a>
-        
-        
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/RMIRe0.html" target="_blank" title="Facebook">
-            <i class="iconfont icon-facebooksquare"></i>
-          </a>
-        
-      </div>
     </div>
-  
-  
-<script src="/js/shares.js"></script>
+</body>
 
-
-
-      </div>
-    </div>
-  </body>
 </html>

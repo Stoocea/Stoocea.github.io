@@ -1,185 +1,229 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN">
 
-  <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="author" content="stoocea" />
-  <!-- Open Graph Description 简短摘要-->
-  
-  <!-- 用于搜索引擎的文章摘要 -->
-  
-  <meta name="description" content="time thicking away" />
-  
-  
-  
-  <title>
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="stoocea">
+
+
+
+    <meta name="description" content="time thicking away">
+
+
+
+<title>Jackson反序列化初步学习 | stoocea&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
     
-      Jackson反序列化初步学习 
-      
-      
-      |
+    <link rel="stylesheet" href="/css/style.css">
     
-     stoocea&#39;s blog
-  </title>
 
-  
-    <link rel="apple-touch-icon" href="/images/favicon.png">
-    <link rel="icon" href="/images/favicon.png">
-  
 
-  <!-- Raleway-Font -->
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
 
-  <!-- hexo site css -->
-  <link rel="stylesheet" href="/css/main.css" />
-  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
-  <!-- 代码块风格 -->
-  
+    <!-- scripts list from _config.yml -->
     
-<link rel="stylesheet" href="/css/figcaption/mac-block.css">
-
-  
-
-  <!-- jquery3.3.1 -->
-  
-    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
-  
-
-  <!-- fancybox -->
-  
-    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
-    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
-  
-  
-<script src="/js/fancybox.js"></script>
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
 
 
-  
 
-  
+    
+    
+        
+    
 
-  <script>
-    var html = document.documentElement
-    const colorMode = localStorage.getItem('color-mode')
-    if (colorMode) {
-      document.documentElement.setAttribute('color-mode', colorMode)
-    }
-  </script>
+
 <meta name="generator" content="Hexo 6.3.0"></head>
 
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
 
-  <body>
-    <div id="app">
-      <div class="header">
-  <div class="avatar">
-    <a href="/">
-      <!-- 头像取消懒加载，添加no-lazy -->
-      
-        <img src="/images/4DF91FDE2543D52C6A4B04B2C784E859.png" alt="">
-      
-    </a>
-    <div class="nickname"><a href="/">stoocea</a></div>
-  </div>
-  <div class="navbar">
-    <ul>
-      
-        <li class="nav-item" data-path="/">
-          <a href="/">Home</a>
-        </li>
-      
-        <li class="nav-item" data-path="/archives/">
-          <a href="/archives/">Archives</a>
-        </li>
-      
-        <li class="nav-item" data-path="/tags/">
-          <a href="/tags/">Tags</a>
-        </li>
-      
-        <li class="nav-item" data-path="/friends/">
-          <a href="/friends/">Friends</a>
-        </li>
-      
-        <li class="nav-item" data-path="/about/">
-          <a href="/about/">About</a>
-        </li>
-      
-    </ul>
-  </div>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">stoocea&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">stoocea&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
 </div>
 
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
 
-<script src="/js/activeNav.js"></script>
-
-
-
-      <div class="flex-container">
-        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
-<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
-
-
-  <!-- LaTex Display -->
-
-  
-    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
-  
-  <script>
-    MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-      }
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
     }
-  </script>
 
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
 
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
 
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
 
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
 
-  <!-- clipboard -->
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
 
-  
-    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
-  
-  
-<script src="/js/codeCopy.js"></script>
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Jackson反序列化初步学习</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">stoocea</a>
+                    
 
+                    
+                        <span class="post-time">
+                        Date: <a href="#">三月 18, 2024&nbsp;&nbsp;17:01:00</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Java/">Java</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
 
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
-  <div class="container post-details" id="post-details">
-    <div class="post-content">
-      <div class="post-title">Jackson反序列化初步学习</div>
-      <div class="post-attach">
-        <span class="post-pubtime">
-          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2024-08-09 18:23:41
-        </span>
-        
-              <span class="post-tags">
-                <i class="iconfont icon-tags mr-10" title="标签"></i>
-                
-                <span class="span--tag mr-8">
-                  <a href="/tags/JackSon/" title="JackSon">
-                    #JackSon
-                  </a>
-                </span>
-                
-              </span>
-          
-      </div>
-      <div class="markdown-body">
-        <p><a target="_blank" rel="noopener" href="https://drun1baby.top/2023/12/07/Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86/">https://drun1baby.top/2023/12/07/Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86/</a><br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12966?time__1311=mqmhqIx+ODkDCDlxGofDyAID8UuyaqRG+D&alichlgref=https://www.google.com/#toc-6">https://xz.aliyun.com/t/12966?time__1311&#x3D;mqmhqIx%2BODkDCDlxGofDyAID8UuyaqRG%2BD&amp;alichlgref&#x3D;https%3A%2F%2Fwww.google.com%2F#toc-6</a><br><a target="_blank" rel="noopener" href="http://www.mi1k7ea.com/2019/11/13/Jackson%E7%B3%BB%E5%88%97%E4%B8%80%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">http://www.mi1k7ea.com/2019/11/13/Jackson%E7%B3%BB%E5%88%97%E4%B8%80%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</a></p>
+        <div class="post-content">
+            <p><a target="_blank" rel="noopener" href="https://drun1baby.top/2023/12/07/Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86/">https://drun1baby.top/2023/12/07/Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86/</a><br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12966?time__1311=mqmhqIx+ODkDCDlxGofDyAID8UuyaqRG+D&alichlgref=https://www.google.com/#toc-6">https://xz.aliyun.com/t/12966?time__1311&#x3D;mqmhqIx%2BODkDCDlxGofDyAID8UuyaqRG%2BD&amp;alichlgref&#x3D;https%3A%2F%2Fwww.google.com%2F#toc-6</a><br><a target="_blank" rel="noopener" href="http://www.mi1k7ea.com/2019/11/13/Jackson%E7%B3%BB%E5%88%97%E4%B8%80%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">http://www.mi1k7ea.com/2019/11/13/Jackson%E7%B3%BB%E5%88%97%E4%B8%80%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</a></p>
 <h1 id="Jackson-基本使用"><a href="#Jackson-基本使用" class="headerlink" title="Jackson 基本使用"></a>Jackson 基本使用</h1><p>jackson 其实使用起来还是很广泛的，之前学习 springMVC 的时候就感受到过，它的默认解析器就是 jackson。</p>
 <h2 id="0x00-核心模块浅尝"><a href="#0x00-核心模块浅尝" class="headerlink" title="0x00 核心模块浅尝"></a>0x00 核心模块浅尝</h2><ul>
 <li>jackson-core：核心包，提供最重要的基于流模式的解析功能相关的 API，包括 JsonParser 和 JsonGenerator</li>
@@ -313,360 +357,75 @@
 
 
 
-      </div>
-      
-        <div class="prev-or-next">
-          <div class="post-foot-next">
-            
-              <a href="/post/FastJsonRe0.html" target="_self">
-                <i class="iconfont icon-chevronleft"></i>
-                <span>上一页</span>
-              </a>
-            
-          </div>
-          <div class="post-attach">
-            <span class="post-pubtime">
-              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2024-08-09 18:23:41
-            </span>
-            
-                  <span class="post-tags">
-                    <i class="iconfont icon-tags mr-10" title="标签"></i>
-                    
-                    <span class="span--tag mr-8">
-                      <a href="/tags/JackSon/" title="JackSon">
-                        #JackSon
-                      </a>
-                    </span>
-                    
-                  </span>
-              
-          </div>
-          <div class="post-foot-prev">
-            
-              <a href="/post/C3P0%E9%93%BE%E5%88%86%E6%9E%90.html" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
-            
-          </div>
         </div>
-      
-    </div>
-    
-  <div id="btn-catalog" class="btn-catalog">
-    <i class="iconfont icon-catalog"></i>
-  </div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">目录</div>
-    <div class="catalog-content">
-      
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Jackson-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-text">Jackson 基本使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E6%B5%85%E5%B0%9D"><span class="toc-text">0x00 核心模块浅尝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-text">0x01 环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">0x02 组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-ObjectMapper"><span class="toc-text">1x01 ObjectMapper</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%B0%86-json-%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%AF%B9%E8%B1%A1"><span class="toc-text">2x01 将 json 转化为对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E5%B0%86%E5%AF%B9%E8%B1%A1%E8%BD%AC%E5%8C%96%E4%B8%BA-json"><span class="toc-text">2x02 将对象转化为 json</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-JsonParser"><span class="toc-text">1x02 JsonParser</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-JsonGenerator"><span class="toc-text">1x03 JsonGenerator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-%E5%A4%9A%E6%80%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E2%80%93-JacksonPolymorphicDeserialization"><span class="toc-text">1x04 多态问题解决– JacksonPolymorphicDeserialization</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-DefaultTyping"><span class="toc-text">2x01 DefaultTyping</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-JAVA-LANG-OBJECT"><span class="toc-text">3x01 JAVA_LANG_OBJECT</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-OBJECT-AND-NON-CONCRETE"><span class="toc-text">3x02 OBJECT_AND_NON_CONCRETE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x03-NON-CONCRETE-AND-ARRAYS"><span class="toc-text">3x03 NON_CONCRETE_AND_ARRAYS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x04-NON-FINAL"><span class="toc-text">3x04 NON_FINAL</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-JsonTypeInfo%E6%B3%A8%E8%A7%A3"><span class="toc-text">2x02 @JsonTypeInfo注解</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-JsonTypeInfo-Id-NONE"><span class="toc-text">3x01 JsonTypeInfo.Id.NONE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-JsonTypeInfo-Id-CLASS"><span class="toc-text">3x02 JsonTypeInfo.Id.CLASS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#-1"><span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x03-JsonTypeInfo-Id-NAME"><span class="toc-text">3x03 JsonTypeInfo.Id.NAME</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x04-JsonTypeInfo-Id-CUSTOM"><span class="toc-text">3x04 JsonTypeInfo.Id.CUSTOM</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x05-JsonTypeInfo-Id-MINIMAL-CLASS"><span class="toc-text">3x05  JsonTypeInfo.Id.MINIMAL_CLASS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x05-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%AD%E7%B1%BB%E5%B1%9E%E6%80%A7%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-text">1x05 反序列化中类属性方法调用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-enableDefaultTyping"><span class="toc-text">2x01 enableDefaultTyping</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-JsonTypeInfo-Id-CLASS"><span class="toc-text">2x02 JsonTypeInfo.Id.CLASS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x03 工作流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">1x00 环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-BeanDeserialzer%E2%80%93%E7%B1%BB%E7%9A%84%E6%9E%84%E9%80%A0%E5%92%8C-set-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-text">1x01 BeanDeserialzer–类的构造和 set 方法调用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E8%A7%A3%E6%9E%90"><span class="toc-text">0x04 jackson 反序列化漏洞解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="toc-text">1x01 前置条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-CVE-2017-17485-ClassPathXmlApplicationContext%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">1x02  CVE-2017-17485  ClassPathXmlApplicationContext利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-text">2x01 影响版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">2x02 环境搭建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x03-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">2x03 流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-objectMapper%E2%80%93%E5%88%9D%E6%AD%A5%E5%A4%84%E7%90%86%E8%A7%A3%E6%9E%90"><span class="toc-text">3x01 objectMapper–初步处理解析</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-CPX-%E6%9C%89%E5%8F%82%E6%9E%84%E9%80%A0%E8%A7%A6%E5%8F%91"><span class="toc-text">3x02 CPX 有参构造触发</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
-      
-    </div>
-  </div>
-
-  
-<script src="/js/catalog.js"></script>
-
-
-
-
-    
-      <div class="comments-container">
-        
-
-
-
-
-
-
-
-      </div>
-    
-  </div>
-
 
         
-<div class="footer">
-  <div class="social">
-    <ul>
-      
-        <li>
-          
-              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
-                <i class="iconfont icon-github"></i>
-              </a>
-              
-        </li>
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>stoocea</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span></span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
         
-    </ul>
-  </div>
-  
-    
-    <div class="footer-more">
-      
-        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2025 Oranges</a>
-        
-    </div>
-  
-    
-    <div class="footer-more">
-      
-        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
-        
-    </div>
-  
-  
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/JackSon/"># JackSon</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/post/C3P0%E9%93%BE%E5%88%86%E6%9E%90.html">C3P0攻击链学习</a>
+            
+            
+            <a class="next" rel="next" href="/post/FastJsonRe0.html">FastJsonRe0</a>
+            
+        </section>
+
+
+    </article>
 </div>
 
-      </div>
-
-      <div class="tools-bar">
-        <div class="back-to-top tools-bar-item hidden">
-  <a href="javascript: void(0)">
-    <i class="iconfont icon-chevronup"></i>
-  </a>
-</div>
-
-
-<script src="/js/backtotop.js"></script>
-
-
-
-        
-  <div class="search-icon tools-bar-item" id="search-icon">
-    <a href="javascript: void(0)">
-      <i class="iconfont icon-search"></i>
-    </a>
-  </div>
-
-  <div class="search-overlay hidden">
-    <div class="search-content" tabindex="0">
-      <div class="search-title">
-        <span class="search-icon-input">
-          <a href="javascript: void(0)">
-            <i class="iconfont icon-search"></i>
-          </a>
-        </span>
-        
-          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
-        
-        <span class="search-close-icon" id="search-close-icon">
-          <a href="javascript: void(0)">
-            <i class="iconfont icon-close"></i>
-          </a>
-        </span>
-      </div>
-      <div class="search-result" id="search-result"></div>
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© stoocea | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
     </div>
-  </div>
+</footer>
 
-  <script type="text/javascript">
-    var inputArea = document.querySelector("#search-input")
-    var searchOverlayArea = document.querySelector(".search-overlay")
-
-    inputArea.onclick = function() {
-      getSearchFile()
-      this.onclick = null
-    }
-
-    inputArea.onkeydown = function() {
-      if(event.keyCode == 13)
-        return false
-    }
-
-    function openOrHideSearchContent() {
-      let isHidden = searchOverlayArea.classList.contains('hidden')
-      if (isHidden) {
-        searchOverlayArea.classList.remove('hidden')
-        document.body.classList.add('hidden')
-        // inputArea.focus()
-      } else {
-        searchOverlayArea.classList.add('hidden')
-        document.body.classList.remove('hidden')
-      }
-    }
-
-    function blurSearchContent(e) {
-      if (e.target === searchOverlayArea) {
-        openOrHideSearchContent()
-      }
-    }
-
-    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
-    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
-    searchOverlayArea.addEventListener("click", blurSearchContent, false)
-
-    var searchFunc = function (path, search_id, content_id) {
-      'use strict';
-      var $input = document.getElementById(search_id);
-      var $resultContent = document.getElementById(content_id);
-      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
-      $.ajax({
-        // 0x01. load xml file
-        url: path,
-        dataType: "xml",
-        success: function (xmlResponse) {
-          // 0x02. parse xml file
-          var datas = $("entry", xmlResponse).map(function () {
-            return {
-              title: $("title", this).text(),
-              content: $("content", this).text(),
-              url: $("url", this).text()
-            };
-          }).get();
-          $resultContent.innerHTML = "";
-
-          $input.addEventListener('input', function () {
-            // 0x03. parse query to keywords list
-            var str = '<ul class=\"search-result-list\">';
-            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
-            $resultContent.innerHTML = "";
-            if (this.value.trim().length <= 0) {
-              return;
-            }
-            // 0x04. perform local searching
-            datas.forEach(function (data) {
-              var isMatch = true;
-              var content_index = [];
-              if (!data.title || data.title.trim() === '') {
-                data.title = "Untitled";
-              }
-              var orig_data_title = data.title.trim();
-              var data_title = orig_data_title.toLowerCase();
-              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
-              var data_content = orig_data_content.toLowerCase();
-              var data_url = data.url;
-              var index_title = -1;
-              var index_content = -1;
-              var first_occur = -1;
-              // only match artiles with not empty contents
-              if (data_content !== '') {
-                keywords.forEach(function (keyword, i) {
-                  index_title = data_title.indexOf(keyword);
-                  index_content = data_content.indexOf(keyword);
-
-                  if (index_title < 0 && index_content < 0) {
-                    isMatch = false;
-                  } else {
-                    if (index_content < 0) {
-                      index_content = 0;
-                    }
-                    if (i == 0) {
-                      first_occur = index_content;
-                    }
-                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
-                  }
-                });
-              } else {
-                isMatch = false;
-              }
-              // 0x05. show search results
-              if (isMatch) {
-                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
-                var content = orig_data_content;
-                if (first_occur >= 0) {
-                  // cut out 100 characters
-                  var start = first_occur - 20;
-                  var end = first_occur + 80;
-
-                  if (start < 0) {
-                    start = 0;
-                  }
-
-                  if (start == 0) {
-                    end = 100;
-                  }
-
-                  if (end > content.length) {
-                    end = content.length;
-                  }
-
-                  var match_content = content.substr(start, end);
-
-                  // highlight all keywords
-                  keywords.forEach(function (keyword) {
-                    var regS = new RegExp(keyword, "gi");
-                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
-                  });
-
-                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
-                }
-                str += "</li>";
-              }
-            });
-            str += "</ul>";
-            if (str.indexOf('<li>') === -1) {
-              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
-            }
-            $resultContent.innerHTML = str;
-          });
-        },
-        error: function(xhr, status, error) {
-          $resultContent.innerHTML = ""
-          if (xhr.status === 404) {
-            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
-          } else {
-            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
-          }
-        }
-      });
-      $(document).on('click', '#search-close-icon', function() {
-        $('#search-input').val('');
-        $('#search-result').html('');
-      });
-    }
-
-    var getSearchFile = function() {
-        var path = "/search.xml";
-        searchFunc(path, 'search-input', 'search-result');
-    }
-  </script>
-
-
-
-
-        
-  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-    <a href="javascript: void(0)">
-      <i id="theme-icon" class="iconfont icon-moon"></i>
-    </a>
-  </div>
-
-  
-<script src="/js/colorscheme.js"></script>
-
-
-
-
-
-        
-  
-    <div class="share-icon tools-bar-item">
-      <a href="javascript: void(0)" id="share-icon">
-        <i class="iconfont iconshare"></i>
-      </a>
-      <div class="share-content hidden">
-        
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FJackson%25E5%258F%258D%25E5%25BA%258F%25E5%2588%2597%25E5%258C%2596.html + '" target="_blank" title="Twitter">
-            <i class="iconfont icon-twitter"></i>
-          </a>
-        
-        
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" target="_blank" title="Facebook">
-            <i class="iconfont icon-facebooksquare"></i>
-          </a>
-        
-      </div>
     </div>
-  
-  
-<script src="/js/shares.js"></script>
+</body>
 
-
-
-      </div>
-    </div>
-  </body>
 </html>
