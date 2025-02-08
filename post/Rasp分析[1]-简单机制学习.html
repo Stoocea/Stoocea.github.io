@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="stoocea">
+
+
+
+    <meta name="description" content="time thicking away">
+
+
+
+<title>Rasp分析[1] | stoocea&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">stoocea&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">stoocea&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Rasp分析[1]</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">stoocea</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">二月 8, 2025&nbsp;&nbsp;11:00:00</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Rasp/">Rasp</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这篇用于记录RASP实现的具体入门的实现code以及原理的分析学习，性质上更属于笔记。参考的文章在文末。</p>
+<p>‍</p>
+<h1 id="0x00-环境配置"><a href="#0x00-环境配置" class="headerlink" title="0x00 环境配置"></a>0x00 环境配置</h1><p>RASP本质上是一份Agent，当前用于测试和学习的环境是由一份RASP-Agent以及一份测试环境决定的。这里的测试环境可以自己写一个漏洞环境，也可以是直接采用网上的java漏洞靶场项目，只要有漏洞即可，主要是用来模拟生产环境。</p>
+<h2 id="1x01-RASP-Agent初步结构"><a href="#1x01-RASP-Agent初步结构" class="headerlink" title="1x01 RASP Agent初步结构"></a>1x01 RASP Agent初步结构</h2><p>首先是Agent的部分</p>
+<p>对于一个Agent有两种方式来处理字节码，一种是在主程序启动之前，也就是main方法执行前，我们能够通过编写premain方法，指定相关的ClassFileTransformer实现main函数执行前（整个程序执行前）修改字节码。还有一种是通过编写agentmain方法，依旧是利用ClassFileTransformer的transform实现已运行JVM中的字节码修改。</p>
+<p>先采用premain的方式。</p>
+<p>在一个大的项目中创建名为agent的maven项目，然后按照如下结构写入项目：</p>
+<p><img src="/images/Rasp/0x01/assets/image-20250206113301-wmye2h7.png" alt="image">​</p>
+<p>先写一份transformer,具体是继承ClassFileTransformer，然后在实现的transform中写自己想要实现的功能。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.org.javaweb.agent;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.ClassFileTransformer;</span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.IllegalClassFormatException;</span><br><span class="line"><span class="keyword">import</span> java.security.ProtectionDomain;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AgentTransform</span> <span class="keyword">implements</span> <span class="title class_">ClassFileTransformer</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">byte</span>[] transform(ClassLoader loader, String className, Class&lt;?&gt; classBeingRedefined, ProtectionDomain protectionDomain, <span class="type">byte</span>[] classfileBuffer) <span class="keyword">throws</span> IllegalClassFormatException &#123;</span><br><span class="line">        className=className.replace(<span class="string">&#x27;/&#x27;</span>, <span class="string">&#x27;.&#x27;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;load Class:&quot;</span>+className);</span><br><span class="line">        <span class="keyword">return</span> classfileBuffer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>之后编写premain方法，添加上我们自定义的Transformer</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.org.javaweb.agent;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.Instrumentation;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Agent</span> &#123;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">premain</span><span class="params">(<span class="keyword">final</span> String agentArgs, <span class="keyword">final</span> Instrumentation inst)</span> &#123;</span><br><span class="line">    inst.addTransformer(<span class="keyword">new</span> <span class="title class_">AgentTransform</span>());</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>下一步打包生成agent.jar，在此之前先把MANIFEST文件写好。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Manifest-Version: 1.0</span><br><span class="line">Can-Retransform-Classes: true</span><br><span class="line">Can-Redefine-Classes: true</span><br><span class="line">Can-Set-Native-Method-Prefix: true</span><br><span class="line">Premain-Class: cn.org.javaweb.agent.Agent</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>推荐是idea里面自定义个maven启动项，能够一键重新编译生成jar，方便后续调试。</p>
+<p><img src="/images/Rasp/0x01/assets/image-20250206142513-t8j6tw9.png" alt="image">​</p>
+<p>‍</p>
+<h2 id="1x02-漏洞环境案例"><a href="#1x02-漏洞环境案例" class="headerlink" title="1x02 漏洞环境案例"></a>1x02 漏洞环境案例</h2><p>然后我们可以随意找一个漏洞靶场，或者像我一样自建一个springboot的项目，之后自己编写漏洞环境方便调试。</p>
+<p>我这里的做法是首先先定义一个maven的application，也是将整个springboot项目重新编译和打包。然后再自定义一个大的application作为启动springboot项目并且添加vm参数。</p>
+<p><img src="/images/Rasp/0x01/assets/image-20250206143543-fepol5y.png" alt="image">​</p>
+<p>这里没有vmoptions的选项的话，在Modify options中可以找到。之后是springboot的打包</p>
+<p><img src="/images/Rasp/0x01/assets/image-20250206143554-b8klvwd.png" alt="image">​</p>
+<p>在大的application启动项的vm options中添加如下选项</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Dfile.encoding=UTF-<span class="number">8</span> -noverify -Xbootclasspath/p:H:\ASecuritySearch\RaspLearn\javawebAgent\agent\target\agent.jar -javaagent:H:\ASecuritySearch\RaspLearn\javawebAgent\agent\target\agent.jar</span><br></pre></td></tr></table></figure>
+
+<p>这里的启动参数有一个可能没见过—Xbootclasspath&#x2F;p，主要的作用是将我们的指定路径中的类加入项目中，避免出现类缺失的情况（在OpenRasp的下载指令中也能够见到）</p>
+<p>然后就可以开始调试了，直接启动整个application，由于我们指定了启动参数-javaagent，所以jvm会启动 Instrumentation 的代理程序，调用到premain中指定的transformer的transform逻辑，这里我们写的逻辑是打印出transform方法中第一个形参–className。只要有新的类加载，transform就会被触发，将当前加载的类的全类名传入，进而我们能够打印该类的名称。下面所有打印出来的全类名，就是springboot整个项目启动之后的要加载到的类</p>
+<p><img src="/images/Rasp/0x01/assets/image-20250206143717-qigc3uc.png" alt="image">​</p>
+<p>但是这么做就存在一个分歧，由于我们采用的agent形式是premain，所以只能在项目启动的时候指定javaagent参数进行启动。也就是说如果此前项目并没有采用Rasp，就需要重启。这是不太符合实际的。另一种就是agentmain，直接通过遍历jvm之后attach到对应的进程中，这么做也有一个问题，就是如果HOOK点更新，那么就需要重新Attach，但是原本的我们修改过的字节码又会被修改一次，造成重复告警（JVM进程保护要求不能够自由修改类），增加业务压力。</p>
+<p>下面的例子中还是首先通过premain的方式进行学习。</p>
+<h1 id="0x01-RASP机制探究"><a href="#0x01-RASP机制探究" class="headerlink" title="0x01 RASP机制探究"></a>0x01 RASP机制探究</h1><h2 id="1x01-premain"><a href="#1x01-premain" class="headerlink" title="1x01 premain"></a>1x01 premain</h2><p>用一个premain的例子来感受一下RASP的运行机制。</p>
+<p>在上一节的最后我提到了transform方法的触发时机—当一个新类被加载时。实际上transform方法还有两种情况下会被触发，总结为：</p>
+<ol>
+<li>新的 class 被加载。（已经加载过的就不会触发transform了，这一点在agentmain中有体现）</li>
+<li>Instrumentation.redefineClasses 显式调用。</li>
+<li>addTransformer 第二个参数为 true 时，Instrumentation.retransformClasses 显式调用</li>
+</ol>
+<p>第一种和第三种都是我们之后会遇到的，premain能够直接利用到第一条特性，agentmain方式需要我们利用第三种特性。</p>
+<p>那既然一个类被加载时就会触发transform，如果我们在transform写一段类名判断，为常见的恶意类的话，就对其进行拦截和丢弃处理，是不是就和自己心里想的那个RASP实现的功能一样？虽然具体到产品中这么想还是肤浅了，这里只是先做测试用例。</p>
+<p>我们知道Runtime.getRuntime.exec的最终是通过构建<code>ProcessBuilder</code>​类中所需的命令参数以及本身，调用其start方法实现命令执行的。假如此时项目中没有任何正常逻辑需要调用到系统命令，我想在自己的项目中实现HOOK掉外部调用Runtime命令执行的可能，就可以这么写transform（提前准备好一些ASM和字节码的知识，如果看不懂字节码可以随便找一篇字节码的文章或者表格对照着看就行）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.org.javaweb.agent;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.org.javaweb.Visitor.ProcessorBuilderVisitor;</span><br><span class="line"><span class="keyword">import</span> org.objectweb.asm.ClassReader;</span><br><span class="line"><span class="keyword">import</span> org.objectweb.asm.ClassVisitor;</span><br><span class="line"><span class="keyword">import</span> org.objectweb.asm.ClassWriter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.ClassFileTransformer;</span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.IllegalClassFormatException;</span><br><span class="line"><span class="keyword">import</span> java.security.ProtectionDomain;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AgentTransform</span> <span class="keyword">implements</span> <span class="title class_">ClassFileTransformer</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">byte</span>[] transform(ClassLoader loader, String className, Class&lt;?&gt; classBeingRedefined, ProtectionDomain protectionDomain, <span class="type">byte</span>[] classfileBuffer) <span class="keyword">throws</span> IllegalClassFormatException &#123;</span><br><span class="line">        className=className.replace(<span class="string">&#x27;/&#x27;</span>, <span class="string">&#x27;.&#x27;</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (className.contains(<span class="string">&quot;ProcessBuilder&quot;</span>)) &#123;</span><br><span class="line"></span><br><span class="line">                System.out.println(<span class="string">&quot;load Class&quot;</span>+className);</span><br><span class="line">                <span class="comment">//此时新的ProcessBuilder被加载，ASM使用的规则是首要声明ClassReader，来获取类定义内容</span></span><br><span class="line">                ClassReader classReader=<span class="keyword">new</span> <span class="title class_">ClassReader</span>(classfileBuffer);</span><br><span class="line">                <span class="comment">//如果需要对类中的内容进行修改，就需要声明ClassWriter它是继承于ClassReader的</span></span><br><span class="line">                ClassWriter classWriter=<span class="keyword">new</span> <span class="title class_">ClassWriter</span>(classReader, ClassWriter.COMPUTE_MAXS);</span><br><span class="line">                <span class="comment">//具体的访问操作需要通过自建visitor去实现，visitor的构建又必须传入classWriter，以访问者的身份进入类结构进行操作</span></span><br><span class="line">                <span class="comment">//具体对类操作中，移步到ProcessorBuilderVisitor的visitMethod方法</span></span><br><span class="line">                ClassVisitor ProcessorBuilderVisitor= <span class="keyword">new</span> <span class="title class_">ProcessorBuilderVisitor</span>(classWriter);</span><br><span class="line"></span><br><span class="line">                <span class="comment">//将transform处理后的当前加载类的classBuffer返回。classfileBuffer整个过程中可以通过ASM的classWriter.toByteArray();进行转化得到。</span></span><br><span class="line">                <span class="comment">//ClassWriter实际上会接收到ClassVisitor操作后的字节码，所以一般思路是最终都通过ClassWriter.toByteArray转化获得</span></span><br><span class="line">                classReader.accept(ProcessorBuilderVisitor, ClassReader.EXPAND_FRAMES);</span><br><span class="line">                classfileBuffer=classWriter.toByteArray();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//System.out.println(&quot;load Class:&quot;+className);</span></span><br><span class="line">        <span class="comment">//将transform处理后的classBuffer返回</span></span><br><span class="line">        <span class="keyword">return</span> classfileBuffer;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>抽出重点来讲一下：</p>
+<p>ClassReader，ClassWriter，ClassVisitor都是ASM中的接口，他们的一整套逻辑都已经写在注释里面了，我们最终是通过ClassVisitor的访问者接口去拦截具体的方法或者变量，之后再实现拦截逻辑。而当前样例代码块中总的实现目的就是为了能够拦截到ProcessBuilder类的新加载，之后具体的对方法的拦截和逻辑改写要看ProcessorBuilderVisitor，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.org.javaweb.Visitor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.org.javaweb.Hook.ProcessBuilderHook;</span><br><span class="line"><span class="keyword">import</span> org.objectweb.asm.ClassVisitor;</span><br><span class="line"><span class="keyword">import</span> org.objectweb.asm.MethodVisitor;</span><br><span class="line"><span class="keyword">import</span> org.objectweb.asm.Opcodes;</span><br><span class="line"><span class="keyword">import</span> org.objectweb.asm.commons.AdviceAdapter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProcessorBuilderVisitor</span> <span class="keyword">extends</span> <span class="title class_">ClassVisitor</span> <span class="keyword">implements</span> <span class="title class_">Opcodes</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ProcessorBuilderVisitor</span><span class="params">(ClassVisitor cv)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(Opcodes.ASM5, cv);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> MethodVisitor <span class="title function_">visitMethod</span><span class="params">(<span class="type">int</span> access, String name, String desc, String signature, String[] exceptions)</span> &#123;</span><br><span class="line">        <span class="comment">//一般ASM中对类方法进行修改都是利用MethodVisitor及其接口，也可以采用AdviceAdapter实现</span></span><br><span class="line">        <span class="type">MethodVisitor</span> <span class="variable">mv</span> <span class="operator">=</span> <span class="built_in">super</span>.visitMethod(access, name, desc, signature, exceptions);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//拦截到了ProcessBuilder的start方法执行，继续往下对start方法的操作字节码进行修改</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&quot;start&quot;</span>.equals(name) &amp;&amp;<span class="string">&quot;()Ljava/lang/Process;&quot;</span>.equals(desc)) &#123;</span><br><span class="line">            System.out.println(name +<span class="string">&quot; 方法描述符为 ：&quot;</span>+desc);</span><br><span class="line">			<span class="comment">//返回新的MethodVisitor也是可以的，两者是字符类关系，只是MethodVisitor的实例化方法只有前面两个参数需要传入</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">AdviceAdapter</span>(Opcodes.ASM5,mv, access, name, desc) &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">visitCode</span><span class="params">()</span> &#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;visitCode&quot;</span>);</span><br><span class="line">                    <span class="comment">//加载到的当前方法的局部变量表的索引为0的变量，这里索引为0的及代表当前ProcessBuilder实例本身</span></span><br><span class="line">                    mv.visitVarInsn(ALOAD, <span class="number">0</span>);</span><br><span class="line">                    <span class="comment">//开始获取形参变量，名为command，类型为List。这里ProcessBuilder中存储的command字段就是exec方法传入的命令</span></span><br><span class="line">                    mv.visitFieldInsn(GETFIELD, <span class="string">&quot;java/lang/ProcessBuilder&quot;</span>, <span class="string">&quot;command&quot;</span>, <span class="string">&quot;Ljava/util/List;&quot;</span>);</span><br><span class="line">                    <span class="comment">//在当前方法出生成调用方法的指令，也就是插入ProcessBuilderHook.start(),参数由于我们刚才已经调用visitFieldInsn，command参数会直接被送入Hook方法</span></span><br><span class="line">                    mv.visitMethodInsn(INVOKESTATIC, ProcessBuilderHook.class.getName().replace(<span class="string">&quot;.&quot;</span>, <span class="string">&quot;/&quot;</span>), <span class="string">&quot;Hook&quot;</span>, <span class="string">&quot;(Ljava/util/List;)V&quot;</span>, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">                    <span class="comment">//整体的效果其实就是相当于给当前加载的ProcessBuilder类的start方法加上ProcessBuilderHook.Hook(this.command)这段代码</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mv;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关键部分就是对于方法名是否为start的判断开始了，大部分内容都是用于return一个新定义的MethodVisitor（AdviceAdapter），用来具体对字节码进行操作。注意<code>visitVarInsn</code>​ <code>visitFieldInsnvisitMethodInsn</code>​等一系列操作实际上是对于ProcessBuilder中start方法所表示字节码区进行改写了。最终实现的目的注释中也解释清楚了。</p>
+<p>然后是ProcessBuilderHook的内容。我所采用的HOOK方式是直接抛出异常了，这样有什么不好呢？如果当前项目确实是要利用到一些正常的系统命令执行的接口，如果按照我这么HOOK会出现格杀勿论的情况，所以另一种合理但是有风险的方法是给予黑名单或白名单，因为我们已经获取到了当前Command内容，进行判断之后HOOK即可。因为是演示，所以可能不会注意很多。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.org.javaweb.Hook;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProcessBuilderHook</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">Hook</span><span class="params">(List&lt;String&gt; commands)</span> &#123;</span><br><span class="line">        String[] commandArr = commands.toArray(<span class="keyword">new</span> <span class="title class_">String</span>[commands.size()]);</span><br><span class="line">        System.out.println(Arrays.toString(commandArr));</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">SecurityException</span>(<span class="string">&quot;Blocked dangerous MethodCall: start(\&quot;&quot;</span> + commands+<span class="string">&quot;\&quot;&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>之后就是将当前RASPAgent以及用来测试的项目进行重新打包，执行最开始我提到的那个大的项目，也就是<code>-Dfile.encoding=UTF-8 -noverify -Xbootclasspath/p:H:\ASecuritySearch\RaspLearn\javawebAgent\agent\target\agent.jar -javaagent:H:\ASecuritySearch\RaspLearn\javawebAgent\agent\target\agent.jar</code>​</p>
+<p>这里用来测试的环境代码也很简单，直接Runtime执行一遍</p>
+<p><img src="/images/Rasp/0x01/assets/image-20250206220633-bqipwc8.png" alt="image">​</p>
+<p>传参过去之后执行，控制台打印如下信息，验证Runtime的exec确实是被HOOK了：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">load Classjava.lang.ProcessBuilder</span><br><span class="line">start 方法描述符为 ：()Ljava/lang/Process;</span><br><span class="line">visitCode</span><br><span class="line">[calc]</span><br><span class="line">2025-02-06 21:55:14.419 ERROR 5960 --- [nio-8080-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() <span class="keyword">for</span> servlet [dispatcherServlet] <span class="keyword">in</span> context with path [] threw exception [Request processing failed; nested exception is java.lang.SecurityException: Blocked dangerous MethodCall: start(<span class="string">&quot;[calc]&quot;</span>] with root cause</span><br><span class="line"></span><br><span class="line">java.lang.SecurityException: Blocked dangerous MethodCall: start(<span class="string">&quot;[calc]&quot;</span></span><br><span class="line">	at cn.org.javaweb.Hook.ProcessBuilderHook.Hook(ProcessBuilderHook.java:10) ~[na:1.0.0]</span><br><span class="line">	.....省略大部分无关调用栈信息</span><br><span class="line">	at java.lang.Thread.run(Thread.java:748) [na:1.8.0_202]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="1x02-agentmain"><a href="#1x02-agentmain" class="headerlink" title="1x02 agentmain"></a>1x02 agentmain</h2><p>其实大部分的实现原理已经在premain中粗浅的分析了一遍，agentmain是换了一种形式的加载方式。首先回忆一下在环境搭建的结尾，我留了一个描述：</p>
+<blockquote>
+<p>但是这么做就存在一个分歧，由于我们采用的agent形式是premain，所以只能在项目启动的时候指定javaagent参数进行启动。也就是说如果此前项目并没有采用Rasp，就需要重启。这是不太符合实际的。另一种就是agentmain，直接通过遍历jvm之后attach到对应的进程中，这么做也有一个问题，就是如果HOOK点更新，那么就需要重新Attach，但是原本的我们修改过的字节码又会被修改一次，造成重复告警（JVM进程保护要求不能够自由修改类），增加业务压力。</p>
+</blockquote>
+<p>相信实践完premain的应该对这段话会有新的理解。agentmain方式为了能够具体插入HOOK点，有可能是要对已经在运行的类进行方法的增添和删除的。如果此前机器并没有被Runtimeexec执行过，恶意类并没有被JVM加载，此时agentmain的Hook仍然有效，也就是新加载类之后触发transform如果之前已经有正常业务或者说已经被打过RuntimeRCE了，那此时的Processorbuilder已经被JVM加载过了，agentmain再想去Hook就只能去修改已经加载过的类内容，这个时候就会遇到JVM的线程保护机制，导致修改失败（正常的在方法块内修改还是没问题的）以及报错。</p>
+<p>premain其实也是如此，但是premain增添或者说直接修改恶意类的时机肯定是在被恶意执行前（和程序一条命令同时启动的），还没有被JVM加载，所以能够直接修改。</p>
+<p>如何解决agentmain绕过JVM线程保护的问题，这里先按下不表，问题一个一个解决,我们先看看正常思路下agentmain该如何加载进对应的JVM</p>
+<p>首先是正常的agentmain方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.org.javaweb.agent;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.Instrumentation;</span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.UnmodifiableClassException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Agent</span> &#123;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">agentmain</span><span class="params">(<span class="keyword">final</span> String agentArgs, <span class="keyword">final</span> Instrumentation inst)</span><span class="keyword">throws</span> UnmodifiableClassException &#123;</span><br><span class="line">   AgentTransform agentTransform= <span class="keyword">new</span> <span class="title class_">AgentTransform</span>(inst);</span><br><span class="line">   <span class="comment">//如果是agentmain模式就开启，否则注释</span></span><br><span class="line">   agentTransform.retransform();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>以及具体的Transformer，这里我自定义的是AgentTransform</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.org.javaweb.agent;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.org.javaweb.Visitor.ProcessorBuilderVisitor;</span><br><span class="line"><span class="keyword">import</span> org.objectweb.asm.ClassReader;</span><br><span class="line"><span class="keyword">import</span> org.objectweb.asm.ClassVisitor;</span><br><span class="line"><span class="keyword">import</span> org.objectweb.asm.ClassWriter;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.ClassFileTransformer;</span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.IllegalClassFormatException;</span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.Instrumentation;</span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.UnmodifiableClassException;</span><br><span class="line"><span class="keyword">import</span> java.security.ProtectionDomain;</span><br><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AgentTransform</span> <span class="keyword">implements</span> <span class="title class_">ClassFileTransformer</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Instrumentation inst;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">AgentTransform</span><span class="params">(Instrumentation inst)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.inst = inst;</span><br><span class="line">        inst.addTransformer(<span class="built_in">this</span>, <span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">byte</span>[] transform(ClassLoader loader, String className, Class&lt;?&gt; classBeingRedefined, ProtectionDomain protectionDomain, <span class="type">byte</span>[] classfileBuffer) <span class="keyword">throws</span> IllegalClassFormatException &#123;</span><br><span class="line">        className=className.replace(<span class="string">&#x27;/&#x27;</span>, <span class="string">&#x27;.&#x27;</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (className.contains(<span class="string">&quot;ProcessBuilder&quot;</span>)) &#123;</span><br><span class="line"></span><br><span class="line">                System.out.println(<span class="string">&quot;load Class&quot;</span>+className);</span><br><span class="line">                <span class="comment">//此时新的ProcessBuilder被加载，ASM使用的规则是首要声明ClassReader，来获取类定义内容</span></span><br><span class="line">                ClassReader classReader=<span class="keyword">new</span> <span class="title class_">ClassReader</span>(classfileBuffer);</span><br><span class="line">                <span class="comment">//如果需要对类中的内容进行修改，就需要声明ClassWriter它是继承于ClassReader的</span></span><br><span class="line">                ClassWriter classWriter=<span class="keyword">new</span> <span class="title class_">ClassWriter</span>(classReader, ClassWriter.COMPUTE_MAXS);</span><br><span class="line">                <span class="comment">//具体的访问操作需要通过自建visitor去实现，visitor的构建又必须传入classWriter，以访问者的身份进入类结构进行操作</span></span><br><span class="line">                <span class="comment">//具体对类操作中，移步到ProcessorBuilderVisitor的visitMethod方法</span></span><br><span class="line">                ClassVisitor ProcessorBuilderVisitor= <span class="keyword">new</span> <span class="title class_">ProcessorBuilderVisitor</span>(classWriter);</span><br><span class="line"></span><br><span class="line">                <span class="comment">//将transform处理后的当前加载类的classBuffer返回。classfileBuffer整个过程中可以通过ASM的classWriter.toByteArray();进行转化得到。</span></span><br><span class="line">                <span class="comment">//ClassWriter实际上会接收到ClassVisitor操作后的字节码，所以一般思路是最终都通过ClassWriter.toByteArray转化获得</span></span><br><span class="line">                classReader.accept(ProcessorBuilderVisitor, ClassReader.EXPAND_FRAMES);</span><br><span class="line">                classfileBuffer=classWriter.toByteArray();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> classfileBuffer;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//采用Agentmain模式时开启</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">retransform</span><span class="params">()</span> <span class="keyword">throws</span> UnmodifiableClassException &#123;</span><br><span class="line">        LinkedList&lt;Class&gt; retransformClasses = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;Class&gt;();</span><br><span class="line">        Class[] loadedClasses = inst.getAllLoadedClasses();</span><br><span class="line">        <span class="keyword">for</span> (Class clazz : loadedClasses) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">&quot;java.lang.ProcessBuilder&quot;</span>.equals(clazz.getName())&amp;&amp; inst.isModifiableClass(clazz)) &#123;</span><br><span class="line">                <span class="comment">//System.out.println(&quot;retransforming......&quot;);</span></span><br><span class="line">                inst.retransformClasses(clazz);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我前文提到过，ClassFileTransformer类的transform方法触发有三种情况，这里为了帮助回忆，再列一遍:</p>
+<ol>
+<li>新的 class 被加载。</li>
+<li>Instrumentation.redefineClasses 显式调用。</li>
+<li>addTransformer 第二个参数为 true 时，Instrumentation.retransformClasses 显式调用。</li>
+</ol>
+<p>第三种对应上了我在自定义Transformer中写的retransform()方法，首先先将已加载类全部遍历一遍之后，找出ProcessBuilder，并且判断它是否可以被修改，如果可以的话就调用nst.retransformClasses(clazz);对其进行修改，进行调用到transform的逻辑。之后就是相同的给start方法块字节码加上Hook逻辑。</p>
+<p>agentRasp部分写完之后还要写一个Attach的API用来将agent注入对应的JVM中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.sun.tools.attach.VirtualMachine;</span><br><span class="line"><span class="keyword">import</span> com.sun.tools.attach.VirtualMachineDescriptor;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AgentMainStart</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        List&lt;VirtualMachineDescriptor&gt; list = VirtualMachine.list();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 遍历列表</span></span><br><span class="line">        <span class="keyword">for</span> (VirtualMachineDescriptor descriptor : list) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 根据进程名字获取进程ID, 并使用 loadAgent 注入进程</span></span><br><span class="line">            <span class="keyword">if</span> (descriptor.displayName().endsWith(<span class="string">&quot;TestSpringbootApplication&quot;</span>)) &#123;</span><br><span class="line">                <span class="type">VirtualMachine</span> <span class="variable">virtualMachine</span> <span class="operator">=</span> VirtualMachine.attach(descriptor.id());</span><br><span class="line">                virtualMachine.loadAgent(<span class="string">&quot;H:\\ASecuritySearch\\RaspLearn\\javawebAgent\\agent\\target\\agent-jar-with-dependencies.jar&quot;</span>, <span class="string">&quot;Attach!&quot;</span>);</span><br><span class="line">                System.out.println(<span class="string">&quot;ok&quot;</span>);</span><br><span class="line">                virtualMachine.detach();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>具体实施的话可以参考我idea的application的设置。</p>
+<p><img src="/images/Rasp/0x01/assets/image-20250207150157-mkb63n3.png" alt="image">​</p>
+<p>运行完这个springboot的application，就可以执行Attach API进行agent的注入了。但是为什么启动选项里面还是设置了Xbootclasspath呢？先别急，这里我们设置之后才能正常的体验到Agentmain的拦截的功能，主要还是Hook的功能API报错java.lang.NoClassDefFoundError的问题，也是我下文要提到的。</p>
+<p>‍</p>
+<h3 id="2x01-agentmain中NoClassDefFoundError的解决"><a href="#2x01-agentmain中NoClassDefFoundError的解决" class="headerlink" title="2x01 agentmain中NoClassDefFoundError的解决"></a>2x01 agentmain中NoClassDefFoundError的解决</h3><p>首先我们要明确两个类加载器，一个是ProcessBuilder是由哪个类加载器加载的，以及我们agent中自定义的ProcessBuilderHook是由谁加载的。</p>
+<p><code>java.lang.ProcessBuilder</code>​，位于<code>java.lang</code>​包下，而javalang包属于java的核心类库，也就是说不论哪种应用，只要涉及到它的加载，一定是由Bootstrap ClassLoader去加载的。</p>
+<p>而ProcessBuilderHook所属我们自定义的agent，JVM在接收到agent之后，通常会将agent中的类经由ApplicationClassLoader加载。</p>
+<p>此时当JVM解析ProcessBuilder的符号引用时，也就是进行到start方法时，第一行代码是ProcessBuilderHook.Hook(),他会直接找当前主类，也就是ProcessBuilder的类加载器–Bootstrap ClassLoader去加载ProcessBuilderHook。但是至始至终ProcessBuilderHook都只有applicationClassLoader加载过，Bootstrap ClassLoader并不存在直接访问applicationClassLoader的途径，所以此时并不会找到ProcessBuilderHook类的定义，也就会报错NoClassDefFoundError</p>
+<p>清楚了原因，如何去解决这个问题呢？我选择的方式是直接在agentmain中调用<code>Instrumentation.appendToBootstrapClassLoaderSearch(JarFile)</code>​,将我们自定义agent强行塞入Bootstrap ClassLoader的类搜索路径。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.org.javaweb.agent;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.instrument.Instrumentation;</span><br><span class="line"><span class="keyword">import</span> java.util.jar.JarFile;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Agent</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">agentmain</span><span class="params">(<span class="keyword">final</span> String agentArgs, <span class="keyword">final</span> Instrumentation inst)</span><span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    AgentTransform agentTransform= <span class="keyword">new</span> <span class="title class_">AgentTransform</span>(inst);</span><br><span class="line">    <span class="type">JarFile</span> <span class="variable">jarFile</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JarFile</span>(<span class="string">&quot;/Youragent.jar&quot;</span>);</span><br><span class="line">    inst.appendToBootstrapClassLoaderSearch(jarFile);</span><br><span class="line">    agentTransform.retransform();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际上这么做相当于就是premain中的启动命令Xbootclasspath参数。</p>
+<p>‍</p>
+<h1 id="0x02-小结"><a href="#0x02-小结" class="headerlink" title="0x02 小结"></a>0x02 小结</h1><p>大部分都是一些基础的内容，用来了解原理以及实践操作。后续会更新一些其他Rasp产品的分析和学习。</p>
+<p>‍</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>stoocea</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/post/Rasp%E5%88%86%E6%9E%90[1]-%E7%AE%80%E5%8D%95%E6%9C%BA%E5%88%B6%E5%AD%A6%E4%B9%A0.html">http://example.com/post/Rasp%E5%88%86%E6%9E%90[1]-%E7%AE%80%E5%8D%95%E6%9C%BA%E5%88%B6%E5%AD%A6%E4%B9%A0.html</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span></span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/1/"># 1</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/post/Golang-shellCode%E5%8A%A0%E8%BD%BD%E5%99%A8.html">Go-shellCode加载器</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© stoocea | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
