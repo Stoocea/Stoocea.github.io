@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="stoocea">
+
+
+
+    <meta name="description" content="time thicking away">
+
+
+
+<title>Rasp分析[2]-OpenRasp源码阅读 | stoocea&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">stoocea&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">stoocea&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Rasp分析[2]-OpenRasp源码阅读</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">stoocea</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">二月 17, 2025&nbsp;&nbsp;15:00:00</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Rasp/">Rasp</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>上一节主要对Rasp的基本实现原理进行了分析，后续一直想着继续看看实战中的Rasp是怎么写的以及怎么用的，因为自己在实现一个简单的Rasp原理时心里总是感觉有些地方和实际接轨起来出入很大。现在网上的中文文档聊到Rasp基本上都会提到OpenRasp，因为是开源而且文档详细。所以这一节我也接着来看OpenRasp的分析，巩固一下。</p>
+<p>‍</p>
+<p>翻了几篇国内关于OpenRasp的分析文章，粗略过一遍之后发现大家都在着重讨论以下几点：RaspAgent是如何被加载的；Hook了哪里；以及如何Hook的。如果不出意外的话，我这篇笔记也还是会围绕这三个点来讲，只不过过程会不同吧。可能最后会有新的方面？</p>
+<p>‍</p>
+<p>OpenRasp的java版的文件结构如下</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250212092605-18quoq4.png" alt="image">​</p>
+<p>总计三个jar包，其中被真正加载到应用线程JVM中的是rasp-engine和rasp这两个jar。rasp-install一眼就能看出来是用来帮助各个系统以及各个中间件进行attach的一个api，且openrasp的官方文档中对于部署的教学也是直接通过rasp-install这个jar进行的。所以入口点也自然而然的落在install中。</p>
+<h1 id="0x01-Rasp-install分析"><a href="#0x01-Rasp-install分析" class="headerlink" title="0x01 Rasp-install分析"></a>0x01 Rasp-install分析</h1><p>首先是它的MANIFEST文件，入口类是Main-Class中标注了的App类</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250212104108-q84y89e.png" alt="image">​</p>
+<p>先看其main方法,其中operateServer方法承担了一切，也是整个项目的入口点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            operateServer(args);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception var2) &#123;</span><br><span class="line">            <span class="type">Exception</span> <span class="variable">e</span> <span class="operator">=</span> var2;</span><br><span class="line">            <span class="keyword">if</span> (!(e <span class="keyword">instanceof</span> RaspError) &amp;&amp; !(e <span class="keyword">instanceof</span> UnrecognizedOptionException)) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(e.getMessage());</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            showNotice();</span><br><span class="line">            System.exit(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>进一步走operateServer的逻辑，大致就是两个部分，为了不过多赘述我这里就用纯文字描述。只需清楚在正式install和uninstall前肯定要解析参数，所以会调用argsParser(args);</p>
+<p>分为install和uninstall两个判断逻辑，最开始肯定是走install，它首先根据参数将用来install的功能类installer创建出来，然后调用其install进行具体的加载。</p>
+<p>这里不难想到为了适配多种中间件，要给install中的一些细节指定不同的逻辑，但OpenRasp中对于各类中间件的install是统一管理的，也就是<code>BaseStandardInstaller</code>​中install方法具体实现了，其余具体中间件的installer都是遵循他这个install进行下载的</p>
+<p>install的逻辑分为三个部分</p>
+<ul>
+<li>读取Rasp本身的配置文件内容进行功能嵌入</li>
+<li>预先准备好插件目录</li>
+<li>先修改tomcat(其他中间件也是如此)的启动命令，写入premian的加载参数-javaagent等。然后判断premain还是agentmain形式，如果是agentmain形式则再次读取PID参数，进行进程挂载。</li>
+</ul>
+<p>前面的内容不太想搬上来，我们直接看最后的加载</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="built_in">this</span>.needModifyScript) &#123;</span><br><span class="line">            <span class="built_in">this</span>.generateStartScript(installDir.getPath());</span><br><span class="line">            <span class="keyword">if</span> (App.isAttach) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;\nAttach the rasp to process: &quot;</span> + App.pid);</span><br><span class="line">                (<span class="keyword">new</span> <span class="title class_">Attacher</span>(App.pid + <span class="string">&quot;&quot;</span>, App.baseDir)).doAttach(<span class="string">&quot;install&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">&quot;\nInstallation completed without errors.&quot;</span>);</span><br><span class="line">            <span class="keyword">if</span> (!App.isAttach) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;Please restart application server to take effect.&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>this.generateStartScript</code>​用来直接修改应用的启动命令，具体的主要修改意图就是增添上javaagent参数，然后指定为rasp.jar。所以OpenRASP启动无论如何都会修改你中间件的启动命令。之后判断App.isAttach，这里App就是install整个jar的启动类，在operateServer方法中会调用到argsParser()方法，读取pid参数，将isAttach参数置为true。默认是false</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250212144107-x1f308n.png" alt="image">​</p>
+<p>如果为agentmain形式，则还需调用<code>Attacher</code>​的attachapi–doAttach方法，比较常规，只是注意loadAgent中第二个参数传入了action–”install”字符串。也就是说agentmain方法触发时，其固定参数<code>String agentArg</code>​就是install了</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250212144401-d5dklm0.png" alt="image">​</p>
+<p>整个OpenRasp的启动就分为这几个部分了，可以看到install的jar的作用就是为了对前期做准备，读取配置文件和plugins等，最后就是将rasp.jar加载上去。所以接下来看rasp.jar的内容</p>
+<p>‍</p>
+<h1 id="0x02-RaspAgent分析"><a href="#0x02-RaspAgent分析" class="headerlink" title="0x02 RaspAgent分析"></a>0x02 RaspAgent分析</h1><p>通过阅读rasp.jar的MANIFEST文件读到其agent类是<code>com.baidu.openrasp.Agent</code>​</p>
+<p>premain方法被标识为normal模式，agentmain被标识为Attach模式。两者都要调用init方法进行加载。</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250212145135-4m33bm5.png" alt="image">​</p>
+<p>init方法一开始就将当前rasp.jar添加进当前应用的启动类加载器中（底层还是inst的<code>appendToBootstrapClassLoaderSearch()</code>​，封装了一下），跟我们上一节的做法相同，目的是一样的。但实际上真正Hook的功能不在这个jar中，rasp-agent才是真正实现Hook的地方。而rasp-engine.jar又是通过扩展类加载器加载的，这里是为什么我们后续到了再细讲。</p>
+<p>然后调用<code>readVersion</code>​方法，读取MANIFEST中的版本信息进行一些配置变量的写入。</p>
+<p>最后就是调用MouduleLoader.load进行加载了，记住这里的三个参数，我们以agentmain为例。此时mode传入为attach，ation为install（前文提到过），Instrumentation肯定也是得传递的。</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250212173415-ew7qy16.png" alt="image">​</p>
+<p>在跟进之前首先先看一下ModuleLoader的结构，存在静态代码块。load方法其实就是new一个ModuleLoader。所以我们构造方法和静态代码块一起看</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250212152248-pg7lpcd.png" alt="image">​</p>
+<h2 id="1x01-ModuleLoader-静态代码块"><a href="#1x01-ModuleLoader-静态代码块" class="headerlink" title="1x01 ModuleLoader-静态代码块"></a>1x01 ModuleLoader-静态代码块</h2><p>先看静态代码块</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">        Class clazz;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            clazz = Class.forName(<span class="string">&quot;java.nio.file.FileSystems&quot;</span>);</span><br><span class="line">            clazz.getMethod(<span class="string">&quot;getDefault&quot;</span>).invoke((Object)<span class="literal">null</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable var4) &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        clazz = ModuleLoader.class;</span><br><span class="line">        <span class="type">String</span> <span class="variable">path</span> <span class="operator">=</span> clazz.getResource(<span class="string">&quot;/&quot;</span> + clazz.getName().replace(<span class="string">&quot;.&quot;</span>, <span class="string">&quot;/&quot;</span>) + <span class="string">&quot;.class&quot;</span>).getPath();</span><br><span class="line">        <span class="keyword">if</span> (path.startsWith(<span class="string">&quot;file:&quot;</span>)) &#123;</span><br><span class="line">            path = path.substring(<span class="number">5</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (path.contains(<span class="string">&quot;!&quot;</span>)) &#123;</span><br><span class="line">            path = path.substring(<span class="number">0</span>, path.indexOf(<span class="string">&quot;!&quot;</span>));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            baseDirectory = URLDecoder.decode((<span class="keyword">new</span> <span class="title class_">File</span>(path)).getParent(), <span class="string">&quot;UTF-8&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (UnsupportedEncodingException var3) &#123;</span><br><span class="line">            baseDirectory = (<span class="keyword">new</span> <span class="title class_">File</span>(path)).getParent();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ClassLoader systemClassLoader;</span><br><span class="line">        <span class="keyword">for</span>(systemClassLoader = ClassLoader.getSystemClassLoader(); systemClassLoader.getParent() != <span class="literal">null</span> &amp;&amp; !systemClassLoader.getClass().getName().equals(<span class="string">&quot;sun.misc.Launcher$ExtClassLoader&quot;</span>); systemClassLoader = systemClassLoader.getParent()) &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        moduleClassLoader = systemClassLoader;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>前面一大段关于File的操作简单来说就是为了定位到当前的工作目录，也就是rasp.jar所在的目录。然后存入baseDirectory变量，后续在加载rasp-engine的时候会用到。</p>
+<h3 id="2x01-Why-ExtClassLoader？"><a href="#2x01-Why-ExtClassLoader？" class="headerlink" title="2x01 Why ExtClassLoader？"></a>2x01 Why ExtClassLoader？</h3><p>最关键的是下面这段循环操作，它的目的是为了能够循环调用当前applicationClassLoader的getParent方法，获取到当前JVM中的扩展类加载器<code>ExtClassLoader</code>​，然后存入moduleClassLoader变量。而此时的moduleClassLoader是为了后续插入Hook代码时可用于指定加载Agent中的Hook类，防止出现因为类加载隔离而报错<code>NoClassDefFoundError</code>​的情况。</p>
+<p>‍</p>
+<h4 id="3x01-Case-BootstrapClassLoader"><a href="#3x01-Case-BootstrapClassLoader" class="headerlink" title="3x01 Case: BootstrapClassLoader"></a>3x01 Case: BootstrapClassLoader</h4><p>说是这么说，如何去理解呢？我们这里假设两种情形。</p>
+<p>一种是例如我们Rasp分析第一节提到的<code>java.lang.ProcessBuilder</code>​的Hook代码插入遇到的问题。此时Java.lang包下所有的类不论是什么情况，都一定是由BootstrapClassLoader启动类加载器去加载。而我们自己的Hook类是JVM调用SystemClassLoader(一般是ApplicationClassLoader)去加载的。此时就会出现一个问题，如果我们将Hook类的Hook方法通过ASM或javassist等字节码操作API插入到了<code>ProcessBuilder</code>​的start方法中，假设Runtime的exec开始执行，调用PB的start方法之后，由于隐式类加载机制，当前调用栈上出现了对Hook类的引用，那么JVM会指定<code>ProcessBuilder</code>​的类加载器去加载Hook类。但是Bootstrap类加载器是最顶级的类加载器，就算双亲委派去加载，上面也没有类加载器了。而Hook类只由下面几级的application类加载器加载过，BootstrapClassLoader自然找不到Hook类的定义，报错NoClassDefFoundError。</p>
+<p>要解决这个问题其实很简单，我们不直接写<code>com.xxx.Hook().start</code>​这种会触发隐式类加载的调用方式，直接调用刚才存储的<code>ExtClassLoader</code>​扩展类加载器去加载我们的Hook类即可。这么做的前提和我下面接着分析的ModuleLoader的构造方法有关，他会利用这个扩展类加载器去加载rasp-engine.jar，使里面的Hook等功能类都能够被扩展类找到。（这里存在一个适配性的问题，JDK9之后并不存在扩展类加载器，我们后续遇到了再谈）</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250212162543-q4li32v.png" alt="image">​</p>
+<p>‍</p>
+<h4 id="3x02-Case-applicationClassLoader"><a href="#3x02-Case-applicationClassLoader" class="headerlink" title="3x02 Case: applicationClassLoader"></a>3x02 Case: applicationClassLoader</h4><p>还有一种情况就是像tomcat这种，我们就拿tomcat举例。</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250212171629-g7zgk9r.png" alt="image">​</p>
+<p>一个正式的web服务中一定会出现多个应用的情况，如果使用默认的类加载器机制，那么是无法加载两个相同类库的不同版本的。所以他一般都自定义了类加载器用来打破双亲委派机制，每个应用都有自己单独的类加载器。这个时候JVM用来加载agent类的applicationClassLoader和tomcat的类加载器就会出现隔离的情况，插入Hook时也会报错NoClassDefFoundError。</p>
+<p>解决方案有两种，一种是像OpenRasp一样，直接在最开始就通过扩展类加载器去加载Hookagent所在的jar，虽说应用有单独的类加载器，但本质WebappClassLoader共享一个类加载器–sharedLoader，由于要加载共享类库，所以它遵循双亲委派机制，依然能够使用到扩展类加载器的类，也就能够加载到Hook功能类。还有一种是直接agenmain的时候调Instrumentaion.appendToBootstrapClassLoaderSearch（不太推荐，因为rasp.jar已经塞入了，不然rasp-engine.jar会出现同样的问题）</p>
+<p>‍</p>
+<p>所以总结起来，这里获取<code>ExtClassLoader</code>​的原因有两点：1.加载rasp-engine.jar要用到的类加载器。2.保证不论是在BootstrapClassLoader，还是tomcat这种不同application类加载器与HookAgent的类加载器出现隔离的情况，我们插入Hook功能代码都不会报错，保证Hook类能够被正常加载到。</p>
+<p>‍</p>
+<h2 id="1x02-ModuleLoader-构造方法"><a href="#1x02-ModuleLoader-构造方法" class="headerlink" title="1x02 ModuleLoader-构造方法"></a>1x02 ModuleLoader-构造方法</h2><p>具体内容如下</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250212173937-cl1s7t2.png" alt="image">​</p>
+<p>premain模式关于Jboss的一些处理暂且先不看，这里又涉及到了<code>ModuleContainer</code>​类的实例化，主要是用来加载rasp-engine.jar。</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213100102-jacxp9d.png" alt="image">​</p>
+<p>这里完成了两件事，一是把当前rasp-engine.jar塞入指定的ClassLoader的类搜索路径。而是实例化engineboot类，为调用start方法做准备。</p>
+<p>我标出了两个代码块的部分，通过if判断出SystemClassLoader是否继承自URLClassLoader来分割。但根据我们上面的思路，这个问题应该不会出现，不论是EXTClassLoader还是ApplicationClassLoader他们都应该继承自URLClassLoader，所以第一块代码是符合我们上面的分析逻辑，也就是将raspenginejar塞入扩展类加载器的类搜索路径。而为什么会出现不是继承的情况呢？</p>
+<p>第二种情况我们可以通过跟进isCustomClassLoader方法来看，当我们进入else分支之后的一段判断</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213100609-3wu1tjm.png" alt="image">​</p>
+<p>也就是说OpenRasp这里判断出是否为WebLogic环境以及是否为JDK之后的模块化环境。weblogic通常会自定义类加载器，这很好理解，但是JDK9之后的模块化什么情况？这里先给出JDK9之后模块化类加载有什么不同</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213102317-m442h33.png" alt="image">​</p>
+<p>JDK9之后EXT扩展类加载器被删除了，取而代之的是PlatformClassLoader。双亲委派也自然要改规则。当平台或者应用类加载器收到了类加载请求的时候，他会先判断当前类是否归属到某一个系统模块，如果找到了这样的归属关系，就会先优先派给那个模块的类加载器去进行加载。如果没有加载到的话，就还是交给双亲加载器去加载。</p>
+<p>所以本质上模块化对于我们要解决的类加载的问题就是上面提到的变化–扩展类加载器没了，并且新的平台类加载器和启动类加载器以及应用类加载器都不在继承自URLClassLoader，改成了BuiltinClassLoader。我们一开始就是在获取扩展类加载器去加载rasp-egine.jar，到JDK9之后肯定就不行了。所以这里要改变思路。</p>
+<p>JDK9之后的appClassLoader由于不继承URLClassLoader了，addURL这个API肯定也就没有了。但实际上JDK内部还有一个API可以实现同样的效果，这个API所对应的方法就是<code>appendToClassPathForInstrumentation</code>​。而所有的自定义类加载器都继承自ApplicationClassLoader，所以我们只要往appClassLoader塞入rasp-engine的类搜索路径，对于Tomcat这种自定义类加载器，插入Hook代码时出现的隐式类加载最终也还是会传到ApplicationClassLoader，保证其不会出现<code>NoClassDefFoundError</code>​。而Hook代码处于启动类加载器的情况，我们依然还是通过指定的ClassLoader去loadClass即可。整体功能不变。</p>
+<p>这个问题好像国内分析OpenRasp文章并没有提到过，本身也不是什么关键性问题，能跑就行。然后说到这其实有一个疑问一直没有提到和解答，如果我们比较粗暴的直接将engine中的类加载进appclassLoader或者extclassloader，肯定是会出现engine类与业务应用类出现版本误差和类重复加载的问题。但是OpenRasp其实也解决了这个问题，只要翻阅的过源码的师傅应该都见到了openrasp里面对于类重定义类名的操作，比如我们看javassist这个公有依赖，openrasp将其修改进了com.baidu.openrasp包下，也解决了这个问题。</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250212150103-smfnsgt.png" alt="image">​</p>
+<p>‍</p>
+<p>ModuleContainer实例化完毕，此时可能更新了新的ClassLoader，也可能照旧。但最终还是实现了将rasp-engine.jar整体加入到了可用的类搜索路径。并且我们实例化了一个位于rasp-enginejar下的EngineBoot类，用于后续start启动。</p>
+<p>跟进ModuleContainer的start方法，发现其实就是调用到了ngineBoot的start方法</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213105059-r27zcnh.png" alt="image">​</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213105253-ds5jt2r.png" alt="image">​</p>
+<p>最关心的肯定就是我们图上标出的两处了。其中transformer更是迫不及待，终于见到了Hook的起点<code>CustomClassTransformer</code>​。开始进入下一章节。</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213105318-441msy8.png" alt="image">​</p>
+<p>‍</p>
+<h1 id="0x02-rasp-engine分析"><a href="#0x02-rasp-engine分析" class="headerlink" title="0x02 rasp-engine分析"></a>0x02 rasp-engine分析</h1><p>此时心中回忆一下，表面上Agent已经被挂载了，并且类加载器也给我们准备好了，engine里面的Hook类被塞进了可用的类加载器搜索路径中，现在就是专心看Hook逻辑的环节。</p>
+<p>继续看start方法，先是调用load，加载了一段动态链接库。这里用一句话概括就是加载V8引擎，用于解释和执行JavaScript。后续会解释为什么这么做</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213111013-h6ngumg.png" alt="image">​</p>
+<p>了解完这个行为，我们直接看自定义ClassTransformer，前面还有两层if判断，分别是loadConfig()方法的执行以及JS.Initialize()初始化。在了解他们做了什么以及为什么这么做之前，我选择先把如何Hook的逻辑看完，有助于理解。</p>
+<p>‍</p>
+<h1 id="1x01-CustomClassTransformer分析"><a href="#1x01-CustomClassTransformer分析" class="headerlink" title="1x01 CustomClassTransformer分析"></a>1x01 CustomClassTransformer分析</h1><p><code>initTransformer</code>​方法就是实例化了<code>CustomClassTransformer</code>​然后调用retransform保证agentmain。</p>
+<p>先看CustomClassTransformer的构造方法</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213114008-9c5hmmc.png" alt="image">​</p>
+<p>前面两行是常规操作，直接看<code>addAnnotationHook</code>​方法</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213114046-lsfctmv.png" alt="image">​</p>
+<p>扫描<code>com.baidu.openrasp.hook</code>​包下所有带了<code>HookAnnotation</code>​注释的类，并遍历将其实例化加载。之后判断是否继承自AbstractClassHook，如果继承就将其载入私有变量hooks</p>
+<h2 id="2x01-Hook具体分析"><a href="#2x01-Hook具体分析" class="headerlink" title="2x01 Hook具体分析"></a>2x01 Hook具体分析</h2><p>先看hook包下具体内容</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213114229-1ikq2j9.png" alt="image">​</p>
+<p>每一个具体包下都是一个Hook类，其中所有的抽象类都没有打上<code>HookAnnotation</code>​的注释，他们的作用是抽离出相同的Hook思路，然后再具体分发到各个漏洞的Hook类。这里最大的Hook抽象类是com.baidu.openrasp.hook.AbstractClassHook。它定义了所有的Hook功能类大致的结构，其中最关键的就是<code>hookMethod</code>​方法，用来给各个Hook类写具体Hook逻辑</p>
+<p>将这些Hook类装载进hooks变量后，就可以准备进行transform了。最开始有一段关于应用类的依赖路径处理以及JSP类加载器的处理，这两个先不看，直接看标准处理。</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213153410-lstbq9i.png" alt="image">​</p>
+<p>正在加载的类通过各Hook类的isClassMatched方法进行类名匹配，这里我们依然拿ProcessBuilder举例，相较于上一节中我们自己写的ProcessBuilderHook，OpenRasp对于真正的Hook点选择更加深入</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213153646-7h3f8gp.png" alt="image">​</p>
+<p>之后就是开始插桩写Hook了，调用hook.transformClass方法。然后具体调用到Hook类型的hookMethod()</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213172534-2h5xo0z.png" alt="image">​</p>
+<p>依然拿ProcessBuilder举例（其实每一个Hook类的hookMethod都是如此），每一段代码插桩Hook具体实现Hook的时候都是两步走，1.先调用getInvokeStaticSrc方法将具体的Hook代码组建起来，在暂存为src对象。2.然后通过insertBefore或insertAfter将其插入。在此之前ProcessBuilder的命令执行由于存在不同情况，windows与JDK模块化之后的高版本，ProcessBuilder内部命令执行都是通过ProcessImpl，而linux，mac这种UNIX-like系统且JDK并不是模块化高版本，则采用UNIXProcess的接口，所以获取的时候会有区分</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213173356-l006gwt.png" alt="image">​</p>
+<p>我本地环境是windows的，具体的源码只有ProcessImpl的，先跟进windows情况的getInvokeStaticSrc方法</p>
+<h3 id="3x01-Hook公式插入"><a href="#3x01-Hook公式插入" class="headerlink" title="3x01 Hook公式插入"></a>3x01 Hook公式插入</h3><p><code>public String getInvokeStaticSrc(Class invokeClass, String methodName, String paramString, Class... parameterTypes)</code>​位于AbstractClassHook中，这其实是所有Hook类公有的，只需将插入的具体Hook代码名称以及参数占位与参数类型即可。参数占位这个东西我们先看<code>getInvokeStaticSrc</code>​的具体内容</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213190020-5fie0g4.png" alt="image">​</p>
+<p>我分为了3个大的部分，第一个部分是关于parameterTypes参数类型的处理，此时的parameterTypes传入为new Class[]{String[].class, String.class}类型数组。由于存在启动类加载器的类加载，OpenRasp选择获取扩展类加载器对Hook功能类进行加载并反射调用Hook代码。我们知道反射获取方法就得传入参数类型数组，这里第一部分就是循环遍历类型数组一一加载为class，便于后续传入。</p>
+<p>这一部分组成<code>new Class[]&#123;String[].class, String.class&#125;</code>​代码</p>
+<p>之后就是if判断，第一层判断就是是否由启动类加载器加载，如果是，就反射获取调用Hook方法，最终在有参数的情况下组成<code>com.baidu.openrasp.ModuleLoader.moduleClassLoader.loadClass(&quot;com.baidu.openrasp.hook.system.ProcessBuilderHook&quot;).getMethod(&quot;checkCommand&quot;,new Class[]&#123;String[].class, String.class&#125;).invoke(null,new Object[]&#123;&quot;$1,$2&quot;&#125;);</code>​</p>
+<p><code>paramString</code>​传入替换为了<code>$1,$2</code>​用于参数占位，用于获取具体insert到的方法的形参</p>
+<p>如果不是启动类加载器的情况，则直接在trycatch块中写入显式调用，具体组成为<code>com.baidu.openrasp.hook.system.ProcessBuilderHook.checkCommand($1,$2);</code>​</p>
+<p>关于参数占位，我们稍微回退看insertBefore处的逻辑：</p>
+<p><code>this.insertBefore(ctClass, &quot;&lt;init&gt;&quot;, (String)null, src);</code>​，也就是说这里ProcessBuilderHook具体插入Hook代码的地方是ProcessImpl的构造方法</p>
+<p>定位到ProcessImpl的构造方法中的cmd[]与envblock参数，为第一号参数和第二号参数，对应$1与$2。两者皆替换为调用<code>checkCommand</code>​方法的参数</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213190829-cuf15k6.png" alt="image">​</p>
+<p>所以OpenRasp中的Hook公式就是一个大的trycatch块，里面插入Hook方法调用逻辑，当Hook异常捕获时抛出SecurityException。</p>
+<p>‍</p>
+<h3 id="3x02-JS具体处理"><a href="#3x02-JS具体处理" class="headerlink" title="3x02 JS具体处理"></a>3x02 JS具体处理</h3><p>到最终检测的时候，所有的Hook方法最终都要调用到HookHandler的check方法，具体的实现例子看checkCommand。</p>
+<p>command与envblock经过封装，最终来到现在这个checkCommand。</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213191706-uuj35mq.png" alt="image">​</p>
+<p>新建了一段hashmap用于存储具体命令执行字符串，环境变量以及调用的堆栈信息。后续调用<code>doCheckWithoutRequest</code>​的时候有一个Type，这里就是我们在最开始不讲那两个if判断的原因，回到之前EngineBoot的start方法</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213193240-b5acf11.png" alt="image">​</p>
+<p>其中<code>Loader.load();</code>​用于加载V8的dll文件，loadConfig是用于初始化日志文件系统，JS.Initiallize用于给V8引擎设置日志，更新js文件等，还得具体到对应的V8dll的源码中分析，这里先打住。</p>
+<p>再看<code>CheckerManager</code>​的init，遍历Type里面的值，并且加入到checkers变量中<br>​<img src="/images/Rasp/0x02/assets/image-20250213195618-6clps7d.png" alt="image">​</p>
+<p>此时checkCommand的<code>doCheckWithoutRequest</code>​传入的参数就对应了<code>COMMAND(&quot;command&quot;, new V8AttackChecker(), 2)</code>​</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213192845-erddvkk.png" alt="image">​</p>
+<p>doCheckWithoutRequest的内容前面就不跟进了，获取云端的一些配置以及请求的信息转载进变量之后，看后续HookHandler的doRealCheckWithoutRequest的调用。</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213201047-zucohxi.png" alt="image">​</p>
+<p>一开始有一个<code>enableHook.get()</code>​的if判断，如果返回为NULL或者false，这一段进Hook拦截的逻辑就走不进，所以这也算是一个绕过的点。</p>
+<p>这里将Type和params封装进了checkParameter，然后调用CheckerManager的check方法判断是否被拦截。封装了一层之后来到com.baidu.openrasp.plugin.checker.AbstractChecker的check方法。</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213201747-9ghmka6.png" alt="image">​</p>
+<p>AbstractChecker的check方法将检测之后的结果封装为event，然后遍历这个events列表，如果出现了Block属性值说明在检测过程中确实被Hook了，于是返回的isBlock为true。在返回出去的doRealCheckWithoutRequest的逻辑中，最终被<code>if (isBlock) &#123;handleBlock(parameter);&#125;</code>​捕获，开始抛出securityException，结束整个请求返回。</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250217150454-ofhjckv.png" alt="image">​</p>
+<p>‍</p>
+<p>那现在更关键的是AbstractChecker中check方法中关于具体请求信息的过滤，跟进checkParam，调用到了JS对象的Check方法。这里的JS对象在EngineBoot启动的时候进行初始化，应该还有印象，给V8引擎设置了一段回调函数用于获取java侧的堆栈信息。</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250213201931-htzktqh.png" alt="image">​</p>
+<p>此时再进Check，最关键的就在trycatch块中的通过JNI调用到V8的check，实际上这里就跟进到C++的部分了</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250217151302-wz2p8md.png" alt="image">​</p>
+<p>整体可以定位到内容：</p>
+<p><img src="/images/Rasp/0x02/assets/image-20250217152049-jy6dwyu.png" alt="image">​</p>
+<p>‍</p>
+<p>‍</p>
+<h1 id="0x03-暂存"><a href="#0x03-暂存" class="headerlink" title="0x03 暂存"></a>0x03 暂存</h1><p>这里我选择暂存一下，C++的内容和最后的check部分还有一些地方没讲清楚，需要再沉淀一下。不过前半部分的内容我感觉还是燃尽了，师傅们应该还能看得懂一些。我写这篇笔记的思路是从OpenRasp的启动准备，到最后的Hook调用到V8的内容进行检测，在最后这个部分翻了车，师傅们看文笔应该能看出来，不过这篇前面写了这么多思路了，质量上还是能及格的，决定还是放出来，等我再沉淀一段时间，把最后一段分析完毕之后再补充。</p>
+<p>‍</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>stoocea</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/post/Rasp%E5%88%86%E6%9E%90[2]-OpenRasp%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB.html">http://example.com/post/Rasp%E5%88%86%E6%9E%90[2]-OpenRasp%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB.html</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span></span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/2/"># 2</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/post/Rasp%E5%88%86%E6%9E%90%5B1%5D-%E7%AE%80%E5%8D%95%E6%9C%BA%E5%88%B6%E5%AD%A6%E4%B9%A0.html">Rasp分析[1]</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© stoocea | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
