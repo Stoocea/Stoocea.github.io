@@ -1,229 +1,185 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" color-mode="light">
 
-<head>
-    <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-    <meta name="author" content="stoocea">
-
-
-
-    <meta name="description" content="time thicking away">
-
-
-
-<title>Tomcat型内存马回显以及反序列化写入 | stoocea&#39;s blog</title>
-
-
-
-    <link rel="icon" href="/favicon.ico">
-
-
-
-
-    <!-- stylesheets list from _config.yml -->
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
     
-    <link rel="stylesheet" href="/css/style.css">
+      Tomcat型内存马回显以及反序列化写入 
+      
+      
+      |
     
+     stoocea&#39;s blog
+  </title>
 
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
 
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
 
-    <!-- scripts list from _config.yml -->
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
     
-    <script src="/js/script.js"></script>
-    
-    <script src="/js/tocbot.min.js"></script>
-    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
 
 
+  
 
-    
-    
-        
-    
+  
 
-
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
 <meta name="generator" content="Hexo 6.3.0"></head>
 
-<body>
-    <script>
-        // this function is used to check current theme before page loaded.
-        (() => {
-            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
-            const isDark = currentTheme === 'dark';
-            const pagebody = document.getElementsByTagName('body')[0]
-            if (isDark) {
-                pagebody.classList.add('dark-theme');
-                // mobile
-                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
-            } else {
-                pagebody.classList.remove('dark-theme');
-                // mobile
-                document.getElementById("mobile-toggle-theme").innerText = "· Light"
-            }
-        })();
-    </script>
 
-    <div class="wrapper">
-        <header>
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-header header-logo"><a href="/">stoocea&#39;s Blog</a></div>
-            <div class="menu navbar-right">
-                
-                    <a class="menu-item" href="/archives">Posts</a>
-                
-                    <a class="menu-item" href="/category">Categories</a>
-                
-                    <a class="menu-item" href="/tag">Tags</a>
-                
-                    <a class="menu-item" href="/about">About</a>
-                
-                <input id="switch_default" type="checkbox" class="switch_default">
-                <label for="switch_default" class="toggleBtn"></label>
-            </div>
-        </div>
-    </nav>
-
-    
-    <nav class="navbar-mobile" id="nav-mobile">
-        <div class="container">
-            <div class="navbar-header">
-                <div>
-                    <a href="/">stoocea&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
-                </div>
-                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
-            </div>
-            <div class="menu" id="mobile-menu">
-                
-                    <a class="menu-item" href="/archives">Posts</a>
-                
-                    <a class="menu-item" href="/category">Categories</a>
-                
-                    <a class="menu-item" href="/tag">Tags</a>
-                
-                    <a class="menu-item" href="/about">About</a>
-                
-            </div>
-        </div>
-    </nav>
-
-</header>
-<script>
-    var mobileBtn = function f() {
-        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
-        var mobileMenu = document.getElementById("mobile-menu");
-        if(toggleMenu.classList.contains("active")){
-           toggleMenu.classList.remove("active")
-            mobileMenu.classList.remove("active")
-        }else{
-            toggleMenu.classList.add("active")
-            mobileMenu.classList.add("active")
-        }
-    }
-</script>
-            <div class="main">
-                <div class="container">
-    
-    
-        <div class="post-toc">
-    <div class="tocbot-list">
-    </div>
-    <div class="tocbot-list-menu">
-        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
-        <a onclick="go_top()">Back to top</a>
-        <a onclick="go_bottom()">Go to bottom</a>
-    </div>
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.jpeg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">stoocea</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
 </div>
 
-<script>
-    var tocbot_timer;
-    var DEPTH_MAX = 6; // 为 6 时展开所有
-    var tocbot_default_config = {
-        tocSelector: '.tocbot-list',
-        contentSelector: '.post-content',
-        headingSelector: 'h1, h2, h3, h4, h5',
-        orderedList: false,
-        scrollSmooth: true,
-        onClick: extend_click,
-    };
 
-    function extend_click() {
-        clearTimeout(tocbot_timer);
-        tocbot_timer = setTimeout(function() {
-            tocbot.refresh(obj_merge(tocbot_default_config, {
-                hasInnerContainers: true
-            }));
-        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
     }
+  </script>
 
-    document.ready(function() {
-        tocbot.init(obj_merge(tocbot_default_config, {
-            collapseDepth: 1
-        }));
-    });
 
-    function expand_toc() {
-        var b = document.querySelector('.tocbot-toc-expand');
-        var expanded = b.getAttribute('data-expanded');
-        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
-        tocbot.refresh(obj_merge(tocbot_default_config, {
-            collapseDepth: expanded ? 1 : DEPTH_MAX
-        }));
-        b.innerText = expanded ? 'Expand all' : 'Collapse all';
-    }
 
-    function go_top() {
-        window.scrollTo(0, 0);
-    }
 
-    function go_bottom() {
-        window.scrollTo(0, document.body.scrollHeight);
-    }
 
-    function obj_merge(target, source) {
-        for (var item in source) {
-            if (source.hasOwnProperty(item)) {
-                target[item] = source[item];
-            }
-        }
-        return target;
-    }
-</script>
-    
+  <!-- clipboard -->
 
-    
-    <article class="post-wrap">
-        <header class="post-header">
-            <h1 class="post-title">Tomcat型内存马回显以及反序列化写入</h1>
-            
-                <div class="post-meta">
-                    
-                        Author: <a itemprop="author" rel="author" href="/">stoocea</a>
-                    
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
 
-                    
-                        <span class="post-time">
-                        Date: <a href="#">七月 28, 2024&nbsp;&nbsp;21:50:51</a>
-                        </span>
-                    
-                    
-                        <span class="post-category">
-                    Category:
-                            
-                                <a href="/categories/Memshell/">Memshell</a>
-                            
-                        </span>
-                    
-                </div>
-            
-        </header>
 
-        <div class="post-content">
-            <h1 id="背景引入"><a href="#背景引入" class="headerlink" title="背景引入"></a>背景引入</h1><p>多适用于对方机器不出网，无法弹 shell 的情况，用来获取命令执行的结果。如果是能够解析 JSP 的中间件就很好利用，落地一个 JSP 进行一个 Request 和 Response 的获取就好，但是如果像是 Spring 种，考虑反序列化或者其他能够达到代码执行的情况，注入内存马，并且获得回显就需要另辟蹊径。</p>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Tomcat型内存马回显以及反序列化写入</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-09 18:22:44
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/EchoShell/" title="EchoShell">
+                    #EchoShell
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="背景引入"><a href="#背景引入" class="headerlink" title="背景引入"></a>背景引入</h1><p>多适用于对方机器不出网，无法弹 shell 的情况，用来获取命令执行的结果。如果是能够解析 JSP 的中间件就很好利用，落地一个 JSP 进行一个 Request 和 Response 的获取就好，但是如果像是 Spring 种，考虑反序列化或者其他能够达到代码执行的情况，注入内存马，并且获得回显就需要另辟蹊径。</p>
 <p>总的思路还是获取到当前处理请求服务线程下的 Rquest 和 Response</p>
 <h1 id="ThreadLocal-Response-回显"><a href="#ThreadLocal-Response-回显" class="headerlink" title="ThreadLocal Response 回显"></a>ThreadLocal Response 回显</h1><h2 id="0x01-ThreadLocal-认识"><a href="#0x01-ThreadLocal-认识" class="headerlink" title="0x01 ThreadLocal 认识"></a>0x01 ThreadLocal 认识</h2><p>首先介绍一下 ThreadLocal<br>在 java 中有一个问题被经常提起：线程安全的问题。这里所说的安全不是代码执行或者数据泄露那种安全，它是影响整个业务处理结果，以及处理效率的一个问题，属于开发的范畴。web 服务就是一个特别显著的例子，当我们服务器接收大量的请求时，后台的某一个关键变量，比如某一商品的货存量，有 n 个客户同时请求它的购买，并且每个客户购买的数量都不同。并且此后同时支付的现金，此时 n 个线程开始同时进行，货物数量的值是共享。<br>此时会因为没有线程隔离以及线程保护，导致每个客户都购买了相同数量的货物，并不是自己想要的货物。<br>如何解决这个问题呢？<br>ThreadLocal 就是用来解决这个问题的，它的作用就是在多线程请求的情况下，维护好每一个单一线程的变量，避免因多线程操作而导致共享数据不一致的情况。<br>具体的代码示例就不写了，理解就行</p>
 <h2 id="0x02-思路分析及具体代码执行内容"><a href="#0x02-思路分析及具体代码执行内容" class="headerlink" title="0x02 思路分析及具体代码执行内容"></a>0x02 思路分析及具体代码执行内容</h2><p>回到 ThreadLocal 获取当前进程下的 request 和 repsonse 的内容：<br>思路来自 Kingkk 师傅，不论是在 Springboot 还是 javaweb 等项目中，filter servlet listener 始终是一种设计思想，他们都是会存在的，并且 ApplicationFilterChain 这一路的责任链机制依然存在。我们观察到在他的属性值变量中存在两种变量<code>lastServicedRequest</code>以及<code>lastServicedResponse</code>，并且他们的类型都是 ThreadLocal 类型<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1721649278337-7a366631-8290-44b2-ab31-f439dc1809a3.png#averageHue=%2327292b&clientId=u8e48b11c-4381-4&from=paste&height=365&id=u9499e276&originHeight=684&originWidth=1616&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=387813&status=done&style=none&taskId=ub767ade7-9a23-4e3e-a1f4-a3430918257&title=&width=861.8666666666667" referrerpolicy="no-referrer" alt="image.png"><br>在 ApplicationFilterChain 初始化的情况下它们并不会有所赋值，但是我们跟进其中责任链实现逻辑中 internalDofilter 的部分，当我们从filterCofigs 中读取完所有的 filterConfig 配置，并且走完它们的所有逻辑之后，也就是 <code>if(pos &lt; n)</code>不会满足判断条件，来到之后的 Trycatch 块中<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1721649506501-2dc8b278-39f3-4cf6-885b-c97fbdbb91ab.png#averageHue=%2328292c&clientId=u8e48b11c-4381-4&from=paste&height=212&id=u2386ca76&originHeight=398&originWidth=1285&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=208957&status=done&style=none&taskId=u36ee1a1d-7f6f-4e93-b82f-39922f4df07&title=&width=685.3333333333334" referrerpolicy="no-referrer" alt="image.png"><br>他首先就是<code>if (ApplicationDispatcher.WRAP_SAME_OBJECT)</code>判断，然后开始对 <code>lastServicedRequest</code>以及<code>lastServicedResponse</code>都进行一段赋值操作，这里所赋的值，就是我们想要获取到的 response 以及 request<br>这里两段判断条件都是一样的，也就是<code>ApplicationDispatcher.WRAP_SAME_OBJECT</code>必须不为空<br>所以我们可以总结出利用思路：</p>
@@ -273,75 +229,360 @@
 <p>单论整体的获取下来，总结 14000 多字节的 payload<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1722173745499-a9263ced-3fba-4094-88ef-59280423a0f5.png#averageHue=%232c2d30&clientId=u21d37365-99b3-4&from=paste&height=108&id=u8cdc2f7b&originHeight=203&originWidth=2358&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=204535&status=done&style=none&taskId=ub8315766-37f1-426b-a7cd-3a3e2f5a280&title=&width=1257.6" referrerpolicy="no-referrer" alt="image.png"><br>很恐怖啊，所以后续的武器化利用时我会和 yyjccc 师傅讨论一下这一点。但这篇理论基础就到这了，希望能够帮到师傅们解决一些问题</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://goodapple.top/archives/1355">https://goodapple.top/archives/1355</a><br><a target="_blank" rel="noopener" href="https://boogipop.com/2023/03/02/Tomcat%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF/#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%89%93%E5%85%A5Servlet%E5%86%85%E5%AD%98%E9%A9%AC">https://boogipop.com/2023/03/02/Tomcat%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF/#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%89%93%E5%85%A5Servlet%E5%86%85%E5%AD%98%E9%A9%AC</a><br>两位师傅的文章主要是用来对比 POC 以及大致思路的一个构造，文章逻辑和细节可能不太相同，但还是膜了（</p>
 
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-09 18:22:44
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/EchoShell/" title="EchoShell">
+                        #EchoShell
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
         </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E5%BC%95%E5%85%A5"><span class="toc-text">背景引入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ThreadLocal-Response-%E5%9B%9E%E6%98%BE"><span class="toc-text">ThreadLocal Response 回显</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ThreadLocal-%E8%AE%A4%E8%AF%86"><span class="toc-text">0x01 ThreadLocal 认识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90%E5%8F%8A%E5%85%B7%E4%BD%93%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E5%86%85%E5%AE%B9"><span class="toc-text">0x02 思路分析及具体代码执行内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%80%BB%E7%BB%93"><span class="toc-text">0x03 总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E5%AD%98%E5%82%A8-Response"><span class="toc-text">全局存储 Response</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%88%9D%E6%AD%A5%E6%80%9D%E8%B7%AF%E5%BB%BA%E7%AB%8B"><span class="toc-text">0x01 初步思路建立</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%80%9D%E8%B7%AF%E6%A2%B3%E7%90%86%E5%92%8C%E6%80%BB%E7%BB%93"><span class="toc-text">0x02 思路梳理和总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x03 代码实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E6%80%BB%E7%BB%93"><span class="toc-text">0x04 总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%89%93%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-text">反序列化打入内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%B5%8B%E8%AF%95"><span class="toc-text">环境测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E6%9E%84%E9%80%A0"><span class="toc-text">具体构造</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
 
         
-            <section class="post-copyright">
-                
-                    <p class="copyright-item">
-                        <span>Author:</span>
-                        <span>stoocea</span>
-                    </p>
-                
-                
-                    <p class="copyright-item">
-                        <span>Permalink:</span>
-                        <span><a href="http://example.com/post/%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF.html">http://example.com/post/%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF.html</a></span>
-                    </p>
-                
-                
-                    <p class="copyright-item">
-                        <span>License:</span>
-                        <span></span>
-                    </p>
-                
-                
-                     <p class="copyright-item">
-                         <span>Slogan:</span>
-                         <span>Do you believe in <strong>DESTINY</strong>?</span>
-                     </p>
-                
-
-            </section>
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
         
-        <section class="post-tags">
-            <div>
-                <span>Tag(s):</span>
-                <span class="tag">
-                    
-                    
-                        <a href="/tags/EchoShell/"># EchoShell</a>
-                    
-                        
-                </span>
-            </div>
-            <div>
-                <a href="javascript:window.history.back();">back</a>
-                <span>· </span>
-                <a href="/">home</a>
-            </div>
-        </section>
-        <section class="post-nav">
-            
-                <a class="prev" rel="prev" href="/post/Memshell%E5%86%8D%E7%A0%94%E7%A9%B6.html">Memshell再研究之Tomcat</a>
-            
-            
-            <a class="next" rel="next" href="/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html">Ysoserial-JRMPListener/JRMPClient学习</a>
-            
-        </section>
-
-
-    </article>
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2025 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
 </div>
 
-            </div>
-            <footer id="footer" class="footer">
-    <div class="copyright">
-        <span>© stoocea | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-    </div>
-</footer>
+      </div>
 
-    </div>
-</body>
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
 
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Tomcat%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%86%99%E5%85%A5 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2F%25E5%2586%2585%25E5%25AD%2598%25E9%25A9%25AC%25E5%259B%259E%25E6%2598%25BE%25E6%258A%2580%25E6%259C%25AF.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
 </html>

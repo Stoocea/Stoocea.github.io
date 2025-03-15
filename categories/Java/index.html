@@ -1,250 +1,489 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" color-mode="light">
 
-<head>
-    <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-    <meta name="author" content="stoocea">
-
-
-
-    <meta name="description" content="time thicking away">
-
-
-
-<title>Category: Java | stoocea&#39;s blog</title>
-
-
-
-    <link rel="icon" href="/favicon.ico">
-
-
-
-
-    <!-- stylesheets list from _config.yml -->
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
     
-    <link rel="stylesheet" href="/css/style.css">
+      Category 
+      
+       : Java
+      |
     
+     stoocea&#39;s blog
+  </title>
 
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
 
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
 
-    <!-- scripts list from _config.yml -->
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
     
-    <script src="/js/script.js"></script>
-    
-    <script src="/js/tocbot.min.js"></script>
-    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
 
 
+  
 
-    
-    
-        
-    
+  
 
-
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
 <meta name="generator" content="Hexo 6.3.0"></head>
 
-<body>
-    <script>
-        // this function is used to check current theme before page loaded.
-        (() => {
-            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
-            const isDark = currentTheme === 'dark';
-            const pagebody = document.getElementsByTagName('body')[0]
-            if (isDark) {
-                pagebody.classList.add('dark-theme');
-                // mobile
-                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
-            } else {
-                pagebody.classList.remove('dark-theme');
-                // mobile
-                document.getElementById("mobile-toggle-theme").innerText = "· Light"
-            }
-        })();
-    </script>
 
-    <div class="wrapper">
-        <header>
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-header header-logo"><a href="/">stoocea&#39;s Blog</a></div>
-            <div class="menu navbar-right">
-                
-                    <a class="menu-item" href="/archives">Posts</a>
-                
-                    <a class="menu-item" href="/category">Categories</a>
-                
-                    <a class="menu-item" href="/tag">Tags</a>
-                
-                    <a class="menu-item" href="/about">About</a>
-                
-                <input id="switch_default" type="checkbox" class="switch_default">
-                <label for="switch_default" class="toggleBtn"></label>
-            </div>
-        </div>
-    </nav>
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.jpeg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">stoocea</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
 
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 标签详情页，展示某个标签下的文章列表，url形式：https://yoursite/tags/某个标签/ -->
+
+<div class="container category-details">
+  <div class="content-title">
+    <h2>
+      <span>Java</span>
+    </h2>
+  </div>
+  
+    <div class="post-list">
+      <div class="post-item" title="JDK高版本的模块化以及反射类加载限制绕过">
+        <span class="time-m-d">2024-08-29</span>
+        <a href="/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html">
+          <span>JDK高版本的模块化以及反射类加载限制绕过</span>
+        </a>
+      </div>
+    </div>
+  
+    <div class="post-list">
+      <div class="post-item" title="JDBC-Mysql反序列化">
+        <span class="time-m-d">2024-08-09</span>
+        <a href="/post/JDBC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">
+          <span>JDBC-Mysql反序列化</span>
+        </a>
+      </div>
+    </div>
+  
+    <div class="post-list">
+      <div class="post-item" title="Ysoserial-JRMPListener/JRMPClient学习">
+        <span class="time-m-d">2024-07-06</span>
+        <a href="/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html">
+          <span>Ysoserial-JRMPListener/JRMPClient学习</span>
+        </a>
+      </div>
+    </div>
+  
+    <div class="post-list">
+      <div class="post-item" title="Scala反序列化学习">
+        <span class="time-m-d">2024-07-06</span>
+        <a href="/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">
+          <span>Scala反序列化学习</span>
+        </a>
+      </div>
+    </div>
+  
+    <div class="post-list">
+      <div class="post-item" title="Java字节码初步学习">
+        <span class="time-m-d">2024-06-10</span>
+        <a href="/post/Java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0.html">
+          <span>Java字节码初步学习</span>
+        </a>
+      </div>
+    </div>
+  
+    <div class="post-list">
+      <div class="post-item" title="Java二次反序列化学习">
+        <span class="time-m-d">2024-06-04</span>
+        <a href="/post/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">
+          <span>Java二次反序列化学习</span>
+        </a>
+      </div>
+    </div>
+  
+    <div class="post-list">
+      <div class="post-item" title="ROME攻击链分析">
+        <span class="time-m-d">2024-03-31</span>
+        <a href="/post/ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">
+          <span>ROME攻击链分析</span>
+        </a>
+      </div>
+    </div>
+  
+    <div class="post-list">
+      <div class="post-item" title="C3P0攻击链学习">
+        <span class="time-m-d">2024-03-22</span>
+        <a href="/post/C3P0%E9%93%BE%E5%88%86%E6%9E%90.html">
+          <span>C3P0攻击链学习</span>
+        </a>
+      </div>
+    </div>
+  
+    <div class="post-list">
+      <div class="post-item" title="Jackson反序列化初步学习">
+        <span class="time-m-d">2024-03-18</span>
+        <a href="/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">
+          <span>Jackson反序列化初步学习</span>
+        </a>
+      </div>
+    </div>
+  
+    <div class="post-list">
+      <div class="post-item" title="FastJsonRe0">
+        <span class="time-m-d">2024-03-18</span>
+        <a href="/post/FastJsonRe0.html">
+          <span>FastJsonRe0</span>
+        </a>
+      </div>
+    </div>
+  
+  <nav class="post-navigation">
     
-    <nav class="navbar-mobile" id="nav-mobile">
-        <div class="container">
-            <div class="navbar-header">
-                <div>
-                    <a href="/">stoocea&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
-                </div>
-                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
-            </div>
-            <div class="menu" id="mobile-menu">
-                
-                    <a class="menu-item" href="/archives">Posts</a>
-                
-                    <a class="menu-item" href="/category">Categories</a>
-                
-                    <a class="menu-item" href="/tag">Tags</a>
-                
-                    <a class="menu-item" href="/about">About</a>
-                
-            </div>
-        </div>
-    </nav>
+    <span class="page-num">1 / 2</span>
+    
+      <a href="/categories/Java/page/2/"><i class="iconfont icon-angleright"></i></a>
+    
+  </nav>
+</div>
 
-</header>
-<script>
-    var mobileBtn = function f() {
-        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
-        var mobileMenu = document.getElementById("mobile-menu");
-        if(toggleMenu.classList.contains("active")){
-           toggleMenu.classList.remove("active")
-            mobileMenu.classList.remove("active")
-        }else{
-            toggleMenu.classList.add("active")
-            mobileMenu.classList.add("active")
-        }
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2025 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
     }
-</script>
-            <div class="main">
-                
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
 
 
-    
-<div class="container">
-    <div class="post-wrap categories">
-        <h2 class="post-title">-&nbsp;Categories&nbsp;·&nbsp;Java-</h2>
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
     </div>
-    <div class="post-wrap archive">
-    
-    
-        
-
-        
-            <h3>2024</h3>
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/post/JDK%E9%AB%98%E7%89%88%E6%9C%AC%E7%9A%84%E6%A8%A1%E5%9D%97%E5%8C%96%E4%BB%A5%E5%8F%8A%E5%8F%8D%E5%B0%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E9%99%90%E5%88%B6%E7%BB%95%E8%BF%87.html">JDK高版本的模块化以及反射类加载限制绕过</a>
-            <span class="archive-item-date">八月 29, 2024</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/post/JDBC%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">JDBC-Mysql反序列化</a>
-            <span class="archive-item-date">八月 9, 2024</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/post/JRMPListener%20Client%E5%AD%A6%E4%B9%A0.html">Ysoserial-JRMPListener/JRMPClient学习</a>
-            <span class="archive-item-date">七月 6, 2024</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/post/Scala%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">Scala反序列化学习</a>
-            <span class="archive-item-date">七月 6, 2024</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/post/Java%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%AD%A5%E5%AD%A6%E4%B9%A0.html">Java字节码初步学习</a>
-            <span class="archive-item-date">六月 10, 2024</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/post/Java%E4%BA%8C%E6%AC%A1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">Java二次反序列化学习</a>
-            <span class="archive-item-date">六月 4, 2024</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/post/ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">ROME攻击链分析</a>
-            <span class="archive-item-date">三月 31, 2024</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/post/C3P0%E9%93%BE%E5%88%86%E6%9E%90.html">C3P0攻击链学习</a>
-            <span class="archive-item-date">三月 22, 2024</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/post/Jackson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">Jackson反序列化初步学习</a>
-            <span class="archive-item-date">三月 18, 2024</span>
-        </article>
-    
-        
-
-        
-
-        <article class="archive-item">
-            <a class="archive-item-link" href="/post/FastJsonRe0.html">FastJsonRe0</a>
-            <span class="archive-item-date">三月 18, 2024</span>
-        </article>
-    
-    
-    <nav class="pagination">
-        <span class="page-number current">1</span><a class="page-number" href="/categories/Java/page/2/">2</a>
-    </nav>
-
-</div>
-</div>
-
-            </div>
-            <footer id="footer" class="footer">
-    <div class="copyright">
-        <span>© stoocea | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-    </div>
-</footer>
-
-    </div>
-</body>
-
+  </body>
 </html>

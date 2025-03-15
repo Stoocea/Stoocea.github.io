@@ -1,229 +1,185 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" color-mode="light">
 
-<head>
-    <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-    <meta name="author" content="stoocea">
-
-
-
-    <meta name="description" content="time thicking away">
-
-
-
-<title>ROME攻击链分析 | stoocea&#39;s blog</title>
-
-
-
-    <link rel="icon" href="/favicon.ico">
-
-
-
-
-    <!-- stylesheets list from _config.yml -->
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
     
-    <link rel="stylesheet" href="/css/style.css">
+      ROME攻击链分析 
+      
+      
+      |
     
+     stoocea&#39;s blog
+  </title>
 
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
 
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
 
-    <!-- scripts list from _config.yml -->
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
     
-    <script src="/js/script.js"></script>
-    
-    <script src="/js/tocbot.min.js"></script>
-    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
 
 
+  
 
-    
-    
-        
-    
+  
 
-
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
 <meta name="generator" content="Hexo 6.3.0"></head>
 
-<body>
-    <script>
-        // this function is used to check current theme before page loaded.
-        (() => {
-            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
-            const isDark = currentTheme === 'dark';
-            const pagebody = document.getElementsByTagName('body')[0]
-            if (isDark) {
-                pagebody.classList.add('dark-theme');
-                // mobile
-                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
-            } else {
-                pagebody.classList.remove('dark-theme');
-                // mobile
-                document.getElementById("mobile-toggle-theme").innerText = "· Light"
-            }
-        })();
-    </script>
 
-    <div class="wrapper">
-        <header>
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-header header-logo"><a href="/">stoocea&#39;s Blog</a></div>
-            <div class="menu navbar-right">
-                
-                    <a class="menu-item" href="/archives">Posts</a>
-                
-                    <a class="menu-item" href="/category">Categories</a>
-                
-                    <a class="menu-item" href="/tag">Tags</a>
-                
-                    <a class="menu-item" href="/about">About</a>
-                
-                <input id="switch_default" type="checkbox" class="switch_default">
-                <label for="switch_default" class="toggleBtn"></label>
-            </div>
-        </div>
-    </nav>
-
-    
-    <nav class="navbar-mobile" id="nav-mobile">
-        <div class="container">
-            <div class="navbar-header">
-                <div>
-                    <a href="/">stoocea&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
-                </div>
-                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
-            </div>
-            <div class="menu" id="mobile-menu">
-                
-                    <a class="menu-item" href="/archives">Posts</a>
-                
-                    <a class="menu-item" href="/category">Categories</a>
-                
-                    <a class="menu-item" href="/tag">Tags</a>
-                
-                    <a class="menu-item" href="/about">About</a>
-                
-            </div>
-        </div>
-    </nav>
-
-</header>
-<script>
-    var mobileBtn = function f() {
-        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
-        var mobileMenu = document.getElementById("mobile-menu");
-        if(toggleMenu.classList.contains("active")){
-           toggleMenu.classList.remove("active")
-            mobileMenu.classList.remove("active")
-        }else{
-            toggleMenu.classList.add("active")
-            mobileMenu.classList.add("active")
-        }
-    }
-</script>
-            <div class="main">
-                <div class="container">
-    
-    
-        <div class="post-toc">
-    <div class="tocbot-list">
-    </div>
-    <div class="tocbot-list-menu">
-        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
-        <a onclick="go_top()">Back to top</a>
-        <a onclick="go_bottom()">Go to bottom</a>
-    </div>
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.jpeg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">stoocea</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
 </div>
 
-<script>
-    var tocbot_timer;
-    var DEPTH_MAX = 6; // 为 6 时展开所有
-    var tocbot_default_config = {
-        tocSelector: '.tocbot-list',
-        contentSelector: '.post-content',
-        headingSelector: 'h1, h2, h3, h4, h5',
-        orderedList: false,
-        scrollSmooth: true,
-        onClick: extend_click,
-    };
 
-    function extend_click() {
-        clearTimeout(tocbot_timer);
-        tocbot_timer = setTimeout(function() {
-            tocbot.refresh(obj_merge(tocbot_default_config, {
-                hasInnerContainers: true
-            }));
-        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
     }
+  </script>
 
-    document.ready(function() {
-        tocbot.init(obj_merge(tocbot_default_config, {
-            collapseDepth: 1
-        }));
-    });
 
-    function expand_toc() {
-        var b = document.querySelector('.tocbot-toc-expand');
-        var expanded = b.getAttribute('data-expanded');
-        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
-        tocbot.refresh(obj_merge(tocbot_default_config, {
-            collapseDepth: expanded ? 1 : DEPTH_MAX
-        }));
-        b.innerText = expanded ? 'Expand all' : 'Collapse all';
-    }
 
-    function go_top() {
-        window.scrollTo(0, 0);
-    }
 
-    function go_bottom() {
-        window.scrollTo(0, document.body.scrollHeight);
-    }
 
-    function obj_merge(target, source) {
-        for (var item in source) {
-            if (source.hasOwnProperty(item)) {
-                target[item] = source[item];
-            }
-        }
-        return target;
-    }
-</script>
-    
+  <!-- clipboard -->
 
-    
-    <article class="post-wrap">
-        <header class="post-header">
-            <h1 class="post-title">ROME攻击链分析</h1>
-            
-                <div class="post-meta">
-                    
-                        Author: <a itemprop="author" rel="author" href="/">stoocea</a>
-                    
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
 
-                    
-                        <span class="post-time">
-                        Date: <a href="#">三月 31, 2024&nbsp;&nbsp;23:50:00</a>
-                        </span>
-                    
-                    
-                        <span class="post-category">
-                    Category:
-                            
-                                <a href="/categories/Java/">Java</a>
-                            
-                        </span>
-                    
-                </div>
-            
-        </header>
 
-        <div class="post-content">
-            <h1 id="什么是-ROME"><a href="#什么是-ROME" class="headerlink" title="什么是 ROME"></a>什么是 ROME</h1><p>ROME 是一个关于 RSS 和 Atom 格式的 java 框架<br>那什么是 RSS 和 Atom 呢？<br>RSS 全称：RDF Site Summary 或 Really Simple Syndication，中文翻译为简易信息聚合，也叫做聚合内容。它是一种消息来源的<strong>格式</strong>,主要作用用在聚合多个网站的更新内容，并且能够自动通知网站订阅者。同时 RSS 能够以摘要的形式将信息呈现，帮助订阅者快速游览。（比如 bilibili 的动态？）<br>Atom 本身就是一个名词，它更加具体的名称是 Atom Syndication Format ，中文译为 Atom 供稿格式。Atom 的诞生是为了解决 RSS 在各个版本遇到的问题，降低 web 内容聚合的难度，特地特出来的一种信息格式。<br>RSS 的内容需要通过 RSS 阅读器查看，而 ROME 就是其中一个比较老的 RSS 阅读器了。</p>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">ROME攻击链分析</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2024-08-09 18:25:04
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Rome/" title="Rome">
+                    #Rome
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="什么是-ROME"><a href="#什么是-ROME" class="headerlink" title="什么是 ROME"></a>什么是 ROME</h1><p>ROME 是一个关于 RSS 和 Atom 格式的 java 框架<br>那什么是 RSS 和 Atom 呢？<br>RSS 全称：RDF Site Summary 或 Really Simple Syndication，中文翻译为简易信息聚合，也叫做聚合内容。它是一种消息来源的<strong>格式</strong>,主要作用用在聚合多个网站的更新内容，并且能够自动通知网站订阅者。同时 RSS 能够以摘要的形式将信息呈现，帮助订阅者快速游览。（比如 bilibili 的动态？）<br>Atom 本身就是一个名词，它更加具体的名称是 Atom Syndication Format ，中文译为 Atom 供稿格式。Atom 的诞生是为了解决 RSS 在各个版本遇到的问题，降低 web 内容聚合的难度，特地特出来的一种信息格式。<br>RSS 的内容需要通过 RSS 阅读器查看，而 ROME 就是其中一个比较老的 RSS 阅读器了。</p>
 <h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>rome<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>rome<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.javassist<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>javassist<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.28.0-GA<span class="tag">&lt;/<span class="name">version</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <h1 id="ROME-组件分析"><a href="#ROME-组件分析" class="headerlink" title="ROME 组件分析"></a>ROME 组件分析</h1><h2 id="0x01-ToStringBean"><a href="#0x01-ToStringBean" class="headerlink" title="0x01 ToStringBean"></a>0x01 ToStringBean</h2><p>我们先看他的结构<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1711786873166-a019c7bc-d699-4975-9a12-ce257828840a.png#averageHue=%233b3d42&clientId=u15358810-29f9-4&from=paste&height=250&id=u63d3cb84&originHeight=469&originWidth=914&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=146572&status=done&style=none&taskId=ubde9bbb4-d6f0-4d85-b719-670a43bb34c&title=&width=487.46666666666664" referrerpolicy="no-referrer" alt="image.png"><br>然后理解一下这个类是用来干什么的？从名称我们可以得知，它主要作用是用来打印信息的，所有方法都是用来 print 和 toString。要想将目标类信息打印出来，首先就应该获取对应类信息，那获取对应类信息最直接的就是 get 方法了，这里获取类属性值就是通过对应类的 get 方法获取的<br>我们重点看 toString 方法<br>在 toString 有参方法中，它会接收一段 StringBuffer 参数（类字节码），在经过信息处理和特征获取后，他会经历一段 for 循环，用来循环遍历类中的 get 方法，并且在最后执行该 get 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1711787054097-4ccd24c4-3ba2-4d81-adfd-bebfe56681e1.png#averageHue=%232c2f33&clientId=u15358810-29f9-4&from=paste&height=542&id=uaa7f0ce5&originHeight=1016&originWidth=1913&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=568791&status=done&style=none&taskId=u93a43d16-186d-4912-b554-aa5793f13ad&title=&width=1020.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>for 循环里面是通过<code>getReadMethod()</code>方法来获取 get 方法的<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1711787385126-fec8ca73-8f6f-400e-a327-601e9d82b751.png#averageHue=%232c2e33&clientId=u15358810-29f9-4&from=paste&height=484&id=u141c1995&originHeight=907&originWidth=1558&originalType=binary&ratio=1.875&rotation=0&showTitle=false&size=417497&status=done&style=none&taskId=ub2639b36-e651-4f05-b994-143866ca61d&title=&width=830.9333333333333" referrerpolicy="no-referrer" alt="image.png"><br>获取完 get 方法之后还会经过一层 if 的判断筛选，条件如下</p>
@@ -279,75 +235,360 @@
 <p>断点打在 readObject，跟进，然后顺利的来到 for 循环，第一次进 putval 肯定是不能够触发后续链的，但他会先给缓存 tab 赋值，把第一个 hashmap 存入进去<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1711898247072-076a4ec5-3002-4bd0-94dd-2c6e0818c9a1.png#averageHue=%232e343d&clientId=u9f9b8bcd-7272-4&from=paste&height=214&id=ue2c62fdb&originHeight=402&originWidth=1670&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=201366&status=done&style=none&taskId=u405cc488-2064-4668-8493-3dec5ed7040&title=&width=890.6666666666666" referrerpolicy="no-referrer" alt="image.png"><br>我们直接跟进第二次 putval，此时两段 hash 算出来肯定是一样的，我们只需关注 key 值和 k 值即可，分别为我们本次循环 put 的 hashmap，以及第一次 put ，被存入 tab 缓存的 hashmap<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1711898629888-1c0141e3-69b9-4df5-8e84-7c99d348d22a.png#averageHue=%2333373d&clientId=u9f9b8bcd-7272-4&from=paste&height=650&id=ufc0abded&originHeight=1218&originWidth=1823&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=724805&status=done&style=none&taskId=u2e7a6036-4514-4679-8b3b-eecf856b51b&title=&width=972.2666666666667" referrerpolicy="no-referrer" alt="image.png"><br>继续跟进 equals 方法<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1711898746853-8d85a397-fc7e-4b6d-9495-3eac0c1577d5.png#averageHue=%2333373d&clientId=u9f9b8bcd-7272-4&from=paste&height=702&id=u6fdbd404&originHeight=1317&originWidth=1948&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=812456&status=done&style=none&taskId=u8baa8f5b-5fb1-480d-82c8-17985c071c7&title=&width=1038.9333333333334" referrerpolicy="no-referrer" alt="image.png"><br>m 值为我们传入的第一次的 hashmap，i 为关于第二个 hashmap 的迭代器，迭代器第一次初始化取到的键值对默认为空，所以它第一次 next 就是取出我们第二个 hashmap 的第一个键值对，也就是<code>&lt;&quot;zZ&quot;,equalsbean&gt;</code>，所以 key 是 zZ 字符串，value 是创建好的 qualsbean<br>最终 value.equals(m.get(key)) 转化为<code>EqualsBean.equals(templatesImpl)</code><br>后续触发就是正常流程了，EqualsBean 的 equals 方法直接 return beanEquals 处理的结果，所以跟进beanEquals<br><img src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1711899567246-3ce22e8c-5896-43b1-9a95-1b719a0113a0.png#averageHue=%2333373c&clientId=u9f9b8bcd-7272-4&from=paste&height=564&id=u7b0d8106&originHeight=1057&originWidth=1959&originalType=binary&ratio=1.5&rotation=0&showTitle=false&size=653948&status=done&style=none&taskId=u3a553836-a0cc-4694-9d01-3467bd837ff&title=&width=1044.8" referrerpolicy="no-referrer" alt="image.png"><br>获取完 get 方法之后开始第一次调用，此时调用就是 TemplatesImpl 的 getOutputProperties 方法<br>之后就是加载恶意字节码的流程，不过多赘述</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>用 EqualsBean 的方式去触发链其实不只有 hashset 方法可以作为入口点，以及也不只 templatesImpl 作为最终恶意代码执行的点，它和 ToStringBean 一样，都只是作为攻击链其中的一部分。不过最重要的点还是它两作为 ROME 依赖中组件的特性，就是会调用目标类的 get 方法，这也是存在恶意代码执行的必要条件。<br>我们学习 ROME 链的时候要和 CommonCollections 链联系起来，虽然 CC 是最开始我们学习 java 反序列化的先导，但其实两者是很像的。分析 ROME 链，我最大的感受可能是对 CC 链等依赖中存在的攻击链新的认识，其实就是分析 java 项目中存在哪些依赖，该依赖有没有漏洞点，能不能作为我最终攻击的跳板。</p>
 
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/C3P0%E9%93%BE%E5%88%86%E6%9E%90.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2024-08-09 18:25:04
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Rome/" title="Rome">
+                        #Rome
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/post/Re_Live.html" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
         </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-ROME"><span class="toc-text">什么是 ROME</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">环境搭建</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ROME-%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">ROME 组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ToStringBean"><span class="toc-text">0x01 ToStringBean</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-EqualsBean"><span class="toc-text">0x02 EqualsBean</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ROME-%E9%93%BE%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">ROME 链流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ObjectBean%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">0x01 ObjectBean利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x01 流程分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-HashTable%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">0x02 HashTable利用链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-BadAttributeValueExpException"><span class="toc-text">0x03 BadAttributeValueExpException</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x01 调用流程分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-HotSwappableTargetSource-%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">0x04 HotSwappableTargetSource 利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%8A%9F%E8%83%BD%E5%88%86%E6%9E%90"><span class="toc-text">1x01  功能分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E6%B5%81%E7%A8%8B%E5%88%A9%E7%94%A8%E5%88%86%E6%9E%90"><span class="toc-text">1x02 流程利用分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-hashMap-%E5%85%A5%E5%8F%A3"><span class="toc-text">2x01 hashMap 入口</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">3x01 流程分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-JdbcRowSetImpl%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">0x05 JdbcRowSetImpl利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0"><span class="toc-text">1x01 攻击实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-EqualsBean%E9%93%BE"><span class="toc-text">0x06 EqualsBean链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90-1"><span class="toc-text">1x01 流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-hashSet-%E5%88%86%E6%9E%90"><span class="toc-text">2x01 hashSet 分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">2x02 攻击流程分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
 
         
-            <section class="post-copyright">
-                
-                    <p class="copyright-item">
-                        <span>Author:</span>
-                        <span>stoocea</span>
-                    </p>
-                
-                
-                    <p class="copyright-item">
-                        <span>Permalink:</span>
-                        <span><a href="http://example.com/post/ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html">http://example.com/post/ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html</a></span>
-                    </p>
-                
-                
-                    <p class="copyright-item">
-                        <span>License:</span>
-                        <span></span>
-                    </p>
-                
-                
-                     <p class="copyright-item">
-                         <span>Slogan:</span>
-                         <span>Do you believe in <strong>DESTINY</strong>?</span>
-                     </p>
-                
-
-            </section>
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
         
-        <section class="post-tags">
-            <div>
-                <span>Tag(s):</span>
-                <span class="tag">
-                    
-                    
-                        <a href="/tags/Rome/"># Rome</a>
-                    
-                        
-                </span>
-            </div>
-            <div>
-                <a href="javascript:window.history.back();">back</a>
-                <span>· </span>
-                <a href="/">home</a>
-            </div>
-        </section>
-        <section class="post-nav">
-            
-                <a class="prev" rel="prev" href="/post/Re_Live.html">Re_Life</a>
-            
-            
-            <a class="next" rel="next" href="/post/C3P0%E9%93%BE%E5%88%86%E6%9E%90.html">C3P0攻击链学习</a>
-            
-        </section>
-
-
-    </article>
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2025 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
 </div>
 
-            </div>
-            <footer id="footer" class="footer">
-    <div class="copyright">
-        <span>© stoocea | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
-    </div>
-</footer>
+      </div>
 
-    </div>
-</body>
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
 
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + ROME%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FROME%25E5%258F%258D%25E5%25BA%258F%25E5%2588%2597%25E5%258C%2596.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
 </html>
