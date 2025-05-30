@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="stoocea" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="time thicking away" />
+  
+  
+  
+  <title>
+    
+      JNI学习补充 
+      
+      
+      |
+    
+     stoocea&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.jpeg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">stoocea</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">JNI学习补充</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2025-05-30 15:54:21
+        </span>
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="标签"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/JNI/" title="JNI">
+                    #JNI
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>之前学习基础的rasp绕过的时候一直没有好好过一遍JNI。全称<code>Java Native Interface</code>​，用于扩展java与其他语言的交互，主要为java与C，C++之间的交互，但也不妨碍其他语言的设计。</p>
+<p>其设计的意义主要有两点：特定场景下可以提升应用性能。对于代码层的保护，提升反编译的难度。</p>
+<p>但是这么做就会出现一个问题，对于C和C++编译形成的动态链接库是不能够全平台互通的。需要特制。</p>
+<p>正常使用情况下，java侧如果想要通过JNI去和native层进行交互就必须先向JNI注册native函数，之后JNI才能够找到对应的native函数位置。注册方式主要分为两种，一种是静态注册，一种是动态注册。两者的区别在于静态注册的native方法在查找的时候是根据特定的 命名方式去查找的，所以我们写的native方法或者说生成的native方法名是不变的，这么找效率其实也有点低。动态注册的话由于存在JNINativeMethod这张映射表，所以找起来就快一点，而且方法名不会限制。</p>
+<p>所以其实JNI本质上还是通过Java的功能接口去加载相应的DLL或者so这种动态链接库。具体在java侧的触发就是通过调用到native修饰的方法。</p>
+<p>这一点也可以利用到Rasp当中做nativehook。</p>
+<h1 id="JNI基础与静态注册"><a href="#JNI基础与静态注册" class="headerlink" title="JNI基础与静态注册"></a>JNI基础与静态注册</h1><p>静态注册的话在Java侧首次调用native方法时完成注册</p>
+<p>具体使用如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> Test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNITest</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.loadLibrary(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">hello</span><span class="params">()</span>;</span><br><span class="line"> 	<span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">sum</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">JNITest</span>().hello();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这个时候再通过<code>javac -h . JNITest.java</code>​指令编译并且生成对应的JNI头文件</p>
+<p><img src="/images/JNI/assets/image-20250529111614-2wxybq2.png" alt="image"></p>
+<p>可以看到此时的JNI头文件的命令规则是<code>&lt;PackageName&gt;_&lt;classname&gt;</code>​</p>
+<p>我们再看一下该文件的具体内容</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* DO NOT EDIT THIS FILE - it is machine generated */</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;jni.h&gt;</span></span></span><br><span class="line"><span class="comment">/* Header for class Test_JNITest */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _Included_Test_JNITest</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _Included_Test_JNITest</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Class:     Test_JNITest</span></span><br><span class="line"><span class="comment"> * Method:    hello</span></span><br><span class="line"><span class="comment"> * Signature: ()V</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">JNIEXPORT <span class="type">void</span> JNICALL <span class="title function_">Java_Test_JNITest_hello</span></span><br><span class="line">  <span class="params">(JNIEnv *, jobject)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Class:     Test_JNITest</span></span><br><span class="line"><span class="comment"> * Method:    sum</span></span><br><span class="line"><span class="comment"> * Signature: ()V</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">JNIEXPORT <span class="type">void</span> JNICALL <span class="title function_">Java_Test_JNITest_sum</span></span><br><span class="line">  <span class="params">(JNIEnv *, jobject)</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>#include &lt;jni.h&gt;位于JDK的include目录下，引入了JVM所定义的所有所有JNI规范</p>
+<p>然后就是一段看不太懂的东西，这一段主要用于告诉 C++ 编译器，接下来的代码需要用 C 的方式来编译，因为静态注册对于native方法有命令的要求，如果采用C++的形式编译，方法名由于能够被重载，编译之后函数名会被改变，变成：函数名+参数类型的特殊类型形式。C不允许，所以没有这样的问题</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _Included_Test_JNITest</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _Included_Test_JNITest</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br></pre></td></tr></table></figure>
+
+<p>由于我们定义了两个native方法，一个Hello一个sum方法，所以这里会生成两段对应的静态注册函数，都由<code>JNIEXPORT</code>​ <code>JNICALL</code>​所修饰，然后方法对应函数的返回值肯定是一样，都是void</p>
+<p>可以发现命名规则为包名+类名+方法名。其中还有两个参数的传递<code>JNIEnv * ，jobject</code>​</p>
+<ul>
+<li>JNIEnv这是一个指向 JNI 运行环境的指针，我们可以通过这个指针访问 JNI 函数</li>
+<li>指代 java 中的 this 对象</li>
+</ul>
+<p>JNIEnv这个指针能够允许我们将java层的一些数据带出来，也可以在native层中直接执行一些java层的操作</p>
+<p>部分的结构内容如下，其实大部分功能还是通过const struct JNINativeInterface_ *functions;这个指针去调用得到的</p>
+<p><img src="/images/JNI/assets/image-20250529170252-tcetyb7.png" alt="image"></p>
+<p>所以我们可以继续跟进JNINativeInterface的定义，这里其实是回调到Java层之后返回结果，要想具体知道如何创建的调用的，得看JVM源码了，这里不细谈，了解JNIEnv作用和对应组成即可</p>
+<p><img src="/images/JNI/assets/image-20250529170824-xbvydcp.png" alt="image"></p>
+<p>回过头来，根据刚才javah生成的jni文件写一份Cpp文件然后编译成DLL</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// HelloJNI.cpp</span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;jni.h&gt;</span></span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&quot;Test_JNITest.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现本地方法：注意函数名称需要和头文件中的函数名称保持一致</span></span><br><span class="line"><span class="function">JNIEXPORT <span class="type">void</span> JNICALL <span class="title">Java_Test_JNITest_Hello</span><span class="params">(JNIEnv *env, jobject obj)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Hello from C++!&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">JNIEXPORT <span class="type">void</span> JNICALL <span class="title">Java_Test_JNITest_sum</span><span class="params">(JNIEnv *env, jobject obj)</span> </span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Sum from C++&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果没用编辑器啥的，纯文本编辑然后直接gcc编译的，所以记得加上这些引入头文件的路径</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">g++ -shared -o hello.dll -I<span class="string">&quot;%JAVA_HOME%\include&quot;</span> -I<span class="string">&quot;%JAVA_HOME%\include\win32&quot;</span> ImplJNI.cpp</span><br></pre></td></tr></table></figure>
+
+<p>‍</p>
+<p><img src="/images/JNI/assets/image-20250527162746-1iid52l.png" alt="image"></p>
+<p>之后就得到了一份能用的DLL，然后存放在项目根目录运行当前函数就能看到结果了。这里存在一个问题，当前win11下我如果用g++这种命令形式的编译DLL再去加载会出现<code>Can&#39;t find dependent libraries</code>​的报错情况，DLL引用中会缺点东西，所以最后还是用Visual studio去运行编译的</p>
+<p><img src="/images/JNI/assets/image-20250529163414-xt93gp7.png" alt="image"></p>
+<p>‍</p>
+<h1 id="动态注册"><a href="#动态注册" class="headerlink" title="动态注册"></a>动态注册</h1><h2 id="通过静态注册辅助动态注册"><a href="#通过静态注册辅助动态注册" class="headerlink" title="通过静态注册辅助动态注册"></a>通过静态注册辅助动态注册</h2><p>动态注册关键是JNI接口下的<code>RegisterNatives()</code>​方法。本质上还是在静态注册的过程。</p>
+<p>这里我们可以先看看JDK原生中有哪些类是用到了<code>RegisterNatives</code>​方法的</p>
+<p><img src="/images/JNI/assets/image-20250530095038-ywl13oi.png" alt="image"></p>
+<p>在Class中定义了一段静态的native<code> private static native void registerNatives();</code>​</p>
+<p>然后又在静态代码块对其进行了调用,之后观察每一个样例，都是同一个过程，也就是先定义一个静态native<code>registerNatives</code>​，然后在静态代码块中对其进行调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">        registerNatives();</span><br><span class="line">        useCaches = <span class="literal">true</span>;</span><br><span class="line">        serialPersistentFields = <span class="keyword">new</span> <span class="title class_">ObjectStreamField</span>[<span class="number">0</span>];</span><br><span class="line">        initted = <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>为什么要这么做呢？这里可以看一下<code>registerNatives</code>​在各个类的C实现中具体是怎么写的，比如在Class.c中</p>
+<p>他其实最终还是调用<code>JNIEnv</code>​的RegisterNatives方法进行的注册，只不过这里我们要注意一个变量methods</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">JNIEXPORT <span class="type">void</span> JNICALL</span><br><span class="line"><span class="title function_">Java_java_lang_Class_registerNatives</span><span class="params">(JNIEnv *env, jclass cls)</span></span><br><span class="line">&#123;</span><br><span class="line">    methods[<span class="number">1</span>].fnPtr = (<span class="type">void</span> *)(*env)-&gt;GetSuperclass;</span><br><span class="line">    (*env)-&gt;RegisterNatives(env, cls, methods,</span><br><span class="line">                            <span class="keyword">sizeof</span>(methods)/<span class="keyword">sizeof</span>(JNINativeMethod));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>c中调用还不能够完全了解，跟进jni.h中JNIEnv-RegisterNatives方法的具体内容</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jint (JNICALL *RegisterNatives)</span><br><span class="line">  (JNIEnv *env, jclass clazz, <span class="type">const</span> JNINativeMethod *methods,</span><br><span class="line">   jint nMethods);</span><br></pre></td></tr></table></figure>
+
+<p>发现他是一个JNINativeMethod类型，本质也是一段结构，用来存储对应native方法的名称以及函数签名与函数指针。</p>
+<p><img src="/images/JNI/assets/image-20250530103129-uuvk1md.png" alt="image"></p>
+<p>可这么一个结构很明显是单个方法的描述，为什么要传入一个*methods指针呢？很明显还有一个methods方法数组在作用。回到Class的c中定义，他其实维护了一个静态<code>JNINativeMethod</code>​类型的列表。根据刚才JNINativeMethod的类型，方法名，函数签名，函数指针，这里能够确定调用RegisterNatives方法传入的Methods指针就是这个方法表的指针。</p>
+<p><img src="/images/JNI/assets/image-20250530103801-he2o7v6.png" alt="image"></p>
+<p>所以本质上通过静态注册辅助动态注册的一个过程可以看作动态代理，我们只需要在具体的动态链接库的C中维护一个methods列表，然后在C中实现一个按照静态注册方法名格式的<code>registerNatives</code>​方法，并且在方法内容中调用JNIEnv的<code>RegisterNatives</code>​方法代理一下具体的注册过程，把方法表传进去即完成了动态注册在动态链接库中的具体实现。</p>
+<p>剩下的就是java侧在静态代码块中调用<code>registerNatives</code>​然后自己定义一个静态的<code>registerNatives</code>​native方法即可。后续就不用在头文件中声明其他native方法了</p>
+<p>然后注册c侧写实现的时候传参第二位就不是Jobject了，还是Jclass</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> Test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JNITest</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.loadLibrary(<span class="string">&quot;JNIDll&quot;</span>);</span><br><span class="line">        registerNatives();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">registerNatives</span><span class="params">()</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title function_">Hello</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">JNITest</span>().Hello();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>‍</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// JNIImpl.cpp</span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;jni.h&gt;</span></span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&quot;Test_JNITest.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> JNINativeMethod methods[] = &#123;</span><br><span class="line">    &#123;(<span class="type">char</span>*)<span class="string">&quot;Hello&quot;</span>, (<span class="type">char</span>*)<span class="string">&quot;()V&quot;</span>, (<span class="type">void</span>*)NativeHello&#125;,</span><br><span class="line">&#125;;</span><br><span class="line">JNIEXPORT <span class="type">void</span> JNICALL <span class="title function_">Java_Test_JNITest_registerNatives</span><span class="params">(JNIEnv *env, jclass cls)</span> &#123;</span><br><span class="line">    env-&gt;RegisterNatives(cls, methods, <span class="keyword">sizeof</span>(methods) / <span class="keyword">sizeof</span>(methods[<span class="number">0</span>]));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> */</span><br><span class="line">JNIEXPORT <span class="type">void</span> <span class="title function_">NativeHello</span><span class="params">(JNIEnv *env,jobject)</span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Hello from C++!&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>头文件的话就可以只写registerNatives的声明了</p>
+<figure class="highlight h"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* DO NOT EDIT THIS FILE - it is machine generated */</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;jni.h&gt;</span></span></span><br><span class="line"><span class="comment">/* Header for class Test_JNITest */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _Included_Test_JNITest</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _Included_Test_JNITest</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Class:     Test_JNITest</span></span><br><span class="line"><span class="comment">	 * Method:    registerNatives</span></span><br><span class="line"><span class="comment">	 * Signature: ()V</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	JNIEXPORT <span class="type">void</span> JNICALL <span class="title function_">Java_Test_JNITest_registerNatives</span></span><br><span class="line">	<span class="params">(JNIEnv*, jclass)</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>之后编译该C实现为动态链接库，就可以直接使用了</p>
+<p><img src="/images/JNI/assets/image-20250530110400-ctwgob7.png" alt="image"></p>
+<p>‍</p>
+<h2 id="JNI-OnLoad-动态加载"><a href="#JNI-OnLoad-动态加载" class="headerlink" title="JNI_OnLoad()动态加载"></a>JNI_OnLoad()动态加载</h2><p>这个方式起源一个思考，在自实现中，即使是静态注册辅助动态注册，我们也还是要在静态代码块中通过System.loadLibrary加载我们所编译的DLL。JNI的调用无非就两个过程，Java层中声明并调用native，JVM去寻找对应注册的C实现。那JVM是怎么知道对应的具体实现在哪的呢？这里涉及到一个资源加载的问题。load的对象是我们自己写的动态链接库，那么System.loadLibrary其实就是将我们动态链接库的内容传授给JVM，然后JVM就知道对应的C实现在哪了，也就能够调用到了。这个过程中是否存在能够抽象出来的点供我们自己使用呢？</p>
+<p>我们可以稍微跟进一下loadLibrary的具体方法，流程会持续跟进到ClassLoader$NativeLibrary的nativeload方法。过程中也能够看到见到很多可以记录的地方，比如有哪些参数是我们可以通过启动参数去进行预加载的</p>
+<p><img src="/images/JNI/assets/image-20250530113658-6yzybp7.png" alt="image"></p>
+<p><img src="/images/JNI/assets/image-20250530114413-0cmxzqq.png" alt="image"></p>
+<p>System.loadLibrary()在加载动态链接库的时候会首先在库中查找JNI_OnLoad方法，如果该函数存在，则先执行它，而官方对于JNI_OnLoad的定义其实有三个层面</p>
+<ul>
+<li>告知JVM当前这个动态链接库需要多少版本的JNI</li>
+<li>执行具体的初始化操作</li>
+<li>将javaVM参数保存为全局对象，方便之后能够在任何地方取到JNIEnv对象</li>
+</ul>
+<p><img src="/images/JNI/assets/image-20250530114046-cx21jsp.png" alt="image"></p>
+<p>每一个native方法的C实现中如果有JNI_OnLoad其实内容是不相同的，我们自己也可以通过OnLoad的方式，在方法定义中完成<code>registerNatives</code>​的完整调用。那么我们甚至连头文件也不需要生成了，直接写实现即可</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;jni.h&gt;</span></span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&quot;Test_JNITest.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">NativeHello</span><span class="params">(JNIEnv* env, jobject)</span> &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Hello from JNI!&quot;</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> JNINativeMethod methods[] = &#123;</span><br><span class="line">    &#123;(<span class="type">char</span>*)<span class="string">&quot;Hello&quot;</span>, (<span class="type">char</span>*)<span class="string">&quot;()V&quot;</span>, (<span class="type">void</span>*)NativeHello&#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">JNIEXPORT jint JNICALL <span class="title function_">JNI_OnLoad</span><span class="params">(JavaVM* vm, <span class="type">void</span>* reserved)</span> &#123;</span><br><span class="line">    JNIEnv* env = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取 JNIENV</span></span><br><span class="line">    <span class="keyword">if</span> (vm-&gt;GetEnv(reinterpret_cast&lt;<span class="type">void</span>**&gt;(&amp;env), JNI_VERSION_1_6) != JNI_OK)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取 Java Native 对应的 Class</span></span><br><span class="line">    jclass jClassName = env-&gt;FindClass(<span class="string">&quot;Test/JNITest&quot;</span>);</span><br><span class="line">    jint ret = env-&gt;RegisterNatives(jClassName, methods, <span class="keyword">sizeof</span>(methods) / <span class="keyword">sizeof</span>(methods[<span class="number">0</span>]));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> JNI_VERSION_1_6;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​​</p>
+<p><img src="/images/JNI/assets/image-20250530140019-gklb929.png" alt="image"></p>
+<p>讲到这里对于JNI的基本使用就差不多了，这里再补充一点JNI_OnUnload()的触发时机吧，能够代码执行的点还是记录一下：According to the JNI documentation, it will be called when the classloader that loaded the libarary is garbage collected.</p>
+<p>当GC回收了加载这个库的ClassLoader时，该函数被调用</p>
+<p>‍</p>
+<h1 id="结合思考"><a href="#结合思考" class="headerlink" title="结合思考"></a>结合思考</h1><p>之前在探究一些C侧的rasp绕过，看着看着越来越陷入瓶颈。于是想着沉淀一些基础性的东西。很多java内存攻击的实现都要借助一些JNI的接口，虽然最后实现完了有很多自己的想法，然后一一去问同事，发现基本上所有思路都被拦截了就很操蛋。</p>
+<p>后续退而求其次去看了一下简单的nativeRasp，发现CRASP的实现其实也是通过JNI的一些接口与Java层进行交互的，所以去阅读时候也没有那么多障碍了，可以继续探究。</p>
+<p>比较有趣的是JNI_OnLoad和UnOnLoad这两个方法可以做到类似于filter形式的触发，恶意的代码执行完全可写进C实现中的JNI_OnLoad的即可，就不用LoadLibary之后还调方法了。</p>
+<p>‍</p>
+<p>参考文章</p>
+<p><a target="_blank" rel="noopener" href="https://tttang.com/archive/1622/#toc_native-jni_onload">https://tttang.com/archive/1622/#toc_native-jni_onload</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhujiabin/p/10605745.html">https://www.cnblogs.com/zhujiabin/p/10605745.html</a></p>
+<p>‍</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/post/WebSocket%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%85%A8%E7%89%88%E6%9C%AC%E6%9E%84%E9%80%A0%E6%8E%A2%E7%B4%A2%E5%8F%8A%E5%AE%9E%E6%88%98%E5%8C%96%E5%88%A9%E7%94%A8.html" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2025-05-30 15:54:21
+            </span>
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="标签"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/JNI/" title="JNI">
+                        #JNI
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JNI%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">JNI基础与静态注册</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">动态注册</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C%E8%BE%85%E5%8A%A9%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">通过静态注册辅助动态注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNI-OnLoad-%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD"><span class="toc-text">JNI_OnLoad()动态加载</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%93%E5%90%88%E6%80%9D%E8%80%83"><span class="toc-text">结合思考</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2025 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + JNI%E5%AD%A6%E4%B9%A0%E8%A1%A5%E5%85%85 + '&url=' + http%3A%2F%2Fexample.com%2Fpost%2FJNI.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/post/JNI.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
