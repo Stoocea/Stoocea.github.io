@@ -46,7 +46,8 @@
       </nav>
     </header>
     <div class="flex-container">
-      <main><article class="container post-details reading-page" id="post-details">
+      <main>
+<article class="container post-details reading-page has-toc" id="post-details">
   
   
     <nav class="other-notes" aria-label="其他文章">
@@ -70,7 +71,13 @@
       
     </header>
     
-      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E5%BC%95%E5%85%A5"><span class="toc-text">背景引入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Java-%E5%AD%97%E8%8A%82%E7%A0%81%E6%96%87%E4%BB%B6"><span class="toc-text">Java 字节码文件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E9%87%8F%E6%B1%A0%EF%BC%88Constant-pool%EF%BC%89"><span class="toc-text">常量池（Constant pool）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E8%A1%A8%E9%9B%86%E5%90%88"><span class="toc-text">方法表集合</span></a></li></ol></li></ol></details>
+      <nav class="reading-toc" aria-label="文章目录">
+        <h2>文章目录</h2>
+        <button type="button" aria-expanded="false" aria-controls="reading-sections">
+          文章目录<span class="current-section"></span>
+        </button>
+        <div id="reading-sections"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E5%BC%95%E5%85%A5"><span class="toc-text">背景引入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Java-%E5%AD%97%E8%8A%82%E7%A0%81%E6%96%87%E4%BB%B6"><span class="toc-text">Java 字节码文件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E9%87%8F%E6%B1%A0%EF%BC%88Constant-pool%EF%BC%89"><span class="toc-text">常量池（Constant pool）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E8%A1%A8%E9%9B%86%E5%90%88"><span class="toc-text">方法表集合</span></a></li></ol></li></ol></div>
+      </nav>
     
     <div class="markdown-body"><h1 id="背景引入"><a class="headerlink" href="#背景引入" title="背景引入"></a>背景引入</h1><p>我们平常所写的 Java 是不能被 JVM 识别所运行的，必须将其编译成 class 文件，JVM 才能够识别代码，进行对应的程序操作。<br/>Java 有着”一次编译，到处运行”的特点，也就是说当我们对一份 java 代码进行编译之后，得到的 class 文件能够放在任意机器或者任意 OS 系统中的 JVM 中识别并运行。当然 JVM 并不止单单支持 Java。</p>
 <h1 id="Java-字节码文件"><a class="headerlink" href="#Java-字节码文件" title="Java 字节码文件"></a>Java 字节码文件</h1><p>class 文件本质是一个以 8 位字节为基础的二进制流。所有的 class 文件开头的前四个字节都是固定的魔数– 0xCAFEBABE  （咖啡宝贝）。当然这个主要是用来让 JVM 识别该文件是否为 class 文件<br/>该 class 文件编译之前采用的 Java 版本在魔数之后的 4 个字节给出，前两个字节表示次版本号，后两个字节表示主版本号。class 文件的 10 进制形式能够在 oracle 官网进行版本查询，得知更加具体的版本号<br/>比如我此时编译一份 java 文件</p>
@@ -109,6 +116,7 @@
 </div>
   </div>
 </article>
+<script defer src="/js/catalog.js"></script>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
 </main>

@@ -46,7 +46,8 @@
       </nav>
     </header>
     <div class="flex-container">
-      <main><article class="container post-details reading-page" id="post-details">
+      <main>
+<article class="container post-details reading-page has-toc" id="post-details">
   
   
     <nav class="other-notes" aria-label="其他文章">
@@ -70,7 +71,13 @@
       
     </header>
     
-      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2023-49299-CVE-2024-23320"><span class="toc-text">CVE-2023-49299 CVE-2024-23320</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-text">漏洞点分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x01 工作流程分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x02 漏洞攻击实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-9-%E7%89%88%E6%9C%AC-diff-%E5%88%86%E6%9E%90"><span class="toc-text">3.1.9 版本 diff 分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E6%BA%90%E7%A0%81-diff-%E5%88%86%E6%9E%90"><span class="toc-text">0x01 源码 diff 分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E5%B0%9D%E8%AF%95%E7%BB%95%E8%BF%87"><span class="toc-text">0x02 尝试绕过</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2023-49109"><span class="toc-text">CVE-2023-49109</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%88%9D%E6%AD%A5%E5%AE%9A%E4%BD%8D"><span class="toc-text">0x01 初步定位</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%BC%8F%E6%B4%9E%E9%80%BB%E8%BE%91%E5%88%86%E6%9E%90"><span class="toc-text">0x02 漏洞逻辑分析</span></a></li></ol></li></ol></details>
+      <nav class="reading-toc" aria-label="文章目录">
+        <h2>文章目录</h2>
+        <button type="button" aria-expanded="false" aria-controls="reading-sections">
+          文章目录<span class="current-section"></span>
+        </button>
+        <div id="reading-sections"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2023-49299-CVE-2024-23320"><span class="toc-text">CVE-2023-49299 CVE-2024-23320</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-text">漏洞点分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x01 工作流程分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x02 漏洞攻击实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-9-%E7%89%88%E6%9C%AC-diff-%E5%88%86%E6%9E%90"><span class="toc-text">3.1.9 版本 diff 分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E6%BA%90%E7%A0%81-diff-%E5%88%86%E6%9E%90"><span class="toc-text">0x01 源码 diff 分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E5%B0%9D%E8%AF%95%E7%BB%95%E8%BF%87"><span class="toc-text">0x02 尝试绕过</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2023-49109"><span class="toc-text">CVE-2023-49109</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%88%9D%E6%AD%A5%E5%AE%9A%E4%BD%8D"><span class="toc-text">0x01 初步定位</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%BC%8F%E6%B4%9E%E9%80%BB%E8%BE%91%E5%88%86%E6%9E%90"><span class="toc-text">0x02 漏洞逻辑分析</span></a></li></ol></li></ol></div>
+      </nav>
     
     <div class="markdown-body"><p>包括如下几个 cve：CVE-2023-49299 CVE-2024-23320</p>
 <h1 id="漏洞描述"><a class="headerlink" href="#漏洞描述" title="漏洞描述"></a>漏洞描述</h1><blockquote>
@@ -129,6 +136,7 @@
 </div>
   </div>
 </article>
+<script defer src="/js/catalog.js"></script>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
 </main>

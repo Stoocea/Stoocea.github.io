@@ -46,7 +46,8 @@
       </nav>
     </header>
     <div class="flex-container">
-      <main><article class="container post-details reading-page" id="post-details">
+      <main>
+<article class="container post-details reading-page has-toc" id="post-details">
   
   
     <nav class="other-notes" aria-label="其他文章">
@@ -70,7 +71,13 @@
       
     </header>
     
-      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JNI%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">JNI基础与静态注册</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">动态注册</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C%E8%BE%85%E5%8A%A9%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">通过静态注册辅助动态注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNI-OnLoad-%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD"><span class="toc-text">JNI_OnLoad()动态加载</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%93%E5%90%88%E6%80%9D%E8%80%83"><span class="toc-text">结合思考</span></a></li></ol></details>
+      <nav class="reading-toc" aria-label="文章目录">
+        <h2>文章目录</h2>
+        <button type="button" aria-expanded="false" aria-controls="reading-sections">
+          文章目录<span class="current-section"></span>
+        </button>
+        <div id="reading-sections"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JNI%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">JNI基础与静态注册</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">动态注册</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C%E8%BE%85%E5%8A%A9%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">通过静态注册辅助动态注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNI-OnLoad-%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD"><span class="toc-text">JNI_OnLoad()动态加载</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%93%E5%90%88%E6%80%9D%E8%80%83"><span class="toc-text">结合思考</span></a></li></ol></div>
+      </nav>
     
     <div class="markdown-body"><p>之前学习基础的rasp绕过的时候一直没有好好过一遍JNI。全称<code>Java Native Interface</code>​，用于扩展java与其他语言的交互，主要为java与C，C++之间的交互，但也不妨碍其他语言的设计。</p>
 <p>其设计的意义主要有两点：特定场景下可以提升应用性能。对于代码层的保护，提升反编译的难度。</p>
@@ -164,6 +171,7 @@
 </div>
   </div>
 </article>
+<script defer src="/js/catalog.js"></script>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
 </main>

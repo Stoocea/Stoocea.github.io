@@ -46,7 +46,8 @@
       </nav>
     </header>
     <div class="flex-container">
-      <main><article class="container post-details reading-page" id="post-details">
+      <main>
+<article class="container post-details reading-page has-toc" id="post-details">
   
   
     <nav class="other-notes" aria-label="其他文章">
@@ -70,7 +71,13 @@
       
     </header>
     
-      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SignedObject"><span class="toc-text">SignedObject</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Rome"><span class="toc-text">Rome</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#toStringBean"><span class="toc-text">toStringBean</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#equalsBean"><span class="toc-text">equalsBean</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Commons-Beanutils"><span class="toc-text">Commons-Beanutils</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RmiConnector"><span class="toc-text">RmiConnector</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#wrapperConnectionPoolDataSource"><span class="toc-text">wrapperConnectionPoolDataSource</span></a></li></ol></details>
+      <nav class="reading-toc" aria-label="文章目录">
+        <h2>文章目录</h2>
+        <button type="button" aria-expanded="false" aria-controls="reading-sections">
+          文章目录<span class="current-section"></span>
+        </button>
+        <div id="reading-sections"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SignedObject"><span class="toc-text">SignedObject</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Rome"><span class="toc-text">Rome</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#toStringBean"><span class="toc-text">toStringBean</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#equalsBean"><span class="toc-text">equalsBean</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Commons-Beanutils"><span class="toc-text">Commons-Beanutils</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RmiConnector"><span class="toc-text">RmiConnector</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#wrapperConnectionPoolDataSource"><span class="toc-text">wrapperConnectionPoolDataSource</span></a></li></ol></div>
+      </nav>
     
     <div class="markdown-body"><h1 id="前言"><a class="headerlink" href="#前言" title="前言"></a>前言</h1><p>二次反序列化大多数时候是用来绕过黑名单或者解决不出网的问题，不会作为一条单独且完整的利用链存在，而是作为一个中间节点，用来绕过。<br/>二次反序列化一般来说有如下几个常用的利用类</p>
 <ol>
@@ -101,6 +108,7 @@
 </div>
   </div>
 </article>
+<script defer src="/js/catalog.js"></script>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
 </main>

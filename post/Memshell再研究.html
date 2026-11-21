@@ -46,7 +46,8 @@
       </nav>
     </header>
     <div class="flex-container">
-      <main><article class="container post-details reading-page" id="post-details">
+      <main>
+<article class="container post-details reading-page has-toc" id="post-details">
   
   
     <nav class="other-notes" aria-label="其他文章">
@@ -70,7 +71,13 @@
       
     </header>
     
-      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96StandardContext%E7%9A%84%E6%80%9D%E8%B7%AF%E6%80%BB%E7%BB%93"><span class="toc-text">获取StandardContext的思路总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%A6%E8%A7%A3%E9%81%8D%E5%8E%86%E7%BA%BF%E7%A8%8B%E8%8E%B7%E5%8F%96StandardContext"><span class="toc-text">详解遍历线程获取StandardContext</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ContainerBackgroundProcessor"><span class="toc-text">0x01 ContainerBackgroundProcessor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Tomcat9-%E4%B9%8B%E5%90%8E%E7%9A%84%E8%B7%AF"><span class="toc-text">0x02 Tomcat9 之后的路</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#tomcat-%E7%89%88%E6%9C%AC%E4%B8%8D%E5%90%8C%E4%B8%AD%E5%85%B3%E9%94%AE%E7%BB%84%E4%BB%B6%E7%9A%84%E8%8E%B7%E5%8F%96"><span class="toc-text">tomcat 版本不同中关键组件的获取</span></a></li></ol></details>
+      <nav class="reading-toc" aria-label="文章目录">
+        <h2>文章目录</h2>
+        <button type="button" aria-expanded="false" aria-controls="reading-sections">
+          文章目录<span class="current-section"></span>
+        </button>
+        <div id="reading-sections"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96StandardContext%E7%9A%84%E6%80%9D%E8%B7%AF%E6%80%BB%E7%BB%93"><span class="toc-text">获取StandardContext的思路总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%A6%E8%A7%A3%E9%81%8D%E5%8E%86%E7%BA%BF%E7%A8%8B%E8%8E%B7%E5%8F%96StandardContext"><span class="toc-text">详解遍历线程获取StandardContext</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ContainerBackgroundProcessor"><span class="toc-text">0x01 ContainerBackgroundProcessor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Tomcat9-%E4%B9%8B%E5%90%8E%E7%9A%84%E8%B7%AF"><span class="toc-text">0x02 Tomcat9 之后的路</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#tomcat-%E7%89%88%E6%9C%AC%E4%B8%8D%E5%90%8C%E4%B8%AD%E5%85%B3%E9%94%AE%E7%BB%84%E4%BB%B6%E7%9A%84%E8%8E%B7%E5%8F%96"><span class="toc-text">tomcat 版本不同中关键组件的获取</span></a></li></ol></div>
+      </nav>
     
     <div class="markdown-body"><p>之前学习的通过反序列化或者其他能够代码执行的内存马回显技术，在一定版本下以及一定实验环境下，已经足够好用。但是问题在于如果我们放到JDK11或更高版本，以及实战情况下，这个时候内存马构造的代码就不够看了，并且在大多数攻防情况下，注入一段内存马还是硬道理。于是这段笔记用来记录我学习JMG和其他实战场景下的内存马构造。</p>
 <h1 id="获取StandardContext的思路总结"><a class="headerlink" href="#获取StandardContext的思路总结" title="获取StandardContext的思路总结"></a>获取StandardContext的思路总结</h1><p>目前存在如下方法：<br/>1.从request对象反射出ApplicationContext，然后获取StandardContext。问题在于如何获取request。一是通过ThreadLocal属性获取，而是通过global属性获取。这个方法如果在JDK8下是完全没问题的，由于我个人能力原因JDK11下某些反射之后得到的对象不能够强转的问题而搁置。如果存在能够解析JSP的情况，这个方法就能够快速获取到request对象，从而快速获取到StandardContext，之前学习Memshell回显技术就是基于获取request的思路基础上进行的。<br/>2.直接从ContextClassLoader中获取。ContextClassLoader，这里是指WebappClassLoaderBase，具体作用是Tomcat为了隔离每个webservice容器中类加载的问题，所以每个web容器会内置一个ClassLoader。之后就可以调用WebappClassLoaderBase的getResources方法，获取StandardRoot，再通过StandardRoot的getContext方法获取到StandardContext。代码也很简单实现：</p>
@@ -96,6 +103,7 @@
 </div>
   </div>
 </article>
+<script defer src="/js/catalog.js"></script>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
 </main>

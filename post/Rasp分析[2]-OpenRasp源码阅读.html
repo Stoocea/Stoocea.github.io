@@ -46,7 +46,8 @@
       </nav>
     </header>
     <div class="flex-container">
-      <main><article class="container post-details reading-page" id="post-details">
+      <main>
+<article class="container post-details reading-page has-toc" id="post-details">
   
   
     <nav class="other-notes" aria-label="其他文章">
@@ -70,7 +71,13 @@
       
     </header>
     
-      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-Rasp-install%E5%88%86%E6%9E%90"><span class="toc-text">0x01 Rasp-install分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-RaspAgent%E5%88%86%E6%9E%90"><span class="toc-text">0x02 RaspAgent分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1x01-ModuleLoader-%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E5%9D%97"><span class="toc-text">1x01 ModuleLoader-静态代码块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2x01-Why-ExtClassLoader%EF%BC%9F"><span class="toc-text">2x01 Why ExtClassLoader？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3x01-Case-BootstrapClassLoader"><span class="toc-text">3x01 Case: BootstrapClassLoader</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3x02-Case-applicationClassLoader"><span class="toc-text">3x02 Case: applicationClassLoader</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1x02-ModuleLoader-%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="toc-text">1x02 ModuleLoader-构造方法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-rasp-engine%E5%88%86%E6%9E%90"><span class="toc-text">0x02 rasp-engine分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1x01-CustomClassTransformer%E5%88%86%E6%9E%90"><span class="toc-text">1x01 CustomClassTransformer分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2x01-Hook%E5%85%B7%E4%BD%93%E5%88%86%E6%9E%90"><span class="toc-text">2x01 Hook具体分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3x01-Hook%E5%85%AC%E5%BC%8F%E6%8F%92%E5%85%A5"><span class="toc-text">3x01 Hook公式插入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3x02-JS%E5%85%B7%E4%BD%93%E5%A4%84%E7%90%86"><span class="toc-text">3x02 JS具体处理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-%E6%9A%82%E5%AD%98"><span class="toc-text">0x03 暂存</span></a></li></ol></details>
+      <nav class="reading-toc" aria-label="文章目录">
+        <h2>文章目录</h2>
+        <button type="button" aria-expanded="false" aria-controls="reading-sections">
+          文章目录<span class="current-section"></span>
+        </button>
+        <div id="reading-sections"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-Rasp-install%E5%88%86%E6%9E%90"><span class="toc-text">0x01 Rasp-install分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-RaspAgent%E5%88%86%E6%9E%90"><span class="toc-text">0x02 RaspAgent分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1x01-ModuleLoader-%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E5%9D%97"><span class="toc-text">1x01 ModuleLoader-静态代码块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2x01-Why-ExtClassLoader%EF%BC%9F"><span class="toc-text">2x01 Why ExtClassLoader？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3x01-Case-BootstrapClassLoader"><span class="toc-text">3x01 Case: BootstrapClassLoader</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3x02-Case-applicationClassLoader"><span class="toc-text">3x02 Case: applicationClassLoader</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1x02-ModuleLoader-%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="toc-text">1x02 ModuleLoader-构造方法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-rasp-engine%E5%88%86%E6%9E%90"><span class="toc-text">0x02 rasp-engine分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1x01-CustomClassTransformer%E5%88%86%E6%9E%90"><span class="toc-text">1x01 CustomClassTransformer分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2x01-Hook%E5%85%B7%E4%BD%93%E5%88%86%E6%9E%90"><span class="toc-text">2x01 Hook具体分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3x01-Hook%E5%85%AC%E5%BC%8F%E6%8F%92%E5%85%A5"><span class="toc-text">3x01 Hook公式插入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3x02-JS%E5%85%B7%E4%BD%93%E5%A4%84%E7%90%86"><span class="toc-text">3x02 JS具体处理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-%E6%9A%82%E5%AD%98"><span class="toc-text">0x03 暂存</span></a></li></ol></div>
+      </nav>
     
     <div class="markdown-body"><p>上一节主要对Rasp的基本实现原理进行了分析，后续一直想着继续看看实战中的Rasp是怎么写的以及怎么用的，因为自己在实现一个简单的Rasp原理时心里总是感觉有些地方和实际接轨起来出入很大。现在网上的中文文档聊到Rasp基本上都会提到OpenRasp，因为是开源而且文档详细。所以这一节我也接着来看OpenRasp的分析，巩固一下。</p>
 <p>‍</p>
@@ -215,6 +222,7 @@
 </div>
   </div>
 </article>
+<script defer src="/js/catalog.js"></script>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
 </main>

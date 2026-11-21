@@ -46,7 +46,8 @@
       </nav>
     </header>
     <div class="flex-container">
-      <main><article class="container post-details reading-page" id="post-details">
+      <main>
+<article class="container post-details reading-page has-toc" id="post-details">
   
   
     <nav class="other-notes" aria-label="其他文章">
@@ -70,7 +71,13 @@
       
     </header>
     
-      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE%E9%AB%98%E7%89%88%E6%9C%ACJNDI%E6%94%B9%E5%8A%A8"><span class="toc-text">回顾高版本JNDI改动</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#LDAP%E6%94%B9%E5%8A%A8"><span class="toc-text">LDAP改动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RMI%E6%94%B9%E5%8A%A8"><span class="toc-text">RMI改动</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JDNI-ldap%E6%94%BB%E5%87%BB%E9%9D%A2%E6%89%A9%E5%B1%95%E9%83%A8%E5%88%86"><span class="toc-text">JDNI-ldap攻击面扩展部分</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90"><span class="toc-text">原理解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E6%9E%84%E9%80%A0%E5%88%A9%E7%94%A8"><span class="toc-text">具体构造利用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E7%89%88%E6%9C%ACJDK%E4%B8%8B%E7%9A%84JNDI%E5%85%B7%E4%BD%93%E5%88%A9%E7%94%A8"><span class="toc-text">高版本JDK下的JNDI具体利用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#BeanFactory%E5%88%A9%E7%94%A8"><span class="toc-text">BeanFactory利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanFactory%E8%A7%A3%E6%9E%90"><span class="toc-text">BeanFactory解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ELProcessor%E5%88%A9%E7%94%A8"><span class="toc-text">ELProcessor利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#snakeyaml%E5%88%A9%E7%94%A8"><span class="toc-text">snakeyaml利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GroovyShell%E5%88%A9%E7%94%A8"><span class="toc-text">GroovyShell利用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-text">写入内存马</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-text">后记</span></a></li></ol></details>
+      <nav class="reading-toc" aria-label="文章目录">
+        <h2>文章目录</h2>
+        <button type="button" aria-expanded="false" aria-controls="reading-sections">
+          文章目录<span class="current-section"></span>
+        </button>
+        <div id="reading-sections"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE%E9%AB%98%E7%89%88%E6%9C%ACJNDI%E6%94%B9%E5%8A%A8"><span class="toc-text">回顾高版本JNDI改动</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#LDAP%E6%94%B9%E5%8A%A8"><span class="toc-text">LDAP改动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RMI%E6%94%B9%E5%8A%A8"><span class="toc-text">RMI改动</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JDNI-ldap%E6%94%BB%E5%87%BB%E9%9D%A2%E6%89%A9%E5%B1%95%E9%83%A8%E5%88%86"><span class="toc-text">JDNI-ldap攻击面扩展部分</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90"><span class="toc-text">原理解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E6%9E%84%E9%80%A0%E5%88%A9%E7%94%A8"><span class="toc-text">具体构造利用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E7%89%88%E6%9C%ACJDK%E4%B8%8B%E7%9A%84JNDI%E5%85%B7%E4%BD%93%E5%88%A9%E7%94%A8"><span class="toc-text">高版本JDK下的JNDI具体利用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#BeanFactory%E5%88%A9%E7%94%A8"><span class="toc-text">BeanFactory利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanFactory%E8%A7%A3%E6%9E%90"><span class="toc-text">BeanFactory解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ELProcessor%E5%88%A9%E7%94%A8"><span class="toc-text">ELProcessor利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#snakeyaml%E5%88%A9%E7%94%A8"><span class="toc-text">snakeyaml利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GroovyShell%E5%88%A9%E7%94%A8"><span class="toc-text">GroovyShell利用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-text">写入内存马</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-text">后记</span></a></li></ol></div>
+      </nav>
     
     <div class="markdown-body"><p>文章首发于奇安信攻防社区</p>
 <p>某次行动的时候遇到了jolokia的JNDI注入利用，由于诸多原因需要更稳定的shell，所以考虑JNDI打入内存马，但是遇到了瓶颈。现在准备进一步学习，争取能够实现这个通过JNDI打入内存马的功能。</p>
@@ -175,6 +182,7 @@
 </div>
   </div>
 </article>
+<script defer src="/js/catalog.js"></script>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
 </main>

@@ -46,7 +46,8 @@
       </nav>
     </header>
     <div class="flex-container">
-      <main><article class="container post-details reading-page" id="post-details">
+      <main>
+<article class="container post-details reading-page has-toc" id="post-details">
   
   
     <nav class="other-notes" aria-label="其他文章">
@@ -70,7 +71,13 @@
       
     </header>
     
-      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-unsafePointer%E6%8C%87%E9%92%88%E5%9F%BA%E7%A1%80"><span class="toc-text">0x01 unsafePointer指针基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-unsafe-package"><span class="toc-text">0x02 unsafe package</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1x01-Unsafe-Pointer"><span class="toc-text">1x01 Unsafe.Pointer</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#uintptr"><span class="toc-text">uintptr</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#uintptr%E7%89%B9%E7%82%B9%E4%BB%A5%E5%8F%8A%E4%BD%9C%E7%94%A8"><span class="toc-text">uintptr特点以及作用</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-ShellCode-Loader"><span class="toc-text">0x03 ShellCode Loader</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></details>
+      <nav class="reading-toc" aria-label="文章目录">
+        <h2>文章目录</h2>
+        <button type="button" aria-expanded="false" aria-controls="reading-sections">
+          文章目录<span class="current-section"></span>
+        </button>
+        <div id="reading-sections"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-unsafePointer%E6%8C%87%E9%92%88%E5%9F%BA%E7%A1%80"><span class="toc-text">0x01 unsafePointer指针基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-unsafe-package"><span class="toc-text">0x02 unsafe package</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1x01-Unsafe-Pointer"><span class="toc-text">1x01 Unsafe.Pointer</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#uintptr"><span class="toc-text">uintptr</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#uintptr%E7%89%B9%E7%82%B9%E4%BB%A5%E5%8F%8A%E4%BD%9C%E7%94%A8"><span class="toc-text">uintptr特点以及作用</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-ShellCode-Loader"><span class="toc-text">0x03 ShellCode Loader</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div>
+      </nav>
     
     <div class="markdown-body"><p>笔记属于记录恶意程序免杀入门学到的一些课程以及文章，主要用于记录和自我理解，程度很低。</p>
 <h1 id="0x01-unsafePointer指针基础"><a class="headerlink" href="#0x01-unsafePointer指针基础" title="0x01 unsafePointer指针基础"></a>0x01 unsafePointer指针基础</h1><p>首先是golang中的一些指针基础，在go中和C中取出某个变量的指针的符号是一样的–<code>&amp;</code>​，具体使用案例如下</p>
@@ -124,6 +131,7 @@
 </div>
   </div>
 </article>
+<script defer src="/js/catalog.js"></script>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
 </main>

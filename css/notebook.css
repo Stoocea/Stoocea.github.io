@@ -153,9 +153,56 @@ body, .markdown-body { font-family: var(--text); }
 .markdown-body :is(h1, h2, h3, h4, h5, h6) { font-family: var(--heading); }
 .reading-tags { display: flex; flex-wrap: wrap; gap: 10px; }
 .reading-tags a { color: var(--tone-accent-dark); font: 1.3rem var(--mono); }
-.reading-toc { margin: 24px 0; padding: 12px 0; border-block: 1px solid var(--tone-line); font-size: 1.4rem; }
-.reading-toc summary { cursor: pointer; }
-.reading-toc ol { padding-left: 2rem; }
+.reading-toc { align-self: start; min-width: 0; font: 1.35rem/1.5 var(--text); }
+.reading-toc h2 { margin: 0 0 10px; color: var(--tone-ink); font: 600 1.45rem var(--heading); }
+.reading-toc button { display: none; }
+#reading-sections { overflow-y: auto; overscroll-behavior: contain; }
+.reading-toc ol { list-style: none; margin: 0; padding: 0; }
+.reading-toc .toc-child { padding-left: 1.15rem; }
+.reading-toc .toc-link {
+  display: block;
+  padding: 4px 10px;
+  border-left: 2px solid var(--tone-line);
+  overflow-wrap: anywhere;
+  opacity: 1;
+}
+.reading-toc .toc-link:hover::after { content: none; }
+.reading-toc .toc-link:not([href]) { display: none; }
+.reading-toc .toc-link[aria-current] { border-color: var(--tone-accent); color: var(--tone-accent-dark); font-weight: 600; }
+.has-toc .markdown-body { min-width: 0; }
+html:has(.reading-page.has-toc) { scroll-padding-top: 0; }
+.has-toc .markdown-body :is(h1,h2,h3,h4,h5,h6) { scroll-margin-top: var(--chapter-offset); }
+@media (min-width: 960px) {
+  .reading-page.has-toc { width: var(--shell); --chapter-offset: 28px; }
+  .has-toc .post-content {
+    display: grid;
+    grid-template-columns: minmax(0, 730px) minmax(0, 1fr);
+    column-gap: clamp(24px, 4vw, 56px);
+  }
+  .has-toc .post-content > header, .has-toc .markdown-body { grid-column: 1; }
+  .reading-toc { position: sticky; top: 24px; grid-column: 2; grid-row: 2; margin-top: 26px; }
+  #reading-sections { max-height: calc(100vh - 84px); }
+}
+@media (max-width: 959px) {
+  .reading-page.has-toc { --chapter-offset: 64px; }
+  .reading-toc { margin-top: 20px; background: var(--bg-body); border-block: 1px solid var(--tone-line); }
+  .reading-toc.enhanced { position: sticky; top: 0; z-index: 5; }
+  .reading-toc.enhanced h2 { display: none; }
+  .reading-toc.enhanced button {
+    display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px;
+    padding: 6px 4px; border: 0; background: transparent; color: var(--tone-ink);
+    cursor: pointer; font: 600 1.4rem var(--text);
+  }
+  .current-section { flex: 1; text-align: right; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--tone-muted); font-weight: 400; }
+  .reading-toc button::after { content: ''; width: 6px; height: 6px; border: solid currentColor; border-width: 0 1px 1px 0; transform: rotate(45deg); }
+  .reading-toc button[aria-expanded="true"]::after { transform: rotate(225deg); }
+  .reading-toc.enhanced #reading-sections {
+    position: absolute; inset: 100% 0 auto; max-height: 50vh; padding: 8px 4px;
+    border-block: 1px solid var(--tone-line); background: var(--bg-body);
+  }
+  .reading-toc button[aria-expanded="false"] + #reading-sections { display: none; }
+  .reading-toc:not(.enhanced) button + #reading-sections { display: block; }
+}
 .reading-page .markdown-body { margin-top: 26px; line-height: 1.85; }
 @media (max-width: 700px) {
   :root { --shell: calc(100% - 32px); }
