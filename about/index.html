@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>About | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,24 +24,29 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item active"><a href="/about/" aria-current="location">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container about-index">
+      <main><div class="container about-index">
   <div class="markdown-body"><p>focus on 
 漏洞武器化
 webshell&RAT&Post Exploitation
@@ -48,14 +54,9 @@ AINative自动化
 </p>
 </div>
 </div>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

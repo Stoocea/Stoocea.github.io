@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>《乒乓》三刷观后感 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,52 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+        <a href="/post/WebSocket%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%85%A8%E7%89%88%E6%9C%AC%E6%9E%84%E9%80%A0%E6%8E%A2%E7%B4%A2%E5%8F%8A%E5%AE%9E%E6%88%98%E5%8C%96%E5%88%A9%E7%94%A8.html"><time>2025.05.28</time><span>WebSocket型内存马全版本构造探索及实战化利用</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">《乒乓》三刷观后感</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2025-08-14 00:23:19</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2025-08-14">2025.08.14</time>
+      </div>
+      <h1 class="post-title">《乒乓》三刷观后感</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/Felling/" title="Felling">#Felling</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/Felling/">#Felling</a></div>
       
-    </div>
+    </header>
+    
     <div class="markdown-body"><p>这第一名到底要多强，不用问，一定有人向你挑战。</p>
 <p>到底还要过多少关。不用怕，告诉他们谁是男子汉。</p>
 <p>可不可以不要这个奖，不相关，我只想要流一点汗。</p>
@@ -63,19 +82,12 @@
 <p>没关系，再继续努力，没关系。“我的意思是，叫你拼劲全力的去打乒乓球。”<br/>我真的只是想流一点汗，不过当一条野狗我还是很喜欢的，至少能够放下最后的礼貌。<br/><img alt="image" src="/images/pingpong/assets/image-20250814000604-9hsuxt5.png"/></p>
 </div>
   </div>
-</div>
-
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

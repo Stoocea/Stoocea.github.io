@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>Jackson反序列化初步学习 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">Jackson反序列化初步学习</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2024-08-09 18:23:41</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2024-08-09">2024.08.09</time>
+      </div>
+      <h1 class="post-title">Jackson反序列化初步学习</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/JackSon/" title="JackSon">#JackSon</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/JackSon/">#JackSon</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Jackson-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-text">Jackson 基本使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E6%B5%85%E5%B0%9D"><span class="toc-text">0x00 核心模块浅尝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-text">0x01 环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">0x02 组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-ObjectMapper"><span class="toc-text">1x01 ObjectMapper</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%B0%86-json-%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%AF%B9%E8%B1%A1"><span class="toc-text">2x01 将 json 转化为对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E5%B0%86%E5%AF%B9%E8%B1%A1%E8%BD%AC%E5%8C%96%E4%B8%BA-json"><span class="toc-text">2x02 将对象转化为 json</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-JsonParser"><span class="toc-text">1x02 JsonParser</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-JsonGenerator"><span class="toc-text">1x03 JsonGenerator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-%E5%A4%9A%E6%80%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E2%80%93-JacksonPolymorphicDeserialization"><span class="toc-text">1x04 多态问题解决– JacksonPolymorphicDeserialization</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-DefaultTyping"><span class="toc-text">2x01 DefaultTyping</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-JAVA-LANG-OBJECT"><span class="toc-text">3x01 JAVA_LANG_OBJECT</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-OBJECT-AND-NON-CONCRETE"><span class="toc-text">3x02 OBJECT_AND_NON_CONCRETE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x03-NON-CONCRETE-AND-ARRAYS"><span class="toc-text">3x03 NON_CONCRETE_AND_ARRAYS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x04-NON-FINAL"><span class="toc-text">3x04 NON_FINAL</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-JsonTypeInfo%E6%B3%A8%E8%A7%A3"><span class="toc-text">2x02 @JsonTypeInfo注解</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-JsonTypeInfo-Id-NONE"><span class="toc-text">3x01 JsonTypeInfo.Id.NONE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-JsonTypeInfo-Id-CLASS"><span class="toc-text">3x02 JsonTypeInfo.Id.CLASS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#-1"><span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x03-JsonTypeInfo-Id-NAME"><span class="toc-text">3x03 JsonTypeInfo.Id.NAME</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x04-JsonTypeInfo-Id-CUSTOM"><span class="toc-text">3x04 JsonTypeInfo.Id.CUSTOM</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x05-JsonTypeInfo-Id-MINIMAL-CLASS"><span class="toc-text">3x05  JsonTypeInfo.Id.MINIMAL_CLASS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x05-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%AD%E7%B1%BB%E5%B1%9E%E6%80%A7%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-text">1x05 反序列化中类属性方法调用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-enableDefaultTyping"><span class="toc-text">2x01 enableDefaultTyping</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-JsonTypeInfo-Id-CLASS"><span class="toc-text">2x02 JsonTypeInfo.Id.CLASS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x03 工作流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">1x00 环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-BeanDeserialzer%E2%80%93%E7%B1%BB%E7%9A%84%E6%9E%84%E9%80%A0%E5%92%8C-set-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-text">1x01 BeanDeserialzer–类的构造和 set 方法调用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E8%A7%A3%E6%9E%90"><span class="toc-text">0x04 jackson 反序列化漏洞解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="toc-text">1x01 前置条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-CVE-2017-17485-ClassPathXmlApplicationContext%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">1x02  CVE-2017-17485  ClassPathXmlApplicationContext利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-text">2x01 影响版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">2x02 环境搭建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x03-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">2x03 流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-objectMapper%E2%80%93%E5%88%9D%E6%AD%A5%E5%A4%84%E7%90%86%E8%A7%A3%E6%9E%90"><span class="toc-text">3x01 objectMapper–初步处理解析</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-CPX-%E6%9C%89%E5%8F%82%E6%9E%84%E9%80%A0%E8%A7%A6%E5%8F%91"><span class="toc-text">3x02 CPX 有参构造触发</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></details>
+    
     <div class="markdown-body"><p><a href="https://drun1baby.top/2023/12/07/Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86/" rel="noopener" target="_blank">https://drun1baby.top/2023/12/07/Jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%EF%BC%88%E4%B8%80%EF%BC%89%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86/</a><br/><a href="https://xz.aliyun.com/t/12966?time__1311=mqmhqIx+ODkDCDlxGofDyAID8UuyaqRG+D&amp;alichlgref=https://www.google.com/#toc-6" rel="noopener" target="_blank">https://xz.aliyun.com/t/12966?time__1311=mqmhqIx%2BODkDCDlxGofDyAID8UuyaqRG%2BD&amp;alichlgref=https%3A%2F%2Fwww.google.com%2F#toc-6</a><br/><a href="http://www.mi1k7ea.com/2019/11/13/Jackson%E7%B3%BB%E5%88%97%E4%B8%80%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/" rel="noopener" target="_blank">http://www.mi1k7ea.com/2019/11/13/Jackson%E7%B3%BB%E5%88%97%E4%B8%80%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</a></p>
 <h1 id="Jackson-基本使用"><a class="headerlink" href="#Jackson-基本使用" title="Jackson 基本使用"></a>Jackson 基本使用</h1><p>jackson 其实使用起来还是很广泛的，之前学习 springMVC 的时候就感受到过，它的默认解析器就是 jackson。</p>
 <h2 id="0x00-核心模块浅尝"><a class="headerlink" href="#0x00-核心模块浅尝" title="0x00 核心模块浅尝"></a>0x00 核心模块浅尝</h2><ul>
@@ -178,26 +199,12 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br/><span class="line">2</span><br/><span class="line">3</span><br/><span class="line">4</span><br/><span class="line">5</span><br/><span class="line">6</span><br/><span class="line">7</span><br/><span class="line">8</span><br/><span class="line">9</span><br/><span class="line">10</span><br/><span class="line">11</span><br/><span class="line">12</span><br/><span class="line">13</span><br/><span class="line">14</span><br/><span class="line">15</span><br/><span class="line">16</span><br/></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.expression.EvaluationContext;</span><br/><span class="line"><span class="keyword">import</span> org.springframework.expression.Expression;</span><br/><span class="line"><span class="keyword">import</span> org.springframework.expression.ExpressionParser;</span><br/><span class="line"><span class="keyword">import</span> org.springframework.expression.spel.standard.SpelExpressionParser;</span><br/><span class="line"><span class="keyword">import</span> org.springframework.expression.spel.support.StandardEvaluationContext;</span><br/><span class="line"></span><br/><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ExpressionTest</span> {</span><br/><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> {</span><br/><span class="line">        <span class="type">ExpressionParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SpelExpressionParser</span>();</span><br/><span class="line">        <span class="type">Expression</span> <span class="variable">expression</span> <span class="operator">=</span> parser.parseExpression(<span class="string">"new java.lang.ProcessBuilder(new String[]{\"calc\"}).start()"</span>);</span><br/><span class="line">        <span class="comment">//EvaluationContext context = new StandardEvaluationContext();</span></span><br/><span class="line">        <span class="comment">//context.setVariable("end", "~");</span></span><br/><span class="line">        System.out.println(expression.getValue());</span><br/><span class="line">        <span class="comment">//System.out.println(expression.getValue(context));</span></span><br/><span class="line">    }</span><br/><span class="line"></span><br/></pre></td></tr></table></figure>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Jackson-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-text">Jackson 基本使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E6%B5%85%E5%B0%9D"><span class="toc-text">0x00 核心模块浅尝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-text">0x01 环境准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">0x02 组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-ObjectMapper"><span class="toc-text">1x01 ObjectMapper</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%B0%86-json-%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%AF%B9%E8%B1%A1"><span class="toc-text">2x01 将 json 转化为对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E5%B0%86%E5%AF%B9%E8%B1%A1%E8%BD%AC%E5%8C%96%E4%B8%BA-json"><span class="toc-text">2x02 将对象转化为 json</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-JsonParser"><span class="toc-text">1x02 JsonParser</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-JsonGenerator"><span class="toc-text">1x03 JsonGenerator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-%E5%A4%9A%E6%80%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E2%80%93-JacksonPolymorphicDeserialization"><span class="toc-text">1x04 多态问题解决– JacksonPolymorphicDeserialization</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-DefaultTyping"><span class="toc-text">2x01 DefaultTyping</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-JAVA-LANG-OBJECT"><span class="toc-text">3x01 JAVA_LANG_OBJECT</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-OBJECT-AND-NON-CONCRETE"><span class="toc-text">3x02 OBJECT_AND_NON_CONCRETE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x03-NON-CONCRETE-AND-ARRAYS"><span class="toc-text">3x03 NON_CONCRETE_AND_ARRAYS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x04-NON-FINAL"><span class="toc-text">3x04 NON_FINAL</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-JsonTypeInfo%E6%B3%A8%E8%A7%A3"><span class="toc-text">2x02 @JsonTypeInfo注解</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-JsonTypeInfo-Id-NONE"><span class="toc-text">3x01 JsonTypeInfo.Id.NONE</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-JsonTypeInfo-Id-CLASS"><span class="toc-text">3x02 JsonTypeInfo.Id.CLASS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#-1"><span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x03-JsonTypeInfo-Id-NAME"><span class="toc-text">3x03 JsonTypeInfo.Id.NAME</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x04-JsonTypeInfo-Id-CUSTOM"><span class="toc-text">3x04 JsonTypeInfo.Id.CUSTOM</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x05-JsonTypeInfo-Id-MINIMAL-CLASS"><span class="toc-text">3x05  JsonTypeInfo.Id.MINIMAL_CLASS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x05-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%AD%E7%B1%BB%E5%B1%9E%E6%80%A7%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-text">1x05 反序列化中类属性方法调用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-enableDefaultTyping"><span class="toc-text">2x01 enableDefaultTyping</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-JsonTypeInfo-Id-CLASS"><span class="toc-text">2x02 JsonTypeInfo.Id.CLASS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x03 工作流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x00-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">1x00 环境搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-BeanDeserialzer%E2%80%93%E7%B1%BB%E7%9A%84%E6%9E%84%E9%80%A0%E5%92%8C-set-%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-text">1x01 BeanDeserialzer–类的构造和 set 方法调用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-jackson-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E8%A7%A3%E6%9E%90"><span class="toc-text">0x04 jackson 反序列化漏洞解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="toc-text">1x01 前置条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-CVE-2017-17485-ClassPathXmlApplicationContext%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">1x02  CVE-2017-17485  ClassPathXmlApplicationContext利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-%E5%BD%B1%E5%93%8D%E7%89%88%E6%9C%AC"><span class="toc-text">2x01 影响版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">2x02 环境搭建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x03-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">2x03 流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-objectMapper%E2%80%93%E5%88%9D%E6%AD%A5%E5%A4%84%E7%90%86%E8%A7%A3%E6%9E%90"><span class="toc-text">3x01 objectMapper–初步处理解析</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3x02-CPX-%E6%9C%89%E5%8F%82%E6%9E%84%E9%80%A0%E8%A7%A6%E5%8F%91"><span class="toc-text">3x02 CPX 有参构造触发</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

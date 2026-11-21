@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>WebSocket型内存马全版本构造探索及实战化利用 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">WebSocket型内存马全版本构造探索及实战化利用</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2025-05-28 20:39:51</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2025-05-28">2025.05.28</time>
+      </div>
+      <h1 class="post-title">WebSocket型内存马全版本构造探索及实战化利用</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/WebSocket/" title="WebSocket">#WebSocket</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/WebSocket/">#WebSocket</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#websocket%E5%89%8D%E7%BD%AE"><span class="toc-text">websocket前置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89websocket%E6%8E%A2%E7%B4%A2"><span class="toc-text">动态添加自定义websocket探索</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-WsFilter%E5%88%A4%E6%96%AD%E5%A4%84%E7%90%86"><span class="toc-text">0x01 WsFilter判断处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E9%80%A0ServerEndpointConfig"><span class="toc-text">构造ServerEndpointConfig</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%8E%B7%E5%8F%96WsServerContainer"><span class="toc-text">动态获取WsServerContainer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%9A%E5%8A%9F%E8%83%BDshell%E5%AE%9E%E7%8E%B0"><span class="toc-text">多功能shell实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Websocketmemshell%E6%94%B9%E9%80%A0"><span class="toc-text">Websocketmemshell改造</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Godzilla%E6%94%B9%E9%80%A0"><span class="toc-text">Godzilla改造</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#webSocket-Cryption%E6%96%B0%E5%A2%9E"><span class="toc-text">webSocket-Cryption新增</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#webscoketClient%E6%96%B0%E5%A2%9E"><span class="toc-text">webscoketClient新增</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#websocket-payload%E6%94%B9%E9%80%A0"><span class="toc-text">websocket-payload改造</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></details>
+    
     <div class="markdown-body"><h1 id="前言"><a class="headerlink" href="#前言" title="前言"></a>前言</h1><p>好久都没有发文章了，其实在这段日子里写了很多文章，也做了很多调试，每次都是思考到最后或者做到最后的时候没有成色，导致文章也没有发出来。不过webscoket这个好歹能够收个尾，就发出来看看。</p>
 <p>这篇文章跨度很大，看我的idea背景也看得出来（x，其实在开头我提到的某个connector层的内存马就死在了这里，不能够实战化使用其实是比较蛋疼的地方。然后我看了一下veo师傅的原项目，居然已经提到了，并且其实思路上面已经差不多能对上了，但是真正实现起来我考虑了很多不需要考虑的问题，导致最终问题堆积起来就解决不了，还是基本功太薄弱了。</p>
 <h1 id="websocket前置"><a class="headerlink" href="#websocket前置" title="websocket前置"></a>websocket前置</h1><p>经过之前内存马的洗礼，其实不管是未知类型的探索还是对于已知类型的复现和学习，通性应该是了解为什么要探究这个类型，以及这个类型怎么使用，如何动态构造</p>
@@ -162,26 +183,12 @@
 <h1 id="总结"><a class="headerlink" href="#总结" title="总结"></a>总结</h1><p>改一个原始godzilla没什么用。我做这个事情的目的是为了理顺自己的构造思路，因为确实在网上搜不到其他的高可用实战化的websocket马，那只能自己从头开始搓了。这篇文章也是属于记录性质的，可能会稍微细节一点。但是我并没有放出所有代码，把思路讲清楚我觉得就差不多。那之后的进一步改造就可以顺着这个思路走了，想怎么二开就是自己的事情了，希望能够帮助到师傅们。</p>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#websocket%E5%89%8D%E7%BD%AE"><span class="toc-text">websocket前置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E8%87%AA%E5%AE%9A%E4%B9%89websocket%E6%8E%A2%E7%B4%A2"><span class="toc-text">动态添加自定义websocket探索</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-WsFilter%E5%88%A4%E6%96%AD%E5%A4%84%E7%90%86"><span class="toc-text">0x01 WsFilter判断处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E9%80%A0ServerEndpointConfig"><span class="toc-text">构造ServerEndpointConfig</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%8E%B7%E5%8F%96WsServerContainer"><span class="toc-text">动态获取WsServerContainer</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%9A%E5%8A%9F%E8%83%BDshell%E5%AE%9E%E7%8E%B0"><span class="toc-text">多功能shell实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Websocketmemshell%E6%94%B9%E9%80%A0"><span class="toc-text">Websocketmemshell改造</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Godzilla%E6%94%B9%E9%80%A0"><span class="toc-text">Godzilla改造</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#webSocket-Cryption%E6%96%B0%E5%A2%9E"><span class="toc-text">webSocket-Cryption新增</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#webscoketClient%E6%96%B0%E5%A2%9E"><span class="toc-text">webscoketClient新增</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#websocket-payload%E6%94%B9%E9%80%A0"><span class="toc-text">websocket-payload改造</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

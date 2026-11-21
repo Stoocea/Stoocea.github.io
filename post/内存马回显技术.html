@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>Tomcat型内存马回显以及反序列化写入 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">Tomcat型内存马回显以及反序列化写入</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2024-08-09 18:22:44</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2024-08-09">2024.08.09</time>
+      </div>
+      <h1 class="post-title">Tomcat型内存马回显以及反序列化写入</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/EchoShell/" title="EchoShell">#EchoShell</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/EchoShell/">#EchoShell</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E5%BC%95%E5%85%A5"><span class="toc-text">背景引入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ThreadLocal-Response-%E5%9B%9E%E6%98%BE"><span class="toc-text">ThreadLocal Response 回显</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ThreadLocal-%E8%AE%A4%E8%AF%86"><span class="toc-text">0x01 ThreadLocal 认识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90%E5%8F%8A%E5%85%B7%E4%BD%93%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E5%86%85%E5%AE%B9"><span class="toc-text">0x02 思路分析及具体代码执行内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%80%BB%E7%BB%93"><span class="toc-text">0x03 总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E5%AD%98%E5%82%A8-Response"><span class="toc-text">全局存储 Response</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%88%9D%E6%AD%A5%E6%80%9D%E8%B7%AF%E5%BB%BA%E7%AB%8B"><span class="toc-text">0x01 初步思路建立</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%80%9D%E8%B7%AF%E6%A2%B3%E7%90%86%E5%92%8C%E6%80%BB%E7%BB%93"><span class="toc-text">0x02 思路梳理和总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x03 代码实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E6%80%BB%E7%BB%93"><span class="toc-text">0x04 总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%89%93%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-text">反序列化打入内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%B5%8B%E8%AF%95"><span class="toc-text">环境测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E6%9E%84%E9%80%A0"><span class="toc-text">具体构造</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol></details>
+    
     <div class="markdown-body"><h1 id="背景引入"><a class="headerlink" href="#背景引入" title="背景引入"></a>背景引入</h1><p>多适用于对方机器不出网，无法弹 shell 的情况，用来获取命令执行的结果。如果是能够解析 JSP 的中间件就很好利用，落地一个 JSP 进行一个 Request 和 Response 的获取就好，但是如果像是 Spring 种，考虑反序列化或者其他能够达到代码执行的情况，注入内存马，并且获得回显就需要另辟蹊径。</p>
 <p>总的思路还是获取到当前处理请求服务线程下的 Rquest 和 Response</p>
 <h1 id="ThreadLocal-Response-回显"><a class="headerlink" href="#ThreadLocal-Response-回显" title="ThreadLocal Response 回显"></a>ThreadLocal Response 回显</h1><h2 id="0x01-ThreadLocal-认识"><a class="headerlink" href="#0x01-ThreadLocal-认识" title="0x01 ThreadLocal 认识"></a>0x01 ThreadLocal 认识</h2><p>首先介绍一下 ThreadLocal<br/>在 java 中有一个问题被经常提起：线程安全的问题。这里所说的安全不是代码执行或者数据泄露那种安全，它是影响整个业务处理结果，以及处理效率的一个问题，属于开发的范畴。web 服务就是一个特别显著的例子，当我们服务器接收大量的请求时，后台的某一个关键变量，比如某一商品的货存量，有 n 个客户同时请求它的购买，并且每个客户购买的数量都不同。并且此后同时支付的现金，此时 n 个线程开始同时进行，货物数量的值是共享。<br/>此时会因为没有线程隔离以及线程保护，导致每个客户都购买了相同数量的货物，并不是自己想要的货物。<br/>如何解决这个问题呢？<br/>ThreadLocal 就是用来解决这个问题的，它的作用就是在多线程请求的情况下，维护好每一个单一线程的变量，避免因多线程操作而导致共享数据不一致的情况。<br/>具体的代码示例就不写了，理解就行</p>
@@ -101,26 +122,12 @@
 <h1 id="参考"><a class="headerlink" href="#参考" title="参考"></a>参考</h1><p><a href="https://goodapple.top/archives/1355" rel="noopener" target="_blank">https://goodapple.top/archives/1355</a><br/><a href="https://boogipop.com/2023/03/02/Tomcat%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF/#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%89%93%E5%85%A5Servlet%E5%86%85%E5%AD%98%E9%A9%AC" rel="noopener" target="_blank">https://boogipop.com/2023/03/02/Tomcat%E5%86%85%E5%AD%98%E9%A9%AC%E5%9B%9E%E6%98%BE%E6%8A%80%E6%9C%AF/#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%89%93%E5%85%A5Servlet%E5%86%85%E5%AD%98%E9%A9%AC</a><br/>两位师傅的文章主要是用来对比 POC 以及大致思路的一个构造，文章逻辑和细节可能不太相同，但还是膜了（</p>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E5%BC%95%E5%85%A5"><span class="toc-text">背景引入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ThreadLocal-Response-%E5%9B%9E%E6%98%BE"><span class="toc-text">ThreadLocal Response 回显</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ThreadLocal-%E8%AE%A4%E8%AF%86"><span class="toc-text">0x01 ThreadLocal 认识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90%E5%8F%8A%E5%85%B7%E4%BD%93%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E5%86%85%E5%AE%B9"><span class="toc-text">0x02 思路分析及具体代码执行内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E6%80%BB%E7%BB%93"><span class="toc-text">0x03 总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E5%AD%98%E5%82%A8-Response"><span class="toc-text">全局存储 Response</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%88%9D%E6%AD%A5%E6%80%9D%E8%B7%AF%E5%BB%BA%E7%AB%8B"><span class="toc-text">0x01 初步思路建立</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%80%9D%E8%B7%AF%E6%A2%B3%E7%90%86%E5%92%8C%E6%80%BB%E7%BB%93"><span class="toc-text">0x02 思路梳理和总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x03 代码实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E6%80%BB%E7%BB%93"><span class="toc-text">0x04 总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%89%93%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-text">反序列化打入内存马</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%B5%8B%E8%AF%95"><span class="toc-text">环境测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E6%9E%84%E9%80%A0"><span class="toc-text">具体构造</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

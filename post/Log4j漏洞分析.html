@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>Log4j2漏洞分析 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">Log4j2漏洞分析</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2024-08-09 18:24:34</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2024-08-09">2024.08.09</time>
+      </div>
+      <h1 class="post-title">Log4j2漏洞分析</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/LOG4J/" title="LOG4J">#LOG4J</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/LOG4J/">#LOG4J</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#demo-%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%85%B7%E4%BD%93%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">demo 实现与具体组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">0x01 环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-log4j2-%E5%8A%9F%E8%83%BD%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">0x02 log4j2 功能组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95-%E8%A7%A6%E5%8F%91%E7%82%B9%E2%80%94-AbstractLogger"><span class="toc-text">1x01 日志记录&#x2F;触发点—-AbstractLogger</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E6%B6%88%E6%81%AF%E6%A0%BC%E5%BC%8F%E5%8C%96%E2%80%94-MessagePatternConverter"><span class="toc-text">1x02 消息格式化—-MessagePatternConverter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-%E5%AD%97%E7%AC%A6%E6%9B%BF%E6%8D%A2%E2%80%94-StrSubstitutor"><span class="toc-text">1x03 字符替换—-StrSubstitutor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-lookup-%E5%A4%84%E7%90%86%E2%80%94-Interpolator"><span class="toc-text">1x04 lookup 处理—-Interpolator</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-text">漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-text">0x01 漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x02 流程分析</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E7%89%88%E6%9C%AC%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90"><span class="toc-text">高版本绕过分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rc1-%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="toc-text">0x01 rc1 及绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0%E7%82%B9%E5%88%86%E6%9E%90-1"><span class="toc-text">1x01 安全更新点分析 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0%E7%82%B9-2"><span class="toc-text">1x02 安全更新点 2</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93"><span class="toc-text">个人总结</span></a></li></ol></details>
+    
     <div class="markdown-body"><p>复习完 JNDI 之后想专门过来学一下 log4j</p>
 <h1 id="demo-实现与具体组件分析"><a class="headerlink" href="#demo-实现与具体组件分析" title="demo 实现与具体组件分析"></a>demo 实现与具体组件分析</h1><h2 id="0x01-环境搭建"><a class="headerlink" href="#0x01-环境搭建" title="0x01 环境搭建"></a>0x01 环境搭建</h2><p>在分析漏洞之前 ，log4j 的具体工作流程和组成很有必要去了解和熟悉<br/>先把测试环境搭建好<br/>依赖</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br/><span class="line">2</span><br/><span class="line">3</span><br/><span class="line">4</span><br/><span class="line">5</span><br/><span class="line">6</span><br/><span class="line">7</span><br/><span class="line">8</span><br/><span class="line">9</span><br/><span class="line">10</span><br/><span class="line">11</span><br/><span class="line">12</span><br/><span class="line">13</span><br/><span class="line">14</span><br/><span class="line">15</span><br/><span class="line">16</span><br/></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br/><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br/><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br/><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br/><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br/><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br/><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br/><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br/><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.14.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br/><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br/><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br/><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br/><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br/><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br/><span class="line">  <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br/><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br/></pre></td></tr></table></figure>
@@ -88,26 +109,12 @@
 <p>log4j 分析暂告一段落了，从 JNDI 的复习开始，有了一种新的感觉，新的学习的感觉，之前听队里的师傅说之前的漏洞调流程的时候要能够自己调出来，我并没有将这个事在自己心里强度，只是默认自己该这么做，也觉得自己现在可以有这样的能力，但还是缺少很多感觉，要走的路还有很长</p>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#demo-%E5%AE%9E%E7%8E%B0%E4%B8%8E%E5%85%B7%E4%BD%93%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">demo 实现与具体组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">0x01 环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-log4j2-%E5%8A%9F%E8%83%BD%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">0x02 log4j2 功能组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95-%E8%A7%A6%E5%8F%91%E7%82%B9%E2%80%94-AbstractLogger"><span class="toc-text">1x01 日志记录&#x2F;触发点—-AbstractLogger</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E6%B6%88%E6%81%AF%E6%A0%BC%E5%BC%8F%E5%8C%96%E2%80%94-MessagePatternConverter"><span class="toc-text">1x02 消息格式化—-MessagePatternConverter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-%E5%AD%97%E7%AC%A6%E6%9B%BF%E6%8D%A2%E2%80%94-StrSubstitutor"><span class="toc-text">1x03 字符替换—-StrSubstitutor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-lookup-%E5%A4%84%E7%90%86%E2%80%94-Interpolator"><span class="toc-text">1x04 lookup 处理—-Interpolator</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-text">漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-text">0x01 漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x02 流程分析</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E7%89%88%E6%9C%AC%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90"><span class="toc-text">高版本绕过分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rc1-%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="toc-text">0x01 rc1 及绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0%E7%82%B9%E5%88%86%E6%9E%90-1"><span class="toc-text">1x01 安全更新点分析 1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E5%AE%89%E5%85%A8%E6%9B%B4%E6%96%B0%E7%82%B9-2"><span class="toc-text">1x02 安全更新点 2</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93"><span class="toc-text">个人总结</span></a></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

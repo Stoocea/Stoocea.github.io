@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>Go-shellCode加载器 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">Go-shellCode加载器</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2025-01-17 11:51:29</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2025-01-17">2025.01.17</time>
+      </div>
+      <h1 class="post-title">Go-shellCode加载器</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/golang-shellcodeLoader/" title="golang-shellcodeLoader">#golang-shellcodeLoader</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/golang-shellcodeLoader/">#golang-shellcodeLoader</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-unsafePointer%E6%8C%87%E9%92%88%E5%9F%BA%E7%A1%80"><span class="toc-text">0x01 unsafePointer指针基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-unsafe-package"><span class="toc-text">0x02 unsafe package</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1x01-Unsafe-Pointer"><span class="toc-text">1x01 Unsafe.Pointer</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#uintptr"><span class="toc-text">uintptr</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#uintptr%E7%89%B9%E7%82%B9%E4%BB%A5%E5%8F%8A%E4%BD%9C%E7%94%A8"><span class="toc-text">uintptr特点以及作用</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-ShellCode-Loader"><span class="toc-text">0x03 ShellCode Loader</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></details>
+    
     <div class="markdown-body"><p>笔记属于记录恶意程序免杀入门学到的一些课程以及文章，主要用于记录和自我理解，程度很低。</p>
 <h1 id="0x01-unsafePointer指针基础"><a class="headerlink" href="#0x01-unsafePointer指针基础" title="0x01 unsafePointer指针基础"></a>0x01 unsafePointer指针基础</h1><p>首先是golang中的一些指针基础，在go中和C中取出某个变量的指针的符号是一样的–<code>&amp;</code>​，具体使用案例如下</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br/><span class="line">2</span><br/><span class="line">3</span><br/><span class="line">4</span><br/><span class="line">5</span><br/><span class="line">6</span><br/><span class="line">7</span><br/><span class="line">8</span><br/><span class="line">9</span><br/><span class="line">10</span><br/><span class="line">11</span><br/><span class="line">12</span><br/><span class="line">13</span><br/><span class="line">14</span><br/><span class="line">15</span><br/><span class="line">16</span><br/><span class="line">17</span><br/><span class="line">18</span><br/><span class="line">19</span><br/></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br/><span class="line"></span><br/><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br/><span class="line"></span><br/><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> {</span><br/><span class="line"></span><br/><span class="line">	banner1 := <span class="string">"stooceaTest"</span></span><br/><span class="line">	fmt.Printf(<span class="string">"[*] %s\n"</span>, banner1)</span><br/><span class="line">	fmt.Printf(<span class="string">"[*] %p\n"</span>, &amp;banner1)  <span class="comment">//此时%p输出的是指向当前banner指针结构体的指针，并非指向该字符串变量所在内存的指针</span></span><br/><span class="line">	fmt.Printf(<span class="string">"[*] %s\n"</span>, *&amp;banner1) <span class="comment">//解引用符号*, 只能使用在指针变量的左边，用于自动解析该指针变量指向的内存地址，并且将该变量内容带出</span></span><br/><span class="line"></span><br/><span class="line">}</span><br/><span class="line">	</span><br/><span class="line"></span><br/><span class="line"><span class="comment">//============= 编译执行该go文件</span></span><br/><span class="line"><span class="keyword">go</span> run main.<span class="keyword">go</span></span><br/><span class="line">[*] stooceaTest</span><br/><span class="line">[*] <span class="number">0xc00008a030</span></span><br/><span class="line">[*] stooceaTest</span><br/></pre></td></tr></table></figure>
@@ -102,26 +123,12 @@
 <p>‍</p>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-unsafePointer%E6%8C%87%E9%92%88%E5%9F%BA%E7%A1%80"><span class="toc-text">0x01 unsafePointer指针基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-unsafe-package"><span class="toc-text">0x02 unsafe package</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1x01-Unsafe-Pointer"><span class="toc-text">1x01 Unsafe.Pointer</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#uintptr"><span class="toc-text">uintptr</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#uintptr%E7%89%B9%E7%82%B9%E4%BB%A5%E5%8F%8A%E4%BD%9C%E7%94%A8"><span class="toc-text">uintptr特点以及作用</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-ShellCode-Loader"><span class="toc-text">0x03 ShellCode Loader</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

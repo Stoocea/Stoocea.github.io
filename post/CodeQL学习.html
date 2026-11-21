@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>CodeQL学习 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">CodeQL学习</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2024-08-09 18:23:22</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2024-08-09">2024.08.09</time>
+      </div>
+      <h1 class="post-title">CodeQL学习</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/CodeQL/" title="CodeQL">#CodeQL</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/CodeQL/">#CodeQL</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-CodeQL"><span class="toc-text">什么是 CodeQL</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CodeQL-%E9%85%8D%E7%BD%AE"><span class="toc-text">CodeQL 配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CodeQL-%E4%BD%BF%E7%94%A8"><span class="toc-text">CodeQL 使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%B5%8B%E8%AF%95-Helloworld"><span class="toc-text">0x01 测试 Helloworld</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-CodeQL-%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="toc-text">0x02 CodeQL 基本语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E7%B1%BB%E5%BA%93"><span class="toc-text">0x03 类库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E8%B0%93%E8%AF%8D%E4%BD%BF%E7%94%A8"><span class="toc-text">0x04 谓词使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-Node%EF%BC%8CExpr%EF%BC%8CParam"><span class="toc-text">0x05 Node，Expr，Param</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-source-%EF%BC%8Csink%EF%BC%8C-sanitizer"><span class="toc-text">0x06 source ，sink， sanitizer</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%AE%BE%E7%BD%AE-source"><span class="toc-text">1x01 设置 source</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E8%AE%BE%E7%BD%AE-sink"><span class="toc-text">1x02 设置 sink</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-Flow-%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="toc-text">1x03 Flow 数据流</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-%E6%95%B4%E4%BD%93%E6%9F%A5%E8%AF%A2"><span class="toc-text">1x04 整体查询</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%93%E6%9E%9C%E4%BC%98%E5%8C%96"><span class="toc-text">结果优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E8%AF%AF%E6%8A%A5"><span class="toc-text">0x01 误报</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%BC%8F%E6%8A%A5"><span class="toc-text">0x02 漏报</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-Lombok-%E9%97%AE%E9%A2%98"><span class="toc-text">0x03 Lombok 问题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8C%81%E7%BB%AD%E5%B7%A5%E7%A8%8B%E5%8C%96"><span class="toc-text">持续工程化</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Codeql-%E8%AF%AD%E6%B3%95%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BA"><span class="toc-text">Codeql 语法查漏补缺</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Instanceof"><span class="toc-text">Instanceof</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%90%E7%B1%BB%E9%80%92%E5%BD%92%E9%97%AE%E9%A2%98"><span class="toc-text">子类递归问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E7%AD%9B%E9%80%89"><span class="toc-text">类型筛选</span></a></li></ol></li></ol></details>
+    
     <div class="markdown-body"><p>本文为个人学习笔记+一些个人的理解调试，仅供学习参考</p>
 <p>首先存几个学习地点<br/><a href="https://drun1baby.top/2023/09/03/CodeQL-%E5%85%A5%E9%97%A8/" rel="noopener" target="_blank">https://drun1baby.top/2023/09/03/CodeQL-%E5%85%A5%E9%97%A8/</a><br/><a href="https://www.freebuf.com/articles/web/283795.html" rel="noopener" target="_blank">https://www.freebuf.com/articles/web/283795.html</a><br/><a href="https://codeql.github.com/docs/codeql-overview/about-codeql/" rel="noopener" target="_blank">https://codeql.github.com/docs/codeql-overview/about-codeql/</a></p>
 <h1 id="什么是-CodeQL"><a class="headerlink" href="#什么是-CodeQL" title="什么是 CodeQL"></a>什么是 CodeQL</h1><p>这里我本来想用一句话总结的，但是自己学的还不够，所以无法总结，深入学习之后再总结</p>
@@ -157,26 +178,12 @@
 <p><img alt="image.png" referrerpolicy="no-referrer" src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1714636425505-f67602ee-7fbc-4acf-aa9e-672015978edc.png#averageHue=%23262828&amp;clientId=u8b8ef068-c78d-4&amp;from=paste&amp;height=688&amp;id=u8c98b5a3&amp;originHeight=1290&amp;originWidth=1970&amp;originalType=binary&amp;ratio=1.875&amp;rotation=0&amp;showTitle=false&amp;size=394516&amp;status=done&amp;style=none&amp;taskId=u9b4ea65d-d467-4615-9df6-ec67c7eb5c2&amp;title=&amp;width=1050.6666666666667"/></p>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-CodeQL"><span class="toc-text">什么是 CodeQL</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CodeQL-%E9%85%8D%E7%BD%AE"><span class="toc-text">CodeQL 配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CodeQL-%E4%BD%BF%E7%94%A8"><span class="toc-text">CodeQL 使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%B5%8B%E8%AF%95-Helloworld"><span class="toc-text">0x01 测试 Helloworld</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-CodeQL-%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="toc-text">0x02 CodeQL 基本语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-%E7%B1%BB%E5%BA%93"><span class="toc-text">0x03 类库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-%E8%B0%93%E8%AF%8D%E4%BD%BF%E7%94%A8"><span class="toc-text">0x04 谓词使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-Node%EF%BC%8CExpr%EF%BC%8CParam"><span class="toc-text">0x05 Node，Expr，Param</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-source-%EF%BC%8Csink%EF%BC%8C-sanitizer"><span class="toc-text">0x06 source ，sink， sanitizer</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%AE%BE%E7%BD%AE-source"><span class="toc-text">1x01 设置 source</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E8%AE%BE%E7%BD%AE-sink"><span class="toc-text">1x02 设置 sink</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x03-Flow-%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="toc-text">1x03 Flow 数据流</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x04-%E6%95%B4%E4%BD%93%E6%9F%A5%E8%AF%A2"><span class="toc-text">1x04 整体查询</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%93%E6%9E%9C%E4%BC%98%E5%8C%96"><span class="toc-text">结果优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E8%AF%AF%E6%8A%A5"><span class="toc-text">0x01 误报</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%BC%8F%E6%8A%A5"><span class="toc-text">0x02 漏报</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-Lombok-%E9%97%AE%E9%A2%98"><span class="toc-text">0x03 Lombok 问题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8C%81%E7%BB%AD%E5%B7%A5%E7%A8%8B%E5%8C%96"><span class="toc-text">持续工程化</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Codeql-%E8%AF%AD%E6%B3%95%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BA"><span class="toc-text">Codeql 语法查漏补缺</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Instanceof"><span class="toc-text">Instanceof</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%90%E7%B1%BB%E9%80%92%E5%BD%92%E9%97%AE%E9%A2%98"><span class="toc-text">子类递归问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E7%AD%9B%E9%80%89"><span class="toc-text">类型筛选</span></a></li></ol></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>ROME攻击链分析 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">ROME攻击链分析</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2024-08-09 18:25:04</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2024-08-09">2024.08.09</time>
+      </div>
+      <h1 class="post-title">ROME攻击链分析</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/Rome/" title="Rome">#Rome</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/Rome/">#Rome</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-ROME"><span class="toc-text">什么是 ROME</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">环境搭建</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ROME-%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">ROME 组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ToStringBean"><span class="toc-text">0x01 ToStringBean</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-EqualsBean"><span class="toc-text">0x02 EqualsBean</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ROME-%E9%93%BE%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">ROME 链流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ObjectBean%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">0x01 ObjectBean利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x01 流程分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-HashTable%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">0x02 HashTable利用链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-BadAttributeValueExpException"><span class="toc-text">0x03 BadAttributeValueExpException</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x01 调用流程分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-HotSwappableTargetSource-%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">0x04 HotSwappableTargetSource 利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%8A%9F%E8%83%BD%E5%88%86%E6%9E%90"><span class="toc-text">1x01  功能分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E6%B5%81%E7%A8%8B%E5%88%A9%E7%94%A8%E5%88%86%E6%9E%90"><span class="toc-text">1x02 流程利用分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-hashMap-%E5%85%A5%E5%8F%A3"><span class="toc-text">2x01 hashMap 入口</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">3x01 流程分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-JdbcRowSetImpl%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">0x05 JdbcRowSetImpl利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0"><span class="toc-text">1x01 攻击实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-EqualsBean%E9%93%BE"><span class="toc-text">0x06 EqualsBean链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90-1"><span class="toc-text">1x01 流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-hashSet-%E5%88%86%E6%9E%90"><span class="toc-text">2x01 hashSet 分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">2x02 攻击流程分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></details>
+    
     <div class="markdown-body"><h1 id="什么是-ROME"><a class="headerlink" href="#什么是-ROME" title="什么是 ROME"></a>什么是 ROME</h1><p>ROME 是一个关于 RSS 和 Atom 格式的 java 框架<br/>那什么是 RSS 和 Atom 呢？<br/>RSS 全称：RDF Site Summary 或 Really Simple Syndication，中文翻译为简易信息聚合，也叫做聚合内容。它是一种消息来源的<strong>格式</strong>,主要作用用在聚合多个网站的更新内容，并且能够自动通知网站订阅者。同时 RSS 能够以摘要的形式将信息呈现，帮助订阅者快速游览。（比如 bilibili 的动态？）<br/>Atom 本身就是一个名词，它更加具体的名称是 Atom Syndication Format ，中文译为 Atom 供稿格式。Atom 的诞生是为了解决 RSS 在各个版本遇到的问题，降低 web 内容聚合的难度，特地特出来的一种信息格式。<br/>RSS 的内容需要通过 RSS 阅读器查看，而 ROME 就是其中一个比较老的 RSS 阅读器了。</p>
 <h2 id="环境搭建"><a class="headerlink" href="#环境搭建" title="环境搭建"></a>环境搭建</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br/><span class="line">2</span><br/><span class="line">3</span><br/><span class="line">4</span><br/><span class="line">5</span><br/><span class="line">6</span><br/><span class="line">7</span><br/><span class="line">8</span><br/><span class="line">9</span><br/><span class="line">10</span><br/></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span>  </span><br/><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>rome<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>  </span><br/><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>rome<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>  </span><br/><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span>  </span><br/><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span>  </span><br/><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span>  </span><br/><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.javassist<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>  </span><br/><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>javassist<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>  </span><br/><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.28.0-GA<span class="tag">&lt;/<span class="name">version</span>&gt;</span>  </span><br/><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br/></pre></td></tr></table></figure>
 <h1 id="ROME-组件分析"><a class="headerlink" href="#ROME-组件分析" title="ROME 组件分析"></a>ROME 组件分析</h1><h2 id="0x01-ToStringBean"><a class="headerlink" href="#0x01-ToStringBean" title="0x01 ToStringBean"></a>0x01 ToStringBean</h2><p>我们先看他的结构<br/><img alt="image.png" referrerpolicy="no-referrer" src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1711786873166-a019c7bc-d699-4975-9a12-ce257828840a.png#averageHue=%233b3d42&amp;clientId=u15358810-29f9-4&amp;from=paste&amp;height=250&amp;id=u63d3cb84&amp;originHeight=469&amp;originWidth=914&amp;originalType=binary&amp;ratio=1.875&amp;rotation=0&amp;showTitle=false&amp;size=146572&amp;status=done&amp;style=none&amp;taskId=ubde9bbb4-d6f0-4d85-b719-670a43bb34c&amp;title=&amp;width=487.46666666666664"/><br/>然后理解一下这个类是用来干什么的？从名称我们可以得知，它主要作用是用来打印信息的，所有方法都是用来 print 和 toString。要想将目标类信息打印出来，首先就应该获取对应类信息，那获取对应类信息最直接的就是 get 方法了，这里获取类属性值就是通过对应类的 get 方法获取的<br/>我们重点看 toString 方法<br/>在 toString 有参方法中，它会接收一段 StringBuffer 参数（类字节码），在经过信息处理和特征获取后，他会经历一段 for 循环，用来循环遍历类中的 get 方法，并且在最后执行该 get 方法<br/><img alt="image.png" referrerpolicy="no-referrer" src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1711787054097-4ccd24c4-3ba2-4d81-adfd-bebfe56681e1.png#averageHue=%232c2f33&amp;clientId=u15358810-29f9-4&amp;from=paste&amp;height=542&amp;id=uaa7f0ce5&amp;originHeight=1016&amp;originWidth=1913&amp;originalType=binary&amp;ratio=1.875&amp;rotation=0&amp;showTitle=false&amp;size=568791&amp;status=done&amp;style=none&amp;taskId=u93a43d16-186d-4912-b554-aa5793f13ad&amp;title=&amp;width=1020.2666666666667"/><br/>for 循环里面是通过<code>getReadMethod()</code>方法来获取 get 方法的<br/><img alt="image.png" referrerpolicy="no-referrer" src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1711787385126-fec8ca73-8f6f-400e-a327-601e9d82b751.png#averageHue=%232c2e33&amp;clientId=u15358810-29f9-4&amp;from=paste&amp;height=484&amp;id=u141c1995&amp;originHeight=907&amp;originWidth=1558&amp;originalType=binary&amp;ratio=1.875&amp;rotation=0&amp;showTitle=false&amp;size=417497&amp;status=done&amp;style=none&amp;taskId=ub2639b36-e651-4f05-b994-143866ca61d&amp;title=&amp;width=830.9333333333333"/><br/>获取完 get 方法之后还会经过一层 if 的判断筛选，条件如下</p>
@@ -103,26 +124,12 @@
 <h1 id="总结"><a class="headerlink" href="#总结" title="总结"></a>总结</h1><p>用 EqualsBean 的方式去触发链其实不只有 hashset 方法可以作为入口点，以及也不只 templatesImpl 作为最终恶意代码执行的点，它和 ToStringBean 一样，都只是作为攻击链其中的一部分。不过最重要的点还是它两作为 ROME 依赖中组件的特性，就是会调用目标类的 get 方法，这也是存在恶意代码执行的必要条件。<br/>我们学习 ROME 链的时候要和 CommonCollections 链联系起来，虽然 CC 是最开始我们学习 java 反序列化的先导，但其实两者是很像的。分析 ROME 链，我最大的感受可能是对 CC 链等依赖中存在的攻击链新的认识，其实就是分析 java 项目中存在哪些依赖，该依赖有没有漏洞点，能不能作为我最终攻击的跳板。</p>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-ROME"><span class="toc-text">什么是 ROME</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">环境搭建</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ROME-%E7%BB%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-text">ROME 组件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ToStringBean"><span class="toc-text">0x01 ToStringBean</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-EqualsBean"><span class="toc-text">0x02 EqualsBean</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ROME-%E9%93%BE%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">ROME 链流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ObjectBean%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">0x01 ObjectBean利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x01 流程分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-HashTable%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">0x02 HashTable利用链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-BadAttributeValueExpException"><span class="toc-text">0x03 BadAttributeValueExpException</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">1x01 调用流程分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-HotSwappableTargetSource-%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">0x04 HotSwappableTargetSource 利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E5%8A%9F%E8%83%BD%E5%88%86%E6%9E%90"><span class="toc-text">1x01  功能分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1x02-%E6%B5%81%E7%A8%8B%E5%88%A9%E7%94%A8%E5%88%86%E6%9E%90"><span class="toc-text">1x02 流程利用分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-hashMap-%E5%85%A5%E5%8F%A3"><span class="toc-text">2x01 hashMap 入口</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#3x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">3x01 流程分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-JdbcRowSetImpl%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-text">0x05 JdbcRowSetImpl利用链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0"><span class="toc-text">1x01 攻击实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-EqualsBean%E9%93%BE"><span class="toc-text">0x06 EqualsBean链</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1x01-%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90-1"><span class="toc-text">1x01 流程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2x01-hashSet-%E5%88%86%E6%9E%90"><span class="toc-text">2x01 hashSet 分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2x02-%E6%94%BB%E5%87%BB%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">2x02 攻击流程分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

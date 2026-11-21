@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>JDK高版本下的JNDI利用以及一些补充 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">JDK高版本下的JNDI利用以及一些补充</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2024-10-04 13:04:57</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2024-10-04">2024.10.04</time>
+      </div>
+      <h1 class="post-title">JDK高版本下的JNDI利用以及一些补充</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/JNDI/" title="JNDI">#JNDI</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/JNDI/">#JNDI</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE%E9%AB%98%E7%89%88%E6%9C%ACJNDI%E6%94%B9%E5%8A%A8"><span class="toc-text">回顾高版本JNDI改动</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#LDAP%E6%94%B9%E5%8A%A8"><span class="toc-text">LDAP改动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RMI%E6%94%B9%E5%8A%A8"><span class="toc-text">RMI改动</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JDNI-ldap%E6%94%BB%E5%87%BB%E9%9D%A2%E6%89%A9%E5%B1%95%E9%83%A8%E5%88%86"><span class="toc-text">JDNI-ldap攻击面扩展部分</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90"><span class="toc-text">原理解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E6%9E%84%E9%80%A0%E5%88%A9%E7%94%A8"><span class="toc-text">具体构造利用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E7%89%88%E6%9C%ACJDK%E4%B8%8B%E7%9A%84JNDI%E5%85%B7%E4%BD%93%E5%88%A9%E7%94%A8"><span class="toc-text">高版本JDK下的JNDI具体利用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#BeanFactory%E5%88%A9%E7%94%A8"><span class="toc-text">BeanFactory利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanFactory%E8%A7%A3%E6%9E%90"><span class="toc-text">BeanFactory解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ELProcessor%E5%88%A9%E7%94%A8"><span class="toc-text">ELProcessor利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#snakeyaml%E5%88%A9%E7%94%A8"><span class="toc-text">snakeyaml利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GroovyShell%E5%88%A9%E7%94%A8"><span class="toc-text">GroovyShell利用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-text">写入内存马</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-text">后记</span></a></li></ol></details>
+    
     <div class="markdown-body"><p>文章首发于奇安信攻防社区</p>
 <p>某次行动的时候遇到了jolokia的JNDI注入利用，由于诸多原因需要更稳定的shell，所以考虑JNDI打入内存马，但是遇到了瓶颈。现在准备进一步学习，争取能够实现这个通过JNDI打入内存马的功能。</p>
 <h1 id="回顾高版本JNDI改动"><a class="headerlink" href="#回顾高版本JNDI改动" title="回顾高版本JNDI改动"></a>回顾高版本JNDI改动</h1><h2 id="LDAP改动"><a class="headerlink" href="#LDAP改动" title="LDAP改动"></a>LDAP改动</h2><p>调用栈如下：</p>
@@ -153,26 +174,12 @@
 <p><a href="https://tttang.com/archive/1405/#toc\_0x00" rel="noopener" target="_blank">https://tttang.com/archive/1405/#toc\_0x00</a></p>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE%E9%AB%98%E7%89%88%E6%9C%ACJNDI%E6%94%B9%E5%8A%A8"><span class="toc-text">回顾高版本JNDI改动</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#LDAP%E6%94%B9%E5%8A%A8"><span class="toc-text">LDAP改动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RMI%E6%94%B9%E5%8A%A8"><span class="toc-text">RMI改动</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JDNI-ldap%E6%94%BB%E5%87%BB%E9%9D%A2%E6%89%A9%E5%B1%95%E9%83%A8%E5%88%86"><span class="toc-text">JDNI-ldap攻击面扩展部分</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90"><span class="toc-text">原理解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E6%9E%84%E9%80%A0%E5%88%A9%E7%94%A8"><span class="toc-text">具体构造利用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E7%89%88%E6%9C%ACJDK%E4%B8%8B%E7%9A%84JNDI%E5%85%B7%E4%BD%93%E5%88%A9%E7%94%A8"><span class="toc-text">高版本JDK下的JNDI具体利用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#BeanFactory%E5%88%A9%E7%94%A8"><span class="toc-text">BeanFactory利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanFactory%E8%A7%A3%E6%9E%90"><span class="toc-text">BeanFactory解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ELProcessor%E5%88%A9%E7%94%A8"><span class="toc-text">ELProcessor利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#snakeyaml%E5%88%A9%E7%94%A8"><span class="toc-text">snakeyaml利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GroovyShell%E5%88%A9%E7%94%A8"><span class="toc-text">GroovyShell利用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%85%A5%E5%86%85%E5%AD%98%E9%A9%AC"><span class="toc-text">写入内存马</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-text">后记</span></a></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

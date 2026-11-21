@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>Apache DolphinScheduler 任意代码执行漏洞分析 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">Apache DolphinScheduler 任意代码执行漏洞分析</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2024-08-09 18:23:00</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2024-08-09">2024.08.09</time>
+      </div>
+      <h1 class="post-title">Apache DolphinScheduler 任意代码执行漏洞分析</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/Apache-DolphinScheduler/" title="Apache DolphinScheduler">#Apache DolphinScheduler</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/Apache-DolphinScheduler/">#Apache DolphinScheduler</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2023-49299-CVE-2024-23320"><span class="toc-text">CVE-2023-49299 CVE-2024-23320</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-text">漏洞点分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x01 工作流程分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x02 漏洞攻击实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-9-%E7%89%88%E6%9C%AC-diff-%E5%88%86%E6%9E%90"><span class="toc-text">3.1.9 版本 diff 分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E6%BA%90%E7%A0%81-diff-%E5%88%86%E6%9E%90"><span class="toc-text">0x01 源码 diff 分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E5%B0%9D%E8%AF%95%E7%BB%95%E8%BF%87"><span class="toc-text">0x02 尝试绕过</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2023-49109"><span class="toc-text">CVE-2023-49109</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%88%9D%E6%AD%A5%E5%AE%9A%E4%BD%8D"><span class="toc-text">0x01 初步定位</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%BC%8F%E6%B4%9E%E9%80%BB%E8%BE%91%E5%88%86%E6%9E%90"><span class="toc-text">0x02 漏洞逻辑分析</span></a></li></ol></li></ol></details>
+    
     <div class="markdown-body"><p>包括如下几个 cve：CVE-2023-49299 CVE-2024-23320</p>
 <h1 id="漏洞描述"><a class="headerlink" href="#漏洞描述" title="漏洞描述"></a>漏洞描述</h1><blockquote>
 <p>Apache DolphinScheduler 是一个分布式、易扩展、可视化的工作流任务调度平台。<br/>Apache DolphinScheduler 3.1.9之前版本中，由于 SwitchTaskUtils#evaluate 方法未对用户可控的 expression 参数进行校验，经过身份验证的攻击者可在创建任务时传入恶意的任务内容，在服务端以 root 身份执行可逃逸沙箱的任意 js 代码。</p>
@@ -107,26 +128,12 @@
 <p>补充一点忘记写了：<br/>这里 yaml 代码的获取是在上述<code>upsertNamespaceToK8s</code>方法中，他会获取到我们传入的 namespace，执行 getNamespaceFromK8s 方法<br/><img alt="image.png" referrerpolicy="no-referrer" src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1714112814726-5082c94b-a3d9-4b3b-bf87-ff3828b92e44.png#averageHue=%2332322e&amp;clientId=u070a54b9-6d60-4&amp;from=paste&amp;height=386&amp;id=u8ceb24b1&amp;originHeight=724&amp;originWidth=1492&amp;originalType=binary&amp;ratio=1.875&amp;rotation=0&amp;showTitle=false&amp;size=274003&amp;status=done&amp;style=none&amp;taskId=u6f3563a3-1cab-454b-a1de-0f08e9f0bf0&amp;title=&amp;width=795.7333333333333"/><br/>我们跟进<code>getNamespaceFromK8s</code>，这里的逻辑是创建一段标准的 namespaceyaml 格式 字符串，然后根据${}标识符替换内容，我们传参的 namespace 就是在这一步被替换上去的，具体的由于时间过久了，这一部分是我事后补充的，搭建环境就没复现了，师傅们可以自己跟进一波<br/><img alt="image.png" referrerpolicy="no-referrer" src="https://cdn.nlark.com/yuque/0/2024/png/36078896/1714112869350-8c4d0ee9-55a7-48a6-8fe7-b3083c18b47d.png#averageHue=%2332322e&amp;clientId=u070a54b9-6d60-4&amp;from=paste&amp;height=307&amp;id=uda2d3c94&amp;originHeight=575&amp;originWidth=1925&amp;originalType=binary&amp;ratio=1.875&amp;rotation=0&amp;showTitle=false&amp;size=276387&amp;status=done&amp;style=none&amp;taskId=uc2b86109-7052-4f46-a453-749e1a0f519&amp;title=&amp;width=1026.6666666666667"/></p>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%8F%8F%E8%BF%B0"><span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2023-49299-CVE-2024-23320"><span class="toc-text">CVE-2023-49299 CVE-2024-23320</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%82%B9%E5%88%86%E6%9E%90"><span class="toc-text">漏洞点分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90"><span class="toc-text">0x01 工作流程分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0"><span class="toc-text">0x02 漏洞攻击实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-9-%E7%89%88%E6%9C%AC-diff-%E5%88%86%E6%9E%90"><span class="toc-text">3.1.9 版本 diff 分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-%E6%BA%90%E7%A0%81-diff-%E5%88%86%E6%9E%90"><span class="toc-text">0x01 源码 diff 分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-%E5%B0%9D%E8%AF%95%E7%BB%95%E8%BF%87"><span class="toc-text">0x02 尝试绕过</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2023-49109"><span class="toc-text">CVE-2023-49109</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%88%9D%E6%AD%A5%E5%AE%9A%E4%BD%8D"><span class="toc-text">0x01 初步定位</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E6%BC%8F%E6%B4%9E%E9%80%BB%E8%BE%91%E5%88%86%E6%9E%90"><span class="toc-text">0x02 漏洞逻辑分析</span></a></li></ol></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>JNI学习补充 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/WebSocket%E5%9E%8B%E5%86%85%E5%AD%98%E9%A9%AC%E5%85%A8%E7%89%88%E6%9C%AC%E6%9E%84%E9%80%A0%E6%8E%A2%E7%B4%A2%E5%8F%8A%E5%AE%9E%E6%88%98%E5%8C%96%E5%88%A9%E7%94%A8.html"><time>2025.05.28</time><span>WebSocket型内存马全版本构造探索及实战化利用</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">JNI学习补充</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2025-05-30 15:54:21</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2025-05-30">2025.05.30</time>
+      </div>
+      <h1 class="post-title">JNI学习补充</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/JNI/" title="JNI">#JNI</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/JNI/">#JNI</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JNI%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">JNI基础与静态注册</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">动态注册</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C%E8%BE%85%E5%8A%A9%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">通过静态注册辅助动态注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNI-OnLoad-%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD"><span class="toc-text">JNI_OnLoad()动态加载</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%93%E5%90%88%E6%80%9D%E8%80%83"><span class="toc-text">结合思考</span></a></li></ol></details>
+    
     <div class="markdown-body"><p>之前学习基础的rasp绕过的时候一直没有好好过一遍JNI。全称<code>Java Native Interface</code>​，用于扩展java与其他语言的交互，主要为java与C，C++之间的交互，但也不妨碍其他语言的设计。</p>
 <p>其设计的意义主要有两点：特定场景下可以提升应用性能。对于代码层的保护，提升反编译的难度。</p>
 <p>但是这么做就会出现一个问题，对于C和C++编译形成的动态链接库是不能够全平台互通的。需要特制。</p>
@@ -142,26 +163,12 @@
 <p>‍</p>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JNI%E5%9F%BA%E7%A1%80%E4%B8%8E%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">JNI基础与静态注册</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">动态注册</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E9%9D%99%E6%80%81%E6%B3%A8%E5%86%8C%E8%BE%85%E5%8A%A9%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C"><span class="toc-text">通过静态注册辅助动态注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JNI-OnLoad-%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD"><span class="toc-text">JNI_OnLoad()动态加载</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%93%E5%90%88%E6%80%9D%E8%80%83"><span class="toc-text">结合思考</span></a></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

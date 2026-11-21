@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>Ysoserial-JRMPListener/JRMPClient学习 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">Ysoserial-JRMPListener/JRMPClient学习</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2024-08-09 18:24:25</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2024-08-09">2024.08.09</time>
+      </div>
+      <h1 class="post-title">Ysoserial-JRMPListener/JRMPClient学习</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/JRMP/" title="JRMP">#JRMP</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/JRMP/">#JRMP</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RMI-%E8%BF%87%E7%A8%8B%E5%9B%9E%E9%A1%BE"><span class="toc-text">RMI 过程回顾</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPListener-%E8%B0%83%E8%AF%95"><span class="toc-text">JRMPListener 调试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E6%AD%A5%E6%94%BB%E5%87%BB%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="toc-text">初步攻击操作示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPListener-%E9%80%BB%E8%BE%91"><span class="toc-text">JRMPListener 逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A2%AB%E6%94%BB%E5%87%BB%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%80%BB%E8%BE%91"><span class="toc-text">被攻击客户端逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPClient-%E8%B0%83%E8%AF%95"><span class="toc-text">JRMPClient 调试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DGC-%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-text">DGC 创建过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DGC-%E5%A4%84%E7%90%86%E6%9C%8D%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="toc-text">DGC 处理服务逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPClient-%E9%80%BB%E8%BE%91"><span class="toc-text">JRMPClient 逻辑</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPListener-Client-Gadget"><span class="toc-text">JRMPListener&#x2F;Client Gadget</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPListener"><span class="toc-text">JRMPListener</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPClient"><span class="toc-text">JRMPClient</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-text">总结</span></a></li></ol></details>
+    
     <div class="markdown-body"><h1 id="RMI-过程回顾"><a class="headerlink" href="#RMI-过程回顾" title="RMI 过程回顾"></a>RMI 过程回顾</h1><p>回顾一下 RMI 的流程，算是复习。我们就拿一段示例代码来举例子</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br/><span class="line">2</span><br/><span class="line">3</span><br/><span class="line">4</span><br/><span class="line">5</span><br/><span class="line">6</span><br/><span class="line">7</span><br/><span class="line">8</span><br/><span class="line">9</span><br/><span class="line">10</span><br/><span class="line">11</span><br/><span class="line">12</span><br/></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.Naming;</span><br/><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br/><span class="line"></span><br/><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RemoteServer</span> {</span><br/><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception {</span><br/><span class="line">        LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br/><span class="line">        <span class="type">RemoteInterface</span> <span class="variable">remoteObject</span> <span class="operator">=</span><span class="keyword">new</span> <span class="title class_">RemoteObject</span>();</span><br/><span class="line">        Naming.bind(<span class="string">"rmi://127.0.0.1:1099/Hello"</span>,remoteObject);</span><br/><span class="line">    }</span><br/><span class="line"></span><br/><span class="line">}</span><br/><span class="line"></span><br/></pre></td></tr></table></figure>
 <p>JDK 版本稍微高一点之后，Registry 和 Server 端必须要在同一台机器上才能创建成功。<br/>总共分为 3 步走，</p>
@@ -95,26 +116,12 @@
 <h1 id="总结-1"><a class="headerlink" href="#总结-1" title="总结"></a>总结</h1><p>关于 RMI 中两端（客户端 服务端）互打的具体实现，以及在实战时的攻击操作学习。重新过了一遍 RMI 的流程，更加清晰了，suki~</p>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RMI-%E8%BF%87%E7%A8%8B%E5%9B%9E%E9%A1%BE"><span class="toc-text">RMI 过程回顾</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPListener-%E8%B0%83%E8%AF%95"><span class="toc-text">JRMPListener 调试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E6%AD%A5%E6%94%BB%E5%87%BB%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="toc-text">初步攻击操作示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPListener-%E9%80%BB%E8%BE%91"><span class="toc-text">JRMPListener 逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A2%AB%E6%94%BB%E5%87%BB%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%80%BB%E8%BE%91"><span class="toc-text">被攻击客户端逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPClient-%E8%B0%83%E8%AF%95"><span class="toc-text">JRMPClient 调试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DGC-%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-text">DGC 创建过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DGC-%E5%A4%84%E7%90%86%E6%9C%8D%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="toc-text">DGC 处理服务逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPClient-%E9%80%BB%E8%BE%91"><span class="toc-text">JRMPClient 逻辑</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JRMPListener-Client-Gadget"><span class="toc-text">JRMPListener&#x2F;Client Gadget</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPListener"><span class="toc-text">JRMPListener</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JRMPClient"><span class="toc-text">JRMPClient</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-text">总结</span></a></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>JavaAgent型内存马分析 | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">JavaAgent型内存马分析</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2024-08-09 18:22:35</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2024-08-09">2024.08.09</time>
+      </div>
+      <h1 class="post-title">JavaAgent型内存马分析</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/AgentMemshell/" title="AgentMemshell">#AgentMemshell</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/AgentMemshell/">#AgentMemshell</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-javaAgent%EF%BC%9F"><span class="toc-text">1.什么是 javaAgent？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#premain-Agent"><span class="toc-text">premain-Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#agentmain-Agent"><span class="toc-text">agentmain-Agent</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachine%E7%B1%BB"><span class="toc-text">VirtualMachine类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachineDescriptor%E7%B1%BB"><span class="toc-text">VirtualMachineDescriptor类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#agentmain-%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-text">agentmain 注入过程详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agentmain-Instrumentation"><span class="toc-text">Agentmain-Instrumentation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#addTransformer"><span class="toc-text">addTransformer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Javassist"><span class="toc-text">Javassist</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Javassist-%E5%88%9B%E5%BB%BA%E7%B1%BB"><span class="toc-text">使用 Javassist 创建类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E6%80%BB%E7%BB%93"><span class="toc-text">步骤总结</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E7%94%9F%E6%88%90%E7%9A%84-class-%E6%96%87%E4%BB%B6"><span class="toc-text">调用生成的 class 文件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%B7%B2%E5%8A%A0%E8%BD%BD%E7%B1%BB%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-text">修改已加载类的字节码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0"><span class="toc-text">Agent 内存马实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B"><span class="toc-text">注入过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE%E4%B8%80%E4%B8%8B"><span class="toc-text">回顾一下</span></a></li></ol></details>
+    
     <div class="markdown-body"><h2 id="1-什么是-javaAgent？"><a class="headerlink" href="#1-什么是-javaAgent？" title="1.什么是 javaAgent？"></a>1.什么是 javaAgent？</h2><p><strong>Agent，意为“代理”</strong><br/>java 是一种静态强类型的语言，在运行之前必须将其编译成.class 字节码，然后交给 JVM 去处理运行。java Agent 就是一种能够在不影响正常编译的前提下，修改 java 字节码，进行动态修改已加载或者未加载的类，属性和方法的技术<br/>平常我们见到的一些技术，比如热加载，或者 RASP 都是基于 Agent 工具实现的，它具体是怎么实现的呢？</p>
 <p>有两种形式<br/>一种是在 JVM 启动前就加载 premain-Agent，另一种是 JVM 启动之后加载 agentmain-Agent，这里我们可以将其功能理解为一种特殊 Interceptor  （拦截器）<br/><strong>Premain-Agent</strong><br/><img alt="PreAgent.jpg" referrerpolicy="no-referrer" src="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990843458-83a08530-567a-4173-89bc-9e8193e2592b.jpeg#averageHue=%23f9f9f9&amp;clientId=ua6718e02-a329-4&amp;from=paste&amp;height=215&amp;id=u7d2fb3c1&amp;originHeight=322&amp;originWidth=1742&amp;originalType=binary&amp;ratio=1.5&amp;rotation=0&amp;showTitle=false&amp;size=29182&amp;status=done&amp;style=none&amp;taskId=u20685936-e08f-445c-9713-ae78767af47&amp;title=&amp;width=1161.3333333333333"/></p>
 <p><strong>agentmain-Agent</strong><br/><img alt="agentmain-Agent.jpg" referrerpolicy="no-referrer" src="https://cdn.nlark.com/yuque/0/2024/jpeg/36078896/1705990852067-3b4192bb-91ed-41af-94c9-c9d2771f135c.jpeg#averageHue=%23fbfbfb&amp;clientId=ua6718e02-a329-4&amp;from=paste&amp;height=415&amp;id=u93b2e673&amp;originHeight=622&amp;originWidth=1382&amp;originalType=binary&amp;ratio=1.5&amp;rotation=0&amp;showTitle=false&amp;size=32466&amp;status=done&amp;style=none&amp;taskId=uda67e32e-241d-43af-a2ec-8246fe2131c&amp;title=&amp;width=921.3333333333334"/></p>
@@ -159,26 +180,12 @@
 <h2 id="回顾一下"><a class="headerlink" href="#回顾一下" title="回顾一下"></a>回顾一下</h2><p>其实学 agent 内存马我的目的不是其本身，而是它的前置知识很诱人，就是 JAVAagent 和 javassist，所以这块的重点也自然放在这两个上，然后现阶段的主要工作是在做前面知识的复习，以及后续知识的推进，JAVAagent 这块的知识对于我来说是新的知识，所以接下来是对前面旧知识的复习，包括 Spring 基础，RMI，JNDI 等</p>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-javaAgent%EF%BC%9F"><span class="toc-text">1.什么是 javaAgent？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#premain-Agent"><span class="toc-text">premain-Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#agentmain-Agent"><span class="toc-text">agentmain-Agent</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachine%E7%B1%BB"><span class="toc-text">VirtualMachine类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VirtualMachineDescriptor%E7%B1%BB"><span class="toc-text">VirtualMachineDescriptor类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#agentmain-%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-text">agentmain 注入过程详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agentmain-Instrumentation"><span class="toc-text">Agentmain-Instrumentation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#addTransformer"><span class="toc-text">addTransformer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Javassist"><span class="toc-text">Javassist</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-Javassist-%E5%88%9B%E5%BB%BA%E7%B1%BB"><span class="toc-text">使用 Javassist 创建类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4%E6%80%BB%E7%BB%93"><span class="toc-text">步骤总结</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E7%94%9F%E6%88%90%E7%9A%84-class-%E6%96%87%E4%BB%B6"><span class="toc-text">调用生成的 class 文件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E5%B7%B2%E5%8A%A0%E8%BD%BD%E7%B1%BB%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-text">修改已加载类的字节码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0"><span class="toc-text">Agent 内存马实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%85%A5%E8%BF%87%E7%A8%8B"><span class="toc-text">注入过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BE%E4%B8%80%E4%B8%8B"><span class="toc-text">回顾一下</span></a></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>

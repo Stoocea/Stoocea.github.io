@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" color-mode="light">
+<html lang="zh-CN" color-mode="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,8 +8,9 @@
   <title>Rasp分析[1] | stoocea&#39;s blog</title>
   <link rel="apple-touch-icon" href="/images/favicon.png">
   <link rel="icon" href="/images/favicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/fonts/maple-mono-cn/regular.css" />
+  <link rel="stylesheet" href="/css/notebook.css" />
   <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
   <link rel="stylesheet" href="/css/figcaption/mac-block.css" />
   <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
@@ -23,34 +24,54 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 <body>
   <div id="app">
-    <div class="header">
+    <header class="header">
       <div class="avatar">
-        <a href="/"><img src="/images/avatar.jpeg" alt=""></a>
         <div class="nickname"><a href="/">stoocea</a></div>
       </div>
-      <div class="navbar">
+      <nav class="navbar" aria-label="主导航">
         <ul>
-          <li class="nav-item" data-path="/"><a href="/">Home</a></li>
-          <li class="nav-item" data-path="/archives/"><a href="/archives/">Archives</a></li>
-          <li class="nav-item" data-path="/tags/"><a href="/tags/">Tags</a></li>
-          <li class="nav-item" data-path="/friends/"><a href="/friends/">Friends</a></li>
-          <li class="nav-item" data-path="/about/"><a href="/about/">About</a></li>
+          
+            <li class="nav-item"><a href="/">Home</a></li>
+          
+            <li class="nav-item"><a href="/archives/">Archives</a></li>
+          
+            <li class="nav-item"><a href="/research/">Research</a></li>
+          
+            <li class="nav-item"><a href="/friends/">Friends</a></li>
+          
+            <li class="nav-item"><a href="/about/">About</a></li>
+          
         </ul>
-      </div>
-    </div>
-    <script src="/js/activeNav.js"></script>
+        <button id="switch-color-scheme" type="button" aria-label="切换深浅配色" title="切换深浅配色">◐</button>
+      </nav>
+    </header>
     <div class="flex-container">
-      <div class="container post-details" id="post-details">
+      <main><article class="container post-details reading-page" id="post-details">
+  
+  
+    <nav class="other-notes" aria-label="其他文章">
+      <h2>其他文章</h2>
+      
+        <a href="/post/%E3%80%8A%E4%B9%92%E4%B9%93%E3%80%8B%E4%B8%89%E5%88%B7%E8%A7%82%E5%90%8E%E6%84%9F.html"><time>2025.08.14</time><span>《乒乓》三刷观后感</span></a>
+      
+        <a href="/post/JNI.html"><time>2025.05.30</time><span>JNI学习补充</span></a>
+      
+    </nav>
+  
   <div class="post-content">
-    <div class="post-title">Rasp分析[1]</div>
-    <div class="post-attach">
-      <span class="post-pubtime"><i class="iconfont icon-updatetime mr-10" title="&#26356;&#26032;&#26102;&#38388;"></i>2025-02-08 11:16:08</span>
+    <header>
+      <div class="byline">
+        <a href="/about/"><img src="/images/avatar.jpeg" width="32" height="32" alt="">stoocea</a>
+        <time datetime="2025-02-08">2025.02.08</time>
+      </div>
+      <h1 class="post-title">Rasp分析[1]</h1>
       
-        <span class="post-tags"><i class="iconfont icon-tags mr-10" title="&#26631;&#31614;"></i>
-        <span class="span--tag mr-8"><a href="/tags/1/" title="1">#1</a></span>
-        </span>
+        <div class="reading-tags"><a href="/tags/1/">#1</a></div>
       
-    </div>
+    </header>
+    
+      <details class="reading-toc"><summary>文章目录</summary><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-text">0x00 环境配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1x01-RASP-Agent%E5%88%9D%E6%AD%A5%E7%BB%93%E6%9E%84"><span class="toc-text">1x01 RASP Agent初步结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1x02-%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E6%A1%88%E4%BE%8B"><span class="toc-text">1x02 漏洞环境案例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-RASP%E6%9C%BA%E5%88%B6%E6%8E%A2%E7%A9%B6"><span class="toc-text">0x01 RASP机制探究</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1x01-premain"><span class="toc-text">1x01 premain</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1x02-agentmain"><span class="toc-text">1x02 agentmain</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2x01-agentmain%E4%B8%ADNoClassDefFoundError%E7%9A%84%E8%A7%A3%E5%86%B3"><span class="toc-text">2x01 agentmain中NoClassDefFoundError的解决</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-%E5%B0%8F%E7%BB%93"><span class="toc-text">0x02 小结</span></a></li></ol></details>
+    
     <div class="markdown-body"><h1 id="前言"><a class="headerlink" href="#前言" title="前言"></a>前言</h1><p>这篇用于记录RASP实现的具体入门的实现code以及原理的分析学习，性质上更属于笔记。参考的文章在文末。</p>
 <p>‍</p>
 <h1 id="0x00-环境配置"><a class="headerlink" href="#0x00-环境配置" title="0x00 环境配置"></a>0x00 环境配置</h1><p>RASP本质上是一份Agent，当前用于测试和学习的环境是由一份RASP-Agent以及一份测试环境决定的。这里的测试环境可以自己写一个漏洞环境，也可以是直接采用网上的java漏洞靶场项目，只要有漏洞即可，主要是用来模拟生产环境。</p>
@@ -138,26 +159,12 @@
 <p>‍</p>
 </div>
   </div>
-</div>
-
-
-  <div id="btn-catalog" class="btn-catalog"><i class="iconfont icon-menu"></i></div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">&#30446;&#24405;</div>
-    <div class="catalog-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-text">0x00 环境配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1x01-RASP-Agent%E5%88%9D%E6%AD%A5%E7%BB%93%E6%9E%84"><span class="toc-text">1x01 RASP Agent初步结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1x02-%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83%E6%A1%88%E4%BE%8B"><span class="toc-text">1x02 漏洞环境案例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-RASP%E6%9C%BA%E5%88%B6%E6%8E%A2%E7%A9%B6"><span class="toc-text">0x01 RASP机制探究</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1x01-premain"><span class="toc-text">1x01 premain</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1x02-agentmain"><span class="toc-text">1x02 agentmain</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2x01-agentmain%E4%B8%ADNoClassDefFoundError%E7%9A%84%E8%A7%A3%E5%86%B3"><span class="toc-text">2x01 agentmain中NoClassDefFoundError的解决</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-%E5%B0%8F%E7%BB%93"><span class="toc-text">0x02 小结</span></a></li></ol></div>
-  </div>
-  <script src="/js/catalog.js"></script>
-
+</article>
 <script src="/plugins/clipboard.min.js"></script>
 <script src="/js/codeCopy.js"></script>
-
+</main>
       <div class="footer">
         <div class="footer-more">stoocea&#39;s blog</div>
-      </div>
-      <div class="tools-bar">
-        <div class="tools-bar-item theme-icon" id="switch-color-scheme">
-          <a href="javascript: void(0)"><i id="theme-icon" class="iconfont icon-moon"></i></a>
-        </div>
       </div>
       <script src="/js/colorscheme.js"></script>
     </div>
