@@ -3,6 +3,7 @@
   if (!nav) return;
 
   const list = nav.querySelector('#reading-sections');
+  const outline = list.querySelector('.toc');
   const button = nav.querySelector('button');
   const label = nav.querySelector('.current-section');
   const article = nav.closest('article');
@@ -16,12 +17,21 @@
   let pending = false;
   nav.classList.add('enhanced');
 
+  function updateFades() {
+    list.style.setProperty('--fade-start', list.scrollTop > 1 ? '8px' : '0px');
+    const remaining = list.scrollHeight - list.clientHeight - list.scrollTop;
+    list.style.setProperty('--fade-end', remaining > 1 ? '8px' : '0px');
+  }
+
   function revealCurrent() {
     if (!current || !list.clientHeight) return;
     const bounds = list.getBoundingClientRect();
     const item = current.link.getBoundingClientRect();
-    if (item.top < bounds.top) list.scrollTop += item.top - bounds.top;
-    else if (item.bottom > bounds.bottom) list.scrollTop += item.bottom - bounds.bottom;
+    outline.style.setProperty('--marker-y', (item.top - outline.getBoundingClientRect().top + 3) + 'px');
+    outline.style.setProperty('--marker-height', (item.height - 6) + 'px');
+    if (item.top < bounds.top + 8) list.scrollTop += item.top - bounds.top - 8;
+    else if (item.bottom > bounds.bottom - 8) list.scrollTop += item.bottom - bounds.bottom + 8;
+    updateFades();
   }
 
   function trackSection() {
@@ -68,6 +78,8 @@
   window.addEventListener('scroll', scheduleUpdate, { passive: true });
   window.addEventListener('resize', scheduleUpdate);
   window.addEventListener('pageshow', scheduleUpdate);
+  list.addEventListener('scroll', updateFades, { passive: true });
+  new ResizeObserver(revealCurrent).observe(outline);
   new ResizeObserver(scheduleUpdate).observe(article);
   trackSection();
 })();

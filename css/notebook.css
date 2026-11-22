@@ -209,8 +209,31 @@ html:has(.reading-page.has-toc) { scroll-padding-top: 0; }
     column-gap: clamp(24px, 4vw, 56px);
   }
   .has-toc .post-content > header, .has-toc .markdown-body { grid-column: 1; }
-  .reading-toc { position: sticky; top: 24px; grid-column: 2; grid-row: 2; margin-top: 26px; }
-  #reading-sections { max-height: calc(100vh - 84px); }
+  .reading-toc { position: sticky; top: 32px; grid-column: 2; grid-row: 1 / span 2; }
+  .reading-toc h2 { display: none; }
+  #reading-sections {
+    max-height: calc(100vh - 80px);
+    scrollbar-width: thin;
+    mask-image: linear-gradient(to bottom, transparent, black var(--fade-start, 0px),
+      black calc(100% - var(--fade-end, 0px)), transparent);
+  }
+  .reading-toc .toc { position: relative; border-left: 1px solid var(--tone-line); }
+  .reading-toc .toc-child { padding-left: 12px; }
+  .reading-toc .toc-link {
+    padding: 5px 6px 5px 14px; border: 0; color: var(--tone-muted);
+    font-size: 1.4rem; line-height: 1.5;
+  }
+  .reading-toc .toc-link:hover, .reading-toc .toc-link:focus-visible,
+  .reading-toc .toc-link[aria-current] { color: var(--tone-ink); }
+  .reading-toc .toc-link:focus-visible { outline-offset: -2px; }
+  .reading-toc .toc::before {
+    content: ''; position: absolute; top: 0; left: -1px; width: 2px;
+    height: var(--marker-height, 0px); transform: translateY(var(--marker-y, 0px));
+    background: var(--tone-accent); border-radius: 2px; pointer-events: none;
+  }
+}
+@media (min-width: 960px) and (prefers-reduced-motion: no-preference) {
+  .reading-toc .toc::before { transition: transform 160ms ease-out, height 160ms ease-out; }
 }
 @media (max-width: 959px) {
   .reading-page.has-toc { --chapter-offset: 64px; }
