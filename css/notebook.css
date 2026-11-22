@@ -6,21 +6,50 @@
   font-display: swap;
   unicode-range: U+0020-024F, U+2000-206F;
 }
+@font-face {
+  font-family: "Anthropic Mono";
+  src: url("../fonts/anthropic-mono/normal.woff2") format("woff2");
+  font-weight: 300 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Anthropic Mono";
+  src: url("../fonts/anthropic-mono/italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 300 800;
+  font-display: swap;
+}
 :root {
+  --code-font: "Anthropic Mono", "Maple Mono CN", Consolas, monospace;
   --heading: "Anthropic Web Serif", Georgia, "Maple Mono CN", serif;
   --mono: Consolas, "SFMono-Regular", "Maple Mono CN", "Microsoft YaHei", monospace;
   --text: "Segoe UI", "Maple Mono CN", "PingFang SC", "Microsoft YaHei", sans-serif;
   --shell: min(1040px, calc(100% - 48px));
 }
 :root[color-mode="dark"] {
-  --bg-body: #0c1215;
-  --tone-panel: #142024;
-  --tone-ink: #dce7e8;
-  --tone-muted: #a0b1b5;
-  --tone-line: #2d3b40;
-  --tone-accent: #87c4ce;
-  --tone-accent-dark: #a1d4dc;
-  --color-text-md-content: #cfdbdd;
+  color-scheme: dark;
+  --bg-body: #0b0b0b;
+  --tone-paper: var(--bg-body);
+  --tone-panel: #191919;
+  --tone-ink: #efefef;
+  --tone-muted: #b0adaa;
+  --tone-line: #383838;
+  --tone-accent: #d5a086;
+  --tone-accent-dark: #e0b29c;
+  --color-text-base: var(--tone-muted);
+  --color-text-a: var(--tone-ink);
+  --color-text-a-hover: var(--tone-accent);
+  --color-text-sub: var(--tone-muted);
+  --color-text-md-title: var(--tone-ink);
+  --color-text-md-content: #d4d4d4;
+  --color-text-md-code: var(--tone-ink);
+  --bg-text-md-code: #252525;
+  --bg-block-md-quote: var(--tone-panel);
+  --color-block-md-quote: #c2c2c2;
+  --color-divider-md-border: var(--tone-line);
+  --bg-block-md-table: var(--tone-panel);
+  --bg-block-md-table-2: #202020;
+  --color-border-md-table: var(--tone-line);
 }
 body, .markdown-body { font-family: var(--text); }
 .index-tag, .post-catalog, .post-navigation, .footer { font-family: var(--mono); }
@@ -215,3 +244,56 @@ html:has(.reading-page.has-toc) { scroll-padding-top: 0; }
   .profile-link img { width: 36px; height: 36px; }
   .other-notes a { gap: 10px; }
 }
+
+:root[color-mode="light"] {
+  --bg-block-md-pre: #faf7f1;
+  --color-text-md-pre: #322e29;
+  --syntax-comment: #66645f;
+  --syntax-keyword: #77448b;
+  --syntax-string: #3f663d;
+  --syntax-number: #8a4d31;
+  --syntax-name: #335f7d;
+}
+:root[color-mode="dark"] {
+  --bg-block-md-pre: #1f1f1f;
+  --color-text-md-pre: #efefef;
+  --syntax-comment: #aaa6a1;
+  --syntax-keyword: #cdb4e2;
+  --syntax-string: #b3c89d;
+  --syntax-number: #e5b78e;
+  --syntax-name: #a3c6df;
+}
+.markdown-body code, .markdown-body pre { font-family: var(--code-font); }
+.markdown-body figure.highlight, .markdown-body pre {
+  border-radius: 10px;
+  box-shadow: none;
+}
+.markdown-body figure.highlight { padding: 0; max-width: 100%; }
+.markdown-body figure.highlight figcaption {
+  position: sticky; left: 0; display: flex; align-items: center; gap: 12px;
+  min-height: 36px; padding: 3px 12px 3px 16px; box-sizing: border-box;
+  border-bottom: 1px solid var(--tone-line); background: var(--tone-panel);
+  color: var(--tone-muted); font: 500 1.25rem/1.4 var(--code-font);
+}
+.copy-code {
+  margin-left: auto; padding: 4px 9px; border: 1px solid transparent;
+  border-radius: 5px; background: transparent; color: inherit;
+  cursor: pointer; font: inherit;
+}
+.copy-code:hover, .copy-code:focus-visible { color: var(--tone-ink); border-color: var(--tone-line); }
+.markdown-body figure.highlight table {
+  display: block; width: 100%; overflow-x: auto; margin: 0; border: 0;
+}
+.markdown-body figure.highlight pre {
+  margin: 0; border: 0; padding: 14px 16px; overflow: visible;
+  font: 400 1.4rem/1.7 var(--code-font); tab-size: 4;
+}
+.markdown-body figure.highlight .gutter pre {
+  padding-right: 10px; user-select: none; color: var(--syntax-comment);
+  border-right: 1px solid var(--tone-line); background: transparent !important;
+}
+.markdown-body pre :is(.keyword, .tag, .variable) { color: var(--syntax-keyword); }
+.markdown-body pre :is(.string, .value, .regexp, .class) { color: var(--syntax-string); }
+.markdown-body pre :is(.number, .literal, .params, .attribute, .built_in, .constant, .preprocessor) { color: var(--syntax-number); }
+.markdown-body pre :is(.title, .function, .name) { color: var(--syntax-name); }
+.markdown-body pre .comment { color: var(--syntax-comment); font-style: italic; }

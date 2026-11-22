@@ -1,50 +1,33 @@
-// clipboard js 代码复制功能
-window.addEventListener('DOMContentLoaded', getCodeBlockDoms)
-
-let clipboard = null
-
-// 获取code block dom
-function getCodeBlockDoms() {
-  const codeBlockDoms = document.querySelectorAll('figure')
-  const copyIcon = document.createElement('i')
-  copyIcon.classList = 'iconfont icon-copy'
-  const copyBtn = document.createElement('span')
-  copyBtn.classList = 'pin-copy'
-  copyBtn.setAttribute('data-text', 'copy')
-  copyBtn.appendChild(copyIcon)
-  codeBlockDoms.length && codeBlockDoms.forEach(res => {
-    res.addEventListener('mouseenter', () => {
-      res.setAttribute('id', 'copy-target')
-      const copyContent = res.querySelector('table tbody tr .code')
-      res.setAttribute('data-clipboard-text', copyContent && copyContent.innerText || '')
-      res.appendChild(copyBtn)
-      copyBtn.addEventListener('click', copyContentAction)
-    })
-    res.addEventListener('mouseleave', () => {
-      res.setAttribute('id', '')
-      res.setAttribute('data-clipboard-text', '')
-      copyBtn.removeEventListener('click', copyContentAction)
-      copyBtn.setAttribute('data-text', 'copy')
-    })
-  })
-}
-
-// 点击复制
-function copyContentAction() {
-  if (!clipboard) {
-    clipboard = new ClipboardJS('#copy-target')
+(() => {
+  const figures = document.querySelectorAll('.markdown-body figure.highlight');
+  for (const figure of figures) {
+    const code = figure.querySelector('.code pre');
+    if (!code) continue;
+    const caption = figure.querySelector('figcaption') || document.createElement('figcaption');
+    if (!caption.parentElement) figure.prepend(caption);
+    if (!caption.textContent.trim()) caption.textContent = [...figure.classList].find(name => name !== 'highlight') || 'Code';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'copy-code';
+    button.textContent = '复制';
+    button.setAttribute('aria-label', '复制代码');
+    button.setAttribute('aria-live', 'polite');
+    caption.append(button);
   }
-  const copyBtnDom = document.querySelector('.pin-copy')
-  clipboard.on('success', function(e) {
-    console.warn('clipboard success', e)
-    clipboard.destroy()
-    clipboard = null
-    copyBtnDom && copyBtnDom.setAttribute('data-text', 'copied')
-  })
-  clipboard.on('error', function(e) {
-    console.warn('clipboard error', e)
-    clipboard.destroy()
-    clipboard = null
-    copyBtnDom && copyBtnDom.setAttribute('data-text', 'fail to copy')
-  })
-}
+  const clipboard = new ClipboardJS('.copy-code', {
+    text: button => button.closest('figure').querySelector('.code pre').innerText
+  });
+  const timers = new WeakMap();
+  function feedback(event, label) {
+    const button = event.trigger;
+    clearTimeout(timers.get(button));
+    button.textContent = label;
+    button.setAttribute('aria-label', label);
+    timers.set(button, setTimeout(() => {
+      button.textContent = '复制';
+      button.setAttribute('aria-label', '复制代码');
+    }, 1600));
+  }
+  clipboard.on('success', event => feedback(event, '已复制'));
+  clipboard.on('error', event => feedback(event, '复制失败'));
+})();
